@@ -1,0 +1,983 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Aarambha Car Rentals – Invoice AT/CR/2026/00147</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Syne:wght@600;700;800&display=swap"
+    rel="stylesheet" />
+  <style>
+    :root {
+      --primary: #FF3B30;
+      --primary-dark: #E02E24;
+      --dark: #0F172A;
+      --text-main: #1E293B;
+      --text-muted: #64748B;
+      --text-light: #94A3B8;
+      --border-subtle: #E2E8F0;
+      --bg-light: #F8FAFC;
+      --bg-page: #EEF2F6;
+      --success: #10B981;
+      --danger: #EF4444;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: var(--bg-page);
+      color: var(--text-main);
+      font-size: 12px;
+      line-height: 1.5;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    .page {
+      width: 210mm;
+      min-height: 297mm;
+      background: #FFFFFF;
+      margin: 28px auto;
+      display: flex;
+      flex-direction: column;
+      box-shadow: 0 10px 40px -10px rgba(15, 23, 42, 0.12);
+      border-radius: 4px;
+      position: relative;
+    }
+
+    .page-body {
+      flex: 1;
+      padding: 38px 44px 28px;
+    }
+
+    /* ── HEADER ─────────────────────────────── */
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      padding-bottom: 22px;
+      border-bottom: 2px solid var(--dark);
+      position: relative;
+    }
+
+    .brand-left {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .brand-logo-wrap {
+      width: 58px;
+      height: 58px;
+      border-radius: 14px;
+      background: #FFFFFF;
+      border: 1px solid var(--border-subtle);
+      padding: 3px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.04);
+    }
+
+    .brand-logo {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      border-radius: 10px;
+    }
+
+    .brand-name {
+      font-size: 19px;
+      font-weight: 800;
+      color: var(--dark);
+      letter-spacing: -0.4px;
+      line-height: 1.1;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .brand-name .dot {
+      color: var(--primary);
+      font-size: 22px;
+      line-height: 0;
+    }
+
+    .brand-tagline {
+      font-size: 9px;
+      font-weight: 700;
+      color: var(--primary);
+      letter-spacing: 1.8px;
+      text-transform: uppercase;
+      margin: 4px 0 6px;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    .brand-address {
+      font-size: 10px;
+      color: var(--text-muted);
+      line-height: 1.6;
+      font-weight: 500;
+    }
+
+    .invoice-right {
+      text-align: right;
+    }
+
+    .invoice-badge-title {
+      font-family: 'Syne', sans-serif;
+      font-size: 26px;
+      font-weight: 800;
+      color: var(--dark);
+      letter-spacing: -0.5px;
+      line-height: 1;
+      margin-bottom: 8px;
+    }
+
+    .invoice-meta-card {
+      background: var(--bg-light);
+      border: 1px solid var(--border-subtle);
+      border-radius: 10px;
+      padding: 8px 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+      min-width: 190px;
+    }
+
+    .meta-row {
+      display: flex;
+      justify-content: space-between;
+      font-size: 10px;
+      gap: 12px;
+    }
+
+    .meta-row .label {
+      color: var(--text-muted);
+      font-weight: 500;
+    }
+
+    .meta-row .value {
+      color: var(--dark);
+      font-weight: 700;
+      text-align: right;
+    }
+
+    /* ── BILL TO + RENTAL DETAILS ────────────── */
+    .info-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+      margin-top: 22px;
+      padding: 16px 20px;
+      background: var(--bg-light);
+      border: 1px solid var(--border-subtle);
+      border-radius: 12px;
+    }
+
+    .section-label {
+      font-size: 9px;
+      font-weight: 800;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      color: var(--primary);
+      margin-bottom: 6px;
+    }
+
+    .customer-name {
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--dark);
+      margin-bottom: 4px;
+    }
+
+    .customer-detail {
+      font-size: 10.5px;
+      color: var(--text-muted);
+      line-height: 1.65;
+    }
+
+    .rental-details-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px 14px;
+    }
+
+    .rental-item .r-label {
+      font-size: 8.5px;
+      font-weight: 600;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      color: var(--text-light);
+      margin-bottom: 2px;
+    }
+
+    .rental-item .r-value {
+      font-size: 11.5px;
+      font-weight: 700;
+      color: var(--dark);
+    }
+
+    /* ── TABLE ───────────────────────────────── */
+    .table-wrap {
+      margin-top: 24px;
+      border-radius: 10px;
+      overflow: hidden;
+      border: 1px solid var(--border-subtle);
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    thead th {
+      background: var(--dark);
+      color: #FFFFFF;
+      font-size: 9px;
+      font-weight: 700;
+      letter-spacing: 1.2px;
+      text-transform: uppercase;
+      padding: 11px 16px;
+      text-align: left;
+    }
+
+    thead th:not(:first-child) {
+      text-align: right;
+    }
+
+    tbody td {
+      padding: 14px 16px;
+      border-bottom: 1px solid var(--border-subtle);
+      font-size: 11.5px;
+      color: var(--dark);
+      vertical-align: middle;
+      background: #FFFFFF;
+    }
+
+    tbody td:not(:first-child) {
+      text-align: right;
+    }
+
+    .item-name {
+      font-weight: 700;
+      font-size: 12.5px;
+      color: var(--dark);
+      margin-bottom: 3px;
+    }
+
+    .item-sub {
+      font-size: 10px;
+      color: var(--text-muted);
+      font-weight: 500;
+    }
+
+    .placeholder-row td {
+      padding: 10px 16px;
+      border-bottom: 1px solid #F1F5F9;
+      color: #E2E8F0;
+      font-size: 11px;
+    }
+
+    /* ── TOTALS ──────────────────────────────── */
+    .totals-wrap {
+      display: flex;
+      justify-content: flex-end;
+      margin-top: 18px;
+    }
+
+    .totals-table {
+      width: 280px;
+      background: var(--bg-light);
+      border: 1px solid var(--border-subtle);
+      border-radius: 12px;
+      padding: 12px 16px;
+    }
+
+    .totals-table .t-row {
+      display: flex;
+      justify-content: space-between;
+      padding: 6px 0;
+      border-bottom: 1px solid #E2E8F0;
+      font-size: 11px;
+    }
+
+    .totals-table .t-row:last-child {
+      border-bottom: none;
+    }
+
+    .totals-table .t-row .tl {
+      color: var(--text-muted);
+      font-weight: 500;
+    }
+
+    .totals-table .t-row .tv {
+      font-weight: 700;
+      color: var(--dark);
+    }
+
+    .totals-table .t-row.paid .tv {
+      color: var(--success);
+      font-weight: 700;
+    }
+
+    .totals-table .t-row.due .tv {
+      color: var(--danger);
+      font-weight: 700;
+    }
+
+    .totals-table .t-row.total {
+      border-top: 2px solid var(--dark);
+      border-bottom: none;
+      margin-top: 6px;
+      padding-top: 8px;
+    }
+
+    .totals-table .t-row.total .tl {
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: 0.8px;
+      text-transform: uppercase;
+      color: var(--dark);
+    }
+
+    .totals-table .t-row.total .tv {
+      font-size: 16px;
+      font-weight: 800;
+      color: var(--primary);
+    }
+
+    /* ── NOTE ────────────────────────────────── */
+    .note-section {
+      margin-top: 28px;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      gap: 20px;
+    }
+
+    .note-box {
+      flex: 1;
+      background: #FFF5F5;
+      border-left: 3.5px solid var(--primary);
+      border-radius: 0 8px 8px 0;
+      padding: 10px 14px;
+    }
+
+    .note-box .note-label {
+      font-size: 9px;
+      font-weight: 800;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      color: var(--primary);
+      margin-bottom: 4px;
+    }
+
+    .note-box .note-text {
+      font-size: 10px;
+      color: #475569;
+      line-height: 1.6;
+    }
+
+    .signature-box {
+      text-align: center;
+      padding-bottom: 4px;
+      min-width: 140px;
+    }
+
+    .sig-line {
+      width: 130px;
+      border-top: 1.5px solid var(--dark);
+      margin: 0 auto 6px;
+    }
+
+    .sig-label {
+      font-size: 9px;
+      font-weight: 700;
+      color: var(--text-muted);
+      letter-spacing: 1px;
+      text-transform: uppercase;
+    }
+
+    /* ── FOOTER ──────────────────────────────── */
+    .footer {
+      border-top: 2px solid var(--dark);
+      padding: 14px 44px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: auto;
+      background: #FFFFFF;
+    }
+
+    .footer-left {
+      font-size: 10.5px;
+      color: var(--dark);
+      font-weight: 700;
+    }
+
+    .footer-center {
+      font-size: 10px;
+      color: var(--text-muted);
+      text-align: center;
+    }
+
+    .footer-center .fc-label {
+      font-size: 8px;
+      font-weight: 700;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      color: var(--primary);
+      margin-bottom: 2px;
+    }
+
+    .footer-divider {
+      width: 1px;
+      height: 26px;
+      background: var(--border-subtle);
+    }
+
+    /* ════════════════════════════════
+     PAGE 2 — TERMS & CONDITIONS
+  ════════════════════════════════ */
+    .tc-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      padding-bottom: 20px;
+      border-bottom: 2px solid var(--dark);
+    }
+
+    .tc-brand-left {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .tc-brand-logo-wrap {
+      width: 44px;
+      height: 44px;
+      border-radius: 10px;
+      background: #FFFFFF;
+      border: 1px solid var(--border-subtle);
+      padding: 2px;
+    }
+
+    .tc-brand-logo {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      border-radius: 8px;
+    }
+
+    .tc-brand-name {
+      font-size: 16px;
+      font-weight: 800;
+      color: var(--dark);
+    }
+
+    .tc-brand-sub {
+      font-size: 9px;
+      color: var(--primary);
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      margin-top: 2px;
+      font-weight: 700;
+    }
+
+    .tc-title-block {
+      text-align: right;
+    }
+
+    .tc-title {
+      font-family: 'Syne', sans-serif;
+      font-size: 20px;
+      font-weight: 800;
+      color: var(--dark);
+      letter-spacing: -0.5px;
+    }
+
+    .tc-subtitle {
+      font-size: 9.5px;
+      color: var(--text-muted);
+      letter-spacing: 1px;
+      margin-top: 3px;
+      font-weight: 600;
+    }
+
+    /* tc items */
+    .tc-list {
+      margin-top: 18px;
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .tc-item {
+      display: grid;
+      grid-template-columns: 28px 1fr;
+      gap: 12px;
+      padding: 9px 0;
+      border-bottom: 1px solid #F1F5F9;
+      align-items: start;
+    }
+
+    .tc-item:last-child {
+      border-bottom: none;
+    }
+
+    .tc-num {
+      font-size: 11px;
+      font-weight: 800;
+      color: var(--primary);
+      padding-top: 1px;
+    }
+
+    .tc-content {
+      font-size: 11px;
+      color: var(--dark);
+      line-height: 1.6;
+      font-weight: 400;
+    }
+
+    .tc-content strong {
+      color: #0F172A;
+      font-weight: 700;
+    }
+
+    .tc-ack-card {
+      margin-top: 22px;
+      padding: 14px 18px;
+      border: 1px solid var(--border-subtle);
+      border-radius: 10px;
+      background: var(--bg-light);
+    }
+
+    .tc-footer {
+      border-top: 2px solid var(--dark);
+      padding: 14px 44px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: auto;
+      background: #FFFFFF;
+    }
+
+    .tc-footer-left {
+      font-size: 10px;
+      color: var(--text-muted);
+    }
+
+    .tc-footer-left strong {
+      color: var(--dark);
+      font-weight: 700;
+    }
+
+    .tc-footer-right {
+      font-size: 10px;
+      color: var(--primary);
+      font-weight: 700;
+      letter-spacing: 0.5px;
+    }
+
+    @media print {
+      body {
+        background: #fff;
+        padding: 0;
+      }
+
+      .page {
+        margin: 0;
+        box-shadow: none;
+        page-break-after: always;
+      }
+
+      .no-print {
+        display: none !important;
+      }
+    }
+
+    /* Floating Action Bar */
+    .action-bar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 60px;
+      background: rgba(15, 23, 42, 0.96);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0 40px;
+      z-index: 1000;
+      box-shadow: 0 4px 24px rgba(0, 0, 0, 0.25);
+    }
+
+    .action-title {
+      color: #FFFFFF;
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: 0.3px;
+    }
+
+    .action-title span {
+      color: var(--primary);
+    }
+
+    .action-buttons {
+      display: flex;
+      gap: 12px;
+    }
+
+    .btn-action {
+      background: var(--primary);
+      color: #FFFFFF;
+      border: none;
+      padding: 9px 20px;
+      border-radius: 8px;
+      font-weight: 800;
+      font-size: 11px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.2s ease;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+      font-family: inherit;
+      box-shadow: 0 4px 14px rgba(255, 59, 48, 0.35);
+    }
+
+    .btn-action:hover {
+      background: var(--primary-dark);
+      transform: translateY(-1px);
+      box-shadow: 0 6px 18px rgba(255, 59, 48, 0.45);
+    }
+
+    .btn-action-outline {
+      background: transparent;
+      color: #FFFFFF;
+      border: 1px solid rgba(255, 255, 255, 0.25);
+      box-shadow: none;
+    }
+
+    .btn-action-outline:hover {
+      background: rgba(255, 255, 255, 0.08);
+      border-color: #FFFFFF;
+      box-shadow: none;
+    }
+
+    @media screen {
+      body {
+        padding-top: 80px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- Floating Action Bar for Web View -->
+  <div class="action-bar no-print">
+    <div class="action-title">
+      Aarambha Car Rentals &nbsp;&middot;&nbsp; <span>Invoice AT/CR/2026/00147</span>
+    </div>
+    <div class="action-buttons">
+      <button class="btn-action btn-action-outline" onclick="window.close()">Close Tab</button>
+      <button class="btn-action" onclick="window.print()">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="margin-right:2px;"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+        Save as PDF / Print
+      </button>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════
+     PAGE 1 — INVOICE
+  ══════════════════════════════════ -->
+  <div class="page">
+    <div class="page-body">
+
+      <!-- HEADER -->
+      <div class="header">
+        <div class="brand-left">
+          <div class="brand-logo-wrap">
+            <img src="frontend/website/public/images/logo.jpeg" alt="Aarambha Logo" class="brand-logo" onerror="this.src='/images/logo.jpeg';" />
+          </div>
+          <div class="brand-text">
+            <div class="brand-name">
+              <span>Aarambha Car Rentals</span>
+              <span class="dot">.</span>
+            </div>
+            <div class="brand-tagline">Self-Drive Fleet &middot; Pune, Maharashtra</div>
+            <div class="brand-address">
+              Green Hills Soc, Katraj, Pune, Maharashtra 411046<br>
+              Call: +91 78208 02985 &nbsp;&middot;&nbsp; WhatsApp: +91 82082 11478<br>
+              support@aarambhatravels.in &nbsp;&middot;&nbsp; booking@aarambhatravels.in
+            </div>
+          </div>
+        </div>
+
+        <div class="invoice-right">
+          <div class="invoice-badge-title">INVOICE</div>
+          <div class="invoice-meta-card">
+            <div class="meta-row"><span class="label">Invoice No.</span><span class="value">AT/CR/2026/00147</span></div>
+            <div class="meta-row"><span class="label">Invoice Date</span><span class="value">18 / 08 / 2026</span></div>
+            <div class="meta-row"><span class="label">Pickup Date</span><span class="value">20 / 08 / 2026</span></div>
+            <div class="meta-row"><span class="label">Return Date</span><span class="value">23 / 08 / 2026</span></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- BILL TO + RENTAL DETAILS -->
+      <div class="info-grid">
+        <div class="bill-to">
+          <div class="section-label">Billed To</div>
+          <div class="customer-name">Rahul Sharma</div>
+          <div class="customer-detail">
+            +91 98765 43210<br>
+            rahul.sharma@example.com<br>
+            DL No.: MH-12-202100892<br>
+            Aadhaar No.: XXXX-XXXX-5821<br>
+            Aundh, Pune, Maharashtra 411007
+          </div>
+        </div>
+
+        <div class="rental-details-grid">
+          <div class="rental-item">
+            <div class="r-label">Rental Duration</div>
+            <div class="r-value">3 Days</div>
+          </div>
+          <div class="rental-item">
+            <div class="r-label">Pickup Location</div>
+            <div class="r-value">Katraj Office / Doorstep</div>
+          </div>
+          <div class="rental-item">
+            <div class="r-label">KM Limit / Day</div>
+            <div class="r-value">300 KM</div>
+          </div>
+          <div class="rental-item">
+            <div class="r-label">Extra KM Rate</div>
+            <div class="r-value">&#8377;7 per KM</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ITEMS TABLE -->
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th style="width:45%">Vehicle Description</th>
+              <th style="width:15%">Days</th>
+              <th style="width:20%">Rate / Day</th>
+              <th style="width:20%">Amount</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>
+                <div class="item-name">Maruti Suzuki Swift VXi</div>
+                <div class="item-sub">Reg. No.: MH 12 AB 8821 &nbsp;&middot;&nbsp; Color: Arctic White &nbsp;&middot;&nbsp; Fuel: Petrol / Manual</div>
+              </td>
+              <td>3</td>
+              <td>&#8377; 1,500.00</td>
+              <td>&#8377; 4,500.00</td>
+            </tr>
+            <tr class="placeholder-row">
+              <td>&nbsp;</td>
+              <td></td>
+              <td></td>
+              <td></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- TOTALS -->
+      <div class="totals-wrap">
+        <div class="totals-table">
+          <div class="t-row"><span class="tl">Subtotal</span><span class="tv">&#8377; 4,500.00</span></div>
+          <div class="t-row"><span class="tl">Security Deposit</span><span class="tv">&#8377; 500.00</span></div>
+          <div class="t-row paid"><span class="tl">Deposit / Amount Paid</span><span class="tv">&#8377; 500.00</span></div>
+          <div class="t-row due"><span class="tl">Balance Due</span><span class="tv">&#8377; 4,500.00</span></div>
+          <div class="t-row total"><span class="tl">Total Payable</span><span class="tv">&#8377; 5,000.00</span></div>
+        </div>
+      </div>
+
+      <!-- NOTE + SIGNATURE -->
+      <div class="note-section">
+        <div class="note-box">
+          <div class="note-label">Important Note</div>
+          <div class="note-text">
+            All vehicle rentals are governed by Aarambha Terms &amp; Conditions (see page 2).<br>
+            Please record a 360&deg; video of the vehicle before pickup.<br>
+            Allowance of 300 KM/day cumulative; extra kilometres charged at &#8377;7/KM.<br>
+            24/7 Roadside Assistance: Call +91 78208 02985 &middot; WhatsApp +91 82082 11478.
+          </div>
+        </div>
+        <div class="signature-box">
+          <div style="height:36px;"></div>
+          <div class="sig-line"></div>
+          <div class="sig-label">Authorised Signatory</div>
+        </div>
+      </div>
+
+    </div><!-- /page-body -->
+
+    <!-- FOOTER -->
+    <div class="footer">
+      <div class="footer-left">Thank you for choosing Aarambha Car Rentals</div>
+      <div class="footer-divider"></div>
+      <div class="footer-center">
+        <div class="fc-label">Support Helpline</div>
+        <div>Call: +91 78208 02985 &nbsp;&middot;&nbsp; support@aarambhatravels.in</div>
+      </div>
+      <div class="footer-divider"></div>
+      <div class="footer-center">
+        <div class="fc-label">WhatsApp Helpline</div>
+        <div>+91 82082 11478 &nbsp;&middot;&nbsp; Quick Response Team</div>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- ══════════════════════════════════
+     PAGE 2 — TERMS & CONDITIONS (ENGLISH ONLY)
+  ══════════════════════════════════ -->
+  <div class="page">
+    <div class="page-body">
+
+      <!-- TC HEADER -->
+      <div class="tc-header">
+        <div class="tc-brand-left">
+          <div class="tc-brand-logo-wrap">
+            <img src="frontend/website/public/images/logo.jpeg" alt="Aarambha Logo" class="tc-brand-logo" onerror="this.src='/images/logo.jpeg';" />
+          </div>
+          <div>
+            <div class="tc-brand-name">Aarambha Car Rentals</div>
+            <div class="tc-brand-sub">Self-Drive Fleet &middot; Pune, Maharashtra</div>
+          </div>
+        </div>
+        <div class="tc-title-block">
+          <div class="tc-title">Terms &amp; Conditions</div>
+          <div class="tc-subtitle">
+            Rental Agreement &middot; Standard Policy
+          </div>
+        </div>
+      </div>
+
+      <!-- TERMS LIST (ENGLISH ONLY) -->
+      <div class="tc-list">
+        
+        <div class="tc-item">
+          <div class="tc-num">01</div>
+          <div class="tc-content">
+            <strong>Valid Driving License:</strong> The customer must possess a valid, original government-approved R.T.O. Driving License and carry it at all times while operating the rental vehicle.
+          </div>
+        </div>
+
+        <div class="tc-item">
+          <div class="tc-num">02</div>
+          <div class="tc-content">
+            <strong>Fines, Penalties &amp; Tolls:</strong> The customer is solely responsible for paying all traffic fines, speeding challans, parking tickets, penalties, and toll taxes incurred throughout the rental duration.
+          </div>
+        </div>
+
+        <div class="tc-item">
+          <div class="tc-num">03</div>
+          <div class="tc-content">
+            <strong>Damages &amp; Non-Covered Repairs:</strong> Any vehicle damages, loss of accessories, or repair expenses not covered under the insurance policy—including rental downtime fees during servicing—must be paid in full by the customer.
+          </div>
+        </div>
+
+        <div class="tc-item">
+          <div class="tc-num">04</div>
+          <div class="tc-content">
+            <strong>Accident Reporting:</strong> In the event of an accident, mishap, or vehicle damage, the customer must immediately inform the Aarambha Support Helpline before initiating any repairs or negotiations.
+          </div>
+        </div>
+
+        <div class="tc-item">
+          <div class="tc-num">05</div>
+          <div class="tc-content">
+            <strong>Rental Extension:</strong> If the customer wishes to extend the rental duration, prior authorization from Aarambha Car Rentals must be obtained at least 6 hours before the scheduled return time.
+          </div>
+        </div>
+
+        <div class="tc-item">
+          <div class="tc-num">06</div>
+          <div class="tc-content">
+            <strong>Mandatory Vehicle Inspection:</strong> The customer is strictly advised to inspect the car and record a full 360-degree video of the exterior body and interior cabin before taking possession.
+          </div>
+        </div>
+
+        <div class="tc-item">
+          <div class="tc-num">07</div>
+          <div class="tc-content">
+            <strong>Kilometer Limit &amp; Excess Charges:</strong> Standard daily limit is 300 km/day (calculated cumulatively across total rental days). Additional distance driven beyond this allowance will be charged at &#8377;7 per km.
+          </div>
+        </div>
+
+        <div class="tc-item">
+          <div class="tc-num">08</div>
+          <div class="tc-content">
+            <strong>Prohibited Activities:</strong> The vehicle must strictly not be used for racing, towing, off-roading, commercial subleasing, or any unlawful/illegal activity. Any breach will result in immediate forfeiture and legal action.
+          </div>
+        </div>
+
+        <div class="tc-item">
+          <div class="tc-num">09</div>
+          <div class="tc-content">
+            <strong>Breakdown &amp; Emergency Assistance:</strong> In case of mechanical breakdown or puncture, immediately contact our 24/7 Roadside Assistance Team at <strong>+91 78208 02985</strong> or WhatsApp <strong>+91 82082 11478</strong>.
+          </div>
+        </div>
+
+      </div>
+
+      <!-- ACKNOWLEDGEMENT -->
+      <div class="tc-ack-card">
+        <div style="font-size:9.5px;font-weight:800;letter-spacing:1.5px;text-transform:uppercase;color:var(--primary);margin-bottom:6px;">
+          Customer Acknowledgement &amp; Declaration
+        </div>
+        <div style="font-size:10.5px;color:#475569;line-height:1.7;">
+          I have read, understood, and agree to abide by all the above Terms &amp; Conditions of Aarambha Car Rentals.
+          I acknowledge that I am fully responsible for the vehicle, passengers, and adherence to traffic regulations during the rental duration.
+        </div>
+        <div style="display:flex;gap:60px;margin-top:24px;">
+          <div>
+            <div style="width:170px;border-top:1.5px solid var(--dark);margin-bottom:5px;"></div>
+            <div style="font-size:9px;color:var(--text-muted);font-weight:700;letter-spacing:1px;text-transform:uppercase;">Customer Signature</div>
+          </div>
+          <div>
+            <div style="width:170px;border-top:1.5px solid var(--dark);margin-bottom:5px;"></div>
+            <div style="font-size:9px;color:var(--text-muted);font-weight:700;letter-spacing:1px;text-transform:uppercase;">Date</div>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /page-body -->
+
+    <!-- TC FOOTER -->
+    <div class="tc-footer">
+      <div class="tc-footer-left">
+        By renting a vehicle, the customer agrees to all the above terms.<br>
+        <strong>Aarambha Car Rentals</strong> &nbsp;&middot;&nbsp; Call: +91 78208 02985 &nbsp;&middot;&nbsp; WhatsApp: +91 82082 11478
+      </div>
+      <div class="tc-footer-right">Drive safe. Drive smart.</div>
+    </div>
+  </div>
+
+</body>
+
+</html>

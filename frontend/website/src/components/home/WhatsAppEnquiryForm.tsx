@@ -1,0 +1,424 @@
+'use client';
+
+import React, { useState } from 'react';
+import { MessageSquare, Send, CheckCircle2, Calendar, MapPin, User, Phone, Car, Compass, ArrowRight } from 'lucide-react';
+import { FLEET_VEHICLES } from '@/constants/carsData';
+import { TOUR_PACKAGES } from '@/constants/toursData';
+import { apiFetch } from '@/services/api-client';
+
+export default function WhatsAppEnquiryForm({ mode = 'cars' }: { mode?: 'cars' | 'tours' }) {
+  // Car Rental Form State
+  const [carForm, setCarForm] = useState({
+    name: '',
+    phone: '',
+    carId: FLEET_VEHICLES[0]?.id || 'thar-4x4',
+    date: '',
+    pickupLocation: 'Green Hills Society, Katraj, Pune',
+    message: '',
+  });
+  const [carSubmitted, setCarSubmitted] = useState(false);
+
+  // Tour Form State
+  const [tourForm, setTourForm] = useState({
+    name: '',
+    phone: '',
+    tourId: TOUR_PACKAGES[0]?.id || '3-jyotirlinga-yatra-ujjain-omkareshwar-ghrishneshwar',
+    date: '',
+    destination: '3 Jyotirlinga / Krishna Yatra / Tirupati Balaji',
+    message: '',
+  });
+  const [tourSubmitted, setTourSubmitted] = useState(false);
+
+  const carWhatsAppNumber = '918208211478';
+  const tourWhatsAppNumber = '919067617451';
+
+  // Handle Car Form Submit
+  const handleCarSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    const foundCar = FLEET_VEHICLES.find(c => c.id === carForm.carId);
+    const carName = foundCar ? `${foundCar.name} (${foundCar.category || 'Self-Drive'}) - ₹${Math.round(foundCar.pricePerDay * 65).toLocaleString('en-IN')}/day` : 'Self-Drive Vehicle';
+
+    const textMessage = 
+      `*AARAMBHA CAR RENTAL INQUIRY*%0A` +
+      `━━━━━━━━━━━━━━━━━━━━%0A` +
+      `👤 *Name:* ${carForm.name}%0A` +
+      `📞 *Phone:* ${carForm.phone}%0A` +
+      `🚗 *Selected Car:* ${carName}%0A` +
+      `📅 *Pickup Date:* ${carForm.date || 'Flexible'}%0A` +
+      `📍 *Pickup Point:* ${carForm.pickupLocation}%0A` +
+      `📝 *Notes:* ${carForm.message || 'Please confirm vehicle availability.'}%0A` +
+      `━━━━━━━━━━━━━━━━━━━━%0A` +
+      `_Sent via Aarambha Self-Drive Hub_`;
+
+    const whatsappUrl = `https://wa.me/${carWhatsAppNumber}?text=${textMessage}`;
+
+    try {
+      await apiFetch('/api/fleet/inquiries', {
+        method: 'POST',
+        body: JSON.stringify({
+          name: carForm.name,
+          phone: carForm.phone,
+          carName,
+          date: carForm.date,
+          pickupLocation: carForm.pickupLocation,
+          message: carForm.message,
+        }),
+      }).catch(() => {});
+    } catch (_err) {}
+
+    setCarSubmitted(true);
+    window.open(whatsappUrl, '_blank');
+  };
+
+  // Handle Tour Form Submit
+  const handleTourSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    const foundTour = TOUR_PACKAGES.find(t => t.id === tourForm.tourId);
+    const tourTitle = foundTour ? `${foundTour.title} (${foundTour.durationDays}D/${foundTour.durationNights}N) - ₹${foundTour.basePrice.toLocaleString('en-IN')}` : 'Tour Package';
+
+    const textMessage = 
+      `*AARAMBHA TOUR PACKAGE INQUIRY*%0A` +
+      `━━━━━━━━━━━━━━━━━━━━%0A` +
+      `👤 *Name:* ${tourForm.name}%0A` +
+      `📞 *Phone:* ${tourForm.phone}%0A` +
+      `🧭 *Selected Tour:* ${tourTitle}%0A` +
+      `📅 *Travel Start Date:* ${tourForm.date || 'Flexible'}%0A` +
+      `📍 *Destination:* ${tourForm.destination}%0A` +
+      `📝 *Notes:* ${tourForm.message || 'Please send itinerary details & pricing.'}%0A` +
+      `━━━━━━━━━━━━━━━━━━━━%0A` +
+      `_Sent via Aarambha Tours Hub_`;
+
+    const whatsappUrl = `https://wa.me/${tourWhatsAppNumber}?text=${textMessage}`;
+
+    try {
+      await apiFetch('/api/tours/inquiries', {
+        method: 'POST',
+        body: JSON.stringify({
+          name: tourForm.name,
+          phone: tourForm.phone,
+          tourTitle,
+          date: tourForm.date,
+          destination: tourForm.destination,
+          message: tourForm.message,
+        }),
+      }).catch(() => {});
+    } catch (_err) {}
+
+    setTourSubmitted(true);
+    window.open(whatsappUrl, '_blank');
+  };
+
+  return (
+    <section className="py-16 bg-[#090D14] text-white relative overflow-hidden border-t border-gray-800">
+      
+      {/* Ambient Glows */}
+      <div className={`absolute top-1/3 left-1/4 w-[500px] h-[300px] blur-[130px] rounded-full pointer-events-none ${
+        mode === 'cars' ? 'bg-red-600/10' : 'bg-emerald-600/10'
+      }`} />
+
+      <div className="max-w-4xl mx-auto px-6 lg:px-12 relative z-10 space-y-10">
+        
+        {/* Section Header */}
+        <div className="text-center space-y-3">
+          <span className="inline-flex items-center gap-1.5 px-3.5 py-1 rounded-full bg-white/10 border border-white/20 text-white text-xs font-extrabold font-syne uppercase tracking-wider backdrop-blur-md">
+            <MessageSquare className={`w-3.5 h-3.5 ${mode === 'cars' ? 'text-red-400' : 'text-emerald-400'}`} />
+            {mode === 'cars' ? 'SELF-DRIVE FLEET WHATSAPP INQUIRY' : 'TOUR PACKAGES WHATSAPP INQUIRY'}
+          </span>
+
+          <h2 className="font-syne text-3xl sm:text-4xl font-extrabold text-white tracking-tight">
+            {mode === 'cars' ? 'Car Rental WhatsApp Inquiry' : 'Tour Package WhatsApp Inquiry'}
+          </h2>
+
+          <p className="text-xs text-gray-400 max-w-xl mx-auto leading-relaxed font-normal">
+            {mode === 'cars'
+              ? 'Select your preferred self-drive vehicle below to send a direct WhatsApp inquiry to our office hotline.'
+              : 'Select your preferred tour package below to send a direct WhatsApp inquiry to our office hotline.'}
+          </p>
+        </div>
+
+        {/* 🚗 BOX 1: CAR RENTALS DEDICATED WHATSAPP INQUIRY BOX */}
+        {mode === 'cars' && (
+          <div className="rounded-3xl border p-6 sm:p-10 space-y-6 shadow-2xl transition-all duration-300 bg-[#130606] border-red-500/30">
+            
+            {/* Box Header */}
+            <div className="flex items-center justify-between pb-4 border-b border-red-500/20">
+              <div className="flex items-center gap-3">
+                <div className="p-2.5 rounded-2xl bg-red-500/20 text-[#FF3B30] border border-red-500/30">
+                  <Car className="w-5 h-5" />
+                </div>
+                <div>
+                  <h3 className="font-syne text-xl font-bold text-white flex items-center gap-2">
+                    Self-Drive Fleet Inquiry
+                  </h3>
+                  <p className="text-xs text-red-300">Direct Vehicle Booking Desk</p>
+                </div>
+              </div>
+              <span className="px-3 py-1 rounded-full bg-red-500/20 text-red-400 text-xs font-bold font-syne border border-red-500/30 uppercase">
+                Cars Only
+              </span>
+            </div>
+
+            {carSubmitted ? (
+              <div className="text-center py-8 space-y-3">
+                <div className="w-16 h-16 bg-red-500/20 text-[#FF3B30] rounded-full flex items-center justify-center mx-auto border border-red-500/40 animate-bounce">
+                  <CheckCircle2 className="w-8 h-8" />
+                </div>
+                <h4 className="font-syne text-2xl font-bold text-white">Car Inquiry Sent!</h4>
+                <p className="text-xs text-gray-300">WhatsApp opened with your selected vehicle inquiry.</p>
+                <button
+                  onClick={() => setCarSubmitted(false)}
+                  className="mt-2 text-xs font-bold text-red-400 underline cursor-pointer"
+                >
+                  Send Another Car Inquiry
+                </button>
+              </div>
+            ) : (
+              <form onSubmit={handleCarSubmit} className="space-y-5 text-xs">
+                
+                {/* Select Car Model Dropdown */}
+                <div className="space-y-1.5">
+                  <label className="font-bold text-red-300 uppercase tracking-wider flex items-center gap-1.5 text-xs">
+                    <Car className="w-4 h-4 text-red-400" /> Select Fleet Vehicle Model <span className="text-red-400">*</span>
+                  </label>
+                  <select
+                    name="carId"
+                    value={carForm.carId}
+                    onChange={(e) => setCarForm({ ...carForm, carId: e.target.value })}
+                    className="w-full bg-black/60 border border-red-500/30 rounded-xl p-3.5 text-xs sm:text-sm text-white focus:outline-none focus:border-red-500 font-syne font-bold cursor-pointer"
+                  >
+                    {FLEET_VEHICLES.map((car) => (
+                      <option key={car.id} value={car.id} className="bg-gray-900 text-white">
+                        🚗 {car.name} — ₹{Math.round(car.pricePerDay * 65).toLocaleString('en-IN')}/day ({car.category || 'Luxury'})
+                      </option>
+                    ))}
+                  </select>
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+                  <div className="space-y-1.5">
+                    <label className="font-bold text-gray-300 flex items-center gap-1.5">
+                      <User className="w-3.5 h-3.5 text-red-400" /> Full Name *
+                    </label>
+                    <input
+                      type="text"
+                      required
+                      value={carForm.name}
+                      onChange={(e) => setCarForm({ ...carForm, name: e.target.value })}
+                      placeholder="e.g. Rahul Sharma"
+                      className="w-full bg-black/40 border border-white/15 rounded-xl p-3.5 text-xs text-white placeholder:text-gray-500 focus:outline-none focus:border-red-500"
+                    />
+                  </div>
+
+                  <div className="space-y-1.5">
+                    <label className="font-bold text-gray-300 flex items-center gap-1.5">
+                      <Phone className="w-3.5 h-3.5 text-red-400" /> WhatsApp Number *
+                    </label>
+                    <input
+                      type="tel"
+                      required
+                      value={carForm.phone}
+                      onChange={(e) => setCarForm({ ...carForm, phone: e.target.value })}
+                      placeholder="e.g. +91 82082 11478"
+                      className="w-full bg-black/40 border border-white/15 rounded-xl p-3.5 text-xs text-white placeholder:text-gray-500 focus:outline-none focus:border-red-500"
+                    />
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+                  <div className="space-y-1.5">
+                    <label className="font-bold text-gray-300 flex items-center gap-1.5">
+                      <Calendar className="w-3.5 h-3.5 text-red-400" /> Pickup Date
+                    </label>
+                    <input
+                      type="date"
+                      value={carForm.date}
+                      onChange={(e) => setCarForm({ ...carForm, date: e.target.value })}
+                      className="w-full bg-black/40 border border-white/15 rounded-xl p-3.5 text-xs text-white focus:outline-none focus:border-red-500"
+                    />
+                  </div>
+
+                  <div className="space-y-1.5">
+                    <label className="font-bold text-gray-300 flex items-center gap-1.5">
+                      <MapPin className="w-3.5 h-3.5 text-red-400" /> Pickup Location
+                    </label>
+                    <input
+                      type="text"
+                      value={carForm.pickupLocation}
+                      onChange={(e) => setCarForm({ ...carForm, pickupLocation: e.target.value })}
+                      placeholder="e.g. Green Hills Society, Katraj, Pune"
+                      className="w-full bg-black/40 border border-white/15 rounded-xl p-3.5 text-xs text-white placeholder:text-gray-500 focus:outline-none focus:border-red-500"
+                    />
+                  </div>
+                </div>
+
+                <div className="space-y-1.5">
+                  <label className="font-bold text-gray-300">Message / Special Car Request</label>
+                  <textarea
+                    rows={3}
+                    value={carForm.message}
+                    onChange={(e) => setCarForm({ ...carForm, message: e.target.value })}
+                    placeholder="e.g. Automatic transmission required, Mopa Airport delivery..."
+                    className="w-full bg-black/40 border border-white/15 rounded-xl p-3.5 text-xs text-white placeholder:text-gray-500 focus:outline-none focus:border-red-500 resize-none"
+                  />
+                </div>
+
+                <button
+                  type="submit"
+                  className="w-full py-4 rounded-xl bg-[#FF3B30] hover:bg-[#E03126] text-white font-extrabold uppercase tracking-wider transition-all flex items-center justify-center gap-2 shadow-lg shadow-red-950/50 cursor-pointer hover:scale-[1.01]"
+                >
+                  <MessageSquare className="w-4 h-4 fill-white" />
+                  <span>Send Car Inquiry on WhatsApp</span>
+                  <ArrowRight className="w-4 h-4" />
+                </button>
+
+              </form>
+            )}
+
+          </div>
+        )}
+
+        {/* 🧭 BOX 2: TOURS & TRAVEL PACKAGES DEDICATED WHATSAPP INQUIRY BOX */}
+        {mode === 'tours' && (
+          <div className="rounded-3xl border p-6 sm:p-10 space-y-6 shadow-2xl transition-all duration-300 bg-[#04120c] border-emerald-500/30">
+            
+            {/* Box Header */}
+            <div className="flex items-center justify-between pb-4 border-b border-emerald-500/20">
+              <div className="flex items-center gap-3">
+                <div className="p-2.5 rounded-2xl bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">
+                  <Compass className="w-5 h-5" />
+                </div>
+                <div>
+                  <h3 className="font-syne text-xl font-bold text-white flex items-center gap-2">
+                    Tour Packages Inquiry
+                  </h3>
+                  <p className="text-xs text-emerald-300">Direct Travel Itinerary Desk</p>
+                </div>
+              </div>
+              <span className="px-3 py-1 rounded-full bg-emerald-500/20 text-emerald-400 text-xs font-bold font-syne border border-emerald-500/30 uppercase">
+                Tours Only
+              </span>
+            </div>
+
+            {tourSubmitted ? (
+              <div className="text-center py-8 space-y-3">
+                <div className="w-16 h-16 bg-emerald-500/20 text-emerald-400 rounded-full flex items-center justify-center mx-auto border border-emerald-500/40 animate-bounce">
+                  <CheckCircle2 className="w-8 h-8" />
+                </div>
+                <h4 className="font-syne text-2xl font-bold text-white">Tour Inquiry Sent!</h4>
+                <p className="text-xs text-gray-300">WhatsApp opened with your selected tour package details.</p>
+                <button
+                  onClick={() => setTourSubmitted(false)}
+                  className="mt-2 text-xs font-bold text-emerald-400 underline cursor-pointer"
+                >
+                  Send Another Tour Inquiry
+                </button>
+              </div>
+            ) : (
+              <form onSubmit={handleTourSubmit} className="space-y-5 text-xs">
+                
+                {/* Select Tour Package Dropdown */}
+                <div className="space-y-1.5">
+                  <label className="font-bold text-emerald-300 uppercase tracking-wider flex items-center gap-1.5 text-xs">
+                    <Compass className="w-4 h-4 text-emerald-400" /> Select Tour Package <span className="text-red-400">*</span>
+                  </label>
+                  <select
+                    name="tourId"
+                    value={tourForm.tourId}
+                    onChange={(e) => setTourForm({ ...tourForm, tourId: e.target.value })}
+                    className="w-full bg-black/60 border border-emerald-500/30 rounded-xl p-3.5 text-xs sm:text-sm text-white focus:outline-none focus:border-emerald-500 font-syne font-bold cursor-pointer"
+                  >
+                    {TOUR_PACKAGES.map((pkg) => (
+                      <option key={pkg.id} value={pkg.id} className="bg-gray-900 text-white">
+                        🧭 {pkg.title} — ₹{pkg.basePrice.toLocaleString('en-IN')} ({pkg.durationDays}D/{pkg.durationNights}N)
+                      </option>
+                    ))}
+                  </select>
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+                  <div className="space-y-1.5">
+                    <label className="font-bold text-gray-300 flex items-center gap-1.5">
+                      <User className="w-3.5 h-3.5 text-emerald-400" /> Full Name *
+                    </label>
+                    <input
+                      type="text"
+                      required
+                      value={tourForm.name}
+                      onChange={(e) => setTourForm({ ...tourForm, name: e.target.value })}
+                      placeholder="e.g. Priya Sharma"
+                      className="w-full bg-black/40 border border-white/15 rounded-xl p-3.5 text-xs text-white placeholder:text-gray-500 focus:outline-none focus:border-emerald-500"
+                    />
+                  </div>
+
+                  <div className="space-y-1.5">
+                    <label className="font-bold text-gray-300 flex items-center gap-1.5">
+                      <Phone className="w-3.5 h-3.5 text-emerald-400" /> WhatsApp Number *
+                    </label>
+                    <input
+                      type="tel"
+                      required
+                      value={tourForm.phone}
+                      onChange={(e) => setTourForm({ ...tourForm, phone: e.target.value })}
+                      placeholder="e.g. +91 82082 11478"
+                      className="w-full bg-black/40 border border-white/15 rounded-xl p-3.5 text-xs text-white placeholder:text-gray-500 focus:outline-none focus:border-emerald-500"
+                    />
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+                  <div className="space-y-1.5">
+                    <label className="font-bold text-gray-300 flex items-center gap-1.5">
+                      <Calendar className="w-3.5 h-3.5 text-emerald-400" /> Travel Start Date
+                    </label>
+                    <input
+                      type="date"
+                      value={tourForm.date}
+                      onChange={(e) => setTourForm({ ...tourForm, date: e.target.value })}
+                      className="w-full bg-black/40 border border-white/15 rounded-xl p-3.5 text-xs text-white focus:outline-none focus:border-emerald-500"
+                    />
+                  </div>
+
+                  <div className="space-y-1.5">
+                    <label className="font-bold text-gray-300 flex items-center gap-1.5">
+                      <MapPin className="w-3.5 h-3.5 text-emerald-400" /> Preferred Destination
+                    </label>
+                    <input
+                      type="text"
+                      value={tourForm.destination}
+                      onChange={(e) => setTourForm({ ...tourForm, destination: e.target.value })}
+                      placeholder="e.g. Rajasthan / Kerala / Himachal"
+                      className="w-full bg-black/40 border border-white/15 rounded-xl p-3.5 text-xs text-white placeholder:text-gray-500 focus:outline-none focus:border-emerald-500"
+                    />
+                  </div>
+                </div>
+
+                <div className="space-y-1.5">
+                  <label className="font-bold text-gray-300">Message / Custom Group Request</label>
+                  <textarea
+                    rows={3}
+                    value={tourForm.message}
+                    onChange={(e) => setTourForm({ ...tourForm, message: e.target.value })}
+                    placeholder="e.g. 4 adults family trip, requiring 4-star hotel stay..."
+                    className="w-full bg-black/40 border border-white/15 rounded-xl p-3.5 text-xs text-white placeholder:text-gray-500 focus:outline-none focus:border-emerald-500 resize-none"
+                  />
+                </div>
+
+                <button
+                  type="submit"
+                  className="w-full py-4 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold uppercase tracking-wider transition-all flex items-center justify-center gap-2 shadow-lg shadow-emerald-950/50 cursor-pointer hover:scale-[1.01]"
+                >
+                  <MessageSquare className="w-4 h-4 fill-white" />
+                  <span>Send Tour Inquiry on WhatsApp</span>
+                  <ArrowRight className="w-4 h-4" />
+                </button>
+
+              </form>
+            )}
+
+          </div>
+        )}
+
+      </div>
+    </section>
+  );
+}
