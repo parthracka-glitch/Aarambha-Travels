@@ -204,28 +204,28 @@ export default function DashboardView() {
       {/* KPI METRICS GRID */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
         <KPICard
-          title="Total Bookings"
-          value={allBookings.length}
-          subtitle={`${fleet.bookings.length} Rental • ${tours.bookings.length} Tours`}
-          icon={CalendarCheck}
+          label="Total Bookings"
+          value={String(allBookings.length)}
+          sub={`${fleet.bookings.length} Rental • ${tours.bookings.length} Tours`}
+          variant="peach"
         />
         <KPICard
-          title="Customer Inquiries"
-          value={allInquiries.length}
-          subtitle="Leads & WhatsApp Inquiries"
-          icon={Compass}
+          label="Customer Inquiries"
+          value={String(allInquiries.length)}
+          sub="Leads & WhatsApp Inquiries"
+          variant="blue"
         />
         <KPICard
-          title="Website Buses & Cabs"
-          value={busRates.length}
-          subtitle="Live Bus Rates & Rate Cards"
-          icon={Bus}
+          label="Website Buses & Cabs"
+          value={String(busRates.length)}
+          sub="Live Bus Rates & Rate Cards"
+          variant="purple"
         />
         <KPICard
-          title="Self-Drive Fleet"
-          value={fleet.vehicles.length}
-          subtitle="Cars & Luxury SUVs"
-          icon={Car}
+          label="Self-Drive Fleet"
+          value={String(fleet.vehicles.length)}
+          sub="Cars & Luxury SUVs"
+          variant="green"
         />
       </div>
 
