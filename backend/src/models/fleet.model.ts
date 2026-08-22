@@ -106,11 +106,16 @@ export interface IFleetBooking extends Document {
   totalRentalAmount: number;
   securityDepositAmount: number;
   depositAmount: number;
-  status: string; // Deposit Paid -> Picked Up (Paid in Full) -> Returned -> Deposit Refunded
+  status: string; // pending_verification -> Deposit Paid / Confirmed -> Picked Up (Paid in Full) -> Returned -> Deposit Refunded / Rejected
   pickupPaymentMethod?: string;
   refundRef?: string;
   razorpayOrderId?: string;
   razorpayPaymentId?: string;
+  utrNumber?: string;
+  paymentMethod?: string;
+  verifiedAt?: Date;
+  verifiedBy?: string;
+  rejectionReason?: string;
   agreementAccepted: boolean;
   agreementAcceptedAt?: Date;
   termsAccepted: boolean;
@@ -133,11 +138,16 @@ const FleetBookingSchema = new Schema<IFleetBooking>({
   totalRentalAmount: { type: Number, required: true },
   securityDepositAmount: { type: Number, required: true },
   depositAmount: { type: Number, default: 500 },
-  status: { type: String, default: 'Deposit Paid' },
+  status: { type: String, default: 'pending_verification' },
   pickupPaymentMethod: { type: String },
   refundRef: { type: String },
   razorpayOrderId: { type: String },
   razorpayPaymentId: { type: String },
+  utrNumber: { type: String, index: true },
+  paymentMethod: { type: String, default: 'UPI_QR' },
+  verifiedAt: { type: Date },
+  verifiedBy: { type: String },
+  rejectionReason: { type: String },
   agreementAccepted: { type: Boolean, default: true },
   agreementAcceptedAt: { type: Date },
   termsAccepted: { type: Boolean, required: true, default: true },

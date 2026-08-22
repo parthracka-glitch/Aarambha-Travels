@@ -49,3 +49,9 @@ export const returnFleetBooking = (id: string) =>
 
 export const refundFleetBooking = (id: string) =>
   apiFetch(`/api/fleet/bookings/${id}/refund`, { method: 'PUT' });
+
+export const verifyFleetBooking = (id: string, status: 'Confirmed' | 'Deposit Paid' | 'Rejected', rejectionReason?: string) =>
+  apiFetch(`/api/fleet/bookings/${id}/verify`, {
+    method: 'PUT',
+    body: JSON.stringify({ status, rejectionReason }),
+  });

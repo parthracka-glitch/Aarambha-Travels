@@ -14,6 +14,8 @@ import StaffView from '@/pages/Staff/StaffView';
 import { DashboardLayout } from '@/templates/DashboardLayout';
 import { ProtectedRoute, SuperAdminRoute } from '@/routes/ProtectedRoute';
 
+import CalendarView from '@/pages/Calendar/CalendarView';
+
 export function AppRoutes() {
   return (
     <Routes>
@@ -26,6 +28,8 @@ export function AppRoutes() {
           {/* Viewer-accessible routes */}
           <Route path="/bookings" element={<BookingsView />} />
           <Route path="/admin/bookings" element={<Navigate to="/bookings" replace />} />
+          <Route path="/calendar" element={<CalendarView />} />
+          <Route path="/admin/calendar" element={<Navigate to="/calendar" replace />} />
 
           {/* SuperAdmin-only routes — viewer gets redirected to /bookings */}
           <Route element={<SuperAdminRoute />}>

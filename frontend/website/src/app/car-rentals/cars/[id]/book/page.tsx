@@ -34,6 +34,7 @@ import { apiFetch } from '@/services/api-client';
 import GoogleAuthButton from '@/components/auth/GoogleAuthButton';
 
 import { generateInvoicePDF, getNextInvoiceNumber, type InvoiceData } from '@/utils/generateInvoicePDF';
+import UpiPaymentScreen from '@/components/booking/UpiPaymentScreen';
 
 export default function CarBookingCheckoutPage() {
   const params = useParams();
@@ -62,6 +63,8 @@ export default function CarBookingCheckoutPage() {
   const [specialRequests, setSpecialRequests] = useState('');
   const [termsAccepted, setTermsAccepted] = useState(false);
   const [validationError, setValidationError] = useState('');
+  const [isPaymentStep, setIsPaymentStep] = useState(false);
+  const [bookingRef, setBookingRef] = useState('');
 
   // Inline Quick Auth state
   const [authTab, setAuthTab] = useState<'signup' | 'login'>('signup');
@@ -225,7 +228,7 @@ export default function CarBookingCheckoutPage() {
   const extraDriverFee = additionalDriver ? 400 : 0;
 
   const grandTotalCost = baseRentalCost + doorstepFee + zeroDepFee + childSeatFee + extraDriverFee;
-  const depositAmount = 500;
+  const depositAmount = 1;
 
   const handleBookingSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -263,14 +266,14 @@ export default function CarBookingCheckoutPage() {
     }
 
     setIsSubmitting(true);
-
-    const bookingRef = 'FL-' + Math.floor(100000 + Math.random() * 900000);
+    const refNo = 'FL-' + Math.floor(100000 + Math.random() * 900000);
     const invNum = getNextInvoiceNumber('car');
+    setBookingRef(refNo);
 
     const bookingPayload = {
-      id: bookingRef,
-      bookingCode: bookingRef,
-      type: 'car',
+      id: refNo,
+      bookingCode: refNo,
+      type: 'Fleet',
       title: vehicle.name,
       vehicleName: vehicle.name,
       image: vehicle.image,
@@ -281,7 +284,8 @@ export default function CarBookingCheckoutPage() {
       pickupLocation,
       guestsCount: 1,
       totalPrice: grandTotalCost,
-      depositPaid: depositAmount,
+      totalAmount: grandTotalCost,
+      depositPaid: depositAmount || 500,
       customerName: fullName.trim(),
       customerEmail: (currentUser?.email || email.trim()).toLowerCase(),
       email: (currentUser?.email || email.trim()).toLowerCase(),
@@ -301,22 +305,9 @@ export default function CarBookingCheckoutPage() {
       termsAcceptedAt: new Date().toISOString(),
       termsVersion: '2026.1-STANDARD',
       status: 'Confirmed',
+      paymentMethod: 'Direct Confirmation',
       createdAt: new Date().toISOString(),
     };
-
-    // If no active user session, initialize session with booking contact info
-    if (!currentUser) {
-      const guestProfile = {
-        name: fullName.trim(),
-        email: email.trim().toLowerCase(),
-        phone: phone.trim(),
-        loggedIn: true,
-      };
-      try {
-        localStorage.setItem('aarambha_user', JSON.stringify(guestProfile));
-        window.dispatchEvent(new Event('aarambha_auth_changed'));
-      } catch (_e) {}
-    }
 
     // Save locally to user bookings
     try {
@@ -324,6 +315,7 @@ export default function CarBookingCheckoutPage() {
       const existing = existingStr ? JSON.parse(existingStr) : [];
       existing.unshift(bookingPayload);
       localStorage.setItem('aarambha_user_bookings', JSON.stringify(existing));
+      window.dispatchEvent(new Event('aarambha_booking_updated'));
     } catch (err) {
       console.error('Failed to save to localStorage:', err);
     }
@@ -334,42 +326,24 @@ export default function CarBookingCheckoutPage() {
         method: 'POST',
         body: JSON.stringify(bookingPayload),
       });
-    } catch (err) {}
+    } catch (err) {
+      console.warn('Backend sync warning:', err);
+    }
 
-    // Send WhatsApp notification
-    const textMessage = 
-      `*AARAMBHA VEHICLE BOOKING CONFIRMED*%0A` +
-      `━━━━━━━━━━━━━━━━━━━━%0A` +
-      `📌 *Ref No:* #${bookingRef}%0A` +
-      `🚗 *Vehicle:* ${vehicle.name} (${vehicle.category})%0A` +
-      `👤 *Customer:* ${fullName}%0A` +
-      `📞 *Phone:* ${phone}%0A` +
-      `🪪 *DL No:* ${licenseNumber.toUpperCase()}%0A` +
-      `📅 *Dates:* ${pickupDate} to ${returnDate} (${computedDays} Days)%0A` +
-      `📍 *Pickup:* ${pickupLocation}%0A` +
-      `💰 *Total Cost:* ₹${grandTotalCost.toLocaleString('en-IN')}%0A` +
-      `💳 *Deposit Paid:* ₹500 (Online Deposit)%0A` +
-      `━━━━━━━━━━━━━━━━━━━━%0A` +
-      `_Self-Drive Booking Confirmation_`;
-
-    setTimeout(() => {
-      setIsSubmitting(false);
-      setBookingSuccess({
-        refNo: bookingRef,
-        invoiceNumber: invNum,
-        totalCost: grandTotalCost,
-        depositPaid: depositAmount,
-        pickupDate,
-        returnDate,
-        days: computedDays,
-        fullName: fullName.trim(),
-        email: email.trim(),
-        phone: phone.trim(),
-        licenseNumber: licenseNumber.trim().toUpperCase(),
-        pickupLocation,
-        whatsappUrl: `https://wa.me/918208211478?text=${textMessage}`,
-      });
-    }, 800);
+    setIsSubmitting(false);
+    setBookingSuccess({
+      refNo,
+      fullName: fullName.trim(),
+      phone: phone.trim(),
+      email: email.trim(),
+      pickupDate,
+      returnDate,
+      days: computedDays,
+      pickupLocation,
+      totalCost: grandTotalCost,
+      depositPaid: depositAmount || 500,
+      invoiceNumber: invNum,
+    });
   };
 
   const handleDownloadInvoice = () => {
@@ -430,12 +404,12 @@ export default function CarBookingCheckoutPage() {
                 href={`/car-rentals/cars/${vehicle.id}`}
                 className="flex items-center gap-1.5 text-gray-400 hover:text-white"
               >
-                <span className="w-6 h-6 rounded-full bg-emerald-600 text-white flex items-center justify-center text-[10px]">✓</span>
+                <span className="w-6 h-6 rounded-full bg-[#5266EB] text-white flex items-center justify-center text-[10px]">✓</span>
                 <span>1. Vehicle Specs</span>
               </Link>
               <span className="text-gray-600">→</span>
-              <div className="flex items-center gap-1.5 text-[#FF3B30]">
-                <span className="w-6 h-6 rounded-full bg-[#FF3B30] text-white flex items-center justify-center text-[10px]">2</span>
+              <div className="flex items-center gap-1.5 text-[#9CB4E8]">
+                <span className="w-6 h-6 rounded-full bg-[#5266EB] text-white flex items-center justify-center text-[10px]">2</span>
                 <span>2. Booking & Guest Details</span>
               </div>
             </div>
@@ -451,46 +425,46 @@ export default function CarBookingCheckoutPage() {
           {bookingSuccess ? (
             /* SUCCESS CONFIRMATION VOUCHER */
             <div className="max-w-2xl mx-auto bg-white rounded-3xl border border-gray-200 p-8 sm:p-10 shadow-2xl space-y-6 text-center">
-              <div className="w-20 h-20 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center mx-auto border-4 border-emerald-50 shadow-inner">
+              <div className="w-20 h-20 bg-[#5266EB]/10 text-[#5266EB] rounded-full flex items-center justify-center mx-auto border-4 border-[#5266EB]/20 shadow-inner">
                 <CheckCircle2 className="w-10 h-10" />
               </div>
 
               <div className="space-y-2">
-                <span className="px-3 py-1 bg-emerald-50 text-emerald-700 text-xs font-extrabold rounded-full uppercase tracking-wider font-syne border border-emerald-200">
+                <span className="px-3 py-1 bg-[#9CB4E8]/20 text-[#171721] text-xs font-extrabold rounded-full uppercase tracking-wider font-syne border border-[#9CB4E8]/40">
                   RESERVATION CONFIRMED
                 </span>
-                <h2 className="font-syne text-3xl font-extrabold text-[#111111]">
+                <h2 className="font-syne text-3xl font-extrabold text-[#000000]">
                   Booking #{bookingSuccess.refNo}
                 </h2>
                 <p className="text-xs text-gray-500 max-w-md mx-auto leading-relaxed font-normal">
-                  Congratulations <strong className="text-[#111111]">{bookingSuccess.fullName}</strong>! Your self-drive vehicle <strong className="text-[#111111]">{vehicle.name}</strong> is reserved with a ₹500 deposit.
+                  Congratulations <strong className="text-[#000000]">{bookingSuccess.fullName}</strong>! Your self-drive vehicle <strong className="text-[#000000]">{vehicle.name}</strong> is reserved with a ₹500 deposit.
                 </p>
               </div>
 
               <div className="bg-gray-50/80 rounded-2xl p-6 border border-gray-200/80 text-left text-xs space-y-3">
                 <div className="flex justify-between pb-2 border-b border-gray-200">
                   <span className="text-gray-500">Vehicle:</span>
-                  <strong className="text-[#111111] font-syne">{vehicle.name} ({vehicle.category})</strong>
+                  <strong className="text-[#000000] font-syne">{vehicle.name} ({vehicle.category})</strong>
                 </div>
                 <div className="flex justify-between pb-2 border-b border-gray-200">
                   <span className="text-gray-500">Rental Period:</span>
-                  <strong className="text-[#111111]">{bookingSuccess.pickupDate} → {bookingSuccess.returnDate} ({bookingSuccess.days} Days)</strong>
+                  <strong className="text-[#000000]">{bookingSuccess.pickupDate} → {bookingSuccess.returnDate} ({bookingSuccess.days} Days)</strong>
                 </div>
                 <div className="flex justify-between pb-2 border-b border-gray-200">
                   <span className="text-gray-500">Pickup Point:</span>
-                  <strong className="text-[#111111]">{pickupLocation}</strong>
+                  <strong className="text-[#000000]">{pickupLocation}</strong>
                 </div>
                 <div className="flex justify-between pb-2 border-b border-gray-200">
                   <span className="text-gray-500">DL Number:</span>
-                  <strong className="text-[#111111] font-mono">{bookingSuccess.licenseNumber}</strong>
+                  <strong className="text-[#000000] font-mono">{bookingSuccess.licenseNumber}</strong>
                 </div>
                 <div className="flex justify-between pb-2 border-b border-gray-200">
                   <span className="text-gray-500">Online Lock Deposit Paid:</span>
-                  <strong className="text-emerald-600 font-bold">₹500 (Confirmed)</strong>
+                  <strong className="text-[#5266EB] font-bold">₹500 (Confirmed)</strong>
                 </div>
-                <div className="flex justify-between pt-1 text-sm font-extrabold text-[#111111]">
+                <div className="flex justify-between pt-1 text-sm font-extrabold text-[#000000]">
                   <span>Total Amount Payable at Pickup:</span>
-                  <span className="text-[#FF3B30] font-syne">₹{(bookingSuccess.totalCost - 500).toLocaleString('en-IN')}</span>
+                  <span className="text-[#5266EB] font-syne">₹{(bookingSuccess.totalCost - 500).toLocaleString('en-IN')}</span>
                 </div>
               </div>
 
@@ -498,7 +472,7 @@ export default function CarBookingCheckoutPage() {
               <div className="space-y-3 pt-2">
                 <button
                   onClick={handleDownloadInvoice}
-                  className="w-full py-4 bg-emerald-600 hover:bg-emerald-700 text-white rounded-2xl font-bold text-xs uppercase tracking-wider transition-all shadow-lg shadow-emerald-600/20 flex items-center justify-center gap-2"
+                  className="w-full py-4 bg-[#5266EB] hover:bg-[#3E51D4] text-[#EDEDF3] rounded-2xl font-bold text-xs uppercase tracking-wider transition-all shadow-lg shadow-[#5266EB]/20 flex items-center justify-center gap-2"
                 >
                   <FileText className="w-4 h-4" /> Download Official PDF Invoice
                 </button>
@@ -608,27 +582,27 @@ export default function CarBookingCheckoutPage() {
                     </div>
 
                     {currentUser && (
-                      <span className="text-[10px] font-bold px-2.5 py-1 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200 flex items-center gap-1">
-                        <CheckCircle2 className="w-3 h-3 text-emerald-600" /> Verified Member
+                      <span className="text-[10px] font-bold px-2.5 py-1 rounded-full bg-[#9CB4E8]/20 text-[#171721] border border-[#9CB4E8]/40 flex items-center gap-1">
+                        <CheckCircle2 className="w-3 h-3 text-[#5266EB]" /> Verified Member
                       </span>
                     )}
                   </div>
 
                   {!currentUser ? (
                     /* Inline Auth Box */
-                    <div className="p-5 rounded-2xl bg-amber-50/70 border border-amber-200/80 space-y-4">
-                      <div className="flex items-center gap-2 text-amber-900 font-bold text-xs">
-                        <ShieldCheck className="w-4 h-4 text-amber-600 shrink-0" />
+                    <div className="p-5 rounded-2xl bg-[#9CB4E8]/10 border border-[#9CB4E8]/30 space-y-4">
+                      <div className="flex items-center gap-2 text-[#171721] font-bold text-xs">
+                        <ShieldCheck className="w-4 h-4 text-[#5266EB] shrink-0" />
                         <span>Please Log In or Create Account to Lock Your Vehicle</span>
                       </div>
 
                       {/* Switcher */}
-                      <div className="flex items-center gap-1 bg-white p-1 rounded-xl border border-amber-200">
+                      <div className="flex items-center gap-1 bg-white p-1 rounded-xl border border-gray-200">
                         <button
                           type="button"
                           onClick={() => setAuthTab('signup')}
                           className={`flex-1 py-1.5 rounded-lg text-xs font-bold font-syne transition-all ${
-                            authTab === 'signup' ? 'bg-[#111111] text-white shadow-sm' : 'text-gray-600 hover:text-gray-900'
+                            authTab === 'signup' ? 'bg-[#171721] text-[#EDEDF3] shadow-sm' : 'text-gray-600 hover:text-gray-900'
                           }`}
                         >
                           CREATE ACCOUNT
@@ -637,7 +611,7 @@ export default function CarBookingCheckoutPage() {
                           type="button"
                           onClick={() => setAuthTab('login')}
                           className={`flex-1 py-1.5 rounded-lg text-xs font-bold font-syne transition-all ${
-                            authTab === 'login' ? 'bg-[#111111] text-white shadow-sm' : 'text-gray-600 hover:text-gray-900'
+                            authTab === 'login' ? 'bg-[#171721] text-[#EDEDF3] shadow-sm' : 'text-gray-600 hover:text-gray-900'
                           }`}
                         >
                           LOG IN
@@ -646,7 +620,7 @@ export default function CarBookingCheckoutPage() {
 
                       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1">
                         {authTab === 'signup' && (
-                          <div className="space-y-1">
+                           <div className="space-y-1">
                             <label className="text-xs font-bold text-gray-800">Full Name *</label>
                             <input
                               type="text"
@@ -654,7 +628,7 @@ export default function CarBookingCheckoutPage() {
                               value={fullName}
                               onChange={(e) => setFullName(e.target.value)}
                               placeholder="e.g. Rahul Sharma"
-                              className="w-full px-3.5 py-2.5 bg-white border border-gray-200 rounded-xl text-xs font-medium focus:outline-none focus:border-[#FF3B30]"
+                              className="w-full px-3.5 py-2.5 bg-white border border-gray-200 rounded-xl text-xs font-medium focus:outline-none focus:border-[#5266EB]"
                             />
                           </div>
                         )}
@@ -667,7 +641,7 @@ export default function CarBookingCheckoutPage() {
                             value={email}
                             onChange={(e) => setEmail(e.target.value)}
                             placeholder="e.g. rahul@example.com"
-                            className="w-full px-3.5 py-2.5 bg-white border border-gray-200 rounded-xl text-xs font-medium focus:outline-none focus:border-[#FF3B30]"
+                            className="w-full px-3.5 py-2.5 bg-white border border-gray-200 rounded-xl text-xs font-medium focus:outline-none focus:border-[#5266EB]"
                           />
                         </div>
 
@@ -680,7 +654,7 @@ export default function CarBookingCheckoutPage() {
                               value={phone}
                               onChange={(e) => setPhone(e.target.value)}
                               placeholder="e.g. +91 82082 11478"
-                              className="w-full px-3.5 py-2.5 bg-white border border-gray-200 rounded-xl text-xs font-medium focus:outline-none focus:border-[#FF3B30]"
+                              className="w-full px-3.5 py-2.5 bg-white border border-gray-200 rounded-xl text-xs font-medium focus:outline-none focus:border-[#5266EB]"
                             />
                           </div>
                         )}
@@ -693,7 +667,7 @@ export default function CarBookingCheckoutPage() {
                             value={authPassword}
                             onChange={(e) => setAuthPassword(e.target.value)}
                             placeholder="Min 6 characters"
-                            className="w-full px-3.5 py-2.5 bg-white border border-gray-200 rounded-xl text-xs font-medium focus:outline-none focus:border-[#FF3B30]"
+                            className="w-full px-3.5 py-2.5 bg-white border border-gray-200 rounded-xl text-xs font-medium focus:outline-none focus:border-[#5266EB]"
                           />
                         </div>
                       </div>
@@ -702,16 +676,16 @@ export default function CarBookingCheckoutPage() {
                         type="button"
                         onClick={handleInlineAuth}
                         disabled={authLoading}
-                        className="w-full py-3 bg-[#111111] hover:bg-black text-white font-syne font-bold text-xs uppercase tracking-wider rounded-xl transition-all flex items-center justify-center gap-2"
+                        className="w-full py-3 bg-[#5266EB] hover:bg-[#3E51D4] text-[#EDEDF3] font-syne font-bold text-xs uppercase tracking-wider rounded-xl transition-all flex items-center justify-center gap-2 shadow-md shadow-[#5266EB]/20"
                       >
-                        <Lock className="w-3.5 h-3.5 text-[#FF3B30]" />
+                        <Lock className="w-3.5 h-3.5 text-white" />
                         <span>{authLoading ? 'Verifying Account...' : authTab === 'signup' ? 'Create Account & Unlock Booking' : 'Log In & Unlock Booking'}</span>
                       </button>
 
                       <div className="pt-1">
                         <div className="flex items-center justify-center relative my-2">
-                          <div className="w-full border-t border-amber-200" />
-                          <span className="bg-amber-50/70 px-2 text-[10px] font-bold text-amber-800 uppercase tracking-wider absolute">
+                          <div className="w-full border-t border-gray-200" />
+                          <span className="bg-white px-2 text-[10px] font-bold text-gray-400 uppercase tracking-wider absolute">
                             or 1-click with
                           </span>
                         </div>
@@ -730,9 +704,9 @@ export default function CarBookingCheckoutPage() {
                   ) : (
                     /* Authenticated Member Section */
                     <div className="space-y-4">
-                      <div className="p-3 bg-emerald-50 border border-emerald-200 rounded-2xl flex items-center justify-between text-xs">
+                      <div className="p-3 bg-[#9CB4E8]/10 border border-[#9CB4E8]/30 rounded-2xl flex items-center justify-between text-xs">
                         <div className="flex items-center gap-2">
-                          <div className="w-7 h-7 rounded-full bg-emerald-600 text-white font-bold text-xs flex items-center justify-center font-syne">
+                          <div className="w-7 h-7 rounded-full bg-[#5266EB] text-white font-bold text-xs flex items-center justify-center font-syne">
                             {currentUser.name ? currentUser.name.charAt(0).toUpperCase() : 'U'}
                           </div>
                           <div>
@@ -744,7 +718,7 @@ export default function CarBookingCheckoutPage() {
                         <button
                           type="button"
                           onClick={handleLogout}
-                          className="text-[10px] font-bold text-[#FF3B30] hover:underline flex items-center gap-1"
+                          className="text-[10px] font-bold text-[#5266EB] hover:underline flex items-center gap-1"
                         >
                           <LogOut className="w-3 h-3" /> Log Out
                         </button>
@@ -942,7 +916,7 @@ export default function CarBookingCheckoutPage() {
 
                     <div className="flex justify-between pt-1 text-xs text-emerald-600 font-bold bg-emerald-50 p-2.5 rounded-xl border border-emerald-100">
                       <span>Lock Vehicle Deposit (Payable Now):</span>
-                      <span>₹500 (100% Refundable)</span>
+                      <span>₹1 (100% Refundable)</span>
                     </div>
                   </div>
 
@@ -989,22 +963,16 @@ export default function CarBookingCheckoutPage() {
                   {/* SUBMIT BUTTON */}
                   <button
                     type="submit"
-                    disabled={isSubmitting || !termsAccepted}
+                    disabled={!termsAccepted || isSubmitting}
                     className={`w-full py-4 rounded-2xl font-extrabold uppercase tracking-wider text-xs transition-all flex items-center justify-center gap-2 shadow-xl ${
                       !termsAccepted || isSubmitting
                         ? 'bg-gray-300 text-gray-500 cursor-not-allowed opacity-60 shadow-none'
-                        : 'bg-[#FF3B30] hover:bg-[#E03126] text-white shadow-red-600/30 cursor-pointer hover:scale-[1.01]'
+                        : 'bg-[#5266EB] hover:bg-[#3E51D4] text-[#EDEDF3] shadow-[#5266EB]/20 cursor-pointer hover:scale-[1.01] active:scale-98'
                     }`}
                   >
-                    {isSubmitting ? (
-                      <span>Processing Reservation...</span>
-                    ) : (
-                      <>
-                        <CreditCard className="w-4 h-4" />
-                        <span>Confirm & Lock Booking (₹500 Deposit)</span>
-                        <ArrowRight className="w-4 h-4" />
-                      </>
-                    )}
+                    <CheckCircle2 className="w-4 h-4 text-white" />
+                    <span>{isSubmitting ? 'Confirming Reservation...' : 'Direct Confirm Booking Now'}</span>
+                    <ArrowRight className="w-4 h-4" />
                   </button>
 
                   <p className="text-[10px] text-gray-400 text-center leading-relaxed">

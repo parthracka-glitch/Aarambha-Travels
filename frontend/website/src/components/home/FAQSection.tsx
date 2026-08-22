@@ -2,18 +2,44 @@
 
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Plus, Minus, HelpCircle, Car, Compass, ShieldCheck } from 'lucide-react';
+import { Plus, Minus, HelpCircle, Car, Bus, Compass, ShieldCheck } from 'lucide-react';
 
-export type FAQCategory = 'all' | 'cars' | 'tours';
+export type FAQCategory = 'all' | 'cars' | 'buses' | 'tours';
 
 export interface FAQItem {
   id: string;
-  category: 'common' | 'cars' | 'tours';
+  category: 'common' | 'cars' | 'buses' | 'tours';
   question: string;
   answer: string;
 }
 
 const FAQS_DATA: FAQItem[] = [
+  // ─── BUS RENTALS & OUTSTATION SPECIFIC FAQS ──────────────────────
+  {
+    id: 'bus-1',
+    category: 'buses',
+    question: 'What seating capacities are available for bus rentals and Urbania hire?',
+    answer: 'We offer 13, 17, 20, 27, 32, 35, 40, 41, 45, and 49 Seater AC & Non-AC buses, as well as 13-Seater and 17-Seater Executive Force Urbania luxury vans.',
+  },
+  {
+    id: 'bus-2',
+    category: 'buses',
+    question: 'How are Pune to Mumbai 5-Seater / 7-Seater cab & bus packages priced?',
+    answer: 'Pune → Mumbai packages include up to 350 KM running with a professional driver. Driver DA, tolls, and extra KM rates are clearly itemized on each vehicle rate card.',
+  },
+  {
+    id: 'bus-3',
+    category: 'buses',
+    question: 'What is included in the Pune Local Bus Rental Package?',
+    answer: 'Standard local Pune bus packages include 8 Hours and 80 KM. Running beyond 80 KM or 8 hours is billed at transparent extra KM and extra hour rates.',
+  },
+  {
+    id: 'bus-4',
+    category: 'buses',
+    question: 'Are outstation state permits and driver allowances included?',
+    answer: 'Outstation rate cards clearly detail special state entry permits (e.g. ₹500 to ₹800) and driver DA / toll notes so there are zero hidden costs during your trip.',
+  },
+
   // ─── CAR RENTALS SPECIFIC FAQS ──────────────────────────────────────
   {
     id: 'car-1',
@@ -79,9 +105,10 @@ const FAQS_DATA: FAQItem[] = [
   },
 ];
 
-export default function FAQSection({ mode = 'cars' }: { mode?: 'cars' | 'tours' | 'all' }) {
+export default function FAQSection({ mode = 'cars' }: { mode?: 'cars' | 'buses' | 'tours' | 'all' }) {
   const filteredFaqs = FAQS_DATA.filter((faq) => {
     if (mode === 'cars') return faq.category === 'cars';
+    if (mode === 'buses') return faq.category === 'buses';
     if (mode === 'tours') return faq.category === 'tours';
     return true;
   });
@@ -92,34 +119,46 @@ export default function FAQSection({ mode = 'cars' }: { mode?: 'cars' | 'tours' 
     setOpenId(openId === id ? null : id);
   };
 
+  const badgeColor = mode === 'buses'
+    ? 'bg-blue-50 text-[#5266EB] border border-blue-100'
+    : mode === 'cars'
+    ? 'bg-red-50 text-[#FF3B30] border border-red-100'
+    : 'bg-emerald-50 text-emerald-600 border border-emerald-100';
+
+  const titleText = mode === 'buses'
+    ? 'Bus Rental & Outstation FAQs'
+    : mode === 'cars'
+    ? 'Car Rental FAQs & Guidelines'
+    : 'Tour Packages FAQs & Guidelines';
+
+  const subtitleText = mode === 'buses'
+    ? 'Everything you need to know about bus rentals, Pune-Mumbai packages, Urbania per-km rates, and local packages.'
+    : mode === 'cars'
+    ? 'Everything you need to know about renting self-drive cars, documents, fuel, and delivery.'
+    : 'Everything you need to know about booking tour packages, hotel inclusions, and itineraries.';
+
   return (
-    <section className="py-16 bg-[#FAFAFC] border-t border-gray-200">
-      <div className="max-w-4xl mx-auto px-6 lg:px-12 space-y-10">
+    <section className="py-12 sm:py-16 bg-[#FAFAFC] border-t border-gray-200">
+      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-12 space-y-8 sm:space-y-10">
         
         {/* Section Title */}
         <div className="text-center space-y-3">
-          <span className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-extrabold font-syne uppercase tracking-wider ${
-            mode === 'cars'
-              ? 'bg-red-50 text-[#FF3B30] border border-red-100'
-              : 'bg-emerald-50 text-emerald-600 border border-emerald-100'
-          }`}>
+          <span className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-extrabold font-syne uppercase tracking-wider ${badgeColor}`}>
             <HelpCircle className="w-3.5 h-3.5" />
-            {mode === 'cars' ? 'SELF-DRIVE CAR RENTAL FAQS' : 'TOUR PACKAGES FAQS'}
+            {mode === 'buses' ? 'BUS RENTAL FAQS' : mode === 'cars' ? 'SELF-DRIVE CAR RENTAL FAQS' : 'TOUR PACKAGES FAQS'}
           </span>
 
-          <h2 className="font-syne text-3xl sm:text-4xl font-extrabold text-[#111111] tracking-tight">
-            {mode === 'cars' ? 'Car Rental FAQs & Guidelines' : 'Tour Packages FAQs & Guidelines'}
+          <h2 className="font-syne text-2xl sm:text-4xl font-extrabold text-[#111111] tracking-tight">
+            {titleText}
           </h2>
 
-          <p className="text-xs text-gray-500 max-w-lg mx-auto leading-relaxed font-normal">
-            {mode === 'cars'
-              ? 'Everything you need to know about renting self-drive cars, documents, fuel, and delivery.'
-              : 'Everything you need to know about booking tour packages, hotel inclusions, and itineraries.'}
+          <p className="text-xs sm:text-sm text-gray-500 max-w-lg mx-auto leading-relaxed font-normal">
+            {subtitleText}
           </p>
         </div>
 
         {/* Accordion FAQ List */}
-        <div className="space-y-4">
+        <div className="space-y-3.5">
           {filteredFaqs.map((faq) => {
             const isOpen = openId === faq.id;
             return (
@@ -127,7 +166,9 @@ export default function FAQSection({ mode = 'cars' }: { mode?: 'cars' | 'tours' 
                 key={faq.id}
                 className={`rounded-2xl border transition-all duration-300 overflow-hidden ${
                   isOpen
-                    ? mode === 'cars'
+                    ? mode === 'buses'
+                      ? 'bg-white border-[#5266EB] shadow-md shadow-blue-500/5'
+                      : mode === 'cars'
                       ? 'bg-white border-[#FF3B30] shadow-md shadow-red-500/5'
                       : 'bg-white border-emerald-600 shadow-md shadow-emerald-500/5'
                     : 'bg-white border-gray-200 hover:border-gray-300'
@@ -135,12 +176,14 @@ export default function FAQSection({ mode = 'cars' }: { mode?: 'cars' | 'tours' 
               >
                 <button
                   onClick={() => toggleFaq(faq.id)}
-                  className="w-full p-5 sm:p-6 text-left flex items-center justify-between gap-4 cursor-pointer"
+                  className="w-full p-4 sm:p-6 text-left flex items-center justify-between gap-4 cursor-pointer"
                   aria-expanded={isOpen}
                 >
-                  <span className={`font-syne text-sm sm:text-base font-bold transition-colors ${
+                  <span className={`font-syne text-xs sm:text-base font-bold transition-colors ${
                     isOpen
-                      ? mode === 'cars'
+                      ? mode === 'buses'
+                        ? 'text-[#5266EB]'
+                        : mode === 'cars'
                         ? 'text-[#FF3B30]'
                         : 'text-emerald-600'
                       : 'text-[#111111]'
@@ -148,9 +191,11 @@ export default function FAQSection({ mode = 'cars' }: { mode?: 'cars' | 'tours' 
                     {faq.question}
                   </span>
 
-                  <div className={`p-2 rounded-full shrink-0 transition-colors ${
+                  <div className={`p-1.5 sm:p-2 rounded-full shrink-0 transition-colors ${
                     isOpen
-                      ? mode === 'cars'
+                      ? mode === 'buses'
+                        ? 'bg-blue-50 text-[#5266EB]'
+                        : mode === 'cars'
                         ? 'bg-red-50 text-[#FF3B30]'
                         : 'bg-emerald-50 text-emerald-600'
                       : 'bg-gray-100 text-gray-500'
@@ -167,7 +212,7 @@ export default function FAQSection({ mode = 'cars' }: { mode?: 'cars' | 'tours' 
                       exit={{ height: 0, opacity: 0 }}
                       transition={{ duration: 0.25, ease: 'easeInOut' }}
                     >
-                      <div className="px-5 pb-6 sm:px-6 text-xs sm:text-sm text-gray-600 leading-relaxed border-t border-gray-100 pt-4 font-normal">
+                      <div className="px-4 pb-5 sm:px-6 text-xs sm:text-sm text-gray-600 leading-relaxed border-t border-gray-100 pt-3 font-normal">
                         {faq.answer}
                       </div>
                     </motion.div>

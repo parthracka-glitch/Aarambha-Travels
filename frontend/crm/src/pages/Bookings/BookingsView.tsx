@@ -1,8 +1,9 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { RefreshCw, Plus, Trash2, FileDown, Filter, FileSpreadsheet } from 'lucide-react';
+import { Link } from 'react-router-dom';
+import { RefreshCw, Plus, Trash2, FileDown, Filter, FileSpreadsheet, Calendar as CalendarIcon, CheckCircle, XCircle, AlertTriangle, Copy, Check, Clock, QrCode } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
-import { getToursBookings, getToursPackages, createToursBooking, deleteToursBooking } from '@/api/tours.api';
-import { getFleetBookings, getFleetVehicles, createFleetBooking, deleteFleetBooking, pickupFleetBooking, returnFleetBooking, refundFleetBooking } from '@/api/fleet.api';
+import { getToursBookings, getToursPackages, createToursBooking, deleteToursBooking, verifyToursBooking } from '@/api/tours.api';
+import { getFleetBookings, getFleetVehicles, createFleetBooking, deleteFleetBooking, pickupFleetBooking, returnFleetBooking, refundFleetBooking, verifyFleetBooking } from '@/api/fleet.api';
 import { Badge } from '@/components/common/Badge';
 import { Modal } from '@/components/common/Modal';
 import { Loader } from '@/components/common/Loader';
@@ -28,7 +29,7 @@ export default function BookingsView() {
   const [filterSection, setFilterSection] = useState<'all' | 'tours' | 'fleet'>('all');
   const [filterDateFrom, setFilterDateFrom] = useState('');
   const [filterDateTo, setFilterDateTo] = useState('');
-  const [filterPayment, setFilterPayment] = useState<'all' | 'paid' | 'partial' | 'pending'>('all');
+  const [filterPayment, setFilterPayment] = useState<'all' | 'paid' | 'partial' | 'pending' | 'pending_verification'>('all');
   const [showFilters, setShowFilters] = useState(false);
 
   // Offline walk-in booking state
@@ -43,7 +44,7 @@ export default function BookingsView() {
     startDate: new Date().toISOString().split('T')[0],
     endDate: new Date(Date.now() + 86400000 * 2).toISOString().split('T')[0],
     paxCount: 1,
-    depositPaid: 500,
+    depositPaid: 1,
     paymentMethod: 'Cash', // 'Cash' | 'UPI' | 'POS Card'
   });
 
@@ -52,13 +53,66 @@ export default function BookingsView() {
     const promises: Promise<any>[] = [
       getToursPackages().then(d => setPackages(d)),
       getFleetVehicles().then(d => setVehicles(d)),
+      getToursBookings(),
+      getFleetBookings(),
     ];
-    if (vertical === 'all' || vertical === 'tours') promises.push(getToursBookings().then(d => setToursBookings(d)));
-    if (vertical === 'all' || vertical === 'fleet') promises.push(getFleetBookings().then(d => setFleetBookings(d)));
-    Promise.all(promises).then(() => setLoading(false));
+    Promise.all(promises).then(([tp, fv, tb, fb]) => {
+      let mergedTb = Array.isArray(tb) ? [...tb] : [];
+      let mergedFb = Array.isArray(fb) ? [...fb] : [];
+
+      // Check localStorage for any client bookings
+      try {
+        const rawLocal = localStorage.getItem('aarambha_user_bookings');
+        if (rawLocal) {
+          const localBookings: any[] = JSON.parse(rawLocal);
+          localBookings.forEach((local: any) => {
+            const isCar = local.type === 'car' || local.type === 'Fleet' || local.type === 'Rental';
+            const localCode = local.id || local.bookingCode || local.booking_code;
+            const targetList = isCar ? mergedFb : mergedTb;
+            const exists = targetList.some((x: any) => 
+              (x.bookingCode && x.bookingCode === localCode) ||
+              (x.booking_code && x.booking_code === localCode) ||
+              (x._id && x._id === localCode) ||
+              (x.id && x.id === localCode)
+            );
+            if (!exists) {
+              targetList.unshift({
+                ...local,
+                _id: localCode,
+                id: localCode,
+                bookingCode: localCode,
+                booking_code: localCode,
+                customerName: local.customerName || local.fullName,
+                customerPhone: local.customerPhone || local.phone,
+                customerEmail: local.customerEmail || local.email,
+                vehicleName: local.vehicleName || local.title,
+                packageName: local.packageName || local.title,
+                totalAmount: local.totalPrice || local.totalAmount,
+                depositPaid: local.depositPaid || 1,
+                type: isCar ? 'Fleet' : 'Tours',
+              });
+            }
+          });
+        }
+      } catch (_e) {}
+
+      setToursBookings(mergedTb);
+      setFleetBookings(mergedFb);
+      setLoading(false);
+    });
   }, [vertical]);
 
-  useEffect(() => { load(); }, [load]);
+  useEffect(() => {
+    load();
+    window.addEventListener('storage', load);
+    window.addEventListener('aarambha_booking_updated', load);
+    const interval = setInterval(load, 4000);
+    return () => {
+      clearInterval(interval);
+      window.removeEventListener('storage', load);
+      window.removeEventListener('aarambha_booking_updated', load);
+    };
+  }, [load]);
 
   const handlePickup = async (id: string) => {
     try { await pickupFleetBooking(id, 'Cash'); load(); } catch (e: any) { alert(e.message); }
@@ -77,25 +131,140 @@ export default function BookingsView() {
     } catch (e: any) { alert(e.message); }
   };
 
+  const [copiedUtrId, setCopiedUtrId] = useState<string | null>(null);
+
+  const handleCopyUtr = (id: string, utr: string) => {
+    navigator.clipboard.writeText(utr);
+    setCopiedUtrId(id);
+    setTimeout(() => setCopiedUtrId(null), 2000);
+  };
+
+  const isOverdueVerification = (b: any) => {
+    if (b.status !== 'pending_verification') return false;
+    const created = new Date(b.createdAt || b.created_at).getTime();
+    return Date.now() - created > 24 * 60 * 60 * 1000;
+  };
+
+  const handleApproveBooking = async (b: any) => {
+    const isFleet = b.type === 'Fleet';
+    const code = b.bookingCode || b.booking_code;
+    const name = b.customerName || b.customer_name || 'Guest';
+    const phone = b.customerPhone || b.customer_phone || 'N/A';
+    const email = b.customerEmail || b.customer_email || 'N/A';
+    const total = b.totalAmount || b.total_amount || b.totalRentalAmount || b.total_rental_amount || 0;
+    const depositPaid = b.depositAmount || b.depositPaid || 1;
+
+    if (!confirm(`Approve payment & confirm booking #${code} for ${name} (UTR: ${b.utrNumber || 'Verified'})?`)) return;
+
+    try {
+      if (isFleet) {
+        await verifyFleetBooking(b._id || b.id, 'Confirmed');
+      } else {
+        await verifyToursBooking(b._id || b.id, 'Confirmed');
+      }
+
+      // Automatically generate confirmed invoice
+      const invNum = getNextInvoiceNumber(isFleet ? 'car' : 'tour');
+      const pickupDt = b.pickupDatetime || b.pickup_datetime;
+      const dropDt = b.dropoffDatetime || b.dropoff_datetime;
+      const days = pickupDt && dropDt
+        ? Math.max(1, Math.ceil((new Date(dropDt).getTime() - new Date(pickupDt).getTime()) / 86400000))
+        : 1;
+
+      const invoiceData: InvoiceData = {
+        invoiceNumber: invNum,
+        invoiceDate: new Date().toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' }),
+        bookingType: isFleet ? 'car' : 'tour',
+        bookingCode: code,
+        customerName: name,
+        customerPhone: phone,
+        customerEmail: email,
+        ...(isFleet ? {
+          carModel: b.vehicleId?.name || 'Vehicle Rental',
+          rentalStartDate: pickupDt ? formatDate(pickupDt) : 'N/A',
+          rentalEndDate: dropDt ? formatDate(dropDt) : 'N/A',
+          numberOfDays: days,
+          perDayRate: Math.round(total / days),
+        } : {
+          packageName: b.packageId?.title || 'Tour Package',
+          travelDates: b.travelDate ? formatDate(b.travelDate) : 'N/A',
+          numberOfTravelers: b.paxCount || 1,
+          perPersonPrice: Math.round(total / Math.max(1, b.paxCount || 1)),
+        }),
+        totalAmount: total,
+        depositPaid: depositPaid,
+        balanceAmount: total - depositPaid,
+        paymentMode: 'UPI QR (Bank Transfer)',
+        paymentStatus: 'Partially Paid',
+        transactionId: b.utrNumber || code,
+      };
+      generateInvoicePDF(invoiceData);
+
+      // Sync with localStorage if open in same browser
+      try {
+        const localStr = localStorage.getItem('aarambha_user_bookings');
+        if (localStr) {
+          const list = JSON.parse(localStr);
+          const updatedList = list.map((x: any) => {
+            if (x.id === code || x.bookingCode === code || x.id === (b._id || b.id)) {
+              return { ...x, status: 'Confirmed', verifiedAt: new Date().toISOString() };
+            }
+            return x;
+          });
+          localStorage.setItem('aarambha_user_bookings', JSON.stringify(updatedList));
+          window.dispatchEvent(new Event('aarambha_booking_updated'));
+        }
+      } catch (_e) {}
+
+      load();
+    } catch (err: any) {
+      alert(err.message || 'Failed to approve booking');
+    }
+  };
+
+  const handleRejectBooking = async (b: any) => {
+    const reason = prompt('Enter rejection reason (e.g. UTR not found in bank statement):', 'UTR reference not found in bank statement');
+    if (!reason) return;
+
+    try {
+      if (b.type === 'Fleet') {
+        await verifyFleetBooking(b._id || b.id, 'Rejected', reason);
+      } else {
+        await verifyToursBooking(b._id || b.id, 'Rejected', reason);
+      }
+      load();
+    } catch (err: any) {
+      alert(err.message || 'Failed to reject booking');
+    }
+  };
+
   const handleCreateOfflineBooking = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
       if (offlineForm.bookingType === 'Tours') {
-        if (!offlineForm.packageId && packages.length > 0) offlineForm.packageId = packages[0]._id || packages[0].id;
+        const selectedPkg = packages.find(p => (p._id || p.id) === offlineForm.packageId) || packages[0];
+        const pkgId = selectedPkg ? (selectedPkg._id || selectedPkg.id) : offlineForm.packageId;
         await createToursBooking({
-          packageId: offlineForm.packageId || packages[0]?._id,
+          packageId: pkgId,
+          packageName: selectedPkg?.title,
           customerName: offlineForm.customerName,
           customerEmail: offlineForm.customerEmail || `${offlineForm.customerPhone || 'walkin'}@walkin.com`,
           customerPhone: offlineForm.customerPhone,
           travelDate: offlineForm.startDate,
-          paxCount: offlineForm.paxCount,
+          paxCount: offlineForm.paxCount || 1,
           depositPaid: offlineForm.depositPaid,
+          status: 'Confirmed',
+          termsAccepted: true,
+          agreementAccepted: true,
+          paymentMethod: offlineForm.paymentMethod,
           specialRequests: `Walk-in Offline Booking (${offlineForm.paymentMethod})`,
         });
       } else {
-        if (!offlineForm.vehicleId && vehicles.length > 0) offlineForm.vehicleId = vehicles[0]._id || vehicles[0].id;
+        const selectedVeh = vehicles.find(v => (v._id || v.id) === offlineForm.vehicleId) || vehicles[0];
+        const vehId = selectedVeh ? (selectedVeh._id || selectedVeh.id) : offlineForm.vehicleId;
         await createFleetBooking({
-          vehicleId: offlineForm.vehicleId || vehicles[0]?._id,
+          vehicleId: vehId,
+          vehicleName: selectedVeh?.name,
           customerName: offlineForm.customerName,
           customerEmail: offlineForm.customerEmail || `${offlineForm.customerPhone || 'walkin'}@walkin.com`,
           customerPhone: offlineForm.customerPhone,
@@ -103,10 +272,28 @@ export default function BookingsView() {
           pickupDatetime: `${offlineForm.startDate}T10:00:00.000Z`,
           dropoffDatetime: `${offlineForm.endDate}T10:00:00.000Z`,
           depositPaid: offlineForm.depositPaid,
+          status: 'Confirmed',
+          termsAccepted: true,
+          agreementAccepted: true,
+          paymentMethod: offlineForm.paymentMethod,
           specialRequests: `Walk-in Offline Rental (${offlineForm.paymentMethod})`,
         });
       }
       setIsOfflineModalOpen(false);
+      setOfflineForm({
+        bookingType: 'Tours',
+        packageId: packages[0]?._id || packages[0]?.id || '',
+        vehicleId: vehicles[0]?._id || vehicles[0]?.id || '',
+        customerName: '',
+        customerEmail: '',
+        customerPhone: '',
+        licenseNumber: '',
+        startDate: new Date().toISOString().split('T')[0],
+        endDate: new Date(Date.now() + 86400000 * 2).toISOString().split('T')[0],
+        paxCount: 1,
+        depositPaid: 1000,
+        paymentMethod: 'UPI',
+      });
       load();
     } catch (err: any) { alert(err.message); }
   };
@@ -146,7 +333,7 @@ export default function BookingsView() {
       const itemName = isFleet ? (b.vehicleId?.name || b.vehicleName || 'Vehicle Rental') : (b.packageId?.title || b.packageName || 'Tour Package');
       const start = isFleet ? formatDate(b.pickupDatetime || b.pickupDate || b.startDate) : formatDate(b.travelDate || b.startDate);
       const end = isFleet ? formatDate(b.dropoffDatetime || b.returnDate || b.endDate) : 'N/A';
-      const deposit = b.depositAmount || b.depositPaid || b.deposit_paid || 500;
+      const deposit = b.depositAmount || b.depositPaid || b.deposit_paid || 1;
       const total = b.totalAmount || b.total_amount || b.totalRentalAmount || b.totalPrice || 0;
       const balance = Math.max(0, total - deposit);
       const status = b.status || 'Confirmed';
@@ -189,35 +376,39 @@ export default function BookingsView() {
   const PAID_STATUSES = ['Picked Up (Paid in Full)', 'Returned', 'Confirmed'];
   const PARTIAL_STATUSES = ['Deposit Paid'];
 
-  const allBookings = [
+  const rawAllBookings = [
     ...(vertical !== 'fleet' ? toursBookings.map(b => ({ ...b, type: 'Tours' })) : []),
     ...(vertical !== 'tours' ? fleetBookings.map(b => ({ ...b, type: 'Fleet' })) : []),
-  ]
-    .sort((a, b) => new Date(b.createdAt || b.created_at).getTime() - new Date(a.createdAt || a.created_at).getTime())
-    .filter(b => {
-      // Section filter
-      if (filterSection !== 'all') {
-        if (filterSection === 'tours' && b.type !== 'Tours') return false;
-        if (filterSection === 'fleet' && b.type !== 'Fleet') return false;
-      }
-      // Date from
-      if (filterDateFrom) {
-        const bookingDate = new Date(b.createdAt || b.created_at);
-        if (bookingDate < new Date(filterDateFrom)) return false;
-      }
-      // Date to
-      if (filterDateTo) {
-        const bookingDate = new Date(b.createdAt || b.created_at);
-        if (bookingDate > new Date(filterDateTo + 'T23:59:59')) return false;
-      }
-      // Payment status
-      if (filterPayment !== 'all') {
-        if (filterPayment === 'paid' && !PAID_STATUSES.includes(b.status)) return false;
-        if (filterPayment === 'partial' && !PARTIAL_STATUSES.includes(b.status)) return false;
-        if (filterPayment === 'pending' && (PAID_STATUSES.includes(b.status) || PARTIAL_STATUSES.includes(b.status))) return false;
-      }
-      return true;
-    });
+  ].sort((a, b) => new Date(b.createdAt || b.created_at).getTime() - new Date(a.createdAt || a.created_at).getTime());
+
+  const pendingVerificationCount = rawAllBookings.filter(b => b.status === 'pending_verification').length;
+  const hasOverduePending = rawAllBookings.some(b => isOverdueVerification(b));
+
+  const allBookings = rawAllBookings.filter(b => {
+    // Section filter
+    if (filterSection !== 'all') {
+      if (filterSection === 'tours' && b.type !== 'Tours') return false;
+      if (filterSection === 'fleet' && b.type !== 'Fleet') return false;
+    }
+    // Date from
+    if (filterDateFrom) {
+      const bookingDate = new Date(b.createdAt || b.created_at);
+      if (bookingDate < new Date(filterDateFrom)) return false;
+    }
+    // Date to
+    if (filterDateTo) {
+      const bookingDate = new Date(b.createdAt || b.created_at);
+      if (bookingDate > new Date(filterDateTo + 'T23:59:59')) return false;
+    }
+    // Payment status
+    if (filterPayment !== 'all') {
+      if (filterPayment === 'pending_verification' && b.status !== 'pending_verification') return false;
+      if (filterPayment === 'paid' && !PAID_STATUSES.includes(b.status)) return false;
+      if (filterPayment === 'partial' && !PARTIAL_STATUSES.includes(b.status)) return false;
+      if (filterPayment === 'pending' && (PAID_STATUSES.includes(b.status) || PARTIAL_STATUSES.includes(b.status) || b.status === 'pending_verification')) return false;
+    }
+    return true;
+  });
 
   const activeFilters = [filterSection !== 'all', filterDateFrom, filterDateTo, filterPayment !== 'all'].filter(Boolean).length;
 
@@ -227,9 +418,9 @@ export default function BookingsView() {
       {/* Top Bar Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h3 className="text-xl font-extrabold text-[#111827] tracking-tight flex items-center gap-2">
+          <h3 className="text-xl font-extrabold text-[#000000] tracking-tight flex items-center gap-2">
             Bookings {isViewer && (
-              <span className="text-[10px] font-bold bg-amber-100 text-amber-700 border border-amber-200 px-2.5 py-1 rounded-full uppercase tracking-wider">
+              <span className="text-[10px] font-bold bg-[#9CB4E8]/20 text-[#171721] border border-[#9CB4E8]/40 px-2.5 py-1 rounded-full uppercase tracking-wider">
                 View Only
               </span>
             )}
@@ -238,11 +429,19 @@ export default function BookingsView() {
           <p className="text-xs text-gray-500 font-medium mt-0.5">
             {isViewer
               ? 'View and filter all booking records.'
-              : 'Track online ₹500 deposits, Razorpay txns, walk-in offline bookings & handovers.'}
+              : 'Verify UPI UTR payments, track lock deposits, and manage fleet handovers.'}
           </p>
         </div>
 
         <div className="flex items-center gap-3">
+          <Link
+            to="/calendar"
+            className="px-3.5 py-2 rounded-full border border-[#5266EB]/30 bg-[#5266EB]/10 hover:bg-[#5266EB]/20 text-[#5266EB] text-xs font-bold flex items-center gap-1.5 shadow-sm transition-all"
+            title="Open All-in-One Operations Calendar"
+          >
+            <CalendarIcon className="w-3.5 h-3.5 text-[#5266EB]" /> Calendar View
+          </Link>
+
           <button
             onClick={load}
             className="p-2 rounded-full border border-gray-200 bg-white text-gray-600 hover:text-black hover:bg-gray-50 text-xs font-semibold flex items-center gap-1.5 shadow-sm transition-all"
@@ -253,34 +452,87 @@ export default function BookingsView() {
 
           <button
             onClick={() => exportToExcel(allBookings)}
-            className="px-3.5 py-2 rounded-full border border-emerald-300 bg-emerald-50 hover:bg-emerald-100 text-emerald-800 text-xs font-bold flex items-center gap-1.5 shadow-sm transition-all"
+            className="px-3.5 py-2 rounded-full border border-[#AFB2CE]/40 bg-[#AFB2CE]/20 hover:bg-[#AFB2CE]/30 text-[#171721] text-xs font-bold flex items-center gap-1.5 shadow-sm transition-all"
             title="Download Bookings as Excel / CSV"
           >
-            <FileSpreadsheet className="w-3.5 h-3.5 text-emerald-600" /> Export Excel
+            <FileSpreadsheet className="w-3.5 h-3.5 text-[#5266EB]" /> Export Excel
           </button>
 
           <button
             onClick={() => setShowFilters(!showFilters)}
             className={`px-4 py-2 rounded-full text-xs font-bold shadow-sm transition-all flex items-center gap-2 border ${
               showFilters || activeFilters > 0
-                ? 'bg-[#111827] text-white border-[#111827]'
+                ? 'bg-[#171721] text-[#EDEDF3] border-[#171721]'
                 : 'bg-white text-gray-700 border-gray-200 hover:bg-gray-50'
             }`}
           >
             <Filter className="w-3.5 h-3.5" />
-            Filters {activeFilters > 0 && <span className="bg-amber-400 text-black rounded-full w-4 h-4 flex items-center justify-center text-[10px] font-black">{activeFilters}</span>}
+            Filters {activeFilters > 0 && <span className="bg-[#5266EB] text-white rounded-full w-4 h-4 flex items-center justify-center text-[10px] font-black">{activeFilters}</span>}
           </button>
 
           {/* Add Offline Booking — superadmin only */}
           {!isViewer && (
             <button
               onClick={() => setIsOfflineModalOpen(true)}
-              className="px-4 py-2 bg-[#111827] hover:bg-black text-white rounded-full text-xs font-bold shadow-sm transition-all flex items-center gap-2"
+              className="px-4 py-2 bg-[#5266EB] hover:bg-[#3E51D4] text-[#EDEDF3] rounded-full text-xs font-bold shadow-sm transition-all flex items-center gap-2"
             >
               <Plus className="w-4 h-4" /> Add Offline Booking
             </button>
           )}
         </div>
+      </div>
+
+      {/* Quick Navigation Filter Tabs */}
+      <div className="flex flex-wrap items-center gap-2 pt-1 border-b border-gray-200 pb-3">
+        <button
+          onClick={() => { setFilterPayment('all'); setFilterSection('all'); }}
+          className={`px-4 py-2 rounded-full text-xs font-bold transition-all cursor-pointer ${
+            filterPayment === 'all' && filterSection === 'all'
+              ? 'bg-[#171721] text-[#EDEDF3] shadow-sm'
+              : 'bg-white text-gray-600 border border-gray-200 hover:border-gray-300'
+          }`}
+        >
+          All Bookings ({rawAllBookings.length})
+        </button>
+
+        <button
+          onClick={() => setFilterPayment('pending_verification')}
+          className={`px-4 py-2 rounded-full text-xs font-bold transition-all flex items-center gap-2 cursor-pointer ${
+            filterPayment === 'pending_verification'
+              ? 'bg-amber-600 text-white shadow-sm'
+              : 'bg-amber-50 text-amber-900 border border-amber-200 hover:bg-amber-100'
+          }`}
+        >
+          <Clock className="w-3.5 h-3.5" />
+          <span>Pending Verification</span>
+          <span className={`px-2 py-0.5 rounded-full text-[10px] font-black ${
+            hasOverduePending ? 'bg-red-600 text-white animate-pulse' : 'bg-white text-amber-800'
+          }`}>
+            {pendingVerificationCount}
+          </span>
+        </button>
+
+        <button
+          onClick={() => { setFilterSection('fleet'); setFilterPayment('all'); }}
+          className={`px-4 py-2 rounded-full text-xs font-bold transition-all cursor-pointer ${
+            filterSection === 'fleet' && filterPayment === 'all'
+              ? 'bg-[#5266EB] text-[#EDEDF3] shadow-sm'
+              : 'bg-white text-gray-600 border border-gray-200 hover:border-gray-300'
+          }`}
+        >
+          Car Rental ({fleetBookings.length})
+        </button>
+
+        <button
+          onClick={() => { setFilterSection('tours'); setFilterPayment('all'); }}
+          className={`px-4 py-2 rounded-full text-xs font-bold transition-all cursor-pointer ${
+            filterSection === 'tours' && filterPayment === 'all'
+              ? 'bg-[#5266EB] text-[#EDEDF3] shadow-sm'
+              : 'bg-white text-gray-600 border border-gray-200 hover:border-gray-300'
+          }`}
+        >
+          Tours & Travels ({toursBookings.length})
+        </button>
       </div>
 
       {/* Filter Bar */}
@@ -298,7 +550,7 @@ export default function BookingsView() {
                     filterSection === s ? 'bg-[#111827] text-white' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
                   }`}
                 >
-                  {s === 'all' ? 'All' : s === 'tours' ? 'Car Rental' : 'Tour'}
+                  {s === 'all' ? 'All' : s === 'tours' ? 'Tours' : 'Car Rental'}
                 </button>
               ))}
             </div>
@@ -329,12 +581,13 @@ export default function BookingsView() {
           {/* Payment Status */}
           <div className="space-y-1">
             <label className="text-[10px] font-bold text-gray-500 uppercase tracking-wider block">Payment Status</label>
-            <div className="flex gap-1.5">
+            <div className="flex flex-wrap gap-1.5">
               {([
                 { val: 'all', label: 'All' },
+                { val: 'pending_verification', label: 'Pending Verification' },
                 { val: 'paid', label: 'Paid' },
                 { val: 'partial', label: 'Partial' },
-                { val: 'pending', label: 'Pending' },
+                { val: 'pending', label: 'Other Pending' },
               ] as const).map(({ val, label }) => (
                 <button
                   key={val}
@@ -372,7 +625,7 @@ export default function BookingsView() {
                 <th className="px-5 py-3.5">Customer</th>
                 <th className="px-5 py-3.5">Dates / Travel</th>
                 <th className="px-5 py-3.5">Deposit & Total</th>
-                <th className="px-5 py-3.5">Txn ID</th>
+                <th className="px-5 py-3.5">Payment / UTR</th>
                 <th className="px-5 py-3.5">Agreement</th>
                 <th className="px-5 py-3.5">Status</th>
                 <th className="px-5 py-3.5 text-right">Actions</th>
@@ -386,13 +639,15 @@ export default function BookingsView() {
                 const email = b.customerEmail || b.customer_email || 'N/A';
                 const phone = b.customerPhone || b.customer_phone || 'N/A';
                 const total = b.totalAmount || b.total_amount || b.totalRentalAmount || b.total_rental_amount || 0;
-                const depositPaid = b.depositAmount || b.depositPaid || 500;
-                const razorpayId = b.razorpayPaymentId || b.razorpay_payment_id || 'Walk-in / Cash';
-                const itemName = isFleet ? (b.vehicleId?.name || 'Vehicle Rental') : (b.packageId?.title || 'Tour Package');
+                const depositPaid = b.depositAmount || b.depositPaid || 1;
+                const itemName = isFleet ? (b.vehicleId?.name || b.vehicleName || 'Vehicle Rental') : (b.packageId?.title || b.packageName || 'Tour Package');
+                const isOverdue = isOverdueVerification(b);
 
                 return (
-                  <tr key={i} className="hover:bg-gray-50/80 transition-colors">
-                    <td className="px-5 py-4 font-mono font-bold text-[#111827]">{code}</td>
+                  <tr key={i} className={`transition-colors ${isOverdue ? 'bg-red-50/50 hover:bg-red-50' : b.status === 'pending_verification' ? 'bg-amber-50/30 hover:bg-amber-50/60' : 'hover:bg-gray-50/80'}`}>
+                    <td className="px-5 py-4 font-mono font-bold text-[#111827]">
+                      {code}
+                    </td>
                     <td className="px-5 py-4">
                       <span className={`px-2 py-0.5 rounded-full font-bold text-[10px] ${isFleet ? 'bg-indigo-50 text-indigo-700' : 'bg-emerald-50 text-emerald-700'}`}>
                         {b.type}
@@ -407,21 +662,44 @@ export default function BookingsView() {
                     <td className="px-5 py-4 text-gray-600">
                       {isFleet ? (
                         <>
-                          <div>{formatDate(b.pickupDatetime)} →</div>
-                          <div>{formatDate(b.dropoffDatetime)}</div>
+                          <div>{formatDate(b.pickupDatetime || b.pickupDate || b.startDate)} →</div>
+                          <div>{formatDate(b.dropoffDatetime || b.returnDate || b.endDate)}</div>
                         </>
                       ) : (
                         <>
-                          <div>Start: {formatDate(b.travelDate)}</div>
+                          <div>Start: {formatDate(b.travelDate || b.startDate)}</div>
                           <div className="text-[10px] text-gray-400">{b.paxCount || 1} traveler(s)</div>
                         </>
                       )}
                     </td>
                     <td className="px-5 py-4">
-                      <div className="font-bold text-emerald-600">₹{depositPaid} (Deposit)</div>
+                      <div className="font-bold text-[#5266EB]">₹{depositPaid} (Deposit)</div>
                       <div className="text-[11px] text-gray-500">Total: {formatCurrency(total)}</div>
                     </td>
-                    <td className="px-5 py-4 font-mono text-[11px] text-gray-500">{razorpayId}</td>
+
+                    {/* UTR & Payment Method Column */}
+                    <td className="px-5 py-4">
+                      {b.utrNumber ? (
+                        <div className="space-y-1">
+                          <div className="inline-flex items-center gap-1.5 font-mono text-[11px] font-bold text-[#5266EB] bg-[#5266EB]/10 px-2.5 py-1 rounded-lg border border-[#5266EB]/20">
+                            <span>UTR: {b.utrNumber}</span>
+                            <button
+                              onClick={() => handleCopyUtr(b._id || b.id, b.utrNumber)}
+                              title="Copy UTR"
+                              className="text-gray-500 hover:text-black cursor-pointer"
+                            >
+                              {copiedUtrId === (b._id || b.id) ? <Check className="w-3 h-3 text-emerald-600" /> : <Copy className="w-3 h-3" />}
+                            </button>
+                          </div>
+                          <span className="text-[10px] text-gray-400 block">Mode: Direct UPI QR</span>
+                        </div>
+                      ) : (
+                        <div className="text-[11px] font-mono text-gray-500">
+                          {b.paymentMethod || b.razorpayPaymentId || 'Offline / Cash'}
+                        </div>
+                      )}
+                    </td>
+
                     <td className="px-5 py-4">
                       {b.agreementAccepted ? (
                         <span className="inline-flex items-center gap-1 text-[10px] font-bold text-emerald-700 bg-emerald-50 border border-emerald-100 px-2.5 py-0.5 rounded-full">
@@ -431,53 +709,106 @@ export default function BookingsView() {
                         <span className="text-[10px] text-gray-400 font-medium">Standard</span>
                       )}
                     </td>
-                    <td className="px-5 py-4">
-                      <Badge color={statusColor(b.status)}>{b.status}</Badge>
+
+                    {/* Status Column */}
+                    <td className="px-5 py-4 min-w-[170px]">
+                      {b.status === 'pending_verification' ? (
+                        <div className="space-y-1.5">
+                          <span className="inline-flex items-center gap-1 text-[10px] font-bold text-amber-900 bg-amber-100 border border-amber-300 px-2.5 py-0.5 rounded-full">
+                            <Clock className="w-3 h-3 text-amber-700" /> Pending Verification
+                          </span>
+                          {isOverdue && (
+                            <span className="inline-flex items-center gap-1 text-[10px] font-bold text-white bg-red-600 px-2 py-0.5 rounded-full animate-pulse shadow-sm shadow-red-500/50 block">
+                              <AlertTriangle className="w-3 h-3" /> Overdue (&gt;24h)
+                            </span>
+                          )}
+
+                          {/* 1-Click "Verified" Action Button right in status cell */}
+                          {!isViewer && (
+                            <div className="pt-1 flex items-center gap-1.5">
+                              <button
+                                onClick={() => handleApproveBooking(b)}
+                                title="Click to Verify and Confirm this Booking"
+                                className="px-3.5 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-black shadow-md shadow-emerald-600/30 transition-all flex items-center gap-1.5 cursor-pointer hover:scale-102 active:scale-98"
+                              >
+                                <CheckCircle className="w-3.5 h-3.5 text-white" />
+                                <span>Verified</span>
+                              </button>
+
+                              <button
+                                onClick={() => handleRejectBooking(b)}
+                                title="Reject Booking (Invalid UTR)"
+                                className="p-1.5 bg-red-50 hover:bg-red-100 text-red-700 rounded-xl text-xs font-bold border border-red-200 transition-all flex items-center justify-center cursor-pointer"
+                              >
+                                <XCircle className="w-3.5 h-3.5" />
+                              </button>
+                            </div>
+                          )}
+                        </div>
+                      ) : (
+                        <Badge color={statusColor(b.status)}>{b.status}</Badge>
+                      )}
                     </td>
+
+                    {/* Actions Column */}
                     <td className="px-5 py-4 text-right">
-                      <div className="flex items-center justify-end gap-1.5">
-                        {/* Invoice — always visible */}
-                        <button
-                          onClick={() => {
-                            const invNum = getNextInvoiceNumber(isFleet ? 'car' : 'tour');
-                            const pickupDt = b.pickupDatetime || b.pickup_datetime;
-                            const dropDt = b.dropoffDatetime || b.dropoff_datetime;
-                            const days = pickupDt && dropDt
-                              ? Math.max(1, Math.ceil((new Date(dropDt).getTime() - new Date(pickupDt).getTime()) / 86400000))
-                              : 1;
-                            const invoiceData: InvoiceData = {
-                              invoiceNumber: invNum,
-                              invoiceDate: new Date().toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' }),
-                              bookingType: isFleet ? 'car' : 'tour',
-                              bookingCode: code,
-                              customerName: name,
-                              customerPhone: phone,
-                              customerEmail: email,
-                              ...(isFleet ? {
-                                carModel: b.vehicleId?.name || 'Vehicle Rental',
-                                rentalStartDate: pickupDt ? formatDate(pickupDt) : 'N/A',
-                                rentalEndDate: dropDt ? formatDate(dropDt) : 'N/A',
-                                numberOfDays: days,
-                                perDayRate: Math.round(total / days),
-                              } : {
-                                packageName: b.packageId?.title || 'Tour Package',
-                                travelDates: b.travelDate ? formatDate(b.travelDate) : 'N/A',
-                                numberOfTravelers: b.paxCount || 1,
-                                perPersonPrice: Math.round(total / Math.max(1, b.paxCount || 1)),
-                              }),
-                              totalAmount: total,
-                              depositPaid: depositPaid,
-                              balanceAmount: total - depositPaid,
-                              paymentMode: b.pickupPaymentMethod || (razorpayId.includes('Walk') ? 'Cash' : 'Razorpay'),
-                              paymentStatus: b.status === 'Picked Up (Paid in Full)' || b.status === 'Returned' ? 'Paid' : 'Partially Paid',
-                              transactionId: razorpayId !== 'Walk-in / Cash' ? razorpayId : undefined,
-                            };
-                            generateInvoicePDF(invoiceData);
-                          }}
-                          className="px-3 py-1.5 bg-[#111827] hover:bg-black text-white rounded-full text-[11px] font-bold shadow-sm transition-all flex items-center gap-1"
-                        >
-                          <FileDown className="w-3 h-3" /> Invoice
-                        </button>
+                      <div className="flex items-center justify-end gap-1.5 flex-wrap">
+                        
+                        {/* 1-Click Verification Actions (When pending_verification) */}
+                        {!isViewer && b.status === 'pending_verification' && (
+                          <button
+                            onClick={() => handleApproveBooking(b)}
+                            title="Verify Bank UTR & Confirm Booking"
+                            className="px-3.5 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-bold shadow-sm transition-all flex items-center gap-1 cursor-pointer"
+                          >
+                            <CheckCircle className="w-3.5 h-3.5" /> Verified
+                          </button>
+                        )}
+
+                        {/* Invoice — for confirmed bookings */}
+                        {b.status !== 'pending_verification' && (
+                          <button
+                            onClick={() => {
+                              const invNum = getNextInvoiceNumber(isFleet ? 'car' : 'tour');
+                              const pickupDt = b.pickupDatetime || b.pickup_datetime;
+                              const dropDt = b.dropoffDatetime || b.dropoff_datetime;
+                              const days = pickupDt && dropDt
+                                ? Math.max(1, Math.ceil((new Date(dropDt).getTime() - new Date(pickupDt).getTime()) / 86400000))
+                                : 1;
+                              const invoiceData: InvoiceData = {
+                                invoiceNumber: invNum,
+                                invoiceDate: new Date().toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' }),
+                                bookingType: isFleet ? 'car' : 'tour',
+                                bookingCode: code,
+                                customerName: name,
+                                customerPhone: phone,
+                                customerEmail: email,
+                                ...(isFleet ? {
+                                  carModel: b.vehicleId?.name || 'Vehicle Rental',
+                                  rentalStartDate: pickupDt ? formatDate(pickupDt) : 'N/A',
+                                  rentalEndDate: dropDt ? formatDate(dropDt) : 'N/A',
+                                  numberOfDays: days,
+                                  perDayRate: Math.round(total / days),
+                                } : {
+                                  packageName: b.packageId?.title || 'Tour Package',
+                                  travelDates: b.travelDate ? formatDate(b.travelDate) : 'N/A',
+                                  numberOfTravelers: b.paxCount || 1,
+                                  perPersonPrice: Math.round(total / Math.max(1, b.paxCount || 1)),
+                                }),
+                                totalAmount: total,
+                                depositPaid: depositPaid,
+                                balanceAmount: total - depositPaid,
+                                paymentMode: b.paymentMethod || 'UPI QR',
+                                paymentStatus: b.status === 'Picked Up (Paid in Full)' || b.status === 'Returned' ? 'Paid' : 'Partially Paid',
+                                transactionId: b.utrNumber || code,
+                              };
+                              generateInvoicePDF(invoiceData);
+                            }}
+                            className="px-3 py-1.5 bg-[#171721] hover:bg-[#272735] text-[#EDEDF3] rounded-full text-[11px] font-bold shadow-sm transition-all flex items-center gap-1"
+                          >
+                            <FileDown className="w-3 h-3" /> Invoice
+                          </button>
+                        )}
 
                         {/* Excel Single Export */}
                         <button
@@ -485,24 +816,24 @@ export default function BookingsView() {
                           title="Export booking to Excel / CSV"
                           className="p-1.5 rounded-full border border-gray-200 bg-white text-gray-600 hover:text-emerald-700 hover:border-emerald-300 hover:bg-emerald-50 transition-all"
                         >
-                          <FileSpreadsheet className="w-3.5 h-3.5" />
+                          <FileSpreadsheet className="w-3.5 h-3.5 text-[#5266EB]" />
                         </button>
 
                         {/* Status-change & delete buttons — superadmin only */}
                         {!isViewer && isFleet && (
                           <>
                             {b.status === 'Deposit Paid' && (
-                              <button onClick={() => handlePickup(b._id || b.id)} className="px-2.5 py-1 bg-emerald-50 text-emerald-700 hover:bg-emerald-100 rounded-full text-[11px] font-bold border border-emerald-200">
+                              <button onClick={() => handlePickup(b._id || b.id)} className="px-2.5 py-1 bg-[#AFB2CE]/20 text-[#171721] hover:bg-[#AFB2CE]/30 rounded-full text-[11px] font-bold border border-[#AFB2CE]/40">
                                 Pickup
                               </button>
                             )}
                             {b.status === 'Picked Up (Paid in Full)' && (
-                              <button onClick={() => handleReturn(b._id || b.id)} className="px-2.5 py-1 bg-indigo-50 text-indigo-700 hover:bg-indigo-100 rounded-full text-[11px] font-bold border border-indigo-200">
+                              <button onClick={() => handleReturn(b._id || b.id)} className="px-2.5 py-1 bg-[#5266EB]/10 text-[#5266EB] hover:bg-[#5266EB]/20 rounded-full text-[11px] font-bold border border-[#5266EB]/30">
                                 Return
                               </button>
                             )}
                             {b.status === 'Returned' && (
-                              <button onClick={() => handleRefund(b._id || b.id)} className="px-2.5 py-1 bg-amber-50 text-amber-700 hover:bg-amber-100 rounded-full text-[11px] font-bold border border-amber-200">
+                              <button onClick={() => handleRefund(b._id || b.id)} className="px-2.5 py-1 bg-[#9CB4E8]/20 text-[#171721] hover:bg-[#9CB4E8]/30 rounded-full text-[11px] font-bold border border-[#9CB4E8]/40">
                                 Refund
                               </button>
                             )}
@@ -561,7 +892,7 @@ export default function BookingsView() {
               <div>
                 <label className="block font-bold text-[#111827] mb-1">Select Tour Package</label>
                 <select
-                  value={offlineForm.packageId}
+                  value={offlineForm.packageId || (packages[0]?._id || packages[0]?.id || '')}
                   onChange={e => setOfflineForm({ ...offlineForm, packageId: e.target.value })}
                   className="w-full px-3.5 py-2.5 bg-gray-50 border border-gray-200 rounded-xl font-medium focus:outline-none focus:border-black"
                 >
@@ -576,7 +907,7 @@ export default function BookingsView() {
               <div>
                 <label className="block font-bold text-[#111827] mb-1">Select Rental Vehicle</label>
                 <select
-                  value={offlineForm.vehicleId}
+                  value={offlineForm.vehicleId || (vehicles[0]?._id || vehicles[0]?.id || '')}
                   onChange={e => setOfflineForm({ ...offlineForm, vehicleId: e.target.value })}
                   className="w-full px-3.5 py-2.5 bg-gray-50 border border-gray-200 rounded-xl font-medium focus:outline-none focus:border-black"
                 >

@@ -23,6 +23,8 @@ interface LocalBooking {
   status: string;
   createdAt: string;
   invoiceNumber?: string;
+  utrNumber?: string;
+  paymentMethod?: string;
 }
 
 function formatDate(d: string) {
@@ -36,34 +38,61 @@ export default function MyBookingsPage() {
   const [bookings, setBookings] = useState<LocalBooking[]>([]);
   const [mounted, setMounted] = useState(false);
 
-  const loadBookingsForUser = () => {
+  const loadBookingsForUser = async () => {
     try {
       const rawUser = localStorage.getItem('aarambha_user');
-      if (!rawUser) {
-        setUser(null);
-        setBookings([]);
-        return;
-      }
-      const parsedUser = JSON.parse(rawUser);
-      setUser(parsedUser);
-
-      if (!parsedUser || !parsedUser.email) {
-        setBookings([]);
-        return;
+      let userEmail = '';
+      if (rawUser) {
+        const parsedUser = JSON.parse(rawUser);
+        setUser(parsedUser);
+        userEmail = (parsedUser.email || '').toLowerCase().trim();
       }
 
-      const userEmail = parsedUser.email.toLowerCase().trim();
       const raw = localStorage.getItem('aarambha_user_bookings');
-      if (raw) {
-        const all: any[] = JSON.parse(raw);
-        const userSpecific = all.filter((b) => {
-          const bEmail = (b.customerEmail || b.email || b.accountEmail || b.userEmail || '').toLowerCase().trim();
-          return bEmail === userEmail;
+      let localList: any[] = raw ? JSON.parse(raw) : [];
+
+      // Fetch live bookings from backend to check if admin verified
+      try {
+        const [fleetRes, toursRes] = await Promise.all([
+          fetch('http://127.0.0.1:8000/api/fleet/bookings').then(r => r.json()).catch(() => []),
+          fetch('http://127.0.0.1:8000/api/tours/bookings').then(r => r.json()).catch(() => []),
+        ]);
+
+        const backendAll = [
+          ...(Array.isArray(fleetRes) ? fleetRes.map((x: any) => ({ ...x, _type: 'car' })) : []),
+          ...(Array.isArray(toursRes) ? toursRes.map((x: any) => ({ ...x, _type: 'tour' })) : []),
+        ];
+
+        // Merge updated status from backend into local list
+        let changed = false;
+        localList = localList.map(local => {
+          const match = backendAll.find(b => 
+            (b.bookingCode && b.bookingCode === local.id) ||
+            (b.booking_code && b.booking_code === local.id) ||
+            (b._id && b._id === local.id) ||
+            (b.id && b.id === local.id)
+          );
+          if (match && match.status && match.status !== local.status) {
+            changed = true;
+            return { ...local, status: match.status, rejectionReason: match.rejectionReason };
+          }
+          return local;
         });
-        setBookings(userSpecific);
-      } else {
-        setBookings([]);
-      }
+
+        if (changed) {
+          localStorage.setItem('aarambha_user_bookings', JSON.stringify(localList));
+        }
+      } catch (_apiErr) {}
+
+      // Filter by user if logged in, or show recent guest bookings
+      const userSpecific = userEmail
+        ? localList.filter((b) => {
+            const bEmail = (b.customerEmail || b.email || b.accountEmail || b.userEmail || '').toLowerCase().trim();
+            return bEmail === userEmail;
+          })
+        : localList;
+
+      setBookings(userSpecific);
     } catch (_) {
       setUser(null);
       setBookings([]);
@@ -74,8 +103,16 @@ export default function MyBookingsPage() {
     setMounted(true);
     loadBookingsForUser();
 
+    // Poll every 4 seconds so customer sees admin verification live
+    const interval = setInterval(loadBookingsForUser, 4000);
+
     window.addEventListener('aarambha_auth_changed', loadBookingsForUser);
-    return () => window.removeEventListener('aarambha_auth_changed', loadBookingsForUser);
+    window.addEventListener('aarambha_booking_updated', loadBookingsForUser);
+    return () => {
+      clearInterval(interval);
+      window.removeEventListener('aarambha_auth_changed', loadBookingsForUser);
+      window.removeEventListener('aarambha_booking_updated', loadBookingsForUser);
+    };
   }, []);
 
   const handleDownloadInvoice = (b: LocalBooking) => {
@@ -124,19 +161,19 @@ export default function MyBookingsPage() {
       <Navbar vertical="home" />
 
       {/* Hero */}
-      <section className="relative bg-[#111111] text-white pt-28 pb-14 overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-br from-[#111111] via-[#1a1a2e] to-[#111111] opacity-90" />
+      <section className="relative bg-[#171721] text-[#EDEDF3] pt-28 pb-14 overflow-hidden border-b border-[#272735]">
+        <div className="absolute inset-0 bg-gradient-to-br from-[#171721] via-[#272735] to-[#171721] opacity-90" />
         <div className="relative z-10 max-w-6xl mx-auto px-6 lg:px-12">
-          <Link href="/" className="inline-flex items-center gap-2 text-xs font-bold text-gray-400 hover:text-white mb-6 transition-colors">
+          <Link href="/" className="inline-flex items-center gap-2 text-xs font-bold text-[#9CB4E8] hover:text-white mb-6 transition-colors">
             <ArrowLeft className="w-3.5 h-3.5" /> Back to Home
           </Link>
           <div className="flex items-center gap-4">
-            <div className="w-12 h-12 rounded-2xl bg-emerald-600 flex items-center justify-center">
+            <div className="w-12 h-12 rounded-2xl bg-[#5266EB] flex items-center justify-center shadow-lg shadow-[#5266EB]/20">
               <BookOpen className="w-6 h-6 text-white" />
             </div>
             <div>
               <h1 className="font-syne text-3xl sm:text-4xl font-extrabold text-white">My Bookings</h1>
-              <p className="text-xs text-gray-400 mt-1">All your Aarambha reservations, with downloadable invoices.</p>
+              <p className="text-xs text-[#AFB2CE] mt-1">All your Aarambha reservations, with downloadable invoices.</p>
             </div>
           </div>
         </div>
@@ -146,17 +183,17 @@ export default function MyBookingsPage() {
       <main className="flex-1 max-w-6xl mx-auto w-full px-6 lg:px-12 py-12">
         {!user ? (
           <div className="text-center py-20 bg-white rounded-3xl border border-gray-200/80 shadow-sm p-8 max-w-md mx-auto space-y-4">
-            <div className="w-16 h-16 rounded-full bg-red-50 text-[#FF3B30] flex items-center justify-center mx-auto">
+            <div className="w-16 h-16 rounded-full bg-[#5266EB]/10 text-[#5266EB] flex items-center justify-center mx-auto">
               <User className="w-8 h-8" />
             </div>
-            <h2 className="font-syne text-xl font-bold text-[#111111]">Account Not Logged In</h2>
+            <h2 className="font-syne text-xl font-bold text-[#000000]">Account Not Logged In</h2>
             <p className="text-sm text-gray-500">
               Please log in to your account to view your active bookings and download your verified tax invoices.
             </p>
             <div className="pt-2">
               <Link
                 href="/login"
-                className="inline-flex items-center gap-2 px-6 py-3 bg-[#FF3B30] hover:bg-red-600 text-white text-xs font-bold font-syne uppercase tracking-wider rounded-full transition-all shadow-md hover:scale-105"
+                className="inline-flex items-center gap-2 px-6 py-3 bg-[#5266EB] hover:bg-[#3E51D4] text-[#EDEDF3] text-xs font-bold font-syne uppercase tracking-wider rounded-full transition-all shadow-md hover:scale-105"
               >
                 <User className="w-4 h-4" /> Log In to Your Account
               </Link>
@@ -167,11 +204,11 @@ export default function MyBookingsPage() {
             <div className="w-16 h-16 rounded-full bg-gray-100 flex items-center justify-center mx-auto">
               <BookOpen className="w-8 h-8 text-gray-400" />
             </div>
-            <h2 className="font-syne text-xl font-bold text-[#111111]">No bookings yet</h2>
+            <h2 className="font-syne text-xl font-bold text-[#000000]">No bookings yet</h2>
             <p className="text-sm text-gray-500 max-w-xs mx-auto">
               No reservations found for <strong className="text-gray-700">{user.email}</strong>. Book a tour package or car rental to see your reservations here.
             </p>
-            <Link href="/" className="inline-flex items-center gap-2 px-6 py-3 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold rounded-full transition-all mt-4">
+            <Link href="/" className="inline-flex items-center gap-2 px-6 py-3 bg-[#5266EB] hover:bg-[#3E51D4] text-[#EDEDF3] text-xs font-bold rounded-full transition-all mt-4">
               <Compass className="w-4 h-4" /> Explore Now
             </Link>
           </div>
@@ -202,7 +239,7 @@ export default function MyBookingsPage() {
                       className="w-full h-full object-cover"
                     />
                     <div className={`absolute top-2 left-2 px-2.5 py-1 rounded-full text-[10px] font-extrabold ${
-                      isCar ? 'bg-indigo-600 text-white' : 'bg-emerald-600 text-white'
+                      isCar ? 'bg-[#171721] text-[#9CB4E8] border border-[#9CB4E8]/30' : 'bg-[#5266EB] text-white'
                     }`}>
                       {isCar ? 'Car Rental' : 'Tour Package'}
                     </div>
@@ -213,9 +250,9 @@ export default function MyBookingsPage() {
                     <div className="space-y-2 flex-1">
                       <div className="flex items-center gap-2">
                         {isCar
-                          ? <Car className="w-4 h-4 text-indigo-600" />
-                          : <Compass className="w-4 h-4 text-emerald-600" />}
-                        <h3 className="font-syne text-base font-bold text-[#111111]">{b.title}</h3>
+                          ? <Car className="w-4 h-4 text-[#5266EB]" />
+                          : <Compass className="w-4 h-4 text-[#5266EB]" />}
+                        <h3 className="font-syne text-base font-bold text-[#000000]">{b.title}</h3>
                       </div>
 
                       <div className="flex flex-wrap gap-x-4 gap-y-1 text-xs text-gray-500">
@@ -241,12 +278,22 @@ export default function MyBookingsPage() {
                         <span className="font-bold text-[#111111]">
                           Total: ₹{b.totalPrice.toLocaleString('en-IN')}
                         </span>
-                        <span className="text-emerald-600 font-semibold">
-                          Deposit: ₹{b.depositPaid} paid
+                        <span className="text-[#5266EB] font-semibold">
+                          Deposit: ₹{b.depositPaid} logged
                         </span>
-                        <span className="flex items-center gap-1 text-emerald-600">
-                          <CheckCircle className="w-3 h-3" /> {b.status}
-                        </span>
+                        {b.status === 'pending_verification' ? (
+                          <span className="inline-flex items-center gap-1 font-bold text-amber-700 bg-amber-100 px-2.5 py-0.5 rounded-full border border-amber-300">
+                            <Clock className="w-3 h-3 text-amber-700" /> Under Verification {b.utrNumber ? `(UTR: ${b.utrNumber})` : ''}
+                          </span>
+                        ) : b.status === 'Rejected' ? (
+                          <span className="inline-flex items-center gap-1 font-bold text-red-700 bg-red-100 px-2.5 py-0.5 rounded-full border border-red-300">
+                            Payment Rejected
+                          </span>
+                        ) : (
+                          <span className="inline-flex items-center gap-1.5 font-bold text-emerald-700 bg-emerald-100 px-3 py-0.5 rounded-full border border-emerald-300">
+                            <CheckCircle className="w-3.5 h-3.5 text-emerald-700" /> Booking Confirmed
+                          </span>
+                        )}
                       </div>
 
                       <div className="text-[10px] text-gray-400 font-mono">
@@ -256,13 +303,19 @@ export default function MyBookingsPage() {
 
                     {/* Download Button */}
                     <div className="flex-shrink-0">
-                      <button
-                        onClick={() => handleDownloadInvoice(b)}
-                        className="flex items-center gap-2 px-5 py-2.5 bg-[#111111] hover:bg-black text-white text-xs font-bold rounded-full transition-all shadow-md hover:shadow-lg hover:scale-105"
-                      >
-                        <Download className="w-3.5 h-3.5" />
-                        Invoice PDF
-                      </button>
+                      {b.status === 'pending_verification' ? (
+                        <span className="text-[11px] text-gray-400 italic block py-2">
+                          Invoice available once verified
+                        </span>
+                      ) : (
+                        <button
+                          onClick={() => handleDownloadInvoice(b)}
+                          className="flex items-center gap-2 px-5 py-2.5 bg-[#171721] hover:bg-[#272735] text-[#EDEDF3] text-xs font-bold rounded-full transition-all shadow-md hover:shadow-lg hover:scale-105"
+                        >
+                          <Download className="w-3.5 h-3.5" />
+                          Invoice PDF
+                        </button>
+                      )}
                     </div>
                   </div>
                 </div>

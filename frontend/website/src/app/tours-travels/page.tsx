@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react';
 import Link from 'next/link';
-import { Search, MapPin, Star, ArrowUpRight, Sparkles, Globe, MessageCircle, Share2, Compass, Phone, Calendar, ShieldCheck, Check, Info, CreditCard, Car, ArrowRight } from 'lucide-react';
+import { Search, MapPin, Star, ArrowUpRight, Sparkles, Globe, MessageCircle, Share2, Compass, Phone, Calendar, ShieldCheck, Check, Info, CreditCard, ArrowRight, X } from 'lucide-react';
 import Navbar from '@/components/layout/Navbar';
 import Footer from '@/components/layout/Footer';
 import TermsConditionsSection from '@/components/shared/TermsConditionsSection';
@@ -11,7 +11,6 @@ import WhatsAppEnquiryForm from '@/components/home/WhatsAppEnquiryForm';
 import CompanyLocationSection from '@/components/home/CompanyLocationSection';
 import BookingModal, { BookingModalItem } from '@/components/booking/BookingModal';
 import { TOUR_PACKAGES, SHARED_TOUR_CONTACT } from '@/constants/toursData';
-import { FLEET_VEHICLES } from '@/constants/carsData';
 
 export default function ToursCatalogPage() {
   const [searchQuery, setSearchQuery] = useState('');
@@ -30,7 +29,7 @@ export default function ToursCatalogPage() {
   });
 
   return (
-    <div className="min-h-screen bg-[#FAFAFC] text-[#18181B] flex flex-col font-sans selection:bg-emerald-600 selection:text-white">
+    <div className="min-h-screen bg-[#FAFAFC] text-[#18181B] flex flex-col font-sans selection:bg-[#5266EB] selection:text-white">
       
       <Navbar vertical="tours" />
 
@@ -50,26 +49,36 @@ export default function ToursCatalogPage() {
           <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/40 to-black/30" />
         </div>
 
+        {/* TOP RIGHT CLOSE ICON (X) */}
+        <Link
+          href="/"
+          aria-label="Return to Dashboard / Home"
+          title="Return to Dashboard / Home"
+          className="absolute top-4 right-4 sm:top-8 sm:right-8 z-30 p-2.5 sm:p-3.5 rounded-full bg-black/60 hover:bg-black/90 text-white backdrop-blur-md transition-all cursor-pointer border border-white/30 shadow-2xl hover:scale-110 active:scale-95 group"
+        >
+          <X className="w-5 h-5 sm:w-6 sm:h-6 stroke-[3] group-hover:rotate-90 transition-transform duration-300" />
+        </Link>
+
         {/* Hero Content Overlay (Centered) */}
         <div className="relative z-10 max-w-7xl mx-auto px-6 lg:px-12 py-20 w-full flex flex-col items-center justify-center text-center">
           <div className="max-w-3xl space-y-5 flex flex-col items-center justify-center text-center">
             
-            <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-emerald-950/80 backdrop-blur-md border border-emerald-400/30 text-xs font-semibold text-emerald-300 tracking-wide shadow-lg">
-              <Sparkles className="w-3.5 h-3.5 text-emerald-400" /> SACRED PILGRIMAGE DEPARTURES 2026
+            <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[#171721]/90 backdrop-blur-md border border-[#9CB4E8]/30 text-xs font-semibold text-[#9CB4E8] tracking-wide shadow-lg">
+              <Sparkles className="w-3.5 h-3.5 text-[#9CB4E8]" /> SACRED PILGRIMAGE DEPARTURES 2026
             </div>
 
             <h1 className="font-syne text-3xl sm:text-5xl lg:text-6xl font-extrabold text-white leading-tight tracking-tight drop-shadow-lg">
               Aarambha Pilgrimage Tour Packages
             </h1>
 
-            <p className="text-xs sm:text-sm text-gray-200 max-w-2xl mx-auto leading-relaxed font-medium drop-shadow">
+            <p className="text-xs sm:text-sm text-[#AFB2CE] max-w-2xl mx-auto leading-relaxed font-medium drop-shadow">
               Experience sanctified Yatra departures across India’s most revered Jyotirlingas, Shaktipeeths, and Krishna Bhoomi temples. Complete with New Urbania Pushback AC comfort, verified hotel stays, pure veg meals, and 24/7 assistance.
             </p>
 
             <div className="pt-3 flex flex-wrap items-center justify-center gap-3">
               <a
                 href="#packages-catalog"
-                className="btn-emerald-pill text-xs font-bold px-8 py-3.5 rounded-full bg-emerald-600 hover:bg-emerald-500 text-white hover:scale-105 transition-all inline-flex items-center gap-2 shadow-2xl shadow-emerald-600/40"
+                className="btn-red-pill text-xs font-bold px-8 py-3.5 rounded-full bg-[#5266EB] hover:bg-[#3E51D4] text-[#EDEDF3] hover:scale-105 transition-all inline-flex items-center gap-2 shadow-2xl shadow-[#5266EB]/40"
               >
                 <span>View All 3 Yatra Packages</span>
                 <Compass className="w-4 h-4" />
@@ -79,7 +88,7 @@ export default function ToursCatalogPage() {
                 href={`tel:+91${SHARED_TOUR_CONTACT.phone1}`}
                 className="text-xs font-bold px-6 py-3.5 rounded-full bg-white/10 hover:bg-white/20 text-white border border-white/30 backdrop-blur-md transition-all inline-flex items-center gap-2"
               >
-                <Phone className="w-3.5 h-3.5 text-emerald-400" />
+                <Phone className="w-3.5 h-3.5 text-[#9CB4E8]" />
                 <span>Call {SHARED_TOUR_CONTACT.phone1Display}</span>
               </a>
             </div>
@@ -87,15 +96,15 @@ export default function ToursCatalogPage() {
             {/* Quick Contact & Instagram Strip */}
             <div className="pt-3 flex flex-wrap items-center justify-center gap-4 text-xs text-gray-300">
               <span className="flex items-center gap-1.5 bg-black/40 px-3 py-1 rounded-full border border-white/10">
-                <Phone className="w-3 h-3 text-emerald-400" /> Helpline: {SHARED_TOUR_CONTACT.phone1Display} / {SHARED_TOUR_CONTACT.phone2Display}
+                <Phone className="w-3 h-3 text-[#9CB4E8]" /> Helpline: {SHARED_TOUR_CONTACT.phone1Display} / {SHARED_TOUR_CONTACT.phone2Display}
               </span>
               <a
                 href={SHARED_TOUR_CONTACT.instagramUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex items-center gap-1.5 bg-black/40 hover:bg-pink-900/40 px-3 py-1 rounded-full border border-white/10 hover:border-pink-400/40 text-pink-300 transition-colors"
+                className="flex items-center gap-1.5 bg-black/40 hover:bg-[#5266EB]/20 px-3 py-1 rounded-full border border-white/10 hover:border-[#5266EB]/40 text-[#9CB4E8] transition-colors"
               >
-                <Globe className="w-3 h-3 text-pink-400" /> Follow @aarambha_tours_travels
+                <Globe className="w-3 h-3 text-[#9CB4E8]" /> Follow @aarambha_tours_travels
               </a>
             </div>
 
@@ -109,7 +118,7 @@ export default function ToursCatalogPage() {
         <div className="max-w-7xl mx-auto px-6 lg:px-12 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs">
           
           <div className="text-gray-600 font-semibold flex items-center gap-2">
-            <span className="w-2 h-2 rounded-full bg-emerald-600 animate-pulse" />
+            <span className="w-2 h-2 rounded-full bg-[#5266EB] animate-pulse" />
             Showing {filteredPackages.length} Sacred Pilgrimage Packages
           </div>
 
@@ -119,7 +128,7 @@ export default function ToursCatalogPage() {
               <button
                 onClick={() => setSelectedDuration('all')}
                 className={`px-3 py-1 rounded-full transition-colors ${
-                  selectedDuration === 'all' ? 'bg-emerald-600 text-white font-bold' : 'text-gray-600 hover:text-gray-900'
+                  selectedDuration === 'all' ? 'bg-[#5266EB] text-white font-bold' : 'text-gray-600 hover:text-gray-900'
                 }`}
               >
                 All Yatras
@@ -127,7 +136,7 @@ export default function ToursCatalogPage() {
               <button
                 onClick={() => setSelectedDuration('short')}
                 className={`px-3 py-1 rounded-full transition-colors ${
-                  selectedDuration === 'short' ? 'bg-emerald-600 text-white font-bold' : 'text-gray-600 hover:text-gray-900'
+                  selectedDuration === 'short' ? 'bg-[#5266EB] text-white font-bold' : 'text-gray-600 hover:text-gray-900'
                 }`}
               >
                 3 Days Yatra
@@ -135,7 +144,7 @@ export default function ToursCatalogPage() {
               <button
                 onClick={() => setSelectedDuration('long')}
                 className={`px-3 py-1 rounded-full transition-colors ${
-                  selectedDuration === 'long' ? 'bg-emerald-600 text-white font-bold' : 'text-gray-600 hover:text-gray-900'
+                  selectedDuration === 'long' ? 'bg-[#5266EB] text-white font-bold' : 'text-gray-600 hover:text-gray-900'
                 }`}
               >
                 6 Days Yatra
@@ -186,23 +195,23 @@ export default function ToursCatalogPage() {
                       <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-transparent to-black/30" />
 
                       {/* Duration Badge (Top-Left) */}
-                      <div className="absolute top-3 left-3 px-3 py-1 rounded-full bg-[#111111]/90 backdrop-blur-md text-white text-[11px] font-bold font-syne uppercase border border-white/20">
+                      <div className="absolute top-3 left-3 px-3 py-1 rounded-full bg-[#171721]/90 backdrop-blur-md text-[#9CB4E8] text-[11px] font-bold font-syne uppercase border border-[#9CB4E8]/30">
                         {pkg.durationLabel}
                       </div>
 
                       {/* Advance Amount Badge (Top-Right) */}
-                      <div className="absolute top-3 right-3 px-2.5 py-1 rounded-full bg-emerald-600 text-white text-[11px] font-bold font-syne shadow-md flex items-center gap-1">
+                      <div className="absolute top-3 right-3 px-2.5 py-1 rounded-full bg-[#5266EB] text-[#EDEDF3] text-[11px] font-bold font-syne shadow-md flex items-center gap-1">
                         <ShieldCheck className="w-3 h-3" />
                         <span>{pkg.advanceLabel}</span>
                       </div>
 
                       {/* Travel Dates Ribbon (Bottom) */}
-                      <div className="absolute bottom-3 left-3 right-3 flex items-center justify-between text-white text-[11px] font-bold bg-black/65 backdrop-blur-md px-3 py-1.5 rounded-lg border border-white/10">
-                        <span className="flex items-center gap-1.5 text-amber-300">
-                          <Calendar className="w-3.5 h-3.5 text-amber-400" /> {pkg.datesLabel}
+                      <div className="absolute bottom-3 left-3 right-3 flex items-center justify-between text-[#EDEDF3] text-[11px] font-bold bg-[#171721]/80 backdrop-blur-md px-3 py-1.5 rounded-lg border border-white/10">
+                        <span className="flex items-center gap-1.5 text-[#AFB2CE]">
+                          <Calendar className="w-3.5 h-3.5 text-[#9CB4E8]" /> {pkg.datesLabel}
                         </span>
-                        <span className="flex items-center gap-1 text-emerald-300">
-                          <Star className="w-3.5 h-3.5 fill-amber-400 text-amber-400" /> {pkg.rating} ({pkg.reviewsCount})
+                        <span className="flex items-center gap-1 text-[#9CB4E8]">
+                          <Star className="w-3.5 h-3.5 fill-[#9CB4E8] text-[#9CB4E8]" /> {pkg.rating} ({pkg.reviewsCount})
                         </span>
                       </div>
                     </div>
@@ -210,15 +219,15 @@ export default function ToursCatalogPage() {
                     {/* Card Body */}
                     <div className="p-5 space-y-3.5">
                       <div className="flex items-center justify-between text-xs text-gray-500">
-                        <span className="font-bold text-emerald-700 flex items-center gap-1">
-                          <MapPin className="w-3.5 h-3.5 text-emerald-600 shrink-0" /> {pkg.destination}
+                        <span className="font-bold text-[#5266EB] flex items-center gap-1">
+                          <MapPin className="w-3.5 h-3.5 text-[#5266EB] shrink-0" /> {pkg.destination}
                         </span>
                         <span className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider">
                           {pkg.sites.length} Sacred Sites
                         </span>
                       </div>
 
-                      <h3 className="font-syne text-base font-bold text-[#111111] leading-tight group-hover:text-emerald-700 transition-colors">
+                      <h3 className="font-syne text-base font-bold text-[#000000] leading-tight group-hover:text-[#5266EB] transition-colors">
                         <Link href={`/tours-travels/${pkg.slug}`}>{pkg.title}</Link>
                       </h3>
                       
@@ -233,7 +242,7 @@ export default function ToursCatalogPage() {
                         </span>
                         <div className="flex flex-wrap gap-1">
                           {pkg.sites.slice(0, 4).map((site, i) => (
-                            <span key={i} className="px-2 py-0.5 rounded-md bg-emerald-50 text-[10px] text-emerald-800 font-medium border border-emerald-100">
+                            <span key={i} className="px-2 py-0.5 rounded-md bg-[#9CB4E8]/20 text-[10px] text-[#171721] font-medium border border-[#9CB4E8]/30">
                               ✓ {site}
                             </span>
                           ))}
@@ -267,12 +276,12 @@ export default function ToursCatalogPage() {
                     <div className="flex items-baseline justify-between">
                       <div>
                         <span className="text-[10px] text-gray-400 block font-semibold uppercase">Tour Fare</span>
-                        <span className="font-syne text-base sm:text-lg font-extrabold text-[#111111]">
+                        <span className="font-syne text-base sm:text-lg font-extrabold text-[#000000]">
                           {pkg.priceDisplay}
                         </span>
                       </div>
                       <div className="text-right">
-                        <span className="text-[10px] text-emerald-700 font-bold block bg-emerald-50 px-2 py-0.5 rounded border border-emerald-200">
+                        <span className="text-[10px] text-[#171721] font-bold block bg-[#9CB4E8]/20 px-2 py-0.5 rounded border border-[#9CB4E8]/40">
                           {pkg.advanceLabel}
                         </span>
                       </div>
@@ -291,7 +300,7 @@ export default function ToursCatalogPage() {
                           deposit: pkg.depositPrice || 2999,
                         })
                       }
-                      className="w-full py-3 px-3 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-extrabold text-xs tracking-wider uppercase transition-all shadow-md shadow-emerald-900/20 flex items-center justify-center gap-2 hover:scale-[1.01] active:scale-99 cursor-pointer"
+                      className="w-full py-3 px-3 rounded-xl bg-[#5266EB] hover:bg-[#3E51D4] text-[#EDEDF3] font-extrabold text-xs tracking-wider uppercase transition-all shadow-md shadow-[#5266EB]/20 flex items-center justify-center gap-2 hover:scale-[1.01] active:scale-99 cursor-pointer"
                     >
                       <CreditCard className="w-3.5 h-3.5" />
                       <span>Book Now Online ({pkg.advanceLabel})</span>
@@ -302,7 +311,7 @@ export default function ToursCatalogPage() {
                       {/* Call CTA */}
                       <a
                         href={callUrl}
-                        className="flex items-center justify-center gap-1.5 py-2 px-2 rounded-xl bg-red-600 hover:bg-red-700 text-white font-bold text-xs transition-colors shadow-sm"
+                        className="flex items-center justify-center gap-1.5 py-2 px-2 rounded-xl bg-[#171721] hover:bg-[#272735] text-[#EDEDF3] font-bold text-xs transition-colors shadow-sm"
                         title={`Call ${SHARED_TOUR_CONTACT.phone1Display}`}
                       >
                         <Phone className="w-3.5 h-3.5" />
@@ -314,7 +323,7 @@ export default function ToursCatalogPage() {
                         href={whatsappUrl}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="flex items-center justify-center gap-1.5 py-2 px-2 rounded-xl bg-[#0D1912] hover:bg-[#152B1E] text-emerald-300 font-bold text-xs transition-colors shadow-sm border border-emerald-500/30"
+                        className="flex items-center justify-center gap-1.5 py-2 px-2 rounded-xl bg-[#272735] hover:bg-[#171721] text-[#9CB4E8] font-bold text-xs transition-colors shadow-sm border border-[#9CB4E8]/30"
                         title="Chat on WhatsApp"
                       >
                         <MessageCircle className="w-3.5 h-3.5" />
@@ -324,7 +333,7 @@ export default function ToursCatalogPage() {
                       {/* Detail CTA */}
                       <Link
                         href={`/tours-travels/${pkg.slug}`}
-                        className="flex items-center justify-center gap-1 py-2 px-2 rounded-xl bg-[#111111] hover:bg-gray-800 text-white font-bold text-xs transition-colors shadow-sm"
+                        className="flex items-center justify-center gap-1 py-2 px-2 rounded-xl bg-[#171721] hover:bg-[#5266EB] text-[#EDEDF3] font-bold text-xs transition-colors shadow-sm"
                       >
                         <span>Details</span>
                         <ArrowUpRight className="w-3.5 h-3.5" />
@@ -337,111 +346,6 @@ export default function ToursCatalogPage() {
               );
             })}
           </div>
-
-          {/* ─── 3B. POPULAR 3-CAR SELF-DRIVE FLEET COMPANION ─────────────── */}
-          <div className="pt-12 mt-12 border-t border-gray-200/80 space-y-6">
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-              <div className="space-y-1">
-                <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-red-50 text-[#FF3B30] border border-red-200 text-[10px] font-bold uppercase tracking-wider font-syne">
-                  <Car className="w-3.5 h-3.5" /> SELF-DRIVE FLEET
-                </div>
-                <h3 className="font-syne text-xl sm:text-2xl font-extrabold text-[#111111] tracking-tight">
-                  Prefer a Private Roadtrip? Explore Top 3 Self-Drive Cars
-                </h3>
-                <p className="text-xs text-gray-500 font-normal">
-                  Drive to your pilgrimage or holiday destination on your own schedule with zero security deposit friction.
-                </p>
-              </div>
-
-              <Link
-                href="/car-rentals/cars"
-                className="btn-red-pill text-xs font-bold px-6 py-2.5 rounded-full shadow-md shadow-red-600/20 hover:scale-105 transition-all inline-flex items-center gap-1.5 shrink-0 self-start sm:self-auto"
-              >
-                <span>Explore All 8 Cars</span>
-                <ArrowRight className="w-3.5 h-3.5" />
-              </Link>
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              {[
-                FLEET_VEHICLES.find((c) => c.id === 'swift-black-2026') || FLEET_VEHICLES[2],
-                FLEET_VEHICLES.find((c) => c.id === 'thar-diesel-2023') || FLEET_VEHICLES[6],
-                FLEET_VEHICLES.find((c) => c.id === 'fortuner-2017') || FLEET_VEHICLES[7],
-              ].map((car) => {
-                const priceINR = car.pricePerDay;
-                return (
-                  <div
-                    key={car.id}
-                    className="rounded-2xl bg-white border border-gray-200 overflow-hidden flex flex-col justify-between shadow-sm hover:shadow-xl transition-all duration-300 group"
-                  >
-                    {/* Clean Studio Image Header */}
-                    <div className="relative h-48 bg-[#F4F5F7] overflow-hidden flex items-center justify-center">
-                      <img
-                        src={car.image}
-                        alt={car.name}
-                        loading="lazy"
-                        decoding="async"
-                        className="w-full h-full object-contain p-3 group-hover:scale-105 transition-transform duration-500"
-                      />
-                      
-                      <div className="absolute top-3 left-3 px-3 py-1 rounded-full bg-black/70 backdrop-blur-md text-amber-300 border border-amber-400/30 text-[10px] font-black font-syne uppercase tracking-wider">
-                        {car.category || 'Luxury Fleet'}
-                      </div>
-
-                      <div className="absolute bottom-3 left-3 px-2.5 py-1 rounded-full bg-black/60 backdrop-blur-md text-emerald-300 text-[10px] font-bold border border-emerald-400/30">
-                        Zero Security Deposit
-                      </div>
-                    </div>
-
-                    {/* Card Content */}
-                    <div className="p-5 space-y-4 flex-1 flex flex-col justify-between">
-                      <div className="space-y-2">
-                        <div className="flex items-center justify-between">
-                          <h4 className="font-syne text-base font-bold text-[#111111] group-hover:text-[#FF3B30] transition-colors">
-                            {car.name}
-                          </h4>
-                          <span className="text-[10px] font-bold text-gray-500 bg-gray-100 px-2 py-0.5 rounded-full">
-                            {car.specs?.transmission || 'Automatic'}
-                          </span>
-                        </div>
-
-                        <div className="flex items-center gap-2 text-[10px] text-gray-500">
-                          <span className="bg-gray-100 px-2.5 py-1 rounded-md font-medium">
-                            {car.specs?.fuelType || 'Petrol'}
-                          </span>
-                          <span className="bg-gray-100 px-2.5 py-1 rounded-md font-medium">
-                            {car.specs?.passengers || 5} Seats
-                          </span>
-                          <span className="bg-gray-100 px-2.5 py-1 rounded-md font-medium">
-                            Full Insurance
-                          </span>
-                        </div>
-                      </div>
-
-                      {/* Footer Price & Action */}
-                      <div className="flex items-center justify-between pt-3 border-t border-gray-100">
-                        <div>
-                          <span className="text-[10px] text-gray-400 block uppercase font-semibold">Starting at</span>
-                          <span className="font-syne text-lg font-bold text-[#111111]">
-                            ₹{priceINR.toLocaleString('en-IN')}<span className="text-xs font-normal text-gray-500"> / day</span>
-                          </span>
-                        </div>
-
-                        <Link
-                          href={`/car-rentals/cars/${car.id}`}
-                          className="btn-red-pill text-xs font-bold px-5 py-2 rounded-full shadow-md shadow-red-600/20 hover:scale-105 transition-all inline-flex items-center gap-1"
-                        >
-                          <span>Rent Car</span>
-                          <ArrowRight className="w-3.5 h-3.5" />
-                        </Link>
-                      </div>
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
-          </div>
-
         </div>
       </section>
 
@@ -474,15 +378,15 @@ export default function ToursCatalogPage() {
                 href={`https://wa.me/${SHARED_TOUR_CONTACT.whatsappNumber}?text=Hi%20Aarambha%20Tours,%20I%20want%20to%20inquire%20about%20Pilgrimage%20Tour%20Packages.`}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="w-full sm:w-auto px-6 py-3.5 rounded-full bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs tracking-wider uppercase inline-flex items-center justify-center gap-2 shadow-lg shadow-emerald-900/40 transition-all hover:scale-105"
+                className="w-full sm:w-auto px-6 py-3.5 rounded-full bg-[#272735] hover:bg-[#171721] text-[#9CB4E8] font-bold text-xs tracking-wider uppercase inline-flex items-center justify-center gap-2 shadow-lg border border-[#9CB4E8]/30 transition-all hover:scale-105"
               >
-                <MessageCircle className="w-4 h-4 fill-white" />
+                <MessageCircle className="w-4 h-4 fill-[#9CB4E8]" />
                 <span>WhatsApp Booking</span>
               </a>
 
               <a
                 href={`tel:+91${SHARED_TOUR_CONTACT.phone1}`}
-                className="w-full sm:w-auto px-6 py-3.5 rounded-full bg-[#FF3B30] hover:bg-[#E03126] text-white font-bold text-xs tracking-wider uppercase inline-flex items-center justify-center gap-2 shadow-lg shadow-red-900/40 transition-all hover:scale-105"
+                className="w-full sm:w-auto px-6 py-3.5 rounded-full bg-[#5266EB] hover:bg-[#3E51D4] text-[#EDEDF3] font-bold text-xs tracking-wider uppercase inline-flex items-center justify-center gap-2 shadow-lg shadow-[#5266EB]/30 transition-all hover:scale-105"
               >
                 <Phone className="w-4 h-4" />
                 <span>Call {SHARED_TOUR_CONTACT.phone1Display}</span>

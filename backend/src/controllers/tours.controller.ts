@@ -124,6 +124,24 @@ export class ToursController {
     }
   }
 
+  static async verifyBooking(req: Request, res: Response, next: NextFunction): Promise<void> {
+    try {
+      const { status, rejectionReason, rejection_reason } = req.body;
+      const adminName = (req as any).adminUser?.name || 'Admin';
+      const reason = rejectionReason || rejection_reason;
+      const booking = await ToursService.verifyBooking(
+        req.params.id,
+        status || 'Confirmed',
+        reason,
+        adminName,
+        req.ip
+      );
+      res.json(booking);
+    } catch (err) {
+      next(err);
+    }
+  }
+
   static async deleteBooking(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
       const result = await ToursService.deleteBooking(req.params.id);

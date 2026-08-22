@@ -92,7 +92,7 @@ export class FleetService {
     if (mongoose.connection.readyState === 1) {
       try {
         const list = await FleetInquiry.find().sort({ createdAt: -1 });
-        if (list && list.length > 0) return list;
+        return list;
       } catch (_e) {}
     }
     return localStore.getFleetInquiries();
@@ -167,13 +167,15 @@ export class FleetService {
             totalRentalAmount: total,
             securityDepositAmount: veh.securityDeposit || 5000,
             depositAmount: dep,
-            status: body.status || 'Confirmed',
+            status: body.status || 'pending_verification',
+            utrNumber: body.utrNumber || body.utr_number || '',
+            paymentMethod: body.paymentMethod || body.payment_method || 'UPI_QR',
             agreementAccepted: true,
             agreementAcceptedAt: new Date(body.termsAcceptedAt || Date.now()),
             termsAccepted: true,
             termsAcceptedAt: new Date(body.termsAcceptedAt || Date.now()),
             termsVersion: body.termsVersion || '2026.1-STANDARD',
-            specialRequests: specialRequests || body.pickupLocation ? `Pickup: ${body.pickupLocation}` : '',
+            specialRequests: specialRequests || (body.pickupLocation ? `Pickup: ${body.pickupLocation}` : ''),
           });
 
           await recordAudit({
@@ -181,7 +183,7 @@ export class FleetService {
             action: 'CREATE_FLEET_BOOKING',
             targetType: 'fleet_booking',
             targetId: String(booking._id),
-            details: { bookingCode, deposit: dep, termsAccepted: true, termsVersion: body.termsVersion || '2026.1-STANDARD' },
+            details: { bookingCode, deposit: dep, utrNumber: body.utrNumber, termsAccepted: true, termsVersion: body.termsVersion || '2026.1-STANDARD' },
             ipAddress,
           });
 
@@ -219,7 +221,9 @@ export class FleetService {
       deposit_paid: body.depositPaid || body.deposit_paid || 500,
       depositPaid: body.depositPaid || body.deposit_paid || 500,
       depositAmount: body.depositPaid || body.deposit_paid || 500,
-      status: body.status || 'Confirmed',
+      status: body.status || 'pending_verification',
+      utrNumber: body.utrNumber || body.utr_number || '',
+      paymentMethod: body.paymentMethod || body.payment_method || 'UPI_QR',
       agreementAccepted: true,
       termsAccepted: true,
       termsAcceptedAt: body.termsAcceptedAt || new Date().toISOString(),
@@ -230,11 +234,40 @@ export class FleetService {
     return localStore.addFleetBooking(newBooking);
   }
 
+  static async verifyBooking(id: string, status: 'Confirmed' | 'Deposit Paid' | 'Rejected', rejectionReason?: string, adminName: string = 'Admin', ipAddress?: string) {
+    if (mongoose.connection.readyState === 1) {
+      try {
+        const booking = await FleetBooking.findById(id);
+        if (booking) {
+          booking.status = status;
+          booking.verifiedAt = new Date();
+          booking.verifiedBy = adminName;
+          if (rejectionReason) booking.rejectionReason = rejectionReason;
+          await booking.save();
+
+          await recordAudit({
+            actorName: adminName,
+            action: status === 'Rejected' ? 'REJECT_FLEET_BOOKING' : 'CONFIRM_FLEET_BOOKING',
+            targetType: 'fleet_booking',
+            targetId: String(booking._id),
+            details: { bookingCode: booking.bookingCode, utrNumber: booking.utrNumber, status, rejectionReason },
+            ipAddress,
+          });
+
+          return booking;
+        }
+      } catch (_e) {}
+    }
+
+    const updated = localStore.updateFleetBookingStatus(id, status, rejectionReason);
+    return updated || { _id: id, id, status, rejectionReason, verifiedAt: new Date().toISOString() };
+  }
+
   static async listBookings() {
     if (mongoose.connection.readyState === 1) {
       try {
         const list = await FleetBooking.find().sort({ createdAt: -1 }).populate('vehicleId');
-        if (list && list.length > 0) return list;
+        return list;
       } catch (_e) {}
     }
     return localStore.getFleetBookings();

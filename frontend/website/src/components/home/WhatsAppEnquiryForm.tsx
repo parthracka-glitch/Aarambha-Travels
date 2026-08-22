@@ -109,27 +109,27 @@ export default function WhatsAppEnquiryForm({ mode = 'cars' }: { mode?: 'cars' |
   };
 
   return (
-    <section className="py-16 bg-[#090D14] text-white relative overflow-hidden border-t border-gray-800">
+    <section className="py-16 bg-[#171721] text-[#EDEDF3] relative overflow-hidden border-t border-[#272735]">
       
       {/* Ambient Glows */}
       <div className={`absolute top-1/3 left-1/4 w-[500px] h-[300px] blur-[130px] rounded-full pointer-events-none ${
-        mode === 'cars' ? 'bg-red-600/10' : 'bg-emerald-600/10'
+        mode === 'cars' ? 'bg-[#5266EB]/10' : 'bg-[#9CB4E8]/10'
       }`} />
 
       <div className="max-w-4xl mx-auto px-6 lg:px-12 relative z-10 space-y-10">
         
         {/* Section Header */}
         <div className="text-center space-y-3">
-          <span className="inline-flex items-center gap-1.5 px-3.5 py-1 rounded-full bg-white/10 border border-white/20 text-white text-xs font-extrabold font-syne uppercase tracking-wider backdrop-blur-md">
-            <MessageSquare className={`w-3.5 h-3.5 ${mode === 'cars' ? 'text-red-400' : 'text-emerald-400'}`} />
+          <span className="inline-flex items-center gap-1.5 px-3.5 py-1 rounded-full bg-white/10 border border-white/20 text-[#EDEDF3] text-xs font-extrabold font-syne uppercase tracking-wider backdrop-blur-md">
+            <MessageSquare className={`w-3.5 h-3.5 ${mode === 'cars' ? 'text-[#5266EB]' : 'text-[#9CB4E8]'}`} />
             {mode === 'cars' ? 'SELF-DRIVE FLEET WHATSAPP INQUIRY' : 'TOUR PACKAGES WHATSAPP INQUIRY'}
           </span>
 
-          <h2 className="font-syne text-3xl sm:text-4xl font-extrabold text-white tracking-tight">
+          <h2 className="font-syne text-3xl sm:text-4xl font-extrabold text-[#EDEDF3] tracking-tight">
             {mode === 'cars' ? 'Car Rental WhatsApp Inquiry' : 'Tour Package WhatsApp Inquiry'}
           </h2>
 
-          <p className="text-xs text-gray-400 max-w-xl mx-auto leading-relaxed font-normal">
+          <p className="text-xs text-[#AFB2CE] max-w-xl mx-auto leading-relaxed font-normal">
             {mode === 'cars'
               ? 'Select your preferred self-drive vehicle below to send a direct WhatsApp inquiry to our office hotline.'
               : 'Select your preferred tour package below to send a direct WhatsApp inquiry to our office hotline.'}
@@ -138,36 +138,36 @@ export default function WhatsAppEnquiryForm({ mode = 'cars' }: { mode?: 'cars' |
 
         {/* 🚗 BOX 1: CAR RENTALS DEDICATED WHATSAPP INQUIRY BOX */}
         {mode === 'cars' && (
-          <div className="rounded-3xl border p-6 sm:p-10 space-y-6 shadow-2xl transition-all duration-300 bg-[#130606] border-red-500/30">
+          <div className="rounded-3xl border p-6 sm:p-10 space-y-6 shadow-2xl transition-all duration-300 bg-[#272735]/80 border-[#5266EB]/30">
             
             {/* Box Header */}
-            <div className="flex items-center justify-between pb-4 border-b border-red-500/20">
+            <div className="flex items-center justify-between pb-4 border-b border-[#5266EB]/20">
               <div className="flex items-center gap-3">
-                <div className="p-2.5 rounded-2xl bg-red-500/20 text-[#FF3B30] border border-red-500/30">
+                <div className="p-2.5 rounded-2xl bg-[#5266EB]/20 text-[#5266EB] border border-[#5266EB]/30">
                   <Car className="w-5 h-5" />
                 </div>
                 <div>
-                  <h3 className="font-syne text-xl font-bold text-white flex items-center gap-2">
+                  <h3 className="font-syne text-xl font-bold text-[#EDEDF3] flex items-center gap-2">
                     Self-Drive Fleet Inquiry
                   </h3>
-                  <p className="text-xs text-red-300">Direct Vehicle Booking Desk</p>
+                  <p className="text-xs text-[#9CB4E8]">Direct Vehicle Booking Desk</p>
                 </div>
               </div>
-              <span className="px-3 py-1 rounded-full bg-red-500/20 text-red-400 text-xs font-bold font-syne border border-red-500/30 uppercase">
+              <span className="px-3 py-1 rounded-full bg-[#5266EB]/20 text-[#9CB4E8] text-xs font-bold font-syne border border-[#5266EB]/30 uppercase">
                 Cars Only
               </span>
             </div>
 
             {carSubmitted ? (
               <div className="text-center py-8 space-y-3">
-                <div className="w-16 h-16 bg-red-500/20 text-[#FF3B30] rounded-full flex items-center justify-center mx-auto border border-red-500/40 animate-bounce">
+                <div className="w-16 h-16 bg-[#5266EB]/20 text-[#5266EB] rounded-full flex items-center justify-center mx-auto border border-[#5266EB]/40 animate-bounce">
                   <CheckCircle2 className="w-8 h-8" />
                 </div>
-                <h4 className="font-syne text-2xl font-bold text-white">Car Inquiry Sent!</h4>
+                <h4 className="font-syne text-2xl font-bold text-[#EDEDF3]">Car Inquiry Sent!</h4>
                 <p className="text-xs text-gray-300">WhatsApp opened with your selected vehicle inquiry.</p>
                 <button
                   onClick={() => setCarSubmitted(false)}
-                  className="mt-2 text-xs font-bold text-red-400 underline cursor-pointer"
+                  className="mt-2 text-xs font-bold text-[#9CB4E8] underline cursor-pointer"
                 >
                   Send Another Car Inquiry
                 </button>
@@ -177,17 +177,17 @@ export default function WhatsAppEnquiryForm({ mode = 'cars' }: { mode?: 'cars' |
                 
                 {/* Select Car Model Dropdown */}
                 <div className="space-y-1.5">
-                  <label className="font-bold text-red-300 uppercase tracking-wider flex items-center gap-1.5 text-xs">
-                    <Car className="w-4 h-4 text-red-400" /> Select Fleet Vehicle Model <span className="text-red-400">*</span>
+                  <label className="font-bold text-[#9CB4E8] uppercase tracking-wider flex items-center gap-1.5 text-xs">
+                    <Car className="w-4 h-4 text-[#9CB4E8]" /> Select Fleet Vehicle Model <span className="text-[#5266EB]">*</span>
                   </label>
                   <select
                     name="carId"
                     value={carForm.carId}
                     onChange={(e) => setCarForm({ ...carForm, carId: e.target.value })}
-                    className="w-full bg-black/60 border border-red-500/30 rounded-xl p-3.5 text-xs sm:text-sm text-white focus:outline-none focus:border-red-500 font-syne font-bold cursor-pointer"
+                    className="w-full bg-[#171721] border border-[#5266EB]/30 rounded-xl p-3.5 text-xs sm:text-sm text-[#EDEDF3] focus:outline-none focus:border-[#5266EB] font-syne font-bold cursor-pointer"
                   >
                     {FLEET_VEHICLES.map((car) => (
-                      <option key={car.id} value={car.id} className="bg-gray-900 text-white">
+                      <option key={car.id} value={car.id} className="bg-[#171721] text-white">
                         🚗 {car.name} — ₹{Math.round(car.pricePerDay * 65).toLocaleString('en-IN')}/day ({car.category || 'Luxury'})
                       </option>
                     ))}
@@ -196,8 +196,8 @@ export default function WhatsAppEnquiryForm({ mode = 'cars' }: { mode?: 'cars' |
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
                   <div className="space-y-1.5">
-                    <label className="font-bold text-gray-300 flex items-center gap-1.5">
-                      <User className="w-3.5 h-3.5 text-red-400" /> Full Name *
+                    <label className="font-bold text-[#EDEDF3] flex items-center gap-1.5">
+                      <User className="w-3.5 h-3.5 text-[#9CB4E8]" /> Full Name *
                     </label>
                     <input
                       type="text"
@@ -205,13 +205,13 @@ export default function WhatsAppEnquiryForm({ mode = 'cars' }: { mode?: 'cars' |
                       value={carForm.name}
                       onChange={(e) => setCarForm({ ...carForm, name: e.target.value })}
                       placeholder="e.g. Rahul Sharma"
-                      className="w-full bg-black/40 border border-white/15 rounded-xl p-3.5 text-xs text-white placeholder:text-gray-500 focus:outline-none focus:border-red-500"
+                      className="w-full bg-[#171721] border border-white/15 rounded-xl p-3.5 text-xs text-white placeholder:text-gray-500 focus:outline-none focus:border-[#5266EB]"
                     />
                   </div>
 
                   <div className="space-y-1.5">
-                    <label className="font-bold text-gray-300 flex items-center gap-1.5">
-                      <Phone className="w-3.5 h-3.5 text-red-400" /> WhatsApp Number *
+                    <label className="font-bold text-[#EDEDF3] flex items-center gap-1.5">
+                      <Phone className="w-3.5 h-3.5 text-[#9CB4E8]" /> WhatsApp Number *
                     </label>
                     <input
                       type="tel"
@@ -219,52 +219,52 @@ export default function WhatsAppEnquiryForm({ mode = 'cars' }: { mode?: 'cars' |
                       value={carForm.phone}
                       onChange={(e) => setCarForm({ ...carForm, phone: e.target.value })}
                       placeholder="e.g. +91 82082 11478"
-                      className="w-full bg-black/40 border border-white/15 rounded-xl p-3.5 text-xs text-white placeholder:text-gray-500 focus:outline-none focus:border-red-500"
+                      className="w-full bg-[#171721] border border-white/15 rounded-xl p-3.5 text-xs text-white placeholder:text-gray-500 focus:outline-none focus:border-[#5266EB]"
                     />
                   </div>
                 </div>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
                   <div className="space-y-1.5">
-                    <label className="font-bold text-gray-300 flex items-center gap-1.5">
-                      <Calendar className="w-3.5 h-3.5 text-red-400" /> Pickup Date
+                    <label className="font-bold text-[#EDEDF3] flex items-center gap-1.5">
+                      <Calendar className="w-3.5 h-3.5 text-[#9CB4E8]" /> Pickup Date
                     </label>
                     <input
                       type="date"
                       value={carForm.date}
                       onChange={(e) => setCarForm({ ...carForm, date: e.target.value })}
-                      className="w-full bg-black/40 border border-white/15 rounded-xl p-3.5 text-xs text-white focus:outline-none focus:border-red-500"
+                      className="w-full bg-[#171721] border border-white/15 rounded-xl p-3.5 text-xs text-white focus:outline-none focus:border-[#5266EB]"
                     />
                   </div>
 
                   <div className="space-y-1.5">
-                    <label className="font-bold text-gray-300 flex items-center gap-1.5">
-                      <MapPin className="w-3.5 h-3.5 text-red-400" /> Pickup Location
+                    <label className="font-bold text-[#EDEDF3] flex items-center gap-1.5">
+                      <MapPin className="w-3.5 h-3.5 text-[#9CB4E8]" /> Pickup Location
                     </label>
                     <input
                       type="text"
                       value={carForm.pickupLocation}
                       onChange={(e) => setCarForm({ ...carForm, pickupLocation: e.target.value })}
                       placeholder="e.g. Green Hills Society, Katraj, Pune"
-                      className="w-full bg-black/40 border border-white/15 rounded-xl p-3.5 text-xs text-white placeholder:text-gray-500 focus:outline-none focus:border-red-500"
+                      className="w-full bg-[#171721] border border-white/15 rounded-xl p-3.5 text-xs text-white placeholder:text-gray-500 focus:outline-none focus:border-[#5266EB]"
                     />
                   </div>
                 </div>
 
                 <div className="space-y-1.5">
-                  <label className="font-bold text-gray-300">Message / Special Car Request</label>
+                  <label className="font-bold text-[#EDEDF3]">Message / Special Car Request</label>
                   <textarea
                     rows={3}
                     value={carForm.message}
                     onChange={(e) => setCarForm({ ...carForm, message: e.target.value })}
                     placeholder="e.g. Automatic transmission required, Mopa Airport delivery..."
-                    className="w-full bg-black/40 border border-white/15 rounded-xl p-3.5 text-xs text-white placeholder:text-gray-500 focus:outline-none focus:border-red-500 resize-none"
+                    className="w-full bg-[#171721] border border-white/15 rounded-xl p-3.5 text-xs text-white placeholder:text-gray-500 focus:outline-none focus:border-[#5266EB] resize-none"
                   />
                 </div>
 
                 <button
                   type="submit"
-                  className="w-full py-4 rounded-xl bg-[#FF3B30] hover:bg-[#E03126] text-white font-extrabold uppercase tracking-wider transition-all flex items-center justify-center gap-2 shadow-lg shadow-red-950/50 cursor-pointer hover:scale-[1.01]"
+                  className="w-full py-4 rounded-xl bg-[#5266EB] hover:bg-[#3E51D4] text-[#EDEDF3] font-extrabold uppercase tracking-wider transition-all flex items-center justify-center gap-2 shadow-lg shadow-[#5266EB]/20 cursor-pointer hover:scale-[1.01]"
                 >
                   <MessageSquare className="w-4 h-4 fill-white" />
                   <span>Send Car Inquiry on WhatsApp</span>
@@ -399,13 +399,13 @@ export default function WhatsAppEnquiryForm({ mode = 'cars' }: { mode?: 'cars' |
                     value={tourForm.message}
                     onChange={(e) => setTourForm({ ...tourForm, message: e.target.value })}
                     placeholder="e.g. 4 adults family trip, requiring 4-star hotel stay..."
-                    className="w-full bg-black/40 border border-white/15 rounded-xl p-3.5 text-xs text-white placeholder:text-gray-500 focus:outline-none focus:border-emerald-500 resize-none"
+                    className="w-full bg-black/40 border border-white/15 rounded-xl p-3.5 text-xs text-white placeholder:text-gray-500 focus:outline-none focus:border-[#5266EB] resize-none"
                   />
                 </div>
 
                 <button
                   type="submit"
-                  className="w-full py-4 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold uppercase tracking-wider transition-all flex items-center justify-center gap-2 shadow-lg shadow-emerald-950/50 cursor-pointer hover:scale-[1.01]"
+                  className="w-full py-4 rounded-xl bg-[#5266EB] hover:bg-[#3E51D4] text-[#EDEDF3] font-extrabold uppercase tracking-wider transition-all flex items-center justify-center gap-2 shadow-lg shadow-[#5266EB]/30 cursor-pointer hover:scale-[1.01]"
                 >
                   <MessageSquare className="w-4 h-4 fill-white" />
                   <span>Send Tour Inquiry on WhatsApp</span>

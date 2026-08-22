@@ -80,7 +80,7 @@ export class ToursService {
     if (mongoose.connection.readyState === 1) {
       try {
         const list = await TourInquiry.find().sort({ createdAt: -1 });
-        if (list && list.length > 0) return list;
+        return list;
       } catch (_e) {}
     }
     return localStore.getToursInquiries();
@@ -157,7 +157,9 @@ export class ToursService {
             totalAmount: total,
             depositPaid: deposit,
             balanceAmount: balance,
-            status: body.status || 'Confirmed',
+            status: body.status || 'pending_verification',
+            utrNumber: body.utrNumber || body.utr_number || '',
+            paymentMethod: body.paymentMethod || body.payment_method || 'UPI_QR',
             agreementAccepted: true,
             agreementAcceptedAt: new Date(body.termsAcceptedAt || Date.now()),
             termsAccepted: true,
@@ -171,7 +173,7 @@ export class ToursService {
             action: 'CREATE_TOURS_BOOKING',
             targetType: 'tour_booking',
             targetId: String(booking._id),
-            details: { bookingCode, deposit, termsAccepted: true, termsVersion: body.termsVersion || '2026.1-STANDARD' },
+            details: { bookingCode, deposit, utrNumber: body.utrNumber, termsAccepted: true, termsVersion: body.termsVersion || '2026.1-STANDARD' },
             ipAddress,
           });
 
@@ -203,7 +205,9 @@ export class ToursService {
       depositPaid: body.depositPaid || body.deposit_paid || 500,
       deposit_paid: body.depositPaid || body.deposit_paid || 500,
       balanceAmount: (body.totalPrice || 24000) - (body.depositPaid || 500),
-      status: body.status || 'Confirmed',
+      status: body.status || 'pending_verification',
+      utrNumber: body.utrNumber || body.utr_number || '',
+      paymentMethod: body.paymentMethod || body.payment_method || 'UPI_QR',
       agreementAccepted: true,
       termsAccepted: true,
       termsAcceptedAt: body.termsAcceptedAt || new Date().toISOString(),
@@ -213,11 +217,40 @@ export class ToursService {
     return localStore.addToursBooking(newBooking);
   }
 
+  static async verifyBooking(id: string, status: 'Confirmed' | 'Deposit Paid' | 'Rejected', rejectionReason?: string, adminName: string = 'Admin', ipAddress?: string) {
+    if (mongoose.connection.readyState === 1) {
+      try {
+        const booking = await TourBooking.findById(id);
+        if (booking) {
+          booking.status = status;
+          booking.verifiedAt = new Date();
+          booking.verifiedBy = adminName;
+          if (rejectionReason) booking.rejectionReason = rejectionReason;
+          await booking.save();
+
+          await recordAudit({
+            actorName: adminName,
+            action: status === 'Rejected' ? 'REJECT_TOURS_BOOKING' : 'CONFIRM_TOURS_BOOKING',
+            targetType: 'tour_booking',
+            targetId: String(booking._id),
+            details: { bookingCode: booking.bookingCode, utrNumber: booking.utrNumber, status, rejectionReason },
+            ipAddress,
+          });
+
+          return booking;
+        }
+      } catch (_e) {}
+    }
+
+    const updated = localStore.updateToursBookingStatus(id, status, rejectionReason);
+    return updated || { _id: id, id, status, rejectionReason, verifiedAt: new Date().toISOString() };
+  }
+
   static async listBookings() {
     if (mongoose.connection.readyState === 1) {
       try {
         const list = await TourBooking.find().sort({ createdAt: -1 }).populate('packageId');
-        if (list && list.length > 0) return list;
+        return list;
       } catch (_e) {}
     }
     return localStore.getToursBookings();

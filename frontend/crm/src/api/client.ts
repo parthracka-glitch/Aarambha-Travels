@@ -51,7 +51,7 @@ export async function apiFetch(path: string, opts?: RequestInit) {
 
   if (!res.ok) {
     const err = await res.json().catch(() => ({ detail: res.statusText }));
-    throw new Error(err.detail || res.statusText);
+    throw new Error(err.detail || err.message || err.error || res.statusText);
   }
 
   const data = await res.json();

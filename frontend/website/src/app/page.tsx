@@ -42,7 +42,7 @@ function PortalContent() {
   ];
 
   return (
-    <div className="min-h-screen bg-[#FAFAFC] text-[#18181B] flex flex-col font-sans selection:bg-[#FF3B30] selection:text-white">
+    <div className="min-h-screen bg-[#FAFAFC] text-[#18181B] flex flex-col font-sans selection:bg-[#5266EB] selection:text-white">
       
       <Navbar vertical="home" />
 
@@ -55,33 +55,33 @@ function PortalContent() {
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 text-xs">
             
             <div className="flex items-center gap-3 p-3.5 rounded-2xl bg-[#FAFAFC] border border-gray-200">
-              <ShieldCheck className="w-5 h-5 text-emerald-600 flex-shrink-0" />
+              <ShieldCheck className="w-5 h-5 text-[#5266EB] flex-shrink-0" />
               <div>
-                <h4 className="font-bold text-[#111111] text-xs font-syne">100% Verified Stays & Cars</h4>
+                <h4 className="font-bold text-[#000000] text-xs font-syne">100% Verified Stays & Cars</h4>
                 <p className="text-[11px] text-gray-500">Zero dep insurance & certified guides.</p>
               </div>
             </div>
 
             <div className="flex items-center gap-3 p-3.5 rounded-2xl bg-[#FAFAFC] border border-gray-200">
-              <MapPin className="w-5 h-5 text-[#FF3B30] flex-shrink-0" />
+              <MapPin className="w-5 h-5 text-[#5266EB] flex-shrink-0" />
               <div>
-                <h4 className="font-bold text-[#111111] text-xs font-syne">Doorstep Delivery in Pune</h4>
+                <h4 className="font-bold text-[#000000] text-xs font-syne">Doorstep Delivery in Pune</h4>
                 <p className="text-[11px] text-gray-500">Green Hills Soc Katraj, Pune Airport & doorstep.</p>
               </div>
             </div>
 
             <div className="flex items-center gap-3 p-3.5 rounded-2xl bg-[#FAFAFC] border border-gray-200">
-              <Star className="w-5 h-5 text-amber-500 flex-shrink-0 fill-amber-500" />
+              <Star className="w-5 h-5 text-[#9CB4E8] flex-shrink-0 fill-[#9CB4E8]" />
               <div>
-                <h4 className="font-bold text-[#111111] text-xs font-syne">₹500 Deposit Reserve</h4>
+                <h4 className="font-bold text-[#000000] text-xs font-syne">₹500 Deposit Reserve</h4>
                 <p className="text-[11px] text-gray-500">Lock your booking with 100% refund policy.</p>
               </div>
             </div>
 
             <div className="flex items-center gap-3 p-3.5 rounded-2xl bg-[#FAFAFC] border border-gray-200">
-              <Sparkles className="w-5 h-5 text-purple-600 flex-shrink-0" />
+              <Sparkles className="w-5 h-5 text-[#AFB2CE] flex-shrink-0" />
               <div>
-                <h4 className="font-bold text-[#111111] text-xs font-syne">24/7 Dedicated Support</h4>
+                <h4 className="font-bold text-[#000000] text-xs font-syne">24/7 Dedicated Support</h4>
                 <p className="text-[11px] text-gray-500">Round-the-clock helpline & WhatsApp.</p>
               </div>
             </div>
@@ -97,10 +97,10 @@ function PortalContent() {
           {/* Header & Filter Switcher */}
           <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 border-b border-gray-200/80 pb-6">
             <div>
-              <span className="text-xs font-black text-[#FF3B30] uppercase tracking-widest block font-syne mb-1">
+              <span className="text-xs font-black text-[#5266EB] uppercase tracking-widest block font-syne mb-1">
                 SPOTLIGHT GLIMPSE
               </span>
-              <h2 className="font-syne text-3xl sm:text-4xl font-extrabold text-[#111111] tracking-tight">
+              <h2 className="font-syne text-3xl sm:text-4xl font-extrabold text-[#000000] tracking-tight">
                 Famous Tours & Self-Drive Fleet
               </h2>
               <p className="text-xs text-gray-500 mt-1 font-normal">
@@ -114,7 +114,7 @@ function PortalContent() {
                 onClick={() => setSpotlightTab('all')}
                 className={`px-5 py-2 rounded-full transition-all ${
                   spotlightTab === 'all'
-                    ? 'bg-[#111111] text-white shadow-md'
+                    ? 'bg-[#171721] text-[#EDEDF3] shadow-md'
                     : 'text-gray-500 hover:text-black'
                 }`}
               >
@@ -124,8 +124,8 @@ function PortalContent() {
                 onClick={() => setSpotlightTab('tours')}
                 className={`px-5 py-2 rounded-full transition-all flex items-center gap-1.5 ${
                   spotlightTab === 'tours'
-                    ? 'bg-emerald-600 text-white shadow-md'
-                    : 'text-gray-500 hover:text-emerald-700'
+                    ? 'bg-[#5266EB] text-white shadow-md'
+                    : 'text-gray-500 hover:text-[#5266EB]'
                 }`}
               >
                 <Compass className="w-3.5 h-3.5" />
@@ -135,8 +135,8 @@ function PortalContent() {
                 onClick={() => setSpotlightTab('cars')}
                 className={`px-5 py-2 rounded-full transition-all flex items-center gap-1.5 ${
                   spotlightTab === 'cars'
-                    ? 'bg-[#FF3B30] text-white shadow-md'
-                    : 'text-gray-500 hover:text-red-600'
+                    ? 'bg-[#5266EB] text-white shadow-md'
+                    : 'text-gray-500 hover:text-[#5266EB]'
                 }`}
               >
                 <Car className="w-3.5 h-3.5" />
@@ -150,11 +150,11 @@ function PortalContent() {
             <div className="space-y-6">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
-                  <div className="p-2 rounded-xl bg-emerald-500/10 text-emerald-600 border border-emerald-500/20">
+                  <div className="p-2 rounded-xl bg-[#5266EB]/10 text-[#5266EB] border border-[#5266EB]/20">
                     <Compass className="w-5 h-5" />
                   </div>
                   <div>
-                    <h3 className="font-syne text-xl font-bold text-[#111111]">
+                    <h3 className="font-syne text-xl font-bold text-[#000000]">
                       Famous Tour Packages
                     </h3>
                     <p className="text-xs text-gray-500">Handpicked curated departure batches with 4.8+ ratings.</p>
@@ -163,7 +163,7 @@ function PortalContent() {
 
                 <Link
                   href="/tours-travels"
-                  className="text-xs font-bold text-emerald-600 hover:text-emerald-800 flex items-center gap-1 hover:underline"
+                  className="text-xs font-bold text-[#5266EB] hover:text-[#3E51D4] flex items-center gap-1 hover:underline"
                 >
                   <span>Explore All Tours</span>
                   <ArrowRight className="w-3.5 h-3.5" />
@@ -192,20 +192,20 @@ function PortalContent() {
                         <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-black/30 opacity-80" />
                         
                         {/* Top Badges */}
-                        <div className="absolute top-3 left-3 px-3 py-1 rounded-full bg-emerald-950/80 backdrop-blur-md text-emerald-300 border border-emerald-400/30 text-[10px] font-black font-syne uppercase tracking-wider flex items-center gap-1">
-                          <Award className="w-3 h-3 text-emerald-400" />
+                        <div className="absolute top-3 left-3 px-3 py-1 rounded-full bg-[#171721]/90 backdrop-blur-md text-[#9CB4E8] border border-[#9CB4E8]/30 text-[10px] font-black font-syne uppercase tracking-wider flex items-center gap-1">
+                          <Award className="w-3.5 h-3.5 text-[#9CB4E8]" />
                           <span>{tour.durationLabel}</span>
                         </div>
 
-                        <div className="absolute top-3 right-3 px-2.5 py-1 rounded-full bg-emerald-600 text-white text-[10px] font-bold shadow-md flex items-center gap-1">
+                        <div className="absolute top-3 right-3 px-2.5 py-1 rounded-full bg-[#5266EB] text-[#EDEDF3] text-[10px] font-bold shadow-md flex items-center gap-1">
                           <ShieldCheck className="w-3 h-3" />
                           <span>{tour.advanceLabel}</span>
                         </div>
 
-                        <div className="absolute bottom-3 left-3 right-3 flex items-center justify-between text-white text-[10px] font-bold bg-black/60 backdrop-blur-md px-2.5 py-1 rounded-lg border border-white/10">
-                          <span className="text-amber-300">📅 {tour.datesLabel}</span>
-                          <span className="flex items-center gap-1 text-emerald-300">
-                            <Star className="w-3 h-3 fill-amber-400 text-amber-400" /> {tour.rating} ({tour.reviewsCount})
+                        <div className="absolute bottom-3 left-3 right-3 flex items-center justify-between text-[#EDEDF3] text-[10px] font-bold bg-[#171721]/80 backdrop-blur-md px-2.5 py-1 rounded-lg border border-white/10">
+                          <span className="text-[#AFB2CE]">📅 {tour.datesLabel}</span>
+                          <span className="flex items-center gap-1 text-[#9CB4E8]">
+                            <Star className="w-3 h-3 fill-[#9CB4E8] text-[#9CB4E8]" /> {tour.rating} ({tour.reviewsCount})
                           </span>
                         </div>
                       </div>
@@ -213,10 +213,10 @@ function PortalContent() {
                       {/* Card Content */}
                       <div className="p-5 space-y-3 flex-1 flex flex-col justify-between">
                         <div className="space-y-1.5">
-                          <span className="text-[10px] font-extrabold uppercase tracking-widest text-emerald-600 block">
+                          <span className="text-[10px] font-extrabold uppercase tracking-widest text-[#5266EB] block">
                             {tour.destination} • {tour.sites.length} Holy Sites
                           </span>
-                          <h4 className="font-syne text-base font-bold text-[#111111] group-hover:text-emerald-600 transition-colors line-clamp-1">
+                          <h4 className="font-syne text-base font-bold text-[#000000] group-hover:text-[#5266EB] transition-colors line-clamp-1">
                             <Link href={`/tours-travels/${tour.slug}`}>{tour.title}</Link>
                           </h4>
                           <p className="text-xs text-gray-500 line-clamp-2 leading-relaxed">
@@ -229,11 +229,11 @@ function PortalContent() {
                           <div className="flex items-baseline justify-between">
                             <div>
                               <span className="text-[10px] text-gray-400 block uppercase font-semibold">Tour Fare</span>
-                              <span className="font-syne text-base font-bold text-[#111111]">
+                              <span className="font-syne text-base font-bold text-[#000000]">
                                 {tour.priceDisplay}
                               </span>
                             </div>
-                            <span className="text-[10px] text-emerald-700 font-bold bg-emerald-50 px-2 py-0.5 rounded border border-emerald-200">
+                            <span className="text-[10px] text-[#171721] font-bold bg-[#9CB4E8]/20 px-2 py-0.5 rounded border border-[#9CB4E8]/40">
                               {tour.advanceLabel}
                             </span>
                           </div>
@@ -251,7 +251,7 @@ function PortalContent() {
                                 deposit: tour.depositPrice || 2999,
                               })
                             }
-                            className="w-full py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs transition-all shadow-sm flex items-center justify-center gap-1.5 cursor-pointer"
+                            className="w-full py-2.5 rounded-xl bg-[#5266EB] hover:bg-[#3E51D4] text-[#EDEDF3] font-bold text-xs transition-all shadow-sm flex items-center justify-center gap-1.5 cursor-pointer"
                           >
                             <CreditCard className="w-3.5 h-3.5" />
                             <span>Book Now ({tour.advanceLabel})</span>
@@ -260,7 +260,7 @@ function PortalContent() {
                           <div className="grid grid-cols-3 gap-2">
                             <a
                               href="tel:+919067617451"
-                              className="flex items-center justify-center gap-1 py-2 px-1 rounded-xl bg-red-600 hover:bg-red-700 text-white font-bold text-xs transition-colors text-center"
+                              className="flex items-center justify-center gap-1 py-2 px-1 rounded-xl bg-[#171721] hover:bg-[#272735] text-[#EDEDF3] font-bold text-xs transition-colors text-center"
                             >
                               <span>Call</span>
                             </a>
@@ -269,14 +269,14 @@ function PortalContent() {
                               href={whatsappUrl}
                               target="_blank"
                               rel="noopener noreferrer"
-                              className="flex items-center justify-center gap-1 py-2 px-1 rounded-xl bg-[#0D1912] hover:bg-[#152B1E] text-emerald-300 font-bold text-xs transition-colors text-center border border-emerald-500/30"
+                              className="flex items-center justify-center gap-1 py-2 px-1 rounded-xl bg-[#272735] hover:bg-[#171721] text-[#9CB4E8] font-bold text-xs transition-colors text-center border border-[#9CB4E8]/30"
                             >
                               <span>WhatsApp</span>
                             </a>
 
                             <Link
                               href={`/tours-travels/${tour.slug}`}
-                              className="flex items-center justify-center gap-1 py-2 px-1 rounded-xl bg-[#111111] hover:bg-gray-800 text-white font-bold text-xs transition-colors text-center"
+                              className="flex items-center justify-center gap-1 py-2 px-1 rounded-xl bg-[#171721] hover:bg-[#5266EB] text-[#EDEDF3] font-bold text-xs transition-colors text-center"
                             >
                               <span>Details</span>
                               <ArrowRight className="w-3 h-3" />
@@ -295,11 +295,11 @@ function PortalContent() {
           <div className="space-y-6 pt-4">
             <div className="flex items-center justify-between border-t border-gray-200/60 pt-8">
               <div className="flex items-center gap-2">
-                <div className="p-2 rounded-xl bg-red-500/10 text-[#FF3B30] border border-red-500/20">
+                <div className="p-2 rounded-xl bg-[#5266EB]/10 text-[#5266EB] border border-[#5266EB]/20">
                   <Car className="w-5 h-5" />
                 </div>
                 <div>
-                  <h3 className="font-syne text-xl font-bold text-[#111111]">
+                  <h3 className="font-syne text-xl font-bold text-[#000000]">
                     Famous Self-Drive Fleet (Top 3)
                   </h3>
                   <p className="text-xs text-gray-500">Pair your tour or travel independently with top-requested self-drive cars.</p>
@@ -307,10 +307,10 @@ function PortalContent() {
               </div>
 
               <Link
-                href="/car-rentals/cars"
-                className="text-xs font-bold text-[#FF3B30] hover:text-red-700 flex items-center gap-1 hover:underline"
+                href="/bus-rentals"
+                className="text-xs font-bold text-[#5266EB] hover:text-[#3E51D4] flex items-center gap-1 hover:underline"
               >
-                <span>Explore All 8 Cars</span>
+                <span>Explore Bus & Fleet Rentals</span>
                 <ArrowRight className="w-3.5 h-3.5" />
               </Link>
             </div>

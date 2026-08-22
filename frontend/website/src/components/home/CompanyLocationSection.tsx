@@ -21,12 +21,12 @@ export default function CompanyLocationSection({ mode = 'all' }: { mode?: 'cars'
         <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 border-b border-gray-100 pb-6">
           <div className="space-y-2">
             <span className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-extrabold font-syne uppercase tracking-wider ${
-              mode === 'cars' ? 'bg-red-50 text-[#FF3B30] border border-red-200' : 'bg-emerald-50 text-emerald-700 border border-emerald-200'
+              mode === 'cars' ? 'bg-[#5266EB]/10 text-[#5266EB] border border-[#5266EB]/30' : 'bg-[#9CB4E8]/20 text-[#171721] border border-[#9CB4E8]/40'
             }`}>
               <MapPin className="w-3.5 h-3.5" />
               {mode === 'cars' ? 'CAR RENTALS HQ & CONTACT' : mode === 'tours' ? 'TOURS HQ & CONTACT' : 'LOCATION & CONTACT'}
             </span>
-            <h2 className="font-syne text-3xl sm:text-4xl font-extrabold text-[#111111] tracking-tight">
+            <h2 className="font-syne text-3xl sm:text-4xl font-extrabold text-[#000000] tracking-tight">
               {mode === 'cars' ? 'Visit Central Fleet HQ & Connect' : mode === 'tours' ? 'Visit Travel Desk HQ & Connect' : 'Visit Our HQ & Connect With Us'}
             </h2>
           </div>
@@ -53,14 +53,14 @@ export default function CompanyLocationSection({ mode = 'all' }: { mode?: 'cars'
                     <img src="/images/logo.jpeg" alt="आरंभ Logo" className="w-full h-full object-contain" />
                   </div>
                   <div>
-                    <h3 className="font-['Amita','Yatra_One','Rozha_One',serif] text-xl font-bold text-[#111111] leading-none">
+                    <h3 className="font-['Amita','Yatra_One','Rozha_One',serif] text-xl font-bold text-[#000000] leading-none">
                       आरंभ <span className="font-syne text-sm font-bold text-gray-700 font-sans">Tours & Car Rentals</span>
                     </h3>
                     <p className="text-[11px] text-gray-500 mt-0.5">Government Registered Travel & Fleet Agency</p>
                   </div>
                 </div>
-                <span className="px-3 py-1 rounded-full bg-emerald-100 text-emerald-800 text-[10px] font-bold uppercase tracking-wider flex items-center gap-1 shrink-0">
-                  <ShieldCheck className="w-3 h-3 text-emerald-600" /> Verified HQ
+                <span className="px-3 py-1 rounded-full bg-[#9CB4E8]/20 text-[#171721] text-[10px] font-bold uppercase tracking-wider flex items-center gap-1 shrink-0 border border-[#9CB4E8]/30">
+                  <ShieldCheck className="w-3 h-3 text-[#5266EB]" /> Verified HQ
                 </span>
               </div>
 
@@ -69,11 +69,11 @@ export default function CompanyLocationSection({ mode = 'all' }: { mode?: 'cars'
                 
                 {/* Address */}
                 <div className="flex items-start gap-3 p-3.5 rounded-2xl bg-white border border-gray-200">
-                  <div className="p-2 rounded-xl bg-red-50 text-[#FF3B30] shrink-0">
+                  <div className="p-2 rounded-xl bg-[#5266EB]/10 text-[#5266EB] shrink-0">
                     <MapPin className="w-4 h-4" />
                   </div>
                   <div>
-                    <h4 className="font-bold text-[#111111] text-xs font-syne">Head Office</h4>
+                    <h4 className="font-bold text-[#000000] text-xs font-syne">Head Office</h4>
                     <p className="text-gray-500 text-[11px] leading-relaxed mt-0.5">
                       Green Hills Society, Near Mastan Hotel, Mangdewadi, Katraj, Pune - 411046, Maharashtra
                     </p>
@@ -82,11 +82,11 @@ export default function CompanyLocationSection({ mode = 'all' }: { mode?: 'cars'
 
                 {/* Operating Hours */}
                 <div className="flex items-start gap-3 p-3.5 rounded-2xl bg-white border border-gray-200">
-                  <div className="p-2 rounded-xl bg-purple-50 text-purple-600 shrink-0">
+                  <div className="p-2 rounded-xl bg-[#9CB4E8]/20 text-[#5266EB] shrink-0">
                     <Clock className="w-4 h-4" />
                   </div>
                   <div>
-                    <h4 className="font-bold text-[#111111] text-xs font-syne">Support Desk</h4>
+                    <h4 className="font-bold text-[#000000] text-xs font-syne">Support Desk</h4>
                     <p className="text-gray-500 text-[11px] leading-relaxed mt-0.5">
                       24/7 Operations & On-Trip Roadside Assistance
                     </p>
@@ -95,15 +95,15 @@ export default function CompanyLocationSection({ mode = 'all' }: { mode?: 'cars'
 
                 {/* Phone */}
                 <div className="flex items-start gap-3 p-3.5 rounded-2xl bg-white border border-gray-200">
-                  <div className="p-2 rounded-xl bg-emerald-50 text-emerald-600 shrink-0">
+                  <div className="p-2 rounded-xl bg-[#AFB2CE]/20 text-[#171721] shrink-0">
                     <Phone className="w-4 h-4" />
                   </div>
                   <div>
-                    <h4 className="font-bold text-[#111111] text-xs font-syne">Phone Hotline</h4>
+                    <h4 className="font-bold text-[#000000] text-xs font-syne">Phone Hotline</h4>
                     {mode === 'cars' ? (
                       <>
                         <p className="text-gray-900 font-bold text-[11px] mt-0.5">Call: +91 78208 02985</p>
-                        <p className="text-emerald-700 font-bold text-[10px]">WhatsApp: +91 82082 11478</p>
+                        <p className="text-[#5266EB] font-bold text-[10px]">WhatsApp: +91 82082 11478</p>
                       </>
                     ) : (
                       <>
@@ -116,11 +116,11 @@ export default function CompanyLocationSection({ mode = 'all' }: { mode?: 'cars'
 
                 {/* Email */}
                 <div className="flex items-start gap-3 p-3.5 rounded-2xl bg-white border border-gray-200">
-                  <div className="p-2 rounded-xl bg-blue-50 text-blue-600 shrink-0">
+                  <div className="p-2 rounded-xl bg-[#5266EB]/10 text-[#5266EB] shrink-0">
                     <Mail className="w-4 h-4" />
                   </div>
                   <div>
-                    <h4 className="font-bold text-[#111111] text-xs font-syne">Email Support</h4>
+                    <h4 className="font-bold text-[#000000] text-xs font-syne">Email Support</h4>
                     <p className="text-gray-500 text-[11px] mt-0.5">support@aarambhatravels.in</p>
                     <p className="text-gray-400 text-[10px]">bookings@aarambhatravels.in</p>
                   </div>
@@ -137,7 +137,7 @@ export default function CompanyLocationSection({ mode = 'all' }: { mode?: 'cars'
                 href={whatsappUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex items-center justify-center gap-2 px-5 py-3.5 rounded-full bg-emerald-600 hover:bg-emerald-500 text-white font-extrabold text-xs tracking-wider uppercase transition-all shadow-lg shadow-emerald-900/20 hover:scale-105 active:scale-95"
+                className="flex items-center justify-center gap-2 px-5 py-3.5 rounded-full bg-[#171721] hover:bg-[#272735] text-[#EDEDF3] font-extrabold text-xs tracking-wider uppercase transition-all shadow-lg shadow-[#171721]/20 hover:scale-105 active:scale-95"
               >
                 <MessageSquare className="w-4 h-4 fill-white" />
                 <span>Chat on WhatsApp</span>
@@ -146,7 +146,7 @@ export default function CompanyLocationSection({ mode = 'all' }: { mode?: 'cars'
               {/* Direct Call CTA Button */}
               <a
                 href={phoneUrl}
-                className="flex items-center justify-center gap-2 px-5 py-3.5 rounded-full bg-[#FF3B30] hover:bg-[#E03126] text-white font-extrabold text-xs tracking-wider uppercase transition-all shadow-lg shadow-red-900/20 hover:scale-105 active:scale-95"
+                className="flex items-center justify-center gap-2 px-5 py-3.5 rounded-full bg-[#5266EB] hover:bg-[#3E51D4] text-[#EDEDF3] font-extrabold text-xs tracking-wider uppercase transition-all shadow-lg shadow-[#5266EB]/20 hover:scale-105 active:scale-95"
               >
                 <Phone className="w-4 h-4" />
                 <span>{mode === 'cars' ? 'Call +91 78208 02985' : 'Call +91 90676 17451'}</span>
@@ -171,11 +171,11 @@ export default function CompanyLocationSection({ mode = 'all' }: { mode?: 'cars'
             {/* Floating Map Overlay Badge */}
             <div className="absolute bottom-4 left-4 right-4 bg-white/95 backdrop-blur-md p-4 rounded-2xl border border-gray-200 shadow-xl flex items-center justify-between gap-4">
               <div className="flex items-center gap-3">
-                <div className="p-2.5 rounded-xl bg-red-50 text-[#FF3B30]">
+                <div className="p-2.5 rounded-xl bg-[#5266EB]/10 text-[#5266EB]">
                   <MapPin className="w-5 h-5" />
                 </div>
                 <div>
-                  <h4 className="font-bold text-[#111111] text-xs font-syne">Green Hills Society, Katraj</h4>
+                  <h4 className="font-bold text-[#000000] text-xs font-syne">Green Hills Society, Katraj</h4>
                   <p className="text-[11px] text-gray-500">Pune, Maharashtra - 411046</p>
                 </div>
               </div>
@@ -184,7 +184,7 @@ export default function CompanyLocationSection({ mode = 'all' }: { mode?: 'cars'
                 href={googleMapsUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center gap-1.5 px-4 py-2 rounded-full bg-[#111111] hover:bg-[#FF3B30] text-white font-extrabold text-[11px] tracking-wider uppercase transition-colors shrink-0"
+                className="inline-flex items-center gap-1.5 px-4 py-2 rounded-full bg-[#171721] hover:bg-[#5266EB] text-[#EDEDF3] font-extrabold text-[11px] tracking-wider uppercase transition-colors shrink-0"
               >
                 <span>Get Directions</span>
                 <ExternalLink className="w-3.5 h-3.5" />

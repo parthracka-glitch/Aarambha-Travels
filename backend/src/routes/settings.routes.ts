@@ -4,6 +4,10 @@ import { authenticateAdmin, requireSuperAdmin } from '../middlewares/auth.middle
 
 const router = Router();
 
+// Public settings route (Website)
+router.get('/public', SettingsController.getPublicSettings);
+
+// Protected Admin routes
 router.use(authenticateAdmin);
 
 router.get('/', SettingsController.getSettings);

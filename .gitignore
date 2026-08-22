@@ -10,6 +10,7 @@ dist/
 build/
 .next/
 *.js.map
+*.tsbuildinfo
 
 # Environment
 .env

@@ -151,9 +151,14 @@ export interface ITourBooking extends Document {
   totalAmount: number;
   depositPaid: number;
   balanceAmount: number;
-  status: string;
+  status: string; // pending_verification -> Deposit Paid / Confirmed -> Completed / Cancelled / Rejected
   razorpayOrderId?: string;
   razorpayPaymentId?: string;
+  utrNumber?: string;
+  paymentMethod?: string;
+  verifiedAt?: Date;
+  verifiedBy?: string;
+  rejectionReason?: string;
   agreementAccepted: boolean;
   agreementAcceptedAt?: Date;
   termsAccepted: boolean;
@@ -175,9 +180,14 @@ const TourBookingSchema = new Schema<ITourBooking>({
   totalAmount: { type: Number, required: true },
   depositPaid: { type: Number, required: true },
   balanceAmount: { type: Number, required: true },
-  status: { type: String, default: 'Deposit Paid' },
+  status: { type: String, default: 'pending_verification' },
   razorpayOrderId: { type: String },
   razorpayPaymentId: { type: String },
+  utrNumber: { type: String, index: true },
+  paymentMethod: { type: String, default: 'UPI_QR' },
+  verifiedAt: { type: Date },
+  verifiedBy: { type: String },
+  rejectionReason: { type: String },
   agreementAccepted: { type: Boolean, default: true },
   agreementAcceptedAt: { type: Date },
   termsAccepted: { type: Boolean, required: true, default: true },

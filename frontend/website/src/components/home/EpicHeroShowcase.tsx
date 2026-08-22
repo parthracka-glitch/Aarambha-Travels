@@ -73,7 +73,7 @@ export default function EpicHeroShowcase() {
                   <motion.span
                     animate={{ y: [0, -3, 0] }}
                     transition={{ duration: 3, repeat: Infinity, ease: 'easeInOut', delay: 0.5 }}
-                    className="text-[10px] sm:text-xs uppercase tracking-widest text-pink-300 font-extrabold mb-2 flex items-center gap-1.5 bg-pink-500/20 px-3.5 py-1.5 rounded-full border border-pink-500/30 backdrop-blur-md shadow-lg shadow-pink-950/40"
+                    className="text-[10px] sm:text-xs uppercase tracking-widest text-[#9CB4E8] font-extrabold mb-2 flex items-center gap-1.5 bg-[#5266EB]/20 px-3.5 py-1.5 rounded-full border border-[#5266EB]/30 backdrop-blur-md shadow-lg shadow-[#5266EB]/40"
                   >
                     <Compass className="w-3.5 h-3.5" /> Curated Packages
                   </motion.span>
@@ -82,13 +82,13 @@ export default function EpicHeroShowcase() {
                     TOURS & TRAVELS
                   </h2>
 
-                  <p className="text-[11px] sm:text-xs text-pink-100 mt-2 max-w-xs leading-snug group-hover:text-pink-200 transition-colors">
+                  <p className="text-[11px] sm:text-xs text-[#EDEDF3] mt-2 max-w-xs leading-snug group-hover:text-white transition-colors">
                     Tap to explore Hill Stations, Forts & Fixed Departures
                   </p>
 
                   <motion.span
                     whileHover={{ scale: 1.05 }}
-                    className="mt-3 inline-flex items-center gap-1.5 text-[10px] uppercase font-bold text-pink-300 bg-white/10 px-3.5 py-1 rounded-full border border-white/20 backdrop-blur-md"
+                    className="mt-3 inline-flex items-center gap-1.5 text-[10px] uppercase font-bold text-[#9CB4E8] bg-white/10 px-3.5 py-1 rounded-full border border-white/20 backdrop-blur-md"
                   >
                     <span>Tap to Open</span>
                     <ArrowRight className="w-3 h-3 group-hover:translate-x-1 transition-transform" />
@@ -96,11 +96,10 @@ export default function EpicHeroShowcase() {
                 </div>
               </motion.div>
 
-              {/* BOTTOM HALF (MOBILE) / RIGHT HALF (DESKTOP): CAR RENTALS */}
+              {/* BOTTOM HALF (MOBILE) / RIGHT HALF (DESKTOP): BUS RENTALS */}
               <motion.div
                 onClick={() => {
-                  setExpandedSide('cars');
-                  router.push(`${pathname}?view=cars`, { scroll: false });
+                  router.push('/bus-rentals');
                 }}
                 onMouseEnter={() => setHoveredSide('cars')}
                 onMouseLeave={() => setHoveredSide('none')}
@@ -108,10 +107,10 @@ export default function EpicHeroShowcase() {
                 transition={{ type: 'spring', stiffness: 300, damping: 25 }}
                 className="relative w-full md:w-1/2 h-1/2 md:h-full cursor-pointer overflow-hidden group bg-black"
               >
-                {/* Background Car Image */}
+                {/* Background Bus Rental Image */}
                 <motion.img
-                  src="/images/car_rentals_bg.jpg?v=2"
-                  alt="Car Rentals - Self Drive Fleet"
+                  src="/images/bus_rental_client_hero.jpg"
+                  alt="Bus Rentals - 5 to 50 Seater Fleet"
                   className={`w-full h-full object-cover transition-all duration-700 ease-out ${
                     hoveredSide === 'cars' ? 'scale-108 filter brightness-120 saturate-125' : 'scale-100 filter brightness-110 contrast-105'
                   }`}
@@ -125,22 +124,22 @@ export default function EpicHeroShowcase() {
                   <motion.span
                     animate={{ y: [0, -3, 0] }}
                     transition={{ duration: 3, repeat: Infinity, ease: 'easeInOut' }}
-                    className="text-[10px] sm:text-xs uppercase tracking-widest text-amber-400 font-extrabold mb-2 flex items-center gap-1.5 bg-amber-500/20 px-3.5 py-1.5 rounded-full border border-amber-500/30 backdrop-blur-md shadow-lg shadow-amber-950/40"
+                    className="text-[10px] sm:text-xs uppercase tracking-widest text-[#AFB2CE] font-extrabold mb-2 flex items-center gap-1.5 bg-[#9CB4E8]/20 px-3.5 py-1.5 rounded-full border border-[#9CB4E8]/30 backdrop-blur-md shadow-lg shadow-[#171721]/40"
                   >
-                    <Car className="w-3.5 h-3.5" /> Self-Drive Fleet
+                    <Car className="w-3.5 h-3.5" /> Bus & Fleet Rentals
                   </motion.span>
 
                   <h2 className="font-syne text-3xl sm:text-5xl lg:text-6xl font-black uppercase tracking-tight drop-shadow-2xl group-hover:scale-105 group-hover:tracking-wider transition-all duration-500 text-white">
-                    CAR RENTALS
+                    BUS RENTALS
                   </h2>
 
-                  <p className="text-[11px] sm:text-xs text-gray-300 mt-2 max-w-xs leading-snug group-hover:text-amber-200 transition-colors">
-                    Tap to explore Luxury SUVs, Convertibles & Sedans
+                  <p className="text-[11px] sm:text-xs text-gray-300 mt-2 max-w-xs leading-snug group-hover:text-white transition-colors">
+                    Tap to explore 5-50 Seater Buses, Urbania & Car Fleet
                   </p>
 
                   <motion.span
                     whileHover={{ scale: 1.05 }}
-                    className="mt-3 inline-flex items-center gap-1.5 text-[10px] uppercase font-bold text-amber-400 bg-white/10 px-3.5 py-1 rounded-full border border-white/20 backdrop-blur-md"
+                    className="mt-3 inline-flex items-center gap-1.5 text-[10px] uppercase font-bold text-[#AFB2CE] bg-white/10 px-3.5 py-1 rounded-full border border-white/20 backdrop-blur-md"
                   >
                     <span>Tap to Open</span>
                     <ArrowRight className="w-3 h-3 group-hover:translate-x-1 transition-transform" />
@@ -168,10 +167,9 @@ export default function EpicHeroShowcase() {
                 whileTap={{ scale: 0.95 }}
                 onClick={(e) => {
                   e.stopPropagation();
-                  setExpandedSide('cars');
-                  router.push(`${pathname}?view=cars`, { scroll: false });
+                  router.push('/bus-rentals');
                 }}
-                aria-label="Next Slide / Car Rentals"
+                aria-label="Next Slide / Bus Rentals"
                 className="hidden md:flex absolute right-5 top-1/2 -translate-y-1/2 z-30 p-3.5 rounded-full bg-black/50 hover:bg-black/80 text-white backdrop-blur-md border border-white/20 shadow-2xl transition-all cursor-pointer"
               >
                 <ChevronRight className="w-6 h-6" />
@@ -181,7 +179,7 @@ export default function EpicHeroShowcase() {
 
           {/* ─────────────────────────────────────────────────────────────────
               2. EXPANDED TOURS & TRAVELS MODE (FORTNITE EXPANDED WITH ANIMATIONS)
-             ───────────────────────────────────────────────────────────────── */}
+              ───────────────────────────────────────────────────────────────── */}
           {expandedSide === 'tours' && (
             <motion.div
               key="tours-expanded"
@@ -189,7 +187,7 @@ export default function EpicHeroShowcase() {
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.96 }}
               transition={{ duration: 0.45, ease: [0.16, 1, 0.3, 1] }}
-              className="relative w-full h-full bg-gradient-to-r from-[#180828] via-[#e11d48] to-[#ec4899] flex flex-col md:flex-row items-center justify-between overflow-hidden"
+              className="relative w-full h-full bg-gradient-to-r from-[#171721] via-[#272735] to-[#5266EB] flex flex-col md:flex-row items-center justify-between overflow-hidden"
             >
               {/* Background Travel Artwork */}
               <div className="absolute inset-0 z-0 overflow-hidden">
@@ -216,7 +214,7 @@ export default function EpicHeroShowcase() {
                     className="w-full h-full object-cover rounded-3xl border-4 border-white/20 shadow-2xl transition-all duration-500"
                   />
                   <div className="absolute bottom-6 left-6 right-6 bg-black/75 backdrop-blur-md p-4 rounded-2xl border border-white/10 text-left">
-                    <span className="text-[10px] font-bold uppercase tracking-wider text-pink-400 block font-syne">Featured Destination</span>
+                    <span className="text-[10px] font-bold uppercase tracking-wider text-[#9CB4E8] block font-syne">Featured Destination</span>
                     <h4 className="font-syne font-bold text-base text-white">Hill Station & Heritage Packages</h4>
                     <p className="text-xs text-gray-300">Lock your batch departure with just ₹500 deposit.</p>
                   </div>
@@ -231,7 +229,7 @@ export default function EpicHeroShowcase() {
                   transition={{ duration: 0.5, delay: 0.1 }}
                   className="space-y-2"
                 >
-                  <span className="text-[10px] sm:text-xs font-black uppercase tracking-widest text-pink-200 bg-white/15 px-4 py-1.5 rounded-full border border-white/20 backdrop-blur-md">
+                  <span className="text-[10px] sm:text-xs font-black uppercase tracking-widest text-[#EDEDF3] bg-white/15 px-4 py-1.5 rounded-full border border-white/20 backdrop-blur-md">
                     Aarambha Experiences
                   </span>
                   <h1 className="font-syne text-3xl sm:text-5xl lg:text-6xl font-black uppercase tracking-tight text-white drop-shadow-2xl leading-tight">
@@ -243,7 +241,7 @@ export default function EpicHeroShowcase() {
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.5, delay: 0.2 }}
-                  className="text-xs sm:text-sm text-pink-100 max-w-md leading-relaxed font-medium"
+                  className="text-xs sm:text-sm text-[#AFB2CE] max-w-md leading-relaxed font-medium"
                 >
                   Curated departure batches, luxury hill station stays, and heritage packages with local guide support.
                 </motion.p>
@@ -279,7 +277,7 @@ export default function EpicHeroShowcase() {
 
           {/* ─────────────────────────────────────────────────────────────────
               3. EXPANDED CAR RENTALS MODE (UNREAL ENGINE EXPANDED WITH ANIMATIONS)
-             ───────────────────────────────────────────────────────────────── */}
+              ───────────────────────────────────────────────────────────────── */}
           {expandedSide === 'cars' && (
             <motion.div
               key="cars-expanded"
@@ -293,7 +291,7 @@ export default function EpicHeroShowcase() {
               <div className="absolute inset-0 z-0 overflow-hidden">
                 <img
                   src="/images/car_rentals_bg.jpg?v=2"
-                  alt="Car Rentals Expanded"
+                  alt="Bus Rentals Expanded"
                   className="w-full h-full object-cover opacity-100 filter brightness-115 contrast-105 scale-105"
                 />
                 {/* Subtle soft gradient overlay so vehicle remains crystal clear */}
@@ -309,10 +307,10 @@ export default function EpicHeroShowcase() {
                   className="space-y-2"
                 >
                   <span className="text-[10px] sm:text-xs font-black uppercase tracking-widest text-amber-400 bg-amber-500/20 px-4 py-1.5 rounded-full border border-amber-500/30 backdrop-blur-md">
-                    Self-Drive Luxury Fleet
+                    Bus & Fleet Rentals
                   </span>
                   <h1 className="font-syne text-3xl sm:text-5xl lg:text-6xl font-black uppercase tracking-tight text-white drop-shadow-2xl leading-tight">
-                    CAR<br className="hidden sm:block" /> RENTALS
+                    BUS<br className="hidden sm:block" /> RENTALS
                   </h1>
                 </motion.div>
 
@@ -322,7 +320,7 @@ export default function EpicHeroShowcase() {
                   transition={{ duration: 0.5, delay: 0.2 }}
                   className="text-xs sm:text-base text-gray-300 max-w-lg leading-relaxed font-normal"
                 >
-                  Drive 4x4 SUVs, luxury sedans, coupes & convertibles with 100% full insurance, doorstep pickup & delivery with zero security deposit friction.
+                  Book 5-seater to 50-seater buses, Urbania Tempo Travellers, and luxury car fleet for Pune local trips and outstation travel with 100% transparent pricing.
                 </motion.p>
 
                 {/* Boxed EXPLORE CTA Button */}
@@ -332,7 +330,7 @@ export default function EpicHeroShowcase() {
                   transition={{ duration: 0.4, delay: 0.3 }}
                 >
                   <Link
-                    href="/car-rentals/cars"
+                    href="/bus-rentals"
                     className="relative group inline-flex items-center gap-3 px-8 sm:px-10 py-3.5 sm:py-4 border-2 border-white bg-white/10 hover:bg-white text-white hover:text-black font-extrabold text-xs sm:text-sm tracking-widest uppercase transition-all duration-300 backdrop-blur-sm shadow-2xl overflow-hidden"
                   >
                     <span className="relative z-10">EXPLORE</span>

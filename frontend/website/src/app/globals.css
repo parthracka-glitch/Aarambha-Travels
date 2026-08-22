@@ -1,25 +1,59 @@
-@import url('https://fonts.googleapis.com/css2?family=Amita:wght@400;700&family=Gotu&family=Mukta:wght@400;500;600;700;800&family=Outfit:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Rozha+One&family=Syne:wght@500;600;700;800&family=Tiro+Devanagari+Marathi:ital@0;1&family=Yatra+One&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Amita:wght@400;700&family=Gotu&family=Mukta:wght@400;500;600;700;800&family=Outfit:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Rozha+One&family=Syne:wght@400;500;600;700;800&family=Tiro+Devanagari+Marathi:ital@0;1&family=Yatra+One&display=swap');
 
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
+@font-face {
+  font-family: 'Arcadia Display';
+  font-style: normal;
+  font-weight: 480;
+  font-display: swap;
+  src: local('Arcadia Display'), local('Syne'), local('Outfit');
+}
+
+@font-face {
+  font-family: 'Arcadia';
+  font-style: normal;
+  font-weight: 400 480;
+  font-display: swap;
+  src: local('Arcadia'), local('Outfit'), local('Plus Jakarta Sans');
+}
+
 :root {
-  --font-syne: 'Syne', sans-serif;
-  --font-outfit: 'Outfit', sans-serif;
-  --font-jakarta: 'Plus Jakarta Sans', sans-serif;
+  --font-arcadia-display: 'Arcadia Display', 'arcadiaDisplay', 'Syne', sans-serif;
+  --font-arcadia: 'Arcadia', 'Outfit', 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+  --font-syne: 'Arcadia Display', 'arcadiaDisplay', 'Syne', sans-serif;
+  --font-outfit: 'Arcadia', 'Outfit', sans-serif;
+  --font-jakarta: 'Arcadia', 'Plus Jakarta Sans', sans-serif;
   --font-marathi-logo: 'Amita', 'Yatra One', 'Rozha One', 'Gotu', 'Mukta', serif;
-  --color-primary: #FF3B30;
-  --color-primary-hover: #E03126;
+  
+  /* Mercury Color Palette */
+  --color-primary: #5266EB;
+  --color-primary-hover: #3E51D4;
+  --color-primary-overlay: #9CB4E8;
+  --color-secondary: #9CB4E8;
+  --color-surface: #000000;
+  --color-on-surface: #FFFFFF;
+  --color-accent-soft: #AFB2CE;
+  --color-accent-light: #EDEDF3;
+  --color-surface-dark: #171721;
+  --color-surface-darker: #272735;
+  --color-text-primary: #000000;
+  --color-text-inverse: #EDEDF3;
+  --color-text-tertiary: #C3C3CC;
+  --color-border-subtle: #EBEBEB;
+  --color-border-muted: #F5F5F5;
 }
 
 * {
   scrollbar-width: thin;
-  scrollbar-color: #D1D5DB transparent;
+  scrollbar-color: #AFB2CE transparent;
 }
-::-webkit-scrollbar { width: 5px; }
+::-webkit-scrollbar { width: 5px; height: 5px; }
 ::-webkit-scrollbar-track { background: transparent; }
-::-webkit-scrollbar-thumb { background: #D1D5DB; border-radius: 999px; }
+::-webkit-scrollbar-thumb { background: #AFB2CE; border-radius: 999px; }
+::-webkit-scrollbar-thumb:hover { background: #9CB4E8; }
 
 html {
   scroll-behavior: smooth;
@@ -27,12 +61,17 @@ html {
 }
 
 body {
-  color: #18181B;
+  color: #000000;
   background: #FAFAFC;
-  font-family: 'Outfit', 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+  font-family: 'Arcadia', 'Outfit', 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
   overflow-x: hidden;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+h1, h2 {
+  font-family: 'Arcadia Display', 'arcadiaDisplay', 'Syne', sans-serif;
+  font-weight: 480;
 }
 
 .brand-marathi-logo {
@@ -42,11 +81,12 @@ body {
 }
 
 .font-syne {
-  font-family: 'Syne', 'Outfit', sans-serif;
+  font-family: 'Arcadia Display', 'arcadiaDisplay', 'Syne', sans-serif;
+  font-weight: 480;
 }
 
 .font-outfit {
-  font-family: 'Outfit', sans-serif;
+  font-family: 'Arcadia', 'Outfit', sans-serif;
 }
 
 /* Low-End CPU / GPU Performance Optimization for Offscreen Content */
@@ -57,49 +97,91 @@ body {
 
 /* Active Highlight Card */
 .car-card-active {
-  border: 2px solid #FF3B30 !important;
+  border: 2px solid #5266EB !important;
   background-color: #FFFFFF !important;
 }
 
-/* Clean Red Button Pill */
+/* Primary Button (Mercury Full-Width / Pill CTA) */
 .btn-red-pill {
-  background-color: #FF3B30;
-  color: #FFFFFF;
-  font-weight: 600;
+  background-color: #5266EB;
+  color: #EDEDF3;
+  font-family: 'Arcadia', 'Outfit', sans-serif;
+  font-weight: 420;
+  font-size: 16px;
+  line-height: 16px;
   padding: 0.6rem 1.5rem;
-  border-radius: 9999px;
+  border-radius: 40px;
   display: inline-flex;
   align-items: center;
   justify-content: center;
   gap: 0.5rem;
-  transition: background-color 0.15s ease;
+  border: none;
+  transition: all 0.15s ease;
 }
 
 .btn-red-pill:hover {
-  background-color: #E03126;
+  opacity: 0.9;
+  background-color: #3E51D4;
+  transform: translateY(-1px);
+}
+
+.btn-red-pill:active {
+  opacity: 0.8;
+  transform: translateY(0);
 }
 
 /* Clean Outline Button */
 .btn-red-outline {
-  background-color: #FFFFFF;
-  color: #FF3B30;
-  border: 1px solid #FF3B30;
-  font-weight: 600;
+  background-color: transparent;
+  color: #5266EB;
+  border: 1px solid #5266EB;
+  font-family: 'Arcadia', 'Outfit', sans-serif;
+  font-weight: 420;
   padding: 0.55rem 1.4rem;
-  border-radius: 9999px;
+  border-radius: 40px;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  transition: background-color 0.15s ease;
+  transition: all 0.15s ease;
 }
 
 .btn-red-outline:hover {
-  background-color: #FF3B30;
-  color: #FFFFFF;
+  background-color: #5266EB;
+  color: #EDEDF3;
 }
 
-/* Dark Banner */
-.bg-dark-banner {
-  background: #111111;
-  color: #FFFFFF;
+/* Secondary Button (Mercury Ghost / Tertiary CTA) */
+.btn-mercury-secondary {
+  background-color: rgba(156, 180, 232, 0.2);
+  color: #EDEDF3;
+  font-size: 14px;
+  font-weight: 420;
+  font-family: 'Arcadia', 'Outfit', sans-serif;
+  padding: 0px 16px;
+  height: 32px;
+  border-radius: 40px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.15s ease;
 }
+
+.btn-mercury-secondary:hover {
+  background-color: rgba(156, 180, 232, 0.3);
+}
+
+/* Dark Banner / Container */
+.bg-dark-banner {
+  background: #171721;
+  color: #EDEDF3;
+}
+
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+

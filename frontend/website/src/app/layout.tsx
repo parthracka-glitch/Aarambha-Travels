@@ -37,7 +37,7 @@ export default function RootLayout({
         />
         <link rel="icon" type="image/jpeg" href="/images/logo.jpeg" />
       </head>
-      <body className="antialiased selection:bg-[#FF3B30] selection:text-white">
+      <body className="antialiased selection:bg-[#5266EB] selection:text-white">
         {children}
         <Script
           src="https://checkout.razorpay.com/v1/checkout.js"

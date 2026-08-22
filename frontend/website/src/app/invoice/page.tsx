@@ -1,10 +1,10 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { getAarambhInvoiceHTML, type InvoiceData } from '@/utils/generateInvoicePDF';
 
-export default function InvoiceViewerPage() {
+function InvoiceContent() {
   const searchParams = useSearchParams();
   const [htmlContent, setHtmlContent] = useState<string>('');
 
@@ -58,46 +58,56 @@ export default function InvoiceViewerPage() {
           if (b) {
             invoiceData = {
               ...invoiceData,
-              invoiceNumber: b.invoiceNumber || invoiceData.invoiceNumber,
-              bookingCode: b.id || b.bookingCode || invoiceData.bookingCode,
-              bookingType: b.type === 'car' ? 'car' : 'tour',
-              customerName: b.customerName || invoiceData.customerName,
-              customerEmail: b.customerEmail || invoiceData.customerEmail,
-              customerPhone: b.customerPhone || invoiceData.customerPhone,
-              packageName: b.packageName || b.title || invoiceData.packageName,
-              carModel: b.vehicleName || b.title,
-              travelDates: `${b.startDate} → ${b.endDate}`,
-              numberOfTravelers: b.guestsCount || b.paxCount || 2,
-              numberOfDays: 3,
-              totalAmount: b.totalPrice || b.totalAmount || 13600,
+              bookingType: b.type === 'Fleet' ? 'car' : 'tour',
+              bookingCode: b.bookingCode || b.id,
+              customerName: b.customerName || b.name,
+              customerPhone: b.customerPhone || b.phone,
+              customerEmail: b.customerEmail || b.email,
+              packageName: b.type === 'Fleet' ? undefined : b.title,
+              carModel: b.type === 'Fleet' ? b.title : undefined,
+              travelDates: `${b.startDate || b.pickupDate} to ${b.endDate || b.returnDate}`,
+              totalAmount: b.totalPrice || b.totalAmount,
               depositPaid: b.depositPaid || 500,
-              balanceAmount: (b.totalPrice || b.totalAmount || 13600) - (b.depositPaid || 500),
+              balanceAmount: (b.totalPrice || b.totalAmount) - (b.depositPaid || 500),
             };
           }
         }
       }
     } catch (_e) {}
 
-    const html = getAarambhInvoiceHTML(invoiceData);
-    setHtmlContent(html);
+    setHtmlContent(getAarambhInvoiceHTML(invoiceData));
   }, [searchParams]);
 
   if (!htmlContent) {
     return (
-      <div className="min-h-screen bg-[#DCD3C2] flex items-center justify-center font-sans text-gray-700">
-        <div className="text-center space-y-2">
-          <div className="w-8 h-8 border-4 border-amber-800 border-t-transparent rounded-full animate-spin mx-auto" />
-          <p className="font-bold text-xs uppercase tracking-wider">Generating Royal Invoice...</p>
+      <div className="min-h-screen bg-gray-900 text-white flex items-center justify-center font-sans">
+        <div className="flex items-center gap-3">
+          <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
+          <span>Generating Official Invoice...</span>
         </div>
       </div>
     );
   }
 
   return (
-    <iframe
-      srcDoc={htmlContent}
-      className="w-full h-screen border-none"
-      title="Aarambh Tours & Travels Invoice Preview"
+    <div
+      className="bg-gray-100 min-h-screen py-8 print:py-0 print:bg-white"
+      dangerouslySetInnerHTML={{ __html: htmlContent }}
     />
+  );
+}
+
+export default function InvoiceViewerPage() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen bg-gray-900 text-white flex items-center justify-center font-sans">
+        <div className="flex items-center gap-3">
+          <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
+          <span>Loading Invoice...</span>
+        </div>
+      </div>
+    }>
+      <InvoiceContent />
+    </Suspense>
   );
 }

@@ -5,6 +5,7 @@ import { X, Calendar, User, Phone, Mail, Lock, CheckCircle2, ShieldCheck, Credit
 import GoogleAuthButton from '../auth/GoogleAuthButton';
 import { apiFetch } from '@/services/api-client';
 import { generateInvoicePDF, getNextInvoiceNumber, type InvoiceData } from '@/utils/generateInvoicePDF';
+import UpiPaymentScreen from './UpiPaymentScreen';
 
 export interface BookingModalItem {
   id: string;
@@ -81,6 +82,7 @@ export default function BookingModal({ isOpen, onClose, item, onSuccess }: Booki
   const [guests, setGuests] = useState(1);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
+  const [isPaymentStep, setIsPaymentStep] = useState(false);
   const [bookingRef, setBookingRef] = useState('');
   const [invoiceNumber, setInvoiceNumber] = useState('');
   const [termsAccepted, setTermsAccepted] = useState(false);
@@ -276,17 +278,19 @@ export default function BookingModal({ isOpen, onClose, item, onSuccess }: Booki
     }
 
     setIsSubmitting(true);
-
     const refNo = (item.type === 'car' ? 'FL-' : 'TR-') + Math.floor(100000 + Math.random() * 900000);
+    const invNum = getNextInvoiceNumber(item.type === 'car' ? 'car' : 'tour');
+    setBookingRef(refNo);
+    setInvoiceNumber(invNum);
 
     const calculatedTotal = item.type === 'tour' ? item.price * Math.max(1, guests) : item.price;
-    const calculatedDeposit = item.type === 'tour' ? item.deposit * Math.max(1, guests) : item.deposit;
+    const calculatedDeposit = item.type === 'tour' ? (item.deposit || 2999) * Math.max(1, guests) : (item.deposit || 500);
     const calculatedBalance = Math.max(0, calculatedTotal - calculatedDeposit);
 
     const bookingPayload = {
       id: refNo,
       bookingCode: refNo,
-      type: item.type,
+      type: item.type === 'car' ? 'Fleet' : 'Tours',
       title: item.title,
       packageName: item.title,
       vehicleName: item.title,
@@ -314,22 +318,9 @@ export default function BookingModal({ isOpen, onClose, item, onSuccess }: Booki
       termsAcceptedAt: new Date().toISOString(),
       termsVersion: '2026.1-STANDARD',
       status: 'Confirmed',
+      paymentMethod: 'Direct Confirmation',
       createdAt: new Date().toISOString(),
     };
-
-    // If no active user session, initialize session with booking contact info
-    if (!currentUser) {
-      const guestProfile = {
-        name: fullName.trim(),
-        email: email.trim().toLowerCase(),
-        phone: phone.trim(),
-        loggedIn: true,
-      };
-      try {
-        localStorage.setItem('aarambha_user', JSON.stringify(guestProfile));
-        window.dispatchEvent(new Event('aarambha_auth_changed'));
-      } catch (_e) {}
-    }
 
     // Save to localStorage
     try {
@@ -337,6 +328,7 @@ export default function BookingModal({ isOpen, onClose, item, onSuccess }: Booki
       const existing = existingStr ? JSON.parse(existingStr) : [];
       existing.unshift(bookingPayload);
       localStorage.setItem('aarambha_user_bookings', JSON.stringify(existing));
+      window.dispatchEvent(new Event('aarambha_booking_updated'));
     } catch (err) {
       console.error('Failed to persist booking to localStorage:', err);
     }
@@ -352,18 +344,14 @@ export default function BookingModal({ isOpen, onClose, item, onSuccess }: Booki
       console.warn('Backend sync warning:', err);
     }
 
-    setTimeout(() => {
-      setIsSubmitting(false);
-      setBookingRef(refNo);
-      const invNum = getNextInvoiceNumber(item.type === 'car' ? 'car' : 'tour');
-      setInvoiceNumber(invNum);
-      setIsSuccess(true);
-      if (onSuccess) onSuccess();
-    }, 1000);
+    setIsSubmitting(false);
+    setIsSuccess(true);
+    if (onSuccess) onSuccess();
   };
 
   const handleResetAndClose = () => {
     setIsSuccess(false);
+    setIsPaymentStep(false);
     setIsSubmitting(false);
     onClose();
   };
@@ -402,27 +390,27 @@ export default function BookingModal({ isOpen, onClose, item, onSuccess }: Booki
 
             <div className="bg-[#F8F9FA] rounded-2xl p-4 text-xs space-y-2 text-left border border-gray-200/80">
               <div className="flex justify-between text-gray-600">
-                <span>Item / Package:</span> <strong className="text-[#111111]">{item.title}</strong>
+                <span>Item / Package:</span> <strong className="text-[#000000]">{item.title}</strong>
               </div>
               {item.type === 'tour' && (
                 <div className="flex justify-between text-gray-600">
-                  <span>Travelers (Pax):</span> <strong className="text-[#111111]">{guests} Person{guests > 1 ? 's' : ''}</strong>
+                  <span>Travelers (Pax):</span> <strong className="text-[#000000]">{guests} Person{guests > 1 ? 's' : ''}</strong>
                 </div>
               )}
               <div className="flex justify-between text-gray-600">
                 <span>Total Package Fare:</span> <strong className="text-gray-900 font-bold">₹{item.type === 'tour' ? (item.price * guests).toLocaleString('en-IN') : item.price.toLocaleString('en-IN')}</strong>
               </div>
               <div className="flex justify-between text-gray-600">
-                <span>Deposit Paid:</span> <strong className="text-emerald-600 font-bold">₹{item.type === 'tour' ? (item.deposit * guests).toLocaleString('en-IN') : item.deposit.toLocaleString('en-IN')} (Success)</strong>
+                <span>Deposit Paid:</span> <strong className="text-[#5266EB] font-bold">₹{item.type === 'tour' ? (item.deposit * guests).toLocaleString('en-IN') : item.deposit.toLocaleString('en-IN')} (Success)</strong>
               </div>
               <div className="flex justify-between text-gray-600">
-                <span>Invoice No.:</span> <strong className="font-mono text-[#111111]">{invoiceNumber}</strong>
+                <span>Invoice No.:</span> <strong className="font-mono text-[#000000]">{invoiceNumber}</strong>
               </div>
               <div className="flex justify-between text-gray-600">
-                <span>Account:</span> <strong className="text-[#111111]">{currentUser?.email || email}</strong>
+                <span>Account:</span> <strong className="text-[#000000]">{currentUser?.email || email}</strong>
               </div>
               <div className="flex justify-between text-gray-600">
-                <span>Status:</span> <span className="px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 font-bold text-[10px]">Confirmed</span>
+                <span>Status:</span> <span className="px-2 py-0.5 rounded-full bg-[#9CB4E8]/20 text-[#171721] font-bold text-[10px] border border-[#9CB4E8]/30">Confirmed</span>
               </div>
             </div>
 
@@ -462,14 +450,14 @@ export default function BookingModal({ isOpen, onClose, item, onSuccess }: Booki
                 };
                 generateInvoicePDF(invoiceData);
               }}
-              className="w-full py-3.5 rounded-full bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold transition-colors shadow-md flex items-center justify-center gap-2"
+              className="w-full py-3.5 rounded-full bg-[#5266EB] hover:bg-[#3E51D4] text-[#EDEDF3] text-xs font-bold transition-colors shadow-md flex items-center justify-center gap-2"
             >
               <Download className="w-4 h-4" /> Download Invoice PDF
             </button>
 
             <button
               onClick={handleResetAndClose}
-              className="w-full py-3 rounded-full border border-gray-200 bg-white text-[#111111] text-xs font-bold hover:bg-gray-50 transition-colors"
+              className="w-full py-3 rounded-full border border-gray-200 bg-white text-[#000000] text-xs font-bold hover:bg-gray-50 transition-colors"
             >
               View My Bookings
             </button>
@@ -479,20 +467,20 @@ export default function BookingModal({ isOpen, onClose, item, onSuccess }: Booki
           <div className="flex flex-col flex-1 min-h-0 overflow-hidden">
             
             {/* Modal Header Card */}
-            <div className="bg-[#111111] text-white p-6 relative overflow-hidden flex items-center gap-4 flex-shrink-0">
+            <div className="bg-[#171721] text-[#EDEDF3] p-6 relative overflow-hidden flex items-center gap-4 flex-shrink-0">
               <img
                 src={item.image}
                 alt={item.title}
                 className="w-16 h-16 rounded-xl object-cover border border-white/20 flex-shrink-0"
               />
               <div className="space-y-1">
-                <span className="text-[9px] font-extrabold uppercase px-2 py-0.5 rounded-full inline-block bg-amber-500/20 text-amber-300 border border-amber-500/30 font-syne">
+                <span className="text-[9px] font-extrabold uppercase px-2 py-0.5 rounded-full inline-block bg-[#5266EB]/20 text-[#9CB4E8] border border-[#5266EB]/30 font-syne">
                   🔒 Verified Booking Required
                 </span>
                 <h3 className="font-syne text-base font-extrabold text-white leading-tight">
                   {item.title}
                 </h3>
-                <span className="text-xs font-bold text-gray-300 block font-syne">
+                <span className="text-xs font-bold text-[#AFB2CE] block font-syne">
                   Advance Deposit: ₹{item.deposit.toLocaleString('en-IN')}
                 </span>
               </div>
@@ -502,12 +490,12 @@ export default function BookingModal({ isOpen, onClose, item, onSuccess }: Booki
             <div className="p-6 overflow-y-auto flex-1 space-y-4 text-xs">
               
               {/* Notice Banner */}
-              <div className="p-3.5 bg-amber-50 border border-amber-200 rounded-2xl text-amber-900 text-xs space-y-1">
+              <div className="p-3.5 bg-[#9CB4E8]/10 border border-[#9CB4E8]/30 rounded-2xl text-[#171721] text-xs space-y-1">
                 <div className="flex items-center gap-1.5 font-bold">
-                  <ShieldCheck className="w-4 h-4 text-amber-600 shrink-0" />
+                  <ShieldCheck className="w-4 h-4 text-[#5266EB] shrink-0" />
                   <span>Please Log In or Create Account to Book</span>
                 </div>
-                <p className="text-[11px] text-amber-800 leading-relaxed font-normal">
+                <p className="text-[11px] text-gray-600 leading-relaxed font-normal">
                   To prevent unauthorized or fake bookings, a verified account is required before reserving seats.
                 </p>
               </div>
@@ -527,7 +515,7 @@ export default function BookingModal({ isOpen, onClose, item, onSuccess }: Booki
                   onClick={() => { setAuthTab('signup'); setAuthError(''); }}
                   className={`flex-1 py-2 rounded-xl font-syne font-extrabold text-xs transition-all ${
                     authTab === 'signup'
-                      ? 'bg-[#111827] text-white shadow-md'
+                      ? 'bg-[#171721] text-[#EDEDF3] shadow-md'
                       : 'text-gray-600 hover:text-gray-900'
                   }`}
                 >
@@ -538,7 +526,7 @@ export default function BookingModal({ isOpen, onClose, item, onSuccess }: Booki
                   onClick={() => { setAuthTab('login'); setAuthError(''); }}
                   className={`flex-1 py-2 rounded-xl font-syne font-extrabold text-xs transition-all ${
                     authTab === 'login'
-                      ? 'bg-[#111827] text-white shadow-md'
+                      ? 'bg-[#171721] text-[#EDEDF3] shadow-md'
                       : 'text-gray-600 hover:text-gray-900'
                   }`}
                 >
@@ -558,7 +546,7 @@ export default function BookingModal({ isOpen, onClose, item, onSuccess }: Booki
                       value={authFullName}
                       onChange={(e) => setAuthFullName(e.target.value)}
                       placeholder="e.g. Rahul Sharma"
-                      className="w-full px-3.5 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs font-medium focus:bg-white focus:outline-none focus:border-emerald-600"
+                      className="w-full px-3.5 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs font-medium focus:bg-white focus:outline-none focus:border-[#5266EB]"
                     />
                   </div>
                 )}
@@ -573,7 +561,7 @@ export default function BookingModal({ isOpen, onClose, item, onSuccess }: Booki
                     value={authEmail}
                     onChange={(e) => setAuthEmail(e.target.value)}
                     placeholder="e.g. rahul@example.com"
-                    className="w-full px-3.5 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs font-medium focus:bg-white focus:outline-none focus:border-emerald-600"
+                    className="w-full px-3.5 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs font-medium focus:bg-white focus:outline-none focus:border-[#5266EB]"
                   />
                 </div>
 
@@ -588,7 +576,7 @@ export default function BookingModal({ isOpen, onClose, item, onSuccess }: Booki
                       value={authPhone}
                       onChange={(e) => setAuthPhone(e.target.value)}
                       placeholder="e.g. +91 90676 17451"
-                      className="w-full px-3.5 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs font-medium focus:bg-white focus:outline-none focus:border-emerald-600"
+                      className="w-full px-3.5 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs font-medium focus:bg-white focus:outline-none focus:border-[#5266EB]"
                     />
                   </div>
                 )}
@@ -603,7 +591,7 @@ export default function BookingModal({ isOpen, onClose, item, onSuccess }: Booki
                     value={authPassword}
                     onChange={(e) => setAuthPassword(e.target.value)}
                     placeholder="Enter password (min 6 characters)"
-                    className="w-full px-3.5 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs font-medium focus:bg-white focus:outline-none focus:border-emerald-600"
+                    className="w-full px-3.5 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs font-medium focus:bg-white focus:outline-none focus:border-[#5266EB]"
                   />
                 </div>
 
@@ -611,7 +599,7 @@ export default function BookingModal({ isOpen, onClose, item, onSuccess }: Booki
                   <button
                     type="submit"
                     disabled={authLoading}
-                    className="w-full py-3.5 rounded-2xl bg-emerald-600 hover:bg-emerald-500 text-white font-extrabold text-xs tracking-wider uppercase transition-all shadow-lg flex items-center justify-center gap-2"
+                    className="w-full py-3.5 rounded-2xl bg-[#5266EB] hover:bg-[#3E51D4] text-[#EDEDF3] font-extrabold text-xs tracking-wider uppercase transition-all shadow-lg shadow-[#5266EB]/20 flex items-center justify-center gap-2"
                   >
                     <span>{authLoading ? 'Verifying Account...' : authTab === 'signup' ? 'Create Account & Continue Booking' : 'Log In & Continue Booking'}</span>
                     <ArrowRight className="w-4 h-4" />
@@ -647,22 +635,20 @@ export default function BookingModal({ isOpen, onClose, item, onSuccess }: Booki
           <form onSubmit={handleSubmitBooking} className="flex flex-col flex-1 min-h-0 overflow-hidden">
             
             {/* Modal Header Card (Fixed top) */}
-            <div className="bg-[#111111] text-white p-5 relative overflow-hidden flex items-center gap-4 flex-shrink-0">
+            <div className="bg-[#171721] text-[#EDEDF3] p-5 relative overflow-hidden flex items-center gap-4 flex-shrink-0">
               <img
                 src={item.image}
                 alt={item.title}
                 className="w-16 h-16 rounded-xl object-cover border border-white/20 flex-shrink-0"
               />
               <div className="space-y-1">
-                <span className={`text-[9px] font-extrabold uppercase px-2 py-0.5 rounded-full inline-block ${
-                  item.type === 'car' ? 'bg-red-500/20 text-red-300' : 'bg-emerald-500/20 text-emerald-300'
-                }`}>
+                <span className="text-[9px] font-extrabold uppercase px-2 py-0.5 rounded-full inline-block bg-[#5266EB]/20 text-[#9CB4E8] border border-[#5266EB]/30">
                   {item.type === 'car' ? 'Self-Drive Vehicle' : 'Tour Package'}
                 </span>
                 <h3 className="font-syne text-base font-extrabold text-white leading-tight">
                   {item.title}
                 </h3>
-                <span className="text-xs font-bold text-gray-300 block font-syne">
+                <span className="text-xs font-bold text-[#AFB2CE] block font-syne">
                   ₹{item.price.toLocaleString('en-IN')} {item.type === 'car' ? '/day' : 'total'}
                 </span>
               </div>
@@ -672,13 +658,13 @@ export default function BookingModal({ isOpen, onClose, item, onSuccess }: Booki
             <div className="p-6 overflow-y-auto flex-1 space-y-4 text-xs">
               
               {/* Authenticated User Banner */}
-              <div className="p-3 bg-emerald-50 border border-emerald-200 rounded-2xl flex items-center justify-between">
+              <div className="p-3 bg-[#9CB4E8]/10 border border-[#9CB4E8]/30 rounded-2xl flex items-center justify-between">
                 <div className="flex items-center gap-2">
-                  <div className="w-7 h-7 rounded-full bg-emerald-600 text-white font-bold text-xs flex items-center justify-center font-syne">
+                  <div className="w-7 h-7 rounded-full bg-[#5266EB] text-white font-bold text-xs flex items-center justify-center font-syne">
                     {currentUser.name ? currentUser.name.charAt(0).toUpperCase() : 'U'}
                   </div>
                   <div>
-                    <div className="font-bold text-gray-900 leading-tight">
+                    <div className="font-bold text-[#000000] leading-tight">
                       {currentUser.name}
                     </div>
                     <div className="text-[10px] text-gray-500">
@@ -690,7 +676,7 @@ export default function BookingModal({ isOpen, onClose, item, onSuccess }: Booki
                 <button
                   type="button"
                   onClick={handleLogout}
-                  className="text-[10px] font-bold text-[#FF3B30] hover:underline flex items-center gap-1"
+                  className="text-[10px] font-bold text-[#5266EB] hover:underline flex items-center gap-1"
                 >
                   <LogOut className="w-3 h-3" /> Log Out
                 </button>
@@ -706,12 +692,12 @@ export default function BookingModal({ isOpen, onClose, item, onSuccess }: Booki
               
               {/* Dates / Fixed Departure Batch Selection */}
               {item.type === 'tour' ? (
-                <div className="space-y-2.5 bg-emerald-50/30 border border-emerald-200/80 p-4 rounded-2xl">
+                <div className="space-y-2.5 bg-[#FAFAFC] border border-gray-200 p-4 rounded-2xl">
                   <div className="flex items-center justify-between">
-                    <label className="font-bold text-gray-900 flex items-center gap-1.5 text-xs font-syne">
-                      <Calendar className="w-4 h-4 text-emerald-600" /> Select Tour Batch Date *
+                    <label className="font-bold text-[#000000] flex items-center gap-1.5 text-xs font-syne">
+                      <Calendar className="w-4 h-4 text-[#5266EB]" /> Select Tour Batch Date *
                     </label>
-                    <span className="text-[9px] font-extrabold text-emerald-700 bg-emerald-100 px-2 py-0.5 rounded-full uppercase tracking-wider">
+                    <span className="text-[9px] font-extrabold text-[#171721] bg-[#9CB4E8]/20 px-2 py-0.5 rounded-full uppercase tracking-wider border border-[#9CB4E8]/30">
                       {activeBatches.filter((b: any) => b.month === selectedMonth).length} Departure Dates
                     </span>
                   </div>
@@ -725,7 +711,7 @@ export default function BookingModal({ isOpen, onClose, item, onSuccess }: Booki
                         onClick={() => handleMonthChange(m)}
                         className={`flex-1 py-1.5 px-2 text-[11px] font-bold rounded-lg transition-all whitespace-nowrap ${
                           selectedMonth === m
-                            ? 'bg-emerald-600 text-white shadow-sm'
+                            ? 'bg-[#5266EB] text-white shadow-sm'
                             : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
                         }`}
                       >
@@ -749,13 +735,13 @@ export default function BookingModal({ isOpen, onClose, item, onSuccess }: Booki
                             isSoldOut
                               ? 'border-gray-200 bg-gray-50 opacity-60 cursor-not-allowed'
                               : isSelected
-                              ? 'border-2 border-emerald-600 bg-white shadow-sm'
+                              ? 'border-2 border-[#5266EB] bg-white shadow-sm'
                               : 'border-gray-200 bg-white hover:border-gray-300'
                           }`}
                         >
                           <div className="flex items-center gap-3">
                             <div className={`w-4 h-4 rounded-full border-2 flex items-center justify-center ${
-                              isSelected ? 'border-emerald-600 bg-emerald-600' : 'border-gray-300'
+                              isSelected ? 'border-[#5266EB] bg-[#5266EB]' : 'border-gray-300'
                             }`}>
                               {isSelected && <div className="w-1.5 h-1.5 rounded-full bg-white" />}
                             </div>
@@ -770,7 +756,7 @@ export default function BookingModal({ isOpen, onClose, item, onSuccess }: Booki
                           </div>
 
                           <span className={`text-[10px] font-bold px-2.5 py-0.5 rounded-full ${
-                            isSelected ? 'bg-emerald-100 text-emerald-800' : 'bg-gray-100 text-gray-500'
+                            isSelected ? 'bg-[#9CB4E8]/20 text-[#171721] border border-[#9CB4E8]/30' : 'bg-gray-100 text-gray-500'
                           }`}>
                             {isSelected ? '✓ Selected' : 'Select'}
                           </span>
@@ -790,7 +776,7 @@ export default function BookingModal({ isOpen, onClose, item, onSuccess }: Booki
                       required
                       value={startDate}
                       onChange={(e) => setStartDate(e.target.value)}
-                      className="w-full bg-[#F8F9FA] border border-gray-200 rounded-xl px-3 py-2 text-xs focus:outline-none focus:border-[#FF3B30]"
+                      className="w-full bg-[#F8F9FA] border border-gray-200 rounded-xl px-3 py-2 text-xs focus:outline-none focus:border-[#5266EB]"
                     />
                   </div>
                   <div className="space-y-1">
@@ -802,7 +788,7 @@ export default function BookingModal({ isOpen, onClose, item, onSuccess }: Booki
                       required
                       value={endDate}
                       onChange={(e) => setEndDate(e.target.value)}
-                      className="w-full bg-[#F8F9FA] border border-gray-200 rounded-xl px-3 py-2 text-xs focus:outline-none focus:border-[#FF3B30]"
+                      className="w-full bg-[#F8F9FA] border border-gray-200 rounded-xl px-3 py-2 text-xs focus:outline-none focus:border-[#5266EB]"
                     />
                   </div>
                 </div>
@@ -810,12 +796,12 @@ export default function BookingModal({ isOpen, onClose, item, onSuccess }: Booki
 
               {/* ─── DEDICATED NUMBER OF TRAVELERS / PILGRIMS SELECTION BOX (TOURS ONLY) ─── */}
               {item.type === 'tour' && (
-                <div className="space-y-3 bg-gradient-to-br from-emerald-50/70 via-teal-50/40 to-white border border-emerald-200/90 p-4 rounded-2xl shadow-xs">
+                <div className="space-y-3 bg-[#FAFAFC] border border-gray-200 p-4 rounded-2xl shadow-xs">
                   <div className="flex items-center justify-between">
-                    <label className="font-bold text-gray-900 flex items-center gap-1.5 text-xs font-syne">
-                      <Users className="w-4 h-4 text-emerald-600" /> Number of Travelers / Pilgrims *
+                    <label className="font-bold text-[#000000] flex items-center gap-1.5 text-xs font-syne">
+                      <Users className="w-4 h-4 text-[#5266EB]" /> Number of Travelers / Pilgrims *
                     </label>
-                    <span className="text-[10px] font-extrabold text-emerald-800 bg-emerald-100 px-2.5 py-0.5 rounded-full uppercase tracking-wider font-syne border border-emerald-200">
+                    <span className="text-[10px] font-extrabold text-[#171721] bg-[#9CB4E8]/20 px-2.5 py-0.5 rounded-full uppercase tracking-wider font-syne border border-[#9CB4E8]/30">
                       {guests} {guests > 1 ? 'Pilgrims' : 'Pilgrim'}
                     </span>
                   </div>
@@ -829,8 +815,8 @@ export default function BookingModal({ isOpen, onClose, item, onSuccess }: Booki
                         onClick={() => setGuests(num)}
                         className={`flex-1 py-1.5 px-2 text-xs font-bold rounded-xl transition-all whitespace-nowrap border ${
                           guests === num
-                            ? 'bg-emerald-600 text-white border-emerald-600 shadow-xs'
-                            : 'bg-white text-gray-700 border-gray-200 hover:border-emerald-300 hover:bg-emerald-50/40'
+                            ? 'bg-[#5266EB] text-white border-[#5266EB] shadow-xs'
+                            : 'bg-white text-gray-700 border-gray-200 hover:border-[#5266EB]/40 hover:bg-[#5266EB]/5'
                         }`}
                       >
                         {num} Pax
@@ -858,13 +844,13 @@ export default function BookingModal({ isOpen, onClose, item, onSuccess }: Booki
                         max={50}
                         value={guests}
                         onChange={(e) => setGuests(Math.max(1, parseInt(e.target.value) || 1))}
-                        className="w-14 text-center font-syne font-extrabold text-sm text-gray-900 bg-gray-50 border border-gray-200 rounded-lg py-1 focus:outline-none focus:border-emerald-500"
+                        className="w-14 text-center font-syne font-extrabold text-sm text-gray-900 bg-gray-50 border border-gray-200 rounded-lg py-1 focus:outline-none focus:border-[#5266EB]"
                       />
 
                       <button
                         type="button"
                         onClick={() => setGuests((prev: number) => Math.min(50, prev + 1))}
-                        className="w-8 h-8 rounded-lg bg-emerald-600 hover:bg-emerald-700 flex items-center justify-center text-white transition-colors shadow-xs cursor-pointer"
+                        className="w-8 h-8 rounded-lg bg-[#5266EB] hover:bg-[#3E51D4] flex items-center justify-center text-white transition-colors shadow-xs cursor-pointer"
                       >
                         <Plus className="w-3.5 h-3.5" />
                       </button>
@@ -872,7 +858,7 @@ export default function BookingModal({ isOpen, onClose, item, onSuccess }: Booki
                   </div>
 
                   {/* Live Fare Calculation Summary Card */}
-                  <div className="bg-white/90 rounded-xl p-3 border border-emerald-100 space-y-1.5 text-xs">
+                  <div className="bg-white rounded-xl p-3 border border-gray-200 space-y-1.5 text-xs">
                     <div className="flex justify-between text-gray-600">
                       <span>Package Rate / Pilgrim:</span>
                       <strong className="text-gray-900 font-syne">₹{item.price.toLocaleString('en-IN')}</strong>
@@ -881,9 +867,9 @@ export default function BookingModal({ isOpen, onClose, item, onSuccess }: Booki
                       <span>Total Pilgrims (Pax):</span>
                       <strong className="text-gray-900 font-syne">{guests} Person{guests > 1 ? 's' : ''}</strong>
                     </div>
-                    <div className="flex justify-between pt-1.5 border-t border-emerald-100 text-gray-900 font-syne">
+                    <div className="flex justify-between pt-1.5 border-t border-gray-100 text-gray-900 font-syne">
                       <span className="font-bold">Total Package Fare:</span>
-                      <strong className="text-emerald-700 text-sm font-extrabold">₹{(item.price * guests).toLocaleString('en-IN')}</strong>
+                      <strong className="text-[#5266EB] text-sm font-extrabold">₹{(item.price * guests).toLocaleString('en-IN')}</strong>
                     </div>
                   </div>
                 </div>
@@ -900,7 +886,7 @@ export default function BookingModal({ isOpen, onClose, item, onSuccess }: Booki
                   placeholder="Enter your full name"
                   value={fullName}
                   onChange={(e) => setFullName(e.target.value)}
-                  className="w-full bg-[#F8F9FA] border border-gray-200 rounded-xl px-3.5 py-2 text-xs focus:outline-none focus:border-[#FF3B30]"
+                  className="w-full bg-[#F8F9FA] border border-gray-200 rounded-xl px-3.5 py-2 text-xs focus:outline-none focus:border-[#5266EB]"
                 />
               </div>
 
@@ -916,7 +902,7 @@ export default function BookingModal({ isOpen, onClose, item, onSuccess }: Booki
                     placeholder="email@example.com"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
-                    className="w-full bg-[#F8F9FA] border border-gray-200 rounded-xl px-3 py-2 text-xs focus:outline-none focus:border-[#FF3B30]"
+                    className="w-full bg-[#F8F9FA] border border-gray-200 rounded-xl px-3 py-2 text-xs focus:outline-none focus:border-[#5266EB]"
                   />
                 </div>
                 <div className="space-y-1">
@@ -929,21 +915,21 @@ export default function BookingModal({ isOpen, onClose, item, onSuccess }: Booki
                     placeholder="+91 82082 11478"
                     value={phone}
                     onChange={(e) => setPhone(e.target.value)}
-                    className="w-full bg-[#F8F9FA] border border-gray-200 rounded-xl px-3 py-2 text-xs focus:outline-none focus:border-[#FF3B30]"
+                    className="w-full bg-[#F8F9FA] border border-gray-200 rounded-xl px-3 py-2 text-xs focus:outline-none focus:border-[#5266EB]"
                   />
                 </div>
               </div>
 
-              {/* Deposit Banner */}
-              <div className="bg-emerald-50 border border-emerald-200/70 rounded-xl p-3 flex items-center justify-between">
+              {/* Instant Confirmation Banner */}
+              <div className="bg-emerald-50 border border-emerald-200 rounded-xl p-3 flex items-center justify-between">
                 <div className="flex items-center gap-2">
-                  <ShieldCheck className="w-4 h-4 text-emerald-600" />
+                  <CheckCircle2 className="w-4 h-4 text-emerald-600" />
                   <span className="font-bold text-emerald-900 text-xs">
-                    {item.type === 'tour' ? `Lock Date Deposit (${guests} Pax):` : 'Lock Date With Deposit:'}
+                    Direct Instant Confirmation:
                   </span>
                 </div>
-                <span className="font-syne text-sm font-extrabold text-emerald-700">
-                  ₹{(item.type === 'tour' ? item.deposit * guests : item.deposit).toLocaleString('en-IN')}
+                <span className="font-syne text-xs font-extrabold text-emerald-700 bg-emerald-100 px-2.5 py-0.5 rounded-full">
+                  Instant Voucher & Invoice
                 </span>
               </div>
 
@@ -951,7 +937,7 @@ export default function BookingModal({ isOpen, onClose, item, onSuccess }: Booki
               <div className="space-y-2 pt-1">
                 <label className={`flex items-start gap-2.5 p-3 rounded-2xl border transition-all cursor-pointer select-none ${
                   termsAccepted
-                    ? 'bg-amber-50/50 border-amber-300/80 shadow-sm'
+                    ? 'bg-[#9CB4E8]/10 border-[#5266EB]/40 shadow-sm'
                     : 'bg-gray-50 border-gray-200 hover:border-gray-300'
                 }`}>
                   <input
@@ -961,7 +947,7 @@ export default function BookingModal({ isOpen, onClose, item, onSuccess }: Booki
                       setTermsAccepted(e.target.checked);
                       if (e.target.checked) setValidationError('');
                     }}
-                    className="mt-0.5 w-4 h-4 rounded border-gray-300 text-[#FF3B30] focus:ring-[#FF3B30] cursor-pointer accent-[#FF3B30] flex-shrink-0"
+                    className="mt-0.5 w-4 h-4 rounded border-gray-300 text-[#5266EB] focus:ring-[#5266EB] cursor-pointer accent-[#5266EB] flex-shrink-0"
                   />
                   <span className="text-[11px] text-gray-700 leading-snug font-medium">
                     I have read and agree to the{' '}
@@ -970,12 +956,12 @@ export default function BookingModal({ isOpen, onClose, item, onSuccess }: Booki
                       target="_blank"
                       rel="noopener noreferrer"
                       onClick={(e) => e.stopPropagation()}
-                      className="font-bold text-[#FF3B30] hover:underline inline-flex items-center gap-0.5"
+                      className="font-bold text-[#5266EB] hover:underline inline-flex items-center gap-0.5"
                     >
                       <span>Terms & Conditions</span>
                       <ExternalLink className="w-2.5 h-2.5 inline" />
                     </a>{' '}
-                    including fuel policy, damage liability, late return charges, and cancellation policy.
+                    including booking guidelines, cancellation policies, and tour terms.
                   </span>
                 </label>
 
@@ -1001,23 +987,16 @@ export default function BookingModal({ isOpen, onClose, item, onSuccess }: Booki
 
               <button
                 type="submit"
-                disabled={isSubmitting || !termsAccepted}
-                className={`text-xs font-bold px-8 py-3 rounded-full text-white shadow-md flex items-center gap-2 transition-all ${
+                disabled={!termsAccepted || isSubmitting}
+                className={`text-xs font-bold px-8 py-3.5 rounded-full text-white shadow-md flex items-center gap-2 transition-all ${
                   !termsAccepted || isSubmitting
                     ? 'bg-gray-300 text-gray-500 cursor-not-allowed opacity-60 shadow-none'
-                    : item.type === 'car'
-                    ? 'btn-red-pill bg-[#FF3B30] hover:bg-[#E03126] cursor-pointer hover:scale-102'
-                    : 'bg-emerald-600 hover:bg-emerald-700 cursor-pointer hover:scale-102'
+                    : 'bg-[#5266EB] hover:bg-[#3E51D4] cursor-pointer hover:scale-102 active:scale-98 shadow-[#5266EB]/30'
                 }`}
               >
-                {isSubmitting ? (
-                  <span>Processing Deposit...</span>
-                ) : (
-                  <>
-                    <CreditCard className="w-4 h-4" />
-                    <span>Confirm Booking (Pay ₹{(item.type === 'tour' ? item.deposit * guests : item.deposit).toLocaleString('en-IN')})</span>
-                  </>
-                )}
+                <CheckCircle2 className="w-4 h-4 text-white" />
+                <span>{isSubmitting ? 'Confirming Reservation...' : 'Direct Confirm Booking Now'}</span>
+                <ArrowRight className="w-3.5 h-3.5" />
               </button>
             </div>
 

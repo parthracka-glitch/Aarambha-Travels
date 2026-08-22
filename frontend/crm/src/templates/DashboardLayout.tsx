@@ -30,7 +30,7 @@ export function DashboardLayout() {
         <Topbar onToggleMobileSidebar={() => setMobileSidebarOpen(!mobileSidebarOpen)} />
 
         {/* Dynamic Scrollable Page Content */}
-        <main className="flex-1 overflow-y-auto px-4 sm:px-6 lg:px-8 py-6">
+        <main className="flex-1 overflow-y-auto px-3 sm:px-6 lg:px-8 py-4 sm:py-6">
           <div className="w-full max-w-[1720px] mx-auto">
             {apiStatus === 'offline' ? (
               <div className="bg-red-50/90 border border-red-200/80 rounded-3xl p-6 text-center shadow-sm my-4">

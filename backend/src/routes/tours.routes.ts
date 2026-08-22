@@ -25,6 +25,7 @@ router.delete('/inquiries/:id', requireSuperAdmin, ToursController.deleteInquiry
 
 // Admin Bookings — GET open to viewer; write status actions superadmin only
 router.get('/bookings', ToursController.listBookings);
+router.put('/bookings/:id/verify', requireSuperAdmin, ToursController.verifyBooking);
 router.delete('/bookings/:id', requireSuperAdmin, ToursController.deleteBooking);
 
 export default router;

@@ -101,14 +101,14 @@ export default function MyBookingsDrawer({ isOpen, onClose }: MyBookingsDrawerPr
       <div className="bg-white w-full max-w-md h-full shadow-2xl flex flex-col justify-between relative overflow-hidden border-l border-gray-100">
         
         {/* Header */}
-        <div className="p-6 border-b border-gray-100 flex items-center justify-between bg-[#111111] text-white">
+        <div className="p-6 border-b border-[#272735] flex items-center justify-between bg-[#171721] text-[#EDEDF3]">
           <div className="flex items-center gap-2.5">
-            <div className="w-8 h-8 rounded-full bg-[#FF3B30] text-white flex items-center justify-center font-bold text-xs">
+            <div className="w-8 h-8 rounded-full bg-[#5266EB] text-white flex items-center justify-center font-bold text-xs">
               A
             </div>
             <div>
               <h2 className="font-syne text-lg font-extrabold tracking-tight">My Bookings</h2>
-              <span className="text-[10px] text-gray-400 block font-medium">
+              <span className="text-[10px] text-[#AFB2CE] block font-medium">
                 {user ? `Account: ${user.email}` : 'Active & Confirmed Reservations'}
               </span>
             </div>
@@ -126,10 +126,10 @@ export default function MyBookingsDrawer({ isOpen, onClose }: MyBookingsDrawerPr
         <div className="flex-1 overflow-y-auto p-6 space-y-4">
           {!user ? (
             <div className="text-center py-16 space-y-4">
-              <div className="w-16 h-16 rounded-full bg-red-50 text-[#FF3B30] flex items-center justify-center mx-auto">
+              <div className="w-16 h-16 rounded-full bg-[#5266EB]/10 text-[#5266EB] flex items-center justify-center mx-auto">
                 <Compass className="w-8 h-8" />
               </div>
-              <h3 className="font-syne text-base font-bold text-[#111111]">Not Logged In</h3>
+              <h3 className="font-syne text-base font-bold text-[#000000]">Not Logged In</h3>
               <p className="text-xs text-gray-500 max-w-xs mx-auto">
                 Please log in to your account to view your reservations and invoices.
               </p>
@@ -137,7 +137,7 @@ export default function MyBookingsDrawer({ isOpen, onClose }: MyBookingsDrawerPr
                 <Link
                   href="/login"
                   onClick={onClose}
-                  className="btn-red-pill text-xs font-bold py-2.5 px-6 rounded-full bg-[#FF3B30] text-white text-center inline-block"
+                  className="btn-red-pill text-xs font-bold py-2.5 px-6 rounded-full bg-[#5266EB] text-[#EDEDF3] text-center inline-block"
                 >
                   Log In to Account
                 </Link>
@@ -148,7 +148,7 @@ export default function MyBookingsDrawer({ isOpen, onClose }: MyBookingsDrawerPr
               <div className="w-16 h-16 rounded-full bg-gray-100 text-gray-400 flex items-center justify-center mx-auto">
                 <Compass className="w-8 h-8" />
               </div>
-              <h3 className="font-syne text-base font-bold text-[#111111]">No Active Bookings</h3>
+              <h3 className="font-syne text-base font-bold text-[#000000]">No Active Bookings</h3>
               <p className="text-xs text-gray-500 max-w-xs mx-auto">
                 You haven&apos;t reserved any vehicles or tour packages yet. Lock your departure with just ₹500 deposit!
               </p>
@@ -156,14 +156,14 @@ export default function MyBookingsDrawer({ isOpen, onClose }: MyBookingsDrawerPr
                 <Link
                   href="/car-rentals/cars"
                   onClick={onClose}
-                  className="btn-red-pill text-xs font-bold py-2.5 rounded-full bg-[#FF3B30] text-white text-center"
+                  className="btn-red-pill text-xs font-bold py-2.5 rounded-full bg-[#5266EB] text-[#EDEDF3] text-center"
                 >
                   Browse Self-Drive Cars
                 </Link>
                 <Link
                   href="/tours-travels"
                   onClick={onClose}
-                  className="text-xs font-bold py-2.5 rounded-full bg-emerald-600 text-white text-center hover:bg-emerald-700 transition-colors"
+                  className="text-xs font-bold py-2.5 rounded-full bg-[#171721] text-[#EDEDF3] text-center hover:bg-[#272735] transition-colors"
                 >
                   Explore Tour Packages
                 </Link>
@@ -178,7 +178,7 @@ export default function MyBookingsDrawer({ isOpen, onClose }: MyBookingsDrawerPr
                 {/* Header Badge */}
                 <div className="flex items-center justify-between text-xs">
                   <span className={`px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase ${
-                    booking.type === 'car' ? 'bg-red-50 text-[#FF3B30] border border-red-200' : 'bg-emerald-50 text-emerald-700 border border-emerald-200'
+                    booking.type === 'car' ? 'bg-[#5266EB]/10 text-[#5266EB] border border-[#5266EB]/30' : 'bg-[#9CB4E8]/20 text-[#171721] border border-[#9CB4E8]/40'
                   }`}>
                     {booking.type === 'car' ? 'Car Rental' : 'Tour Package'}
                   </span>

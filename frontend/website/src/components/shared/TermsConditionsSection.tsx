@@ -91,16 +91,16 @@ export default function TermsConditionsSection({ mode = 'all' }: { mode?: TermsM
         <div className="text-center space-y-3">
           <span className={`inline-flex items-center gap-1.5 px-3.5 py-1 rounded-full text-xs font-extrabold font-syne uppercase tracking-wider ${
             currentMode === 'cars'
-              ? 'bg-red-50 text-[#FF3B30] border border-red-200'
+              ? 'bg-[#5266EB]/10 text-[#5266EB] border border-[#5266EB]/30'
               : currentMode === 'tours'
-              ? 'bg-emerald-50 text-emerald-800 border border-emerald-200'
-              : 'bg-slate-100 text-slate-700 border border-slate-200'
+              ? 'bg-[#9CB4E8]/20 text-[#171721] border border-[#9CB4E8]/40'
+              : 'bg-[#EDEDF3] text-slate-700 border border-[#AFB2CE]/30'
           }`}>
             <FileText className="w-3.5 h-3.5" />
             {currentMode === 'cars' ? 'CAR RENTAL TERMS & GUIDELINES' : currentMode === 'tours' ? 'PILGRIMAGE TOUR TRAVEL TERMS' : 'OFFICIAL TERMS & POLICIES'}
           </span>
 
-          <h2 className="font-syne text-3xl sm:text-4xl font-extrabold text-[#111111] tracking-tight">
+          <h2 className="font-syne text-3xl sm:text-4xl font-extrabold text-[#000000] tracking-tight">
             {currentMode === 'cars'
               ? 'Self-Drive Car Rental Terms & Conditions'
               : currentMode === 'tours'
@@ -123,7 +123,7 @@ export default function TermsConditionsSection({ mode = 'all' }: { mode?: TermsM
                 onClick={() => setActiveTab('cars')}
                 className={`px-5 py-2 rounded-full text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer ${
                   activeTab === 'cars'
-                    ? 'bg-[#FF3B30] text-white shadow-md'
+                    ? 'bg-[#5266EB] text-[#EDEDF3] shadow-md'
                     : 'bg-white text-gray-600 border border-gray-200 hover:border-gray-300'
                 }`}
               >
@@ -135,7 +135,7 @@ export default function TermsConditionsSection({ mode = 'all' }: { mode?: TermsM
                 onClick={() => setActiveTab('tours')}
                 className={`px-5 py-2 rounded-full text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer ${
                   activeTab === 'tours'
-                    ? 'bg-emerald-600 text-white shadow-md'
+                    ? 'bg-[#171721] text-[#EDEDF3] shadow-md'
                     : 'bg-white text-gray-600 border border-gray-200 hover:border-gray-300'
                 }`}
               >
@@ -147,11 +147,11 @@ export default function TermsConditionsSection({ mode = 'all' }: { mode?: TermsM
                 onClick={() => setActiveTab('common')}
                 className={`px-5 py-2 rounded-full text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer ${
                   activeTab === 'common'
-                    ? 'bg-[#111111] text-white shadow-md'
+                    ? 'bg-[#272735] text-[#EDEDF3] shadow-md'
                     : 'bg-white text-gray-600 border border-gray-200 hover:border-gray-300'
                 }`}
               >
-                <ShieldCheck className="w-3.5 h-3.5 text-amber-400" />
+                <ShieldCheck className="w-3.5 h-3.5 text-[#9CB4E8]" />
                 <span>Common Platform Terms</span>
               </button>
             </div>
@@ -161,16 +161,16 @@ export default function TermsConditionsSection({ mode = 'all' }: { mode?: TermsM
         {/* Terms Box Container */}
         <div className={`rounded-3xl border p-6 sm:p-8 space-y-6 bg-white shadow-sm transition-all duration-300 ${
           currentMode === 'cars'
-            ? 'border-red-200'
+            ? 'border-[#5266EB]/30'
             : currentMode === 'tours'
-            ? 'border-emerald-200'
+            ? 'border-[#9CB4E8]/40'
             : 'border-gray-200'
         }`}>
           
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-4 border-b border-gray-100">
-            <div className="flex items-center gap-2 text-[#111111] font-syne font-bold text-base">
+            <div className="flex items-center gap-2 text-[#000000] font-syne font-bold text-base">
               <ShieldAlert className={`w-5 h-5 shrink-0 ${
-                currentMode === 'cars' ? 'text-[#FF3B30]' : currentMode === 'tours' ? 'text-emerald-600' : 'text-[#111111]'
+                currentMode === 'cars' ? 'text-[#5266EB]' : currentMode === 'tours' ? 'text-[#171721]' : 'text-[#000000]'
               }`} />
               <span>
                 {currentMode === 'cars'
@@ -180,7 +180,7 @@ export default function TermsConditionsSection({ mode = 'all' }: { mode?: TermsM
                   : 'Common Platform Terms & Conditions'}
               </span>
             </div>
-            <span className="text-[10px] font-extrabold uppercase px-3 py-1 rounded-full bg-gray-100 text-gray-700 self-start sm:self-auto shrink-0">
+            <span className="text-[10px] font-extrabold uppercase px-3 py-1 rounded-full bg-[#EDEDF3] text-gray-700 self-start sm:self-auto shrink-0">
               Active Policy • 2026
             </span>
           </div>
@@ -195,15 +195,15 @@ export default function TermsConditionsSection({ mode = 'all' }: { mode?: TermsM
               <div key={index} className="flex items-start gap-3.5 p-4 rounded-2xl bg-[#FAFAFC] border border-gray-200 hover:border-gray-300 transition-colors">
                 <div className={`p-1.5 rounded-full mt-0.5 shrink-0 ${
                   currentMode === 'cars'
-                    ? 'bg-red-50 text-[#FF3B30]'
+                    ? 'bg-[#5266EB]/10 text-[#5266EB]'
                     : currentMode === 'tours'
-                    ? 'bg-emerald-50 text-emerald-600'
-                    : 'bg-gray-100 text-[#111111]'
+                    ? 'bg-[#9CB4E8]/20 text-[#171721]'
+                    : 'bg-[#EDEDF3] text-[#000000]'
                 }`}>
                   <CheckCircle2 className="w-4 h-4" />
                 </div>
                 <div className="space-y-1">
-                  <h4 className="font-syne text-xs font-bold text-[#111111]">
+                  <h4 className="font-syne text-xs font-bold text-[#000000]">
                     {index + 1}. {term.title}
                   </h4>
                   <p className="text-xs text-gray-600 leading-relaxed font-normal">
@@ -217,7 +217,7 @@ export default function TermsConditionsSection({ mode = 'all' }: { mode?: TermsM
           {/* Quick Helpline Support Callout */}
           <div className="pt-4 border-t border-gray-100 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-gray-500">
             <div className="flex items-center gap-2 text-center sm:text-left">
-              <AlertCircle className="w-4 h-4 text-amber-500 shrink-0" />
+              <AlertCircle className="w-4 h-4 text-[#5266EB] shrink-0" />
               <span>
                 {currentMode === 'cars'
                   ? 'For self-drive queries or breakdown assistance: Call +91 78208 02985 or WhatsApp +91 82082 11478.'
@@ -229,7 +229,7 @@ export default function TermsConditionsSection({ mode = 'all' }: { mode?: TermsM
                 <>
                   <a
                     href={`tel:+91${SHARED_CAR_CONTACT.callPhone}`}
-                    className="inline-flex items-center gap-1.5 font-bold text-[#FF3B30] hover:text-red-700 font-syne"
+                    className="inline-flex items-center gap-1.5 font-bold text-[#5266EB] hover:text-[#3E51D4] font-syne"
                   >
                     <Phone className="w-3.5 h-3.5" />
                     <span>Call {SHARED_CAR_CONTACT.callPhoneDisplay}</span>
@@ -238,7 +238,7 @@ export default function TermsConditionsSection({ mode = 'all' }: { mode?: TermsM
                     href={`https://wa.me/91${SHARED_CAR_CONTACT.whatsappPhone}`}
                     target="_blank"
                     rel="noreferrer"
-                    className="inline-flex items-center gap-1.5 font-bold text-emerald-600 hover:text-emerald-700 font-syne"
+                    className="inline-flex items-center gap-1.5 font-bold text-[#5266EB] hover:underline font-syne"
                   >
                     <span>WA: {SHARED_CAR_CONTACT.whatsappPhoneDisplay}</span>
                   </a>
@@ -246,15 +246,94 @@ export default function TermsConditionsSection({ mode = 'all' }: { mode?: TermsM
               ) : (
                 <a
                   href={`tel:+91${SHARED_TOUR_CONTACT.phone1}`}
-                  className="inline-flex items-center gap-1.5 font-bold text-emerald-600 hover:text-emerald-700 font-syne"
+                  className="inline-flex items-center gap-1.5 font-bold text-[#5266EB] hover:text-[#3E51D4] font-syne"
                 >
-                  <Phone className="w-3.5 h-3.5 text-emerald-600" />
+                  <Phone className="w-3.5 h-3.5 text-[#5266EB]" />
                   <span>{SHARED_TOUR_CONTACT.phone1Display} / {SHARED_TOUR_CONTACT.phone2Display}</span>
                 </a>
               )}
             </div>
           </div>
 
+        </div>
+
+        {/* ─── DEDICATED LEGAL DOCUMENTS CARDS ─── */}
+        <div className="pt-2">
+          <div className="text-center space-y-1 mb-6">
+            <span className="text-[10px] font-extrabold uppercase tracking-widest text-[#5266EB] font-syne">
+              OFFICIAL LEGAL REPOSITORY
+            </span>
+            <h3 className="font-syne text-xl sm:text-2xl font-extrabold text-[#000000]">
+              Official Policy & Agreement Documents
+            </h3>
+            <p className="text-xs text-gray-500 max-w-md mx-auto">
+              Read online or download the official Word (.DOC / .DOCX) agreements below.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+            {/* Card 1: Standard Terms and Conditions */}
+            <div className="bg-white rounded-3xl p-6 border border-gray-200 shadow-sm hover:shadow-md transition-all space-y-4 flex flex-col justify-between">
+              <div className="space-y-2.5">
+                <div className="w-10 h-10 rounded-2xl bg-[#5266EB]/10 text-[#5266EB] flex items-center justify-center">
+                  <FileText className="w-5 h-5" />
+                </div>
+                <h4 className="font-syne text-base font-bold text-[#000000]">
+                  Website Standard Terms & Conditions
+                </h4>
+                <p className="text-xs text-gray-600 leading-relaxed">
+                  Comprehensive 12-clause platform terms governing user obligations, intellectual property, warranties, and Maharashtra jurisdiction.
+                </p>
+              </div>
+
+              <div className="flex flex-wrap items-center gap-2 pt-2 border-t border-gray-100">
+                <a
+                  href="/terms-and-conditions"
+                  className="flex-1 text-center py-2.5 px-4 rounded-full bg-[#171721] hover:bg-[#272735] text-[#EDEDF3] text-xs font-bold transition-colors"
+                >
+                  Read Full Policy
+                </a>
+                <a
+                  href="/documents/Website-Standard-Terms-And-Conditions.docx"
+                  download="Website-Standard-Terms-And-Conditions.docx"
+                  className="py-2.5 px-4 rounded-full bg-gray-100 hover:bg-gray-200 text-gray-800 text-xs font-bold transition-colors inline-flex items-center gap-1.5"
+                >
+                  <FileText className="w-3.5 h-3.5 text-[#5266EB]" /> .DOCX
+                </a>
+              </div>
+            </div>
+
+            {/* Card 2: Non-Disclosure Agreement (NDA) */}
+            <div className="bg-white rounded-3xl p-6 border border-gray-200 shadow-sm hover:shadow-md transition-all space-y-4 flex flex-col justify-between">
+              <div className="space-y-2.5">
+                <div className="w-10 h-10 rounded-2xl bg-[#9CB4E8]/20 text-[#5266EB] flex items-center justify-center">
+                  <ShieldCheck className="w-5 h-5" />
+                </div>
+                <h4 className="font-syne text-base font-bold text-[#000000]">
+                  Website Non-Disclosure Agreement (NDA)
+                </h4>
+                <p className="text-xs text-gray-600 leading-relaxed">
+                  Official 5-year bilateral proprietary confidentiality agreement with fast-track arbitration under Section 29B of the Arbitration Act.
+                </p>
+              </div>
+
+              <div className="flex flex-wrap items-center gap-2 pt-2 border-t border-gray-100">
+                <a
+                  href="/nda"
+                  className="flex-1 text-center py-2.5 px-4 rounded-full bg-[#5266EB] hover:bg-[#3E51D4] text-[#EDEDF3] text-xs font-bold transition-colors shadow-sm"
+                >
+                  Read Full NDA
+                </a>
+                <a
+                  href="/documents/Website-Non-Disclosure-Agreement.doc"
+                  download="Website-Non-Disclosure-Agreement.doc"
+                  className="py-2.5 px-4 rounded-full bg-gray-100 hover:bg-gray-200 text-gray-800 text-xs font-bold transition-colors inline-flex items-center gap-1.5"
+                >
+                  <FileText className="w-3.5 h-3.5 text-[#5266EB]" /> .DOC
+                </a>
+              </div>
+            </div>
+          </div>
         </div>
 
       </div>

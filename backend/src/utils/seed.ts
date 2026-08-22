@@ -1,15 +1,20 @@
-import { AdminUser, Setting, PromoCode, TourDestination, TourPackage, FleetCategory, Vehicle } from '../models';
+import { AdminUser, Setting, PromoCode, TourDestination, TourPackage, FleetCategory, Vehicle, TourBooking, FleetBooking, TourInquiry, FleetInquiry } from '../models';
 import { hashPassword } from '../middlewares/auth.middleware';
 
 export const seedDatabase = async (): Promise<void> => {
   try {
-    // 1. Seed & Update Admin Users
+    // 0. Ensure clean slate for bookings and inquiries
+    await TourBooking.deleteMany({});
+    await FleetBooking.deleteMany({});
+    await TourInquiry.deleteMany({});
+    await FleetInquiry.deleteMany({});
+    // 1. Seed & Update Admin Users (2 Super Admins + 1 Viewer)
     const hashedSuperAdmin = await hashPassword('Admin@123');
     const hashedViewer = await hashPassword('Viewer@123');
 
-    // Ensure default superadmin exists and has 'superadmin' role
-    const existingSuperAdmin = await AdminUser.findOne({ email: 'admin@aarambhatravels.in' });
-    if (!existingSuperAdmin) {
+    // Super Admin 1: Primary Admin
+    const existingSuperAdmin1 = await AdminUser.findOne({ email: 'admin@aarambhatravels.in' });
+    if (!existingSuperAdmin1) {
       await AdminUser.create({
         name: 'Kushal Parakh',
         email: 'admin@aarambhatravels.in',
@@ -17,41 +22,46 @@ export const seedDatabase = async (): Promise<void> => {
         role: 'superadmin',
         isActive: true,
       });
-      console.log('[Seed] Superadmin user created: admin@aarambhatravels.in / Admin@123');
+      console.log('[Seed] Superadmin 1 created: admin@aarambhatravels.in / Admin@123');
     } else {
-      // Ensure existing primary admin account's role is 'superadmin'
-      if (existingSuperAdmin.role !== 'superadmin') {
-        existingSuperAdmin.role = 'superadmin';
-        await existingSuperAdmin.save();
-        console.log('[Seed] Existing admin updated to superadmin role');
-      }
+      existingSuperAdmin1.role = 'superadmin';
+      await existingSuperAdmin1.save();
     }
 
-    // Ensure Viewer 1 exists
+    // Super Admin 2: Operations Super Admin
+    const existingSuperAdmin2 = await AdminUser.findOne({ email: 'admin2@aarambhatravels.in' });
+    if (!existingSuperAdmin2) {
+      await AdminUser.create({
+        name: 'Pravin (Operations Head)',
+        email: 'admin2@aarambhatravels.in',
+        hashedPassword: hashedSuperAdmin,
+        role: 'superadmin',
+        isActive: true,
+      });
+      console.log('[Seed] Superadmin 2 created: admin2@aarambhatravels.in / Admin@123');
+    } else {
+      existingSuperAdmin2.role = 'superadmin';
+      await existingSuperAdmin2.save();
+    }
+
+    // Viewer 1: Booking Viewer
     const existingViewer1 = await AdminUser.findOne({ email: 'viewer1@aarambhatravels.in' });
     if (!existingViewer1) {
       await AdminUser.create({
-        name: 'Booking Viewer 1',
+        name: 'Booking Viewer',
         email: 'viewer1@aarambhatravels.in',
         hashedPassword: hashedViewer,
         role: 'viewer',
         isActive: true,
       });
       console.log('[Seed] Viewer 1 created: viewer1@aarambhatravels.in / Viewer@123');
+    } else {
+      existingViewer1.role = 'viewer';
+      await existingViewer1.save();
     }
 
-    // Ensure Viewer 2 exists
-    const existingViewer2 = await AdminUser.findOne({ email: 'viewer2@aarambhatravels.in' });
-    if (!existingViewer2) {
-      await AdminUser.create({
-        name: 'Booking Viewer 2',
-        email: 'viewer2@aarambhatravels.in',
-        hashedPassword: hashedViewer,
-        role: 'viewer',
-        isActive: true,
-      });
-      console.log('[Seed] Viewer 2 created: viewer2@aarambhatravels.in / Viewer@123');
-    }
+    // Remove legacy viewer2 if exists to maintain exactly 2 Super Admins + 1 Viewer
+    await AdminUser.deleteOne({ email: 'viewer2@aarambhatravels.in' });
 
     // 2. Seed Default Settings
     const settingCount = await Setting.countDocuments();
@@ -154,49 +164,108 @@ export const seedDatabase = async (): Promise<void> => {
     ]);
     console.log('[Seed] 3 new pilgrimage tour destinations and packages seeded successfully');
 
-    // 4. Seed Fleet Categories & Vehicles
-    const vehCount = await Vehicle.countDocuments();
-    if (vehCount === 0) {
-      const catSuv = await FleetCategory.create({ name: 'SUV & 4x4', description: 'Rugged terrain and luxury family SUVs' });
-      const catBike = await FleetCategory.create({ name: 'Adventure Bikes', description: 'High performance touring and cruiser bikes' });
+    // 4. Seed Fleet Categories & 8 Modern Vehicles
+    await Vehicle.deleteMany({});
+    await FleetCategory.deleteMany({});
 
-      await Vehicle.create([
-        {
-          name: 'Mahindra Thar 4x4',
-          regNumber: 'RJ14-AB-1001',
-          categoryId: catSuv._id,
-          vehicleType: 'car',
-          dailyRate: 3500,
-          securityDeposit: 5000,
-          status: 'Available',
-          images: ['https://images.unsplash.com/photo-1533473359331-0135ef1b58bf?q=80&w=800&auto=format&fit=crop'],
-          specs: { transmission: 'Manual', fuel: 'Diesel', seats: 4 },
-        },
-        {
-          name: 'Hyundai Creta SX',
-          regNumber: 'RJ14-CD-2002',
-          categoryId: catSuv._id,
-          vehicleType: 'car',
-          dailyRate: 2800,
-          securityDeposit: 3000,
-          status: 'Available',
-          images: ['https://images.unsplash.com/photo-1541899481282-d53bffe3c35d?q=80&w=800&auto=format&fit=crop'],
-          specs: { transmission: 'Automatic', fuel: 'Petrol', seats: 5 },
-        },
-        {
-          name: 'Royal Enfield Himalayan 450',
-          regNumber: 'RJ14-BK-3003',
-          categoryId: catBike._id,
-          vehicleType: 'bike',
-          dailyRate: 1200,
-          securityDeposit: 2000,
-          status: 'Available',
-          images: ['https://images.unsplash.com/photo-1558981806-ec527fa84c39?q=80&w=800&auto=format&fit=crop'],
-          specs: { engine: '450cc', ABS: 'Dual Channel' },
-        },
-      ]);
-      console.log('[Seed] Sample fleet categories and vehicles created');
-    }
+    const catHatch = await FleetCategory.create({ name: 'Hatchback', description: 'Compact and efficient self-drive hatchbacks' });
+    const catSedan = await FleetCategory.create({ name: 'Sedan', description: 'Executive sedans with plush boot and comfort' });
+    const catMPV = await FleetCategory.create({ name: '7-Seater MPV', description: 'Spacious family MPVs for group travel' });
+    const catCompactSUV = await FleetCategory.create({ name: 'Compact SUV', description: 'Stylish coupe-SUVs and high-clearance crossovers' });
+    const cat4x4 = await FleetCategory.create({ name: '4x4 Lifestyle SUV', description: 'Hardcore off-road 4WD lifestyle vehicles' });
+    const catLuxurySUV = await FleetCategory.create({ name: 'Luxury Full-Size SUV', description: 'Flagship full-size 7-seater luxury SUVs' });
+
+    await Vehicle.create([
+      {
+        name: 'WagonR VXI 2025',
+        regNumber: 'MH12-WR-2025',
+        categoryId: catHatch._id,
+        vehicleType: 'car',
+        dailyRate: 2200,
+        securityDeposit: 3000,
+        status: 'Available',
+        images: ['/images/fleet/wagonr_vxi_2025.jpg'],
+        specs: { bodyType: 'Tallboy Hatchback', transmission: 'Manual', engine: '1.2L Dual Jet', seats: 5, horsepower: 89, fuel: 'Petrol / Efficient' },
+      },
+      {
+        name: 'Swift Dzire 2025',
+        regNumber: 'MH12-DZ-2025',
+        categoryId: catSedan._id,
+        vehicleType: 'car',
+        dailyRate: 2500,
+        securityDeposit: 3000,
+        status: 'Available',
+        images: ['/images/fleet/swift_dzire_2025.jpg'],
+        specs: { bodyType: 'Compact Executive Sedan', transmission: 'Manual', engine: '1.2L Z-Series', seats: 5, horsepower: 82, fuel: 'Petrol' },
+      },
+      {
+        name: 'Swift Black 2026',
+        regNumber: 'MH12-SW-2026',
+        categoryId: catHatch._id,
+        vehicleType: 'car',
+        dailyRate: 2500,
+        securityDeposit: 3000,
+        status: 'Available',
+        images: ['/images/fleet/swift_black_2026.jpg'],
+        specs: { bodyType: 'Sporty Hatchback', transmission: 'Manual', engine: '1.2L Z12E', seats: 5, horsepower: 82, fuel: 'Petrol' },
+      },
+      {
+        name: 'Ertiga 2024',
+        regNumber: 'MH12-ER-2024',
+        categoryId: catMPV._id,
+        vehicleType: 'car',
+        dailyRate: 2800,
+        securityDeposit: 4000,
+        status: 'Available',
+        images: ['/images/fleet/ertiga_2024.jpg'],
+        specs: { bodyType: '7-Seater Family MPV', transmission: 'Manual', engine: '1.5L Smart Hybrid', seats: 7, horsepower: 102, fuel: 'Petrol / Hybrid' },
+      },
+      {
+        name: 'Fronx Black 2026',
+        regNumber: 'MH12-FX-2026',
+        categoryId: catCompactSUV._id,
+        vehicleType: 'car',
+        dailyRate: 2800,
+        securityDeposit: 4000,
+        status: 'Available',
+        images: ['/images/fleet/fronx_black_2026.jpg'],
+        specs: { bodyType: 'Coupe-SUV', transmission: 'Manual', engine: '1.0L Turbo Boosterjet', seats: 5, horsepower: 100, fuel: 'Petrol Turbo' },
+      },
+      {
+        name: 'Rumion 2026',
+        regNumber: 'MH12-RM-2026',
+        categoryId: catMPV._id,
+        vehicleType: 'car',
+        dailyRate: 3000,
+        securityDeposit: 4000,
+        status: 'Available',
+        images: ['/images/fleet/rumion_2026.jpg'],
+        specs: { bodyType: '7-Seater Premium MPV', transmission: 'Manual', engine: '1.5L Dual VVT-i', seats: 7, horsepower: 103, fuel: 'Petrol' },
+      },
+      {
+        name: 'Thar Diesel 2023',
+        regNumber: 'MH12-TH-2023',
+        categoryId: cat4x4._id,
+        vehicleType: 'car',
+        dailyRate: 4500,
+        securityDeposit: 5000,
+        status: 'Available',
+        images: ['/images/fleet/thar_diesel_2023.jpg'],
+        specs: { bodyType: '4x4 Hardtop Off-Roader', transmission: 'Manual 4x4', engine: '2.2L mHawk Diesel', seats: 4, horsepower: 130, fuel: 'Diesel (4WD)' },
+      },
+      {
+        name: 'Fortuner 2017',
+        regNumber: 'MH12-FT-2017',
+        categoryId: catLuxurySUV._id,
+        vehicleType: 'car',
+        dailyRate: 7777,
+        securityDeposit: 10000,
+        status: 'Available',
+        images: ['/images/fleet/fortuner_2017.jpg'],
+        specs: { bodyType: 'Full-Size Luxury SUV', transmission: 'Automatic', engine: '2.8L D-4D Diesel', seats: 7, horsepower: 175, fuel: 'Diesel' },
+      },
+    ]);
+    console.log('[Seed] 8 modern fleet vehicles seeded successfully');
 
     // 5. Seed Promo Codes
     const promoCount = await PromoCode.countDocuments();

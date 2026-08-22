@@ -2,14 +2,35 @@
 @tailwind components;
 @tailwind utilities;
 
+@font-face {
+  font-family: 'Arcadia Display';
+  font-style: normal;
+  font-weight: 480;
+  font-display: swap;
+  src: local('Arcadia Display'), local('Syne'), local('Outfit');
+}
+
+@font-face {
+  font-family: 'Arcadia';
+  font-style: normal;
+  font-weight: 400 480;
+  font-display: swap;
+  src: local('Arcadia'), local('Outfit'), local('Plus Jakarta Sans');
+}
+
 @layer base {
   body {
     margin: 0;
-    background-color: #EDF1F7;
-    font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Plus Jakarta Sans', 'Inter', 'Segoe UI', Roboto, sans-serif;
+    background-color: #EDEDF3;
+    font-family: 'Arcadia', 'arcadia', 'Outfit', 'Plus Jakarta Sans', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
-    color: #1F2937;
+    color: #000000;
+  }
+
+  h1, h2 {
+    font-family: 'Arcadia Display', 'arcadiaDisplay', 'Syne', sans-serif;
+    font-weight: 480;
   }
 }
 
@@ -24,12 +45,12 @@
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #E5E7EB;
+  background: #AFB2CE;
   border-radius: 9999px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #D1D5DB;
+  background: #9CB4E8;
 }
 
 /* Fix browser autofill on dark inputs */
@@ -37,8 +58,18 @@ input:-webkit-autofill,
 input:-webkit-autofill:hover, 
 input:-webkit-autofill:focus,
 input:-webkit-autofill:active {
-  -webkit-text-fill-color: #ffffff !important;
-  -webkit-box-shadow: 0 0 0px 1000px #1e2230 inset !important;
-  box-shadow: 0 0 0px 1000px #1e2230 inset !important;
+  -webkit-text-fill-color: #EDEDF3 !important;
+  -webkit-box-shadow: 0 0 0px 1000px #171721 inset !important;
+  box-shadow: 0 0 0px 1000px #171721 inset !important;
   transition: background-color 5000s ease-in-out 0s;
 }
+
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+

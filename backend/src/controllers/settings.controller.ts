@@ -2,6 +2,15 @@ import { Request, Response, NextFunction } from 'express';
 import { SettingsService } from '../services/settings.service';
 
 export class SettingsController {
+  static async getPublicSettings(req: Request, res: Response, next: NextFunction): Promise<void> {
+    try {
+      const settings = await SettingsService.getPublicSettings();
+      res.json(settings);
+    } catch (err) {
+      next(err);
+    }
+  }
+
   static async getSettings(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
       const settings = await SettingsService.getSettings();

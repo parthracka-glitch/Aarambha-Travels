@@ -356,9 +356,9 @@ export default function CarDetailPage() {
               </div>
 
               {/* RENTAL POLICIES & REQUIREMENTS */}
-              <div className="bg-gradient-to-r from-red-50 to-orange-50 rounded-2xl p-6 border border-red-100 space-y-3">
-                <h4 className="font-syne text-xs font-bold text-[#FF3B30] uppercase tracking-wider flex items-center gap-2">
-                  <ShieldCheck className="w-4 h-4" /> Rental Verification & Requirements
+              <div className="bg-[#9CB4E8]/10 rounded-2xl p-6 border border-[#9CB4E8]/30 space-y-3">
+                <h4 className="font-syne text-xs font-bold text-[#5266EB] uppercase tracking-wider flex items-center gap-2">
+                  <ShieldCheck className="w-4 h-4 text-[#5266EB]" /> Rental Verification & Requirements
                 </h4>
                 <ul className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs text-gray-700">
                   <li className="flex items-center gap-2">
@@ -448,7 +448,7 @@ export default function CarDetailPage() {
                   <div className="pt-2 space-y-3">
                     <Link
                       href={`/car-rentals/cars/${vehicle.id}/book`}
-                      className="w-full py-4 rounded-2xl bg-[#FF3B30] hover:bg-[#E03126] text-white font-extrabold uppercase tracking-wider text-xs transition-all flex items-center justify-center gap-2 shadow-xl shadow-red-600/30 text-center block cursor-pointer hover:scale-[1.01]"
+                      className="w-full py-4 rounded-2xl bg-[#5266EB] hover:bg-[#3E51D4] text-[#EDEDF3] font-extrabold uppercase tracking-wider text-xs transition-all flex items-center justify-center gap-2 shadow-xl shadow-[#5266EB]/20 text-center block cursor-pointer hover:scale-[1.01]"
                     >
                       <span>Proceed to Booking Details</span>
                       <ArrowRight className="w-4 h-4" />
@@ -459,17 +459,17 @@ export default function CarDetailPage() {
                         href="https://wa.me/918208211478?text=Hi%20Aarambha,%20I%20would%20like%20to%20inquire%20about%20booking%20the%20vehicle."
                         target="_blank"
                         rel="noreferrer"
-                        className="py-3 px-3 rounded-2xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs uppercase tracking-wider transition-all flex items-center justify-center gap-1.5 text-center shadow-md"
+                        className="py-3 px-3 rounded-2xl bg-[#272735] hover:bg-[#171721] text-[#9CB4E8] font-bold text-xs uppercase tracking-wider transition-all flex items-center justify-center gap-1.5 text-center shadow-md border border-[#9CB4E8]/30"
                       >
-                        <MessageCircle className="w-3.5 h-3.5 fill-white" />
+                        <MessageCircle className="w-3.5 h-3.5 fill-[#9CB4E8]" />
                         <span>WhatsApp (8208211478)</span>
                       </a>
 
                       <a
                         href="tel:+917820802985"
-                        className="py-3 px-3 rounded-2xl bg-[#111111] hover:bg-black text-white font-bold text-xs uppercase tracking-wider transition-all flex items-center justify-center gap-1.5 text-center shadow-md"
+                        className="py-3 px-3 rounded-2xl bg-[#171721] hover:bg-[#272735] text-[#EDEDF3] font-bold text-xs uppercase tracking-wider transition-all flex items-center justify-center gap-1.5 text-center shadow-md"
                       >
-                        <Phone className="w-3.5 h-3.5 text-[#FF3B30]" />
+                        <Phone className="w-3.5 h-3.5 text-[#5266EB]" />
                         <span>Call (7820802985)</span>
                       </a>
                     </div>

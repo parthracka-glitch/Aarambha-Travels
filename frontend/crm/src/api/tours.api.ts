@@ -37,3 +37,9 @@ export const createToursInquiry = (data: any) =>
     method: 'POST',
     body: JSON.stringify(data),
   });
+
+export const verifyToursBooking = (id: string, status: 'Confirmed' | 'Deposit Paid' | 'Rejected', rejectionReason?: string) =>
+  apiFetch(`/api/tours/bookings/${id}/verify`, {
+    method: 'PUT',
+    body: JSON.stringify({ status, rejectionReason }),
+  });

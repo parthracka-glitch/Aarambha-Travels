@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { Plus, RefreshCw, Pencil, Trash2, Calendar, CheckCircle2, AlertCircle, Clock, Tag, X } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
+import { Plus, RefreshCw, Pencil, Trash2, Calendar, CheckCircle2, AlertCircle, Clock, Tag, X, Users } from 'lucide-react';
 import { getToursPackages, getToursDestinations, createPackage, updatePackage, deletePackage } from '@/api/tours.api';
 import { Modal } from '@/components/common/Modal';
 import { Loader } from '@/components/common/Loader';
@@ -18,6 +19,7 @@ const DEFAULT_BATCHES = [
 ];
 
 export default function ToursView() {
+  const navigate = useNavigate();
   const [packages, setPackages] = useState<any[]>([]);
   const [destinations, setDestinations] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
@@ -268,14 +270,24 @@ export default function ToursView() {
                   </div>
                 </div>
 
-                {/* Manage Departure Dates Button */}
-                <button
-                  onClick={() => handleOpenManageBatches(pkg)}
-                  className="w-full py-2.5 bg-indigo-50 hover:bg-indigo-100 text-indigo-700 font-bold rounded-xl text-xs flex items-center justify-center gap-2 transition-all shadow-sm border border-indigo-100"
-                >
-                  <Calendar className="w-3.5 h-3.5 text-indigo-600" />
-                  <span>Manage Batch Dates ({dateCount})</span>
-                </button>
+                {/* Manage Departure Dates & Calendar Buttons */}
+                <div className="grid grid-cols-2 gap-2">
+                  <button
+                    onClick={() => handleOpenManageBatches(pkg)}
+                    className="py-2 px-2.5 bg-indigo-50 hover:bg-indigo-100 text-indigo-700 font-bold rounded-xl text-xs flex items-center justify-center gap-1.5 transition-all shadow-sm border border-indigo-100"
+                  >
+                    <Calendar className="w-3.5 h-3.5 text-indigo-600" />
+                    <span>Batches ({dateCount})</span>
+                  </button>
+
+                  <button
+                    onClick={() => navigate('/calendar')}
+                    className="py-2 px-2.5 bg-slate-900 hover:bg-black text-white font-bold rounded-xl text-xs flex items-center justify-center gap-1.5 transition-all shadow-sm"
+                  >
+                    <Users className="w-3.5 h-3.5 text-red-400" />
+                    <span>Members List</span>
+                  </button>
+                </div>
               </div>
             </div>
           );
