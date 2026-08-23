@@ -29,7 +29,7 @@ export async function apiFetch<T>(endpoint: string, options?: RequestInit): Prom
     }
   }
 
-  const controllerSignal = options?.signal || AbortSignal.timeout(4000);
+  const controllerSignal = options?.signal || AbortSignal.timeout(30000);
 
   const res = await fetch(`${API_BASE_URL}${endpoint}`, {
     headers: {

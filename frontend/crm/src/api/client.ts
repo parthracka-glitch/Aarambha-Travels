@@ -41,7 +41,7 @@ export async function apiFetch(path: string, opts?: RequestInit) {
     }
   }
 
-  const controllerSignal = opts?.signal || AbortSignal.timeout(4000);
+  const controllerSignal = opts?.signal || AbortSignal.timeout(30000);
 
   const res = await fetch(`${API}${path}`, {
     headers,

@@ -7,21 +7,37 @@ export const connectDB = async (): Promise<void> => {
   const customURI = process.env.MONGODB_URI;
 
   if (customURI) {
-    try {
-      const conn = await mongoose.connect(customURI, {
-        serverSelectionTimeoutMS: 5000,
-      });
-      // Verify database responds
-      if (conn.connection.db) {
-        await conn.connection.db.admin().ping();
-      }
-      console.log(`[Database] Connected & verified successfully with MongoDB Atlas: ${conn.connection.host}`);
-      return;
-    } catch (err: any) {
-      console.error(`[Database Warning] MongoDB Atlas returned error (${err.message}). Checking local/in-memory fallback...`);
+    const isProduction = process.env.NODE_ENV === 'production';
+    const maxRetries = isProduction ? 3 : 1;
+
+    for (let attempt = 1; attempt <= maxRetries; attempt++) {
       try {
-        await mongoose.disconnect();
-      } catch (_e) {}
+        const conn = await mongoose.connect(customURI, {
+          serverSelectionTimeoutMS: 15000,
+          connectTimeoutMS: 15000,
+          socketTimeoutMS: 45000,
+          maxPoolSize: 25,
+          minPoolSize: 2,
+        });
+        // Verify database responds
+        if (conn.connection.db) {
+          await conn.connection.db.admin().ping();
+        }
+        console.log(`[Database] Connected & verified successfully with MongoDB Atlas: ${conn.connection.host}`);
+        return;
+      } catch (err: any) {
+        console.error(`[Database Warning] Attempt ${attempt}/${maxRetries} to connect to MongoDB Atlas failed (${err.message}).`);
+        try {
+          await mongoose.disconnect();
+        } catch (_e) {}
+        if (attempt < maxRetries) {
+          await new Promise((r) => setTimeout(r, 2000));
+        }
+      }
+    }
+
+    if (isProduction) {
+      console.error('[Database Critical] Could not connect to MongoDB Atlas in production mode. Please check MONGODB_URI & Atlas IP Whitelist (allow 0.0.0.0/0 on Render).');
     }
   }
 

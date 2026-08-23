@@ -3,11 +3,6 @@ import { hashPassword } from '../middlewares/auth.middleware';
 
 export const seedDatabase = async (): Promise<void> => {
   try {
-    // 0. Ensure clean slate for bookings and inquiries
-    await TourBooking.deleteMany({});
-    await FleetBooking.deleteMany({});
-    await TourInquiry.deleteMany({});
-    await FleetInquiry.deleteMany({});
     // 1. Seed & Update Admin Users (2 Super Admins + 1 Viewer)
     const hashedSuperAdmin = await hashPassword('Admin@123');
     const hashedViewer = await hashPassword('Viewer@123');
@@ -75,9 +70,9 @@ export const seedDatabase = async (): Promise<void> => {
       console.log('[Seed] Initial settings created');
     }
 
-    // 3. Seed Tour Destinations & Packages
-    await TourPackage.deleteMany({});
-    await TourDestination.deleteMany({});
+    // 3. Seed Tour Destinations & Packages (Only if not already seeded)
+    const packageCount = await TourPackage.countDocuments();
+    if (packageCount === 0) {
 
     const destUjjain = await TourDestination.create({
       name: 'Ujjain & Omkareshwar',
@@ -163,17 +158,17 @@ export const seedDatabase = async (): Promise<void> => {
       },
     ]);
     console.log('[Seed] 3 new pilgrimage tour destinations and packages seeded successfully');
+    }
 
-    // 4. Seed Fleet Categories & 8 Modern Vehicles
-    await Vehicle.deleteMany({});
-    await FleetCategory.deleteMany({});
-
-    const catHatch = await FleetCategory.create({ name: 'Hatchback', description: 'Compact and efficient self-drive hatchbacks' });
-    const catSedan = await FleetCategory.create({ name: 'Sedan', description: 'Executive sedans with plush boot and comfort' });
-    const catMPV = await FleetCategory.create({ name: '7-Seater MPV', description: 'Spacious family MPVs for group travel' });
-    const catCompactSUV = await FleetCategory.create({ name: 'Compact SUV', description: 'Stylish coupe-SUVs and high-clearance crossovers' });
-    const cat4x4 = await FleetCategory.create({ name: '4x4 Lifestyle SUV', description: 'Hardcore off-road 4WD lifestyle vehicles' });
-    const catLuxurySUV = await FleetCategory.create({ name: 'Luxury Full-Size SUV', description: 'Flagship full-size 7-seater luxury SUVs' });
+    // 4. Seed Fleet Categories & 8 Modern Vehicles (Only if not already seeded)
+    const vehicleCount = await Vehicle.countDocuments();
+    if (vehicleCount === 0) {
+      const catHatch = await FleetCategory.create({ name: 'Hatchback', description: 'Compact and efficient self-drive hatchbacks' });
+      const catSedan = await FleetCategory.create({ name: 'Sedan', description: 'Executive sedans with plush boot and comfort' });
+      const catMPV = await FleetCategory.create({ name: '7-Seater MPV', description: 'Spacious family MPVs for group travel' });
+      const catCompactSUV = await FleetCategory.create({ name: 'Compact SUV', description: 'Stylish coupe-SUVs and high-clearance crossovers' });
+      const cat4x4 = await FleetCategory.create({ name: '4x4 Lifestyle SUV', description: 'Hardcore off-road 4WD lifestyle vehicles' });
+      const catLuxurySUV = await FleetCategory.create({ name: 'Luxury Full-Size SUV', description: 'Flagship full-size 7-seater luxury SUVs' });
 
     await Vehicle.create([
       {
@@ -266,6 +261,7 @@ export const seedDatabase = async (): Promise<void> => {
       },
     ]);
     console.log('[Seed] 8 modern fleet vehicles seeded successfully');
+    }
 
     // 5. Seed Promo Codes
     const promoCount = await PromoCode.countDocuments();
