@@ -34,12 +34,18 @@ export function DashboardLayout() {
         <main className="flex-1 overflow-y-auto px-3 sm:px-6 lg:px-8 py-3.5 sm:py-6 pb-24 md:pb-6">
           <div className="w-full max-w-[1720px] mx-auto">
             {apiStatus === 'offline' ? (
-              <div className="bg-red-50/90 border border-red-200/80 rounded-3xl p-6 text-center shadow-sm my-4">
+              <div className="bg-red-50/90 border border-red-200/80 rounded-3xl p-6 text-center shadow-sm my-4 max-w-xl mx-auto">
                 <AlertCircle className="w-8 h-8 text-red-500 mx-auto mb-3" />
                 <h3 className="font-bold text-red-800 mb-1">Backend API Unreachable</h3>
-                <p className="text-sm text-red-600">
-                  Make sure the Express TypeScript server is running on <code className="bg-white/80 px-2 py-0.5 rounded border border-red-200">http://127.0.0.1:8000</code>
+                <p className="text-sm text-red-600 mb-4">
+                  Unable to connect to the backend server. If using Render, it may be waking up from sleep mode.
                 </p>
+                <button
+                  onClick={() => window.location.reload()}
+                  className="px-4 py-2 bg-red-600 hover:bg-red-700 text-white text-xs font-semibold rounded-xl transition-colors shadow-sm"
+                >
+                  Retry Connection
+                </button>
               </div>
             ) : (
               <Outlet />

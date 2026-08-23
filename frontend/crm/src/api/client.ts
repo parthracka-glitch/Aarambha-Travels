@@ -64,7 +64,7 @@ export async function apiFetch(path: string, opts?: RequestInit) {
 
 export async function checkHealthStatus(): Promise<boolean> {
   try {
-    const res = await fetch(`${API}/api/health`, { signal: AbortSignal.timeout(3000) });
+    const res = await fetch(`${API}/api/health`, { signal: AbortSignal.timeout(15000) });
     return res.ok;
   } catch {
     return false;
