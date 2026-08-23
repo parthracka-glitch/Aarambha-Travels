@@ -432,6 +432,36 @@ export default function TourPackageDetailPage() {
         </div>
       </section>
 
+      {/* 📱 MOBILE STICKY FLOATING BOOKING BAR (Fixed at bottom on phones) */}
+      <div className="lg:hidden fixed bottom-0 left-0 right-0 z-40 bg-[#171721]/95 backdrop-blur-xl border-t border-white/15 px-4 py-3 pb-safe flex items-center justify-between gap-3 shadow-2xl">
+        <div>
+          <span className="text-[10px] uppercase font-bold text-[#9CB4E8] block leading-tight">Advance Lock</span>
+          <div className="flex items-baseline gap-1">
+            <span className="text-base font-extrabold text-white font-syne">{tour.advanceLabel}</span>
+            <span className="text-[10px] text-gray-400">/ {tour.priceDisplay}</span>
+          </div>
+        </div>
+
+        <div className="flex items-center gap-2">
+          <a
+            href={whatsappUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="p-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white shadow-md active:scale-95"
+            title="Chat on WhatsApp"
+          >
+            <MessageCircle className="w-4 h-4" />
+          </a>
+
+          <button
+            onClick={() => setIsBookingModalOpen(true)}
+            className="py-2.5 px-5 rounded-xl bg-[#5266EB] hover:bg-[#3E51D4] text-white font-extrabold text-xs shadow-lg flex items-center gap-1.5 active:scale-95 cursor-pointer"
+          >
+            <CreditCard className="w-3.5 h-3.5" /> Book Now
+          </button>
+        </div>
+      </div>
+
       {/* Booking Modal */}
       {isBookingModalOpen && (
         <BookingModal
@@ -442,7 +472,9 @@ export default function TourPackageDetailPage() {
       )}
 
       {/* Tour Package Terms & Conditions */}
-      <TermsConditionsSection mode="tours" />
+      <div className="pb-16 lg:pb-0">
+        <TermsConditionsSection mode="tours" />
+      </div>
 
       <Footer />
 

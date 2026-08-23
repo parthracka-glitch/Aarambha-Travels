@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { Link } from 'react-router-dom';
-import { RefreshCw, Plus, Trash2, FileDown, Filter, FileSpreadsheet, Calendar as CalendarIcon, CheckCircle, XCircle, AlertTriangle, Copy, Check, Clock, QrCode } from 'lucide-react';
+import { RefreshCw, Plus, Trash2, FileDown, Filter, FileSpreadsheet, Calendar as CalendarIcon, CheckCircle, XCircle, AlertTriangle, Copy, Check, Clock, QrCode, Phone, MessageSquare } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
 import { getToursBookings, getToursPackages, createToursBooking, deleteToursBooking, verifyToursBooking } from '@/api/tours.api';
 import { getFleetBookings, getFleetVehicles, createFleetBooking, deleteFleetBooking, pickupFleetBooking, returnFleetBooking, refundFleetBooking, verifyFleetBooking } from '@/api/fleet.api';
@@ -614,8 +614,220 @@ export default function BookingsView() {
         </div>
       )}
 
-      {/* Bookings Table */}
-      <div className="bg-white rounded-[24px] border border-gray-100 overflow-hidden shadow-aether-card">
+      {/* 📱 MOBILE BOOKINGS CARD VIEW (< 768px) */}
+      <div className="md:hidden space-y-3">
+        {allBookings.map((b, i) => {
+          const isFleet = b.type === 'Fleet';
+          const code = b.bookingCode || b.booking_code;
+          const name = b.customerName || b.customer_name || 'Customer';
+          const email = b.customerEmail || b.customer_email || 'N/A';
+          const phone = b.customerPhone || b.customer_phone || '';
+          const cleanPhone = phone.replace(/[^0-9]/g, '');
+          const total = b.totalAmount || b.total_amount || b.totalRentalAmount || b.total_rental_amount || 0;
+          const depositPaid = b.depositAmount || b.depositPaid || 1;
+          const itemName = isFleet ? (b.vehicleId?.name || b.vehicleName || 'Vehicle Rental') : (b.packageId?.title || b.packageName || 'Tour Package');
+          const isOverdue = isOverdueVerification(b);
+
+          return (
+            <div
+              key={i}
+              className={`bg-white rounded-2xl p-4 border shadow-sm space-y-3 relative ${
+                isOverdue ? 'border-red-300 bg-red-50/30' : b.status === 'pending_verification' ? 'border-amber-300 bg-amber-50/20' : 'border-gray-100'
+              }`}
+            >
+              {/* Card Header */}
+              <div className="flex items-start justify-between gap-2">
+                <div>
+                  <div className="flex items-center gap-1.5 flex-wrap">
+                    <span className="font-mono font-extrabold text-xs text-[#111827]">{code}</span>
+                    <span className={`px-2 py-0.5 rounded-full font-bold text-[10px] ${isFleet ? 'bg-indigo-50 text-indigo-700' : 'bg-emerald-50 text-emerald-700'}`}>
+                      {b.type}
+                    </span>
+                    {b.agreementAccepted && (
+                      <span className="text-[10px] font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-100">
+                        ✓ Signed
+                      </span>
+                    )}
+                  </div>
+                  <h4 className="font-bold text-sm text-[#111827] mt-1">{itemName}</h4>
+                </div>
+
+                <div>
+                  <Badge color={statusColor(b.status)}>{b.status}</Badge>
+                </div>
+              </div>
+
+              {/* Customer & Contact */}
+              <div className="bg-gray-50/80 rounded-xl p-2.5 space-y-1.5 text-xs">
+                <div className="flex items-center justify-between">
+                  <span className="font-bold text-gray-900">{name}</span>
+                  {b.licenseNumber && <span className="font-mono text-[10px] text-gray-500">DL: {b.licenseNumber}</span>}
+                </div>
+                {phone && (
+                  <div className="flex items-center justify-between text-[11px] text-gray-600">
+                    <span>{phone}</span>
+                    <div className="flex items-center gap-1.5">
+                      <a
+                        href={`tel:${phone}`}
+                        className="px-2 py-1 rounded-lg bg-blue-50 text-blue-700 font-bold flex items-center gap-1 text-[10px] border border-blue-200"
+                      >
+                        <Phone className="w-3 h-3" /> Call
+                      </a>
+                      <a
+                        href={`https://wa.me/${cleanPhone.startsWith('91') ? cleanPhone : `91${cleanPhone}`}?text=${encodeURIComponent(`Hello ${name}, regarding your Aarambha booking #${code}.`)}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="px-2 py-1 rounded-lg bg-emerald-50 text-emerald-700 font-bold flex items-center gap-1 text-[10px] border border-emerald-200"
+                      >
+                        <MessageSquare className="w-3 h-3" /> WhatsApp
+                      </a>
+                    </div>
+                  </div>
+                )}
+              </div>
+
+              {/* Dates & Money */}
+              <div className="grid grid-cols-2 gap-2 text-xs pt-0.5">
+                <div className="bg-gray-50 p-2 rounded-xl">
+                  <span className="text-[10px] text-gray-400 block font-medium">Dates</span>
+                  {isFleet ? (
+                    <span className="font-semibold text-gray-800 text-[11px] block truncate">
+                      {formatDate(b.pickupDatetime || b.pickupDate || b.startDate)}
+                    </span>
+                  ) : (
+                    <span className="font-semibold text-gray-800 text-[11px] block truncate">
+                      {formatDate(b.travelDate || b.startDate)} ({b.paxCount || 1} Pax)
+                    </span>
+                  )}
+                </div>
+
+                <div className="bg-gray-50 p-2 rounded-xl">
+                  <span className="text-[10px] text-gray-400 block font-medium">Amount</span>
+                  <div className="font-bold text-[#5266EB] text-xs">₹{depositPaid} (Deposit)</div>
+                  <div className="text-[10px] text-gray-400">Total: {formatCurrency(total)}</div>
+                </div>
+              </div>
+
+              {/* UTR if present */}
+              {b.utrNumber && (
+                <div className="flex items-center justify-between bg-[#5266EB]/5 p-2 rounded-xl border border-[#5266EB]/20 text-xs">
+                  <div className="font-mono font-bold text-[#5266EB] text-[11px]">UTR: {b.utrNumber}</div>
+                  <button
+                    onClick={() => handleCopyUtr(b._id || b.id, b.utrNumber)}
+                    className="text-gray-500 hover:text-black p-1"
+                  >
+                    {copiedUtrId === (b._id || b.id) ? <Check className="w-3.5 h-3.5 text-emerald-600" /> : <Copy className="w-3.5 h-3.5" />}
+                  </button>
+                </div>
+              )}
+
+              {/* Mobile Action Buttons */}
+              <div className="pt-2 border-t border-gray-100 flex items-center justify-between gap-2 flex-wrap">
+                {!isViewer && b.status === 'pending_verification' ? (
+                  <div className="flex items-center gap-2 w-full">
+                    <button
+                      onClick={() => handleApproveBooking(b)}
+                      className="flex-1 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-black text-xs flex items-center justify-center gap-1.5 shadow-sm"
+                    >
+                      <CheckCircle className="w-4 h-4" /> Verify Payment
+                    </button>
+                    <button
+                      onClick={() => handleRejectBooking(b)}
+                      className="p-2 rounded-xl bg-red-50 text-red-700 border border-red-200"
+                      title="Reject"
+                    >
+                      <XCircle className="w-4 h-4" />
+                    </button>
+                  </div>
+                ) : (
+                  <button
+                    onClick={() => {
+                      const invNum = getNextInvoiceNumber(isFleet ? 'car' : 'tour');
+                      const pickupDt = b.pickupDatetime || b.pickup_datetime;
+                      const dropDt = b.dropoffDatetime || b.dropoff_datetime;
+                      const days = pickupDt && dropDt
+                        ? Math.max(1, Math.ceil((new Date(dropDt).getTime() - new Date(pickupDt).getTime()) / 86400000))
+                        : 1;
+                      const invoiceData: InvoiceData = {
+                        invoiceNumber: invNum,
+                        invoiceDate: new Date().toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' }),
+                        bookingType: isFleet ? 'car' : 'tour',
+                        bookingCode: code,
+                        customerName: name,
+                        customerPhone: phone,
+                        customerEmail: email,
+                        ...(isFleet ? {
+                          carModel: b.vehicleId?.name || 'Vehicle Rental',
+                          rentalStartDate: pickupDt ? formatDate(pickupDt) : 'N/A',
+                          rentalEndDate: dropDt ? formatDate(dropDt) : 'N/A',
+                          numberOfDays: days,
+                          perDayRate: Math.round(total / days),
+                        } : {
+                          packageName: b.packageId?.title || 'Tour Package',
+                          travelDates: b.travelDate ? formatDate(b.travelDate) : 'N/A',
+                          numberOfTravelers: b.paxCount || 1,
+                          perPersonPrice: Math.round(total / Math.max(1, b.paxCount || 1)),
+                        }),
+                        totalAmount: total,
+                        depositPaid: depositPaid,
+                        balanceAmount: total - depositPaid,
+                        paymentMode: b.paymentMethod || 'UPI QR',
+                        paymentStatus: b.status === 'Picked Up (Paid in Full)' || b.status === 'Returned' ? 'Paid' : 'Partially Paid',
+                        transactionId: b.utrNumber || code,
+                      };
+                      generateInvoicePDF(invoiceData);
+                    }}
+                    className="flex-1 py-2 rounded-xl bg-[#171721] text-white text-xs font-bold flex items-center justify-center gap-1.5 shadow-sm active:scale-95"
+                  >
+                    <FileDown className="w-3.5 h-3.5" /> Download Invoice
+                  </button>
+                )}
+
+                <div className="flex items-center gap-1">
+                  {!isViewer && isFleet && (
+                    <>
+                      {b.status === 'Deposit Paid' && (
+                        <button onClick={() => handlePickup(b._id || b.id)} className="px-3 py-1.5 bg-blue-50 text-blue-700 rounded-xl text-xs font-bold border border-blue-200">
+                          Pickup
+                        </button>
+                      )}
+                      {b.status === 'Picked Up (Paid in Full)' && (
+                        <button onClick={() => handleReturn(b._id || b.id)} className="px-3 py-1.5 bg-purple-50 text-purple-700 rounded-xl text-xs font-bold border border-purple-200">
+                          Return
+                        </button>
+                      )}
+                      {b.status === 'Returned' && (
+                        <button onClick={() => handleRefund(b._id || b.id)} className="px-3 py-1.5 bg-emerald-50 text-emerald-700 rounded-xl text-xs font-bold border border-emerald-200">
+                          Refund
+                        </button>
+                      )}
+                    </>
+                  )}
+
+                  {!isViewer && (
+                    <button
+                      onClick={() => handleDeleteBooking(b._id || b.id, isFleet)}
+                      className="p-2 text-gray-400 hover:text-red-600 rounded-xl hover:bg-red-50"
+                      title="Delete"
+                    >
+                      <Trash2 className="w-3.5 h-3.5" />
+                    </button>
+                  )}
+                </div>
+              </div>
+            </div>
+          );
+        })}
+
+        {allBookings.length === 0 && (
+          <div className="bg-white rounded-2xl p-8 text-center text-gray-400 text-xs border border-gray-100">
+            {activeFilters > 0 ? 'No bookings match the active filters.' : 'No bookings recorded yet.'}
+          </div>
+        )}
+      </div>
+
+      {/* 💻 DESKTOP TABLE VIEW (>= 768px) */}
+      <div className="hidden md:block bg-white rounded-[24px] border border-gray-100 overflow-hidden shadow-aether-card">
         <div className="overflow-x-auto">
           <table className="w-full text-xs">
             <thead className="bg-gray-50 text-left text-gray-500 font-bold uppercase tracking-wider border-b border-gray-100">

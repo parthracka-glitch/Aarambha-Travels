@@ -1,6 +1,15 @@
-import type { Metadata } from 'next';
+import type { Metadata, Viewport } from 'next';
 import Script from 'next/script';
 import './globals.css';
+
+export const viewport: Viewport = {
+  width: 'device-width',
+  initialScale: 1,
+  maximumScale: 5,
+  userScalable: true,
+  themeColor: '#171721',
+  viewportFit: 'cover',
+};
 
 export const metadata: Metadata = {
   title: 'आरंभ (AARAMBHA) — Premium Tours, Travels & Self-Drive Rentals',

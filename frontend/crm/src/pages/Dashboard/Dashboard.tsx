@@ -392,7 +392,55 @@ export default function DashboardView() {
           </Link>
         </div>
 
-        <div className="overflow-x-auto">
+        {/* 📱 MOBILE RECENT BOOKINGS CARDS (< 768px) */}
+        <div className="md:hidden space-y-3">
+          {recentBookings.slice(0, 6).map((b, i) => {
+            const isRental = b.type === 'Rental' || b.type === 'Fleet';
+            const code = b.bookingCode || b.booking_code || `REF-${i + 100}`;
+            const name = b.customerName || b.customer_name || 'Customer';
+            const phone = b.customerPhone || b.customer_phone || 'N/A';
+            const total = b.totalAmount || b.total_amount || b.totalPrice || 0;
+            const depositPaid = b.depositPaid || b.depositAmount || 1;
+            const itemName = isRental
+              ? (b.vehicleName || b.vehicle_name || b.title || 'Rental Vehicle')
+              : (b.packageName || b.package_name || b.title || 'Tour Package');
+            const dateVal = b.startDate || b.travelDate || b.pickup_date || b.createdAt;
+
+            return (
+              <div key={i} className="bg-gray-50/90 rounded-xl p-3.5 border border-gray-100 space-y-2.5">
+                <div className="flex items-center justify-between">
+                  <span className="font-mono font-bold text-xs text-[#111827]">{code}</span>
+                  <Badge color={statusColor(b.status || 'Confirmed')}>{b.status || 'Confirmed'}</Badge>
+                </div>
+                <div className="flex items-center gap-1.5">
+                  <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold ${
+                    isRental ? 'bg-blue-50 text-blue-700 border border-blue-200' : 'bg-emerald-50 text-emerald-700 border border-emerald-200'
+                  }`}>
+                    {isRental ? <Car className="w-3 h-3" /> : <Compass className="w-3 h-3" />}
+                    {b.type}
+                  </span>
+                  <span className="text-xs font-bold text-gray-800 truncate">{itemName}</span>
+                </div>
+                <div className="flex items-center justify-between text-xs pt-1 border-t border-gray-200/60">
+                  <div>
+                    <p className="font-semibold text-gray-900">{name}</p>
+                    <p className="text-[10px] text-gray-400">{formatDate(dateVal)}</p>
+                  </div>
+                  <div className="text-right">
+                    <p className="font-bold text-emerald-700">₹{depositPaid} paid</p>
+                    <p className="text-[10px] text-gray-400">Total: {formatCurrency(total)}</p>
+                  </div>
+                </div>
+              </div>
+            );
+          })}
+          {recentBookings.length === 0 && (
+            <p className="text-xs text-gray-400 text-center py-6">No recent bookings recorded.</p>
+          )}
+        </div>
+
+        {/* 💻 DESKTOP TABLE VIEW (>= 768px) */}
+        <div className="hidden md:block overflow-x-auto">
           <table className="w-full text-left text-xs">
             <thead className="bg-gray-50 text-gray-500 font-bold uppercase tracking-wider text-[10px] border-b border-gray-100">
               <tr>
