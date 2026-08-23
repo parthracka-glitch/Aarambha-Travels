@@ -71,7 +71,7 @@ export default function LoginPage() {
                 autoComplete="email"
                 value={email}
                 onChange={e => setEmail(e.target.value)}
-                placeholder="admin@aarambhatravels.in"
+                placeholder="Enter your email address"
                 className="w-full px-4 py-3 bg-[#171721] border border-gray-700/80 rounded-xl text-[#EDEDF3] font-medium text-sm placeholder-gray-400 focus:outline-none focus:border-[#5266EB] focus:ring-1 focus:ring-[#5266EB] transition-all caret-white shadow-inner"
                 style={{ color: '#ffffff' }}
               />
@@ -119,19 +119,6 @@ export default function LoginPage() {
               {loading ? 'Signing in…' : 'Sign In'}
             </button>
           </form>
-
-          {/* Hint */}
-          <div className="mt-6 pt-5 border-t border-white/8 space-y-1.5 text-center">
-            <p className="text-[11px] text-gray-400 font-medium">
-              Super Admin 1: <code className="text-white bg-white/10 px-1.5 py-0.5 rounded">admin@aarambhatravels.in</code> &middot; <code className="text-gray-300">Admin@123</code>
-            </p>
-            <p className="text-[11px] text-gray-400 font-medium">
-              Super Admin 2: <code className="text-white bg-white/10 px-1.5 py-0.5 rounded">admin2@aarambhatravels.in</code> &middot; <code className="text-gray-300">Admin@123</code>
-            </p>
-            <p className="text-[11px] text-gray-400 font-medium">
-              Viewer: <code className="text-white bg-white/10 px-1.5 py-0.5 rounded">viewer1@aarambhatravels.in</code> &middot; <code className="text-gray-300">Viewer@123</code>
-            </p>
-          </div>
         </div>
 
         <div className="text-center text-[11px] text-gray-500 mt-6 space-y-1">
