@@ -1,15 +1,21 @@
 import React from 'react';
 import { Badge } from '@/components/common/Badge';
 import { ShieldCheck, Eye, UserCheck, Mail, Lock } from 'lucide-react';
+import { useAuth } from '@/hooks/useAuth';
 
 export default function StaffView() {
+  const { user } = useAuth();
+
+  const currentAdminName = user?.name || 'Kushal Parakh';
+  const currentAdminEmail = user?.email || 'admin@aarambhatravels.in';
+
   const staffMembers = [
     {
-      name: 'Kushal Parakh',
-      initials: 'KP',
-      email: 'admin@aarambhatravels.in',
+      name: currentAdminName,
+      initials: currentAdminName.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2) || 'KP',
+      email: currentAdminEmail,
       role: 'Super Admin',
-      badgeColor: 'green',
+      badgeColor: 'green' as const,
       icon: ShieldCheck,
       description: 'Full access to all tours, fleet inventory, finances, bookings, and settings.',
     },
@@ -18,7 +24,7 @@ export default function StaffView() {
       initials: 'PP',
       email: 'admin2@aarambhatravels.in',
       role: 'Super Admin',
-      badgeColor: 'green',
+      badgeColor: 'green' as const,
       icon: ShieldCheck,
       description: 'Operations management, trip scheduling, bookings dispatch, and member lists.',
     },
@@ -27,7 +33,7 @@ export default function StaffView() {
       initials: 'BV',
       email: 'viewer1@aarambhatravels.in',
       role: 'Viewer',
-      badgeColor: 'amber',
+      badgeColor: 'amber' as const,
       icon: Eye,
       description: 'Read-only access to view bookings, passenger manifests, and vehicle schedules.',
     },

@@ -28,4 +28,14 @@ export class AuthController {
       next(err);
     }
   }
+
+  static async updateProfile(req: AuthRequest, res: Response, next: NextFunction): Promise<void> {
+    try {
+      const userId = req.user?.id || req.user?.sub || '';
+      const result = await AuthService.updateProfile(userId, req.body, req.ip);
+      res.json(result);
+    } catch (err) {
+      next(err);
+    }
+  }
 }

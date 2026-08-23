@@ -15,6 +15,7 @@ export interface AuthContextType {
   isAuthenticated: boolean;
   login: (email: string, password: string) => Promise<void>;
   logout: () => void;
+  updateUser: (updatedUser: AdminUser, newToken?: string) => void;
 }
 
 export const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -81,6 +82,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     setUser(adminUser);
   }, []);
 
+  const updateUser = useCallback((updatedUser: AdminUser, newToken?: string) => {
+    if (newToken) {
+      localStorage.setItem('crm_token', newToken);
+    }
+    localStorage.setItem('crm_user', JSON.stringify(updatedUser));
+    setUser(updatedUser);
+  }, []);
+
   const logout = useCallback(() => {
     localStorage.removeItem('crm_token');
     localStorage.removeItem('crm_user');
@@ -98,6 +107,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       isAuthenticated: !!user,
       login,
       logout,
+      updateUser,
     }}>
       {children}
     </AuthContext.Provider>
