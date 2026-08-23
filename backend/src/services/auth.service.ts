@@ -1,5 +1,6 @@
 import { AdminUser } from '../models';
 import { comparePassword, hashPassword, createToken, recordAudit } from '../middlewares/auth.middleware';
+import { realtimeService } from './realtime.service';
 
 export class AuthService {
   static async login(email: string, password: string, ipAddress?: string) {
@@ -106,6 +107,13 @@ export class AuthService {
         emailChanged: !!data.email,
         passwordChanged: !!data.newPassword,
       },
+    });
+
+    realtimeService.broadcast('PROFILE_UPDATED', {
+      adminId: String(admin._id),
+      name: admin.name,
+      email: admin.email,
+      role: admin.role,
     });
 
     return {

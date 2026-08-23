@@ -1,4 +1,5 @@
 import { BusRate, IBusRate } from '../models/bus.model';
+import { realtimeService } from './realtime.service';
 
 const DEFAULT_BUS_RATES: Partial<IBusRate>[] = [
   // Local AC
@@ -82,15 +83,23 @@ export async function getBusById(id: string): Promise<IBusRate | null> {
 export async function createBus(data: Partial<IBusRate>): Promise<IBusRate> {
   const busId = data.busId || `bus-${Date.now()}`;
   const newBus = new BusRate({ ...data, busId });
-  return newBus.save();
+  const saved = await newBus.save();
+  realtimeService.broadcast('BUS_RATES_UPDATED');
+  realtimeService.broadcast('FLEET_UPDATED');
+  return saved;
 }
 
 export async function updateBusRate(id: string, data: Partial<IBusRate>): Promise<IBusRate | null> {
   data.updatedAt = new Date();
-  return BusRate.findByIdAndUpdate(id, { $set: data }, { new: true });
+  const updated = await BusRate.findByIdAndUpdate(id, { $set: data }, { new: true });
+  realtimeService.broadcast('BUS_RATES_UPDATED');
+  realtimeService.broadcast('FLEET_UPDATED');
+  return updated;
 }
 
 export async function deleteBus(id: string): Promise<boolean> {
   const res = await BusRate.findByIdAndDelete(id);
+  realtimeService.broadcast('BUS_RATES_UPDATED');
+  realtimeService.broadcast('FLEET_UPDATED');
   return !!res;
 }

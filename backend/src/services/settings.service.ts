@@ -1,5 +1,6 @@
 import { Setting } from '../models';
 import { recordAudit } from '../middlewares/auth.middleware';
+import { realtimeService } from './realtime.service';
 
 export class SettingsService {
   static async getSettings() {
@@ -46,6 +47,9 @@ export class SettingsService {
       ipAddress,
     });
 
+    realtimeService.broadcast('SETTINGS_UPDATED', settings);
+
     return { message: 'Settings updated successfully' };
   }
 }
+

@@ -3,11 +3,14 @@ import mongoose from 'mongoose';
 import { TourDestination, TourPackage, TourInquiry, TourBooking, TourCustomer } from '../models';
 import { recordAudit } from '../middlewares/auth.middleware';
 import { localStore } from './localStore';
+import { realtimeService } from './realtime.service';
 
 export class ToursService {
   // Destinations
   static async createDestination(data: any) {
-    return TourDestination.create(data);
+    const dest = await TourDestination.create(data);
+    realtimeService.broadcast('TOURS_UPDATED');
+    return dest;
   }
 
   static async listDestinations() {
@@ -16,7 +19,9 @@ export class ToursService {
 
   // Packages
   static async createPackage(data: any) {
-    return TourPackage.create(data);
+    const pkg = await TourPackage.create(data);
+    realtimeService.broadcast('TOURS_UPDATED');
+    return pkg;
   }
 
   static async listPackages() {
@@ -43,6 +48,7 @@ export class ToursService {
       error.statusCode = 404;
       throw error;
     }
+    realtimeService.broadcast('TOURS_UPDATED');
     return pkg;
   }
 
@@ -53,27 +59,33 @@ export class ToursService {
       error.statusCode = 404;
       throw error;
     }
+    realtimeService.broadcast('TOURS_UPDATED');
     return { message: 'Package deleted successfully' };
   }
 
   // Inquiries
   static async createInquiry(data: any) {
+    let result;
     if (mongoose.connection.readyState === 1) {
       try {
-        return await TourInquiry.create({ ...data, status: 'New' });
+        result = await TourInquiry.create({ ...data, status: 'New' });
       } catch (_e) {}
     }
-    const newInquiry = {
-      _id: 'ti-' + Date.now(),
-      id: 'ti-' + Date.now(),
-      customerName: data.customerName || data.customer_name || 'Guest',
-      customerEmail: data.customerEmail || data.customer_email || 'guest@example.com',
-      customerPhone: data.customerPhone || data.customer_phone || '+91 82082 11478',
-      status: data.status || 'New',
-      notes: data.notes || '',
-      createdAt: new Date().toISOString(),
-    };
-    return localStore.addToursInquiry(newInquiry);
+    if (!result) {
+      const newInquiry = {
+        _id: 'ti-' + Date.now(),
+        id: 'ti-' + Date.now(),
+        customerName: data.customerName || data.customer_name || 'Guest',
+        customerEmail: data.customerEmail || data.customer_email || 'guest@example.com',
+        customerPhone: data.customerPhone || data.customer_phone || '+91 82082 11478',
+        status: data.status || 'New',
+        notes: data.notes || '',
+        createdAt: new Date().toISOString(),
+      };
+      result = localStore.addToursInquiry(newInquiry);
+    }
+    realtimeService.broadcast('INQUIRIES_UPDATED');
+    return result;
   }
 
   static async listInquiries() {
@@ -90,9 +102,13 @@ export class ToursService {
     if (mongoose.connection.readyState === 1) {
       try {
         const inquiry = await TourInquiry.findByIdAndUpdate(id, { status }, { new: true });
-        if (inquiry) return { message: `Inquiry status updated to ${status}`, inquiry };
+        if (inquiry) {
+          realtimeService.broadcast('INQUIRIES_UPDATED');
+          return { message: `Inquiry status updated to ${status}`, inquiry };
+        }
       } catch (_e) {}
     }
+    realtimeService.broadcast('INQUIRIES_UPDATED');
     return { message: `Inquiry status updated to ${status}` };
   }
 
@@ -237,12 +253,14 @@ export class ToursService {
             ipAddress,
           });
 
+          realtimeService.broadcast('BOOKINGS_UPDATED');
           return booking;
         }
       } catch (_e) {}
     }
 
     const updated = localStore.updateToursBookingStatus(id, status, rejectionReason);
+    realtimeService.broadcast('BOOKINGS_UPDATED');
     return updated || { _id: id, id, status, rejectionReason, verifiedAt: new Date().toISOString() };
   }
 
@@ -263,6 +281,7 @@ export class ToursService {
       } catch (_e) {}
     }
     localStore.deleteToursBooking(id);
+    realtimeService.broadcast('BOOKINGS_UPDATED');
     return { message: 'Booking deleted successfully' };
   }
 
@@ -273,6 +292,7 @@ export class ToursService {
       } catch (_e) {}
     }
     localStore.deleteToursInquiry(id);
+    realtimeService.broadcast('INQUIRIES_UPDATED');
     return { message: 'Inquiry deleted successfully' };
   }
 }

@@ -28,7 +28,33 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<AdminUser | null>(null);
   const [loading, setLoading] = useState(true);
 
-  // Try to restore session from localStorage on mount
+  const syncCurrentUser = useCallback(async () => {
+    const token = localStorage.getItem('crm_token');
+    if (!token) return;
+
+    try {
+      const meRes = await fetch(`${API}/api/auth/me`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      if (meRes.ok) {
+        const me = await meRes.json();
+        const adminUser: AdminUser = {
+          name: me.name,
+          email: me.email,
+          role: me.role ?? 'viewer',
+        };
+        localStorage.setItem('crm_user', JSON.stringify(adminUser));
+        setUser((prev) => {
+          if (!prev || prev.name !== adminUser.name || prev.email !== adminUser.email || prev.role !== adminUser.role) {
+            return adminUser;
+          }
+          return prev;
+        });
+      }
+    } catch (_e) {}
+  }, []);
+
+  // Try to restore session from localStorage on mount and sync with server
   useEffect(() => {
     const token = localStorage.getItem('crm_token');
     const savedUser = localStorage.getItem('crm_user');
@@ -41,7 +67,28 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       }
     }
     setLoading(false);
-  }, []);
+    syncCurrentUser();
+  }, [syncCurrentUser]);
+
+  // Sync profile when window gains focus or visibility changes
+  useEffect(() => {
+    const onFocus = () => syncCurrentUser();
+    const onVisibility = () => {
+      if (document.visibilityState === 'visible') syncCurrentUser();
+    };
+
+    window.addEventListener('focus', onFocus);
+    document.addEventListener('visibilitychange', onVisibility);
+
+    // Heartbeat profile check every 15s
+    const timer = setInterval(syncCurrentUser, 15000);
+
+    return () => {
+      window.removeEventListener('focus', onFocus);
+      document.removeEventListener('visibilitychange', onVisibility);
+      clearInterval(timer);
+    };
+  }, [syncCurrentUser]);
 
   useEffect(() => {
     checkHealthStatus().then(online => {

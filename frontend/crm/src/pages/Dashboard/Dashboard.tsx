@@ -12,6 +12,7 @@ import { Modal } from '@/components/common/Modal';
 import { statusColor } from '@/utils/statusColor';
 import { formatDate } from '@/utils/formatDate';
 import { formatCurrency } from '@/utils/formatCurrency';
+import { useAutoRefresh } from '@/hooks/useRealtimeSync';
 
 export default function DashboardView() {
   const navigate = useNavigate();
@@ -92,13 +93,12 @@ export default function DashboardView() {
     });
   }, []);
 
+  useAutoRefresh(loadData, [], 4000);
+
   useEffect(() => {
-    loadData();
     window.addEventListener('storage', loadData);
     window.addEventListener('aarambha_booking_updated', loadData);
-    const interval = setInterval(loadData, 5000);
     return () => {
-      clearInterval(interval);
       window.removeEventListener('storage', loadData);
       window.removeEventListener('aarambha_booking_updated', loadData);
     };

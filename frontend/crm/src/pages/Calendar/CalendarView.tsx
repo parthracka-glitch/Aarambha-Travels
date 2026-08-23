@@ -19,6 +19,7 @@ import {
   ManifestTraveler
 } from '@/utils/exportManifest';
 import { generateInvoicePDF } from '@/utils/generateInvoicePDF';
+import { useAutoRefresh } from '@/hooks/useRealtimeSync';
 
 type VerticalFilter = 'all' | 'tours' | 'fleet';
 type ViewMode = 'calendar' | 'packages';
@@ -113,9 +114,7 @@ export default function CalendarView() {
       .finally(() => setLoading(false));
   }, [explorerPackageId]);
 
-  useEffect(() => {
-    loadData();
-  }, [loadData]);
+  useAutoRefresh(loadData, ['BOOKINGS_UPDATED', 'TOURS_UPDATED', 'FLEET_UPDATED'], 6000);
 
   // Sync userVertical if set in layout
   useEffect(() => {

@@ -7,6 +7,7 @@ import cmsRoutes from './cms.routes';
 import auditRoutes from './audit.routes';
 import settingsRoutes from './settings.routes';
 import paymentRoutes from './payment.routes';
+import realtimeRoutes from './realtime.routes';
 
 export const registerRoutes = (app: Express): void => {
   app.use('/api/auth', authRoutes);
@@ -17,6 +18,7 @@ export const registerRoutes = (app: Express): void => {
   app.use('/api/analytics', auditRoutes);
   app.use('/api/settings', settingsRoutes);
   app.use('/api/payments', paymentRoutes);
+  app.use('/api/realtime', realtimeRoutes);
 };
 
 export {
@@ -28,4 +30,5 @@ export {
   auditRoutes,
   settingsRoutes,
   paymentRoutes,
+  realtimeRoutes,
 };

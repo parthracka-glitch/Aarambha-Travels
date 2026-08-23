@@ -11,6 +11,7 @@ import { statusColor } from '@/utils/statusColor';
 import { formatDate } from '@/utils/formatDate';
 import { formatCurrency } from '@/utils/formatCurrency';
 import { generateInvoicePDF, getNextInvoiceNumber, type InvoiceData } from '@/utils/generateInvoicePDF';
+import { useAutoRefresh } from '@/hooks/useRealtimeSync';
 
 export default function BookingsView() {
   const { activeVertical: vertical, user } = useAuth();
@@ -102,13 +103,12 @@ export default function BookingsView() {
     });
   }, [vertical]);
 
+  useAutoRefresh(load, ['BOOKINGS_UPDATED'], 3500);
+
   useEffect(() => {
-    load();
     window.addEventListener('storage', load);
     window.addEventListener('aarambha_booking_updated', load);
-    const interval = setInterval(load, 4000);
     return () => {
-      clearInterval(interval);
       window.removeEventListener('storage', load);
       window.removeEventListener('aarambha_booking_updated', load);
     };

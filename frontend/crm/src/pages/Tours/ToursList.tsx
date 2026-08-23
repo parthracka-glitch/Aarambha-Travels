@@ -5,6 +5,7 @@ import { getToursPackages, getToursDestinations, createPackage, updatePackage, d
 import { Modal } from '@/components/common/Modal';
 import { Loader } from '@/components/common/Loader';
 import { formatCurrency } from '@/utils/formatCurrency';
+import { useAutoRefresh } from '@/hooks/useRealtimeSync';
 
 const DEFAULT_BATCHES = [
   { id: 'aug-1', month: 'August', label: '04 Aug – 10 Aug 2026', tag: 'Batch #1 (Early Aug)', startDate: '2026-08-04', endDate: '2026-08-10', status: 'available' },
@@ -44,14 +45,13 @@ export default function ToursView() {
   });
 
   const load = useCallback(() => {
-    setLoading(true);
     Promise.all([
       getToursPackages().then(d => setPackages(d)),
       getToursDestinations().then(d => setDestinations(d)),
     ]).then(() => setLoading(false));
   }, []);
 
-  useEffect(() => { load(); }, [load]);
+  useAutoRefresh(load, ['TOURS_UPDATED'], 6000);
 
   const resetForm = () => {
     setForm({ title: '', slug: '', description: '', durationDays: 5, durationNights: 4, basePrice: 15000, depositPrice: 2500, inclusions: 'Hotel, Meals, Transfers' });

@@ -3,11 +3,14 @@ import mongoose from 'mongoose';
 import { FleetCategory, Vehicle, FleetInquiry, FleetBooking, FleetCustomer, FleetPayment } from '../models';
 import { recordAudit } from '../middlewares/auth.middleware';
 import { localStore } from './localStore';
+import { realtimeService } from './realtime.service';
 
 export class FleetService {
   // Categories
   static async createCategory(data: any) {
-    return FleetCategory.create(data);
+    const cat = await FleetCategory.create(data);
+    realtimeService.broadcast('FLEET_UPDATED');
+    return cat;
   }
 
   static async listCategories() {
@@ -17,7 +20,7 @@ export class FleetService {
   // Vehicles
   static async createVehicle(body: any) {
     const { name, reg_number, regNumber, category_id, categoryId, vehicle_type, vehicleType, daily_rate, dailyRate, security_deposit, securityDeposit, images, specs } = body;
-    return Vehicle.create({
+    const veh = await Vehicle.create({
       name,
       regNumber: reg_number || regNumber,
       categoryId: category_id || categoryId,
@@ -28,6 +31,8 @@ export class FleetService {
       specs: specs || {},
       status: 'Available',
     });
+    realtimeService.broadcast('FLEET_UPDATED');
+    return veh;
   }
 
   static async listVehicles() {
@@ -51,6 +56,7 @@ export class FleetService {
       error.statusCode = 404;
       throw error;
     }
+    realtimeService.broadcast('FLEET_UPDATED');
     return veh;
   }
 
@@ -61,6 +67,7 @@ export class FleetService {
       error.statusCode = 404;
       throw error;
     }
+    realtimeService.broadcast('FLEET_UPDATED');
     return { message: 'Vehicle deleted successfully' };
   }
 
@@ -254,12 +261,14 @@ export class FleetService {
             ipAddress,
           });
 
+          realtimeService.broadcast('BOOKINGS_UPDATED');
           return booking;
         }
       } catch (_e) {}
     }
 
     const updated = localStore.updateFleetBookingStatus(id, status, rejectionReason);
+    realtimeService.broadcast('BOOKINGS_UPDATED');
     return updated || { _id: id, id, status, rejectionReason, verifiedAt: new Date().toISOString() };
   }
 
@@ -283,10 +292,13 @@ export class FleetService {
           booking.pickupPaymentMethod = method;
           await booking.save();
           await Vehicle.findByIdAndUpdate(booking.vehicleId, { status: 'Rented' });
+          realtimeService.broadcast('BOOKINGS_UPDATED');
+          realtimeService.broadcast('FLEET_UPDATED');
           return booking;
         }
       } catch (_e) {}
     }
+    realtimeService.broadcast('BOOKINGS_UPDATED');
     return { message: 'Picked up updated' };
   }
 
@@ -298,10 +310,13 @@ export class FleetService {
           booking.status = 'Returned';
           await booking.save();
           await Vehicle.findByIdAndUpdate(booking.vehicleId, { status: 'Available' });
+          realtimeService.broadcast('BOOKINGS_UPDATED');
+          realtimeService.broadcast('FLEET_UPDATED');
           return booking;
         }
       } catch (_e) {}
     }
+    realtimeService.broadcast('BOOKINGS_UPDATED');
     return { message: 'Returned updated' };
   }
 
@@ -314,10 +329,12 @@ export class FleetService {
           booking.status = 'Deposit Refunded';
           booking.refundRef = refundRef;
           await booking.save();
+          realtimeService.broadcast('BOOKINGS_UPDATED');
           return booking;
         }
       } catch (_e) {}
     }
+    realtimeService.broadcast('BOOKINGS_UPDATED');
     return { message: 'Deposit refunded' };
   }
 
@@ -328,6 +345,7 @@ export class FleetService {
       } catch (_e) {}
     }
     localStore.deleteFleetBooking(id);
+    realtimeService.broadcast('BOOKINGS_UPDATED');
     return { message: 'Booking deleted successfully' };
   }
 
@@ -338,6 +356,7 @@ export class FleetService {
       } catch (_e) {}
     }
     localStore.deleteFleetInquiry(id);
+    realtimeService.broadcast('INQUIRIES_UPDATED');
     return { message: 'Inquiry deleted successfully' };
   }
 }

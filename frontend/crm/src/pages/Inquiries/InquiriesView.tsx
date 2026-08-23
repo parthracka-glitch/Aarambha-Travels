@@ -8,6 +8,7 @@ import { Loader } from '@/components/common/Loader';
 import { Modal } from '@/components/common/Modal';
 import { statusColor } from '@/utils/statusColor';
 import { formatDate } from '@/utils/formatDate';
+import { useAutoRefresh } from '@/hooks/useRealtimeSync';
 
 export default function InquiriesView() {
   const { activeVertical: vertical } = useAuth();
@@ -30,14 +31,13 @@ export default function InquiriesView() {
   });
 
   const load = useCallback(() => {
-    setLoading(true);
     const p: Promise<any>[] = [];
     if (vertical !== 'fleet') p.push(getToursInquiries().then(d => setToursInq(d)));
     if (vertical !== 'tours') p.push(getFleetInquiries().then(d => setFleetInq(d)));
     Promise.all(p).then(() => setLoading(false));
   }, [vertical]);
 
-  useEffect(() => { load(); }, [load]);
+  useAutoRefresh(load, ['INQUIRIES_UPDATED'], 5000);
 
   const handleDeleteInquiry = async (id: string, isFleet: boolean) => {
     if (!confirm('Are you sure you want to delete this inquiry record?')) return;

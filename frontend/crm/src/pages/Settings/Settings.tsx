@@ -22,6 +22,7 @@ import {
   Sparkles,
 } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
+import { useAutoRefresh } from '@/hooks/useRealtimeSync';
 
 export default function SettingsView() {
   const { user, updateUser } = useAuth();
@@ -65,7 +66,7 @@ export default function SettingsView() {
     }
   }, [user]);
 
-  useEffect(() => {
+  const loadSettings = React.useCallback(() => {
     getSettings()
       .then((d) => {
         setSettings((prev) => ({ ...prev, ...d }));
@@ -73,6 +74,8 @@ export default function SettingsView() {
       })
       .catch(() => setLoading(false));
   }, []);
+
+  useAutoRefresh(loadSettings, ['SETTINGS_UPDATED'], 8000);
 
   const handleSaveSettings = async (e: React.FormEvent) => {
     e.preventDefault();

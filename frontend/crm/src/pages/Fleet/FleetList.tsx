@@ -5,6 +5,7 @@ import { getBusRates, createBusRate, updateBusRate, deleteBusRate } from '@/api/
 import { Modal } from '@/components/common/Modal';
 import { Loader } from '@/components/common/Loader';
 import { formatCurrency } from '@/utils/formatCurrency';
+import { useAutoRefresh } from '@/hooks/useRealtimeSync';
 
 type MainSection = 'buses' | 'cars';
 type BusTab = 'all' | 'pune-mumbai' | 'outstation-ac' | 'outstation-nonac' | 'urbania-perkm' | 'local-ac' | 'local-nonac' | 'urbania-local';
@@ -115,7 +116,7 @@ export default function FleetView() {
       .finally(() => setBusLoading(false));
   }, []);
 
-  useEffect(() => { loadData(); }, [loadData]);
+  useAutoRefresh(loadData, ['FLEET_UPDATED', 'BUS_RATES_UPDATED'], 6000);
 
   // Bus Actions
   const handleOpenBusEdit = (b: any) => {
