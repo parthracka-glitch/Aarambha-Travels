@@ -1,20 +1,30 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { Search, ChevronLeft, ChevronRight } from 'lucide-react';
 import Navbar from '@/components/layout/Navbar';
 import Footer from '@/components/layout/Footer';
 import TermsConditionsSection from '@/components/shared/TermsConditionsSection';
-import { FLEET_VEHICLES, SIDEBAR_POPULAR_CARS, CATEGORIES_LIST, TAGS_LIST } from '@/constants/carsData';
+import { FLEET_VEHICLES, SIDEBAR_POPULAR_CARS, CATEGORIES_LIST, TAGS_LIST, CarVehicle } from '@/constants/carsData';
+import { fetchLiveFleetVehicles } from '@/services/fleet.service';
 
 export default function CarsCatalogPage() {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [selectedTag, setSelectedTag] = useState<string | null>(null);
   const [activeCarId, setActiveCarId] = useState('wagonr-vxi-2025');
+  const [carsList, setCarsList] = useState<CarVehicle[]>(FLEET_VEHICLES);
 
-  const filteredCars = FLEET_VEHICLES.filter((car) => {
+  useEffect(() => {
+    fetchLiveFleetVehicles().then((data) => {
+      if (Array.isArray(data) && data.length > 0) {
+        setCarsList(data);
+      }
+    });
+  }, []);
+
+  const filteredCars = carsList.filter((car) => {
     const matchesSearch = car.name.toLowerCase().includes(searchQuery.toLowerCase());
     const matchesCategory = selectedCategory ? car.category.toLowerCase() === selectedCategory.toLowerCase() : true;
     return matchesSearch && matchesCategory;

@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useParams, useRouter } from 'next/navigation';
 import {
@@ -29,8 +29,9 @@ import {
 import Navbar from '@/components/layout/Navbar';
 import Footer from '@/components/layout/Footer';
 import TermsConditionsSection from '@/components/shared/TermsConditionsSection';
-import { FLEET_VEHICLES } from '@/constants/carsData';
+import { FLEET_VEHICLES, CarVehicle } from '@/constants/carsData';
 import { apiFetch } from '@/services/api-client';
+import { fetchLiveVehicleById } from '@/services/fleet.service';
 import GoogleAuthButton from '@/components/auth/GoogleAuthButton';
 
 import { generateInvoicePDF, getNextInvoiceNumber, type InvoiceData } from '@/utils/generateInvoicePDF';
@@ -41,7 +42,18 @@ export default function CarBookingCheckoutPage() {
   const router = useRouter();
   const carId = params?.id as string;
 
-  const vehicle = FLEET_VEHICLES.find((v) => v.id === carId) || FLEET_VEHICLES[0];
+  const defaultVehicle = FLEET_VEHICLES.find((v) => v.id === carId) || FLEET_VEHICLES[0];
+  const [vehicle, setVehicle] = useState<CarVehicle>(defaultVehicle);
+
+  useEffect(() => {
+    if (carId) {
+      fetchLiveVehicleById(carId).then((liveVeh) => {
+        if (liveVeh) {
+          setVehicle(liveVeh);
+        }
+      });
+    }
+  }, [carId]);
 
   // Rental Dates State
   const todayStr = new Date().toISOString().split('T')[0];

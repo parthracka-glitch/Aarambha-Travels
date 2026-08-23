@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useParams } from 'next/navigation';
 import {
@@ -33,17 +33,29 @@ import Navbar from '@/components/layout/Navbar';
 import Footer from '@/components/layout/Footer';
 import TermsConditionsSection from '@/components/shared/TermsConditionsSection';
 import BookingModal, { BookingModalItem } from '@/components/booking/BookingModal';
-import { FLEET_VEHICLES } from '@/constants/carsData';
+import { FLEET_VEHICLES, CarVehicle } from '@/constants/carsData';
 import { apiFetch } from '@/services/api-client';
+import { fetchLiveVehicleById } from '@/services/fleet.service';
 
 export default function CarDetailPage() {
   const params = useParams();
   const carId = params?.id as string;
 
-  const vehicle = FLEET_VEHICLES.find((v) => v.id === carId) || FLEET_VEHICLES[0];
+  const defaultVehicle = FLEET_VEHICLES.find((v) => v.id === carId) || FLEET_VEHICLES[0];
+  const [vehicle, setVehicle] = useState<CarVehicle>(defaultVehicle);
+  const [selectedImage, setSelectedImage] = useState(defaultVehicle.image);
+  const [selectedColor, setSelectedColor] = useState(defaultVehicle.availableColors[0] || '#FF3B30');
 
-  const [selectedImage, setSelectedImage] = useState(vehicle.image);
-  const [selectedColor, setSelectedColor] = useState(vehicle.availableColors[0] || '#FF3B30');
+  useEffect(() => {
+    if (carId) {
+      fetchLiveVehicleById(carId).then((liveVeh) => {
+        if (liveVeh) {
+          setVehicle(liveVeh);
+          setSelectedImage(liveVeh.image);
+        }
+      });
+    }
+  }, [carId]);
 
   // Dates & Customer Booking State
   const [pickupDate, setPickupDate] = useState(() => {

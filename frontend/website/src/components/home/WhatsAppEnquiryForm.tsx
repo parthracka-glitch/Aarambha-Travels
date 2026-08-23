@@ -1,12 +1,17 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { MessageSquare, Send, CheckCircle2, Calendar, MapPin, User, Phone, Car, Compass, ArrowRight } from 'lucide-react';
-import { FLEET_VEHICLES } from '@/constants/carsData';
-import { TOUR_PACKAGES } from '@/constants/toursData';
+import { FLEET_VEHICLES, CarVehicle } from '@/constants/carsData';
+import { TOUR_PACKAGES, TourPackage } from '@/constants/toursData';
 import { apiFetch } from '@/services/api-client';
+import { fetchLiveFleetVehicles } from '@/services/fleet.service';
+import { fetchLiveTourPackages } from '@/services/tours.service';
 
 export default function WhatsAppEnquiryForm({ mode = 'cars' }: { mode?: 'cars' | 'tours' }) {
+  const [carsList, setCarsList] = useState<CarVehicle[]>(FLEET_VEHICLES);
+  const [toursList, setToursList] = useState<TourPackage[]>(TOUR_PACKAGES);
+
   // Car Rental Form State
   const [carForm, setCarForm] = useState({
     name: '',
@@ -29,14 +34,23 @@ export default function WhatsAppEnquiryForm({ mode = 'cars' }: { mode?: 'cars' |
   });
   const [tourSubmitted, setTourSubmitted] = useState(false);
 
+  useEffect(() => {
+    fetchLiveFleetVehicles().then(cars => {
+      if (Array.isArray(cars) && cars.length > 0) setCarsList(cars);
+    });
+    fetchLiveTourPackages().then(tours => {
+      if (Array.isArray(tours) && tours.length > 0) setToursList(tours);
+    });
+  }, []);
+
   const carWhatsAppNumber = '918208211478';
   const tourWhatsAppNumber = '919067617451';
 
   // Handle Car Form Submit
   const handleCarSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    const foundCar = FLEET_VEHICLES.find(c => c.id === carForm.carId);
-    const carName = foundCar ? `${foundCar.name} (${foundCar.category || 'Self-Drive'}) - ₹${Math.round(foundCar.pricePerDay * 65).toLocaleString('en-IN')}/day` : 'Self-Drive Vehicle';
+    const foundCar = carsList.find(c => c.id === carForm.carId);
+    const carName = foundCar ? `${foundCar.name} (${foundCar.category || 'Self-Drive'}) - ₹${foundCar.pricePerDay.toLocaleString('en-IN')}/day` : 'Self-Drive Vehicle';
 
     const textMessage = 
       `*AARAMBHA CAR RENTAL INQUIRY*%0A` +
@@ -186,9 +200,9 @@ export default function WhatsAppEnquiryForm({ mode = 'cars' }: { mode?: 'cars' |
                     onChange={(e) => setCarForm({ ...carForm, carId: e.target.value })}
                     className="w-full bg-[#171721] border border-[#5266EB]/30 rounded-xl p-3.5 text-xs sm:text-sm text-[#EDEDF3] focus:outline-none focus:border-[#5266EB] font-syne font-bold cursor-pointer"
                   >
-                    {FLEET_VEHICLES.map((car) => (
+                    {carsList.map((car) => (
                       <option key={car.id} value={car.id} className="bg-[#171721] text-white">
-                        🚗 {car.name} — ₹{Math.round(car.pricePerDay * 65).toLocaleString('en-IN')}/day ({car.category || 'Luxury'})
+                        🚗 {car.name} — ₹{car.pricePerDay.toLocaleString('en-IN')}/day ({car.category || 'Luxury'})
                       </option>
                     ))}
                   </select>
@@ -327,7 +341,7 @@ export default function WhatsAppEnquiryForm({ mode = 'cars' }: { mode?: 'cars' |
                     onChange={(e) => setTourForm({ ...tourForm, tourId: e.target.value })}
                     className="w-full bg-black/60 border border-emerald-500/30 rounded-xl p-3.5 text-xs sm:text-sm text-white focus:outline-none focus:border-emerald-500 font-syne font-bold cursor-pointer"
                   >
-                    {TOUR_PACKAGES.map((pkg) => (
+                    {toursList.map((pkg) => (
                       <option key={pkg.id} value={pkg.id} className="bg-gray-900 text-white">
                         🧭 {pkg.title} — ₹{pkg.basePrice.toLocaleString('en-IN')} ({pkg.durationDays}D/{pkg.durationNights}N)
                       </option>

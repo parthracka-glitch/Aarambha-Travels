@@ -9,8 +9,10 @@ import Footer from '@/components/layout/Footer';
 import EpicHeroShowcase from '@/components/home/EpicHeroShowcase';
 import CompanyLocationSection from '@/components/home/CompanyLocationSection';
 import type { BookingModalItem } from '@/components/booking/BookingModal';
-import { FLEET_VEHICLES } from '@/constants/carsData';
-import { TOUR_PACKAGES } from '@/constants/toursData';
+import { FLEET_VEHICLES, CarVehicle } from '@/constants/carsData';
+import { TOUR_PACKAGES, TourPackage } from '@/constants/toursData';
+import { fetchLiveTourPackages } from '@/services/tours.service';
+import { fetchLiveFleetVehicles } from '@/services/fleet.service';
 
 import { useSearchParams } from 'next/navigation';
 import { Suspense } from 'react';
@@ -22,6 +24,12 @@ const BookingModal = dynamic(() => import('@/components/booking/BookingModal'), 
 function PortalContent() {
   const [bookingModalItem, setBookingModalItem] = useState<BookingModalItem | null>(null);
   const [spotlightTab, setSpotlightTab] = useState<'all' | 'tours' | 'cars'>('all');
+  const [famousTours, setFamousTours] = useState<TourPackage[]>(TOUR_PACKAGES.slice(0, 3));
+  const [famousCars, setFamousCars] = useState<CarVehicle[]>([
+    FLEET_VEHICLES.find((c) => c.id === 'swift-black-2026') || FLEET_VEHICLES[2],
+    FLEET_VEHICLES.find((c) => c.id === 'thar-diesel-2023') || FLEET_VEHICLES[6],
+    FLEET_VEHICLES.find((c) => c.id === 'fortuner-2017') || FLEET_VEHICLES[7],
+  ]);
   const spotlightRef = useRef<HTMLElement>(null);
   const searchParams = useSearchParams();
 
@@ -34,12 +42,23 @@ function PortalContent() {
     }
   }, [searchParams]);
 
-  const famousTours = TOUR_PACKAGES.slice(0, 3);
-  const famousCars = [
-    FLEET_VEHICLES.find((c) => c.id === 'swift-black-2026') || FLEET_VEHICLES[2],
-    FLEET_VEHICLES.find((c) => c.id === 'thar-diesel-2023') || FLEET_VEHICLES[6],
-    FLEET_VEHICLES.find((c) => c.id === 'fortuner-2017') || FLEET_VEHICLES[7],
-  ];
+  React.useEffect(() => {
+    fetchLiveTourPackages().then(tours => {
+      if (Array.isArray(tours) && tours.length > 0) {
+        setFamousTours(tours.slice(0, 3));
+      }
+    });
+
+    fetchLiveFleetVehicles().then(cars => {
+      if (Array.isArray(cars) && cars.length > 0) {
+        setFamousCars([
+          cars.find((c) => c.id === 'swift-black-2026') || cars[2] || cars[0],
+          cars.find((c) => c.id === 'thar-diesel-2023') || cars[6] || cars[1],
+          cars.find((c) => c.id === 'fortuner-2017') || cars[7] || cars[2],
+        ]);
+      }
+    });
+  }, []);
 
   return (
     <div className="min-h-screen bg-[#FAFAFC] text-[#18181B] flex flex-col font-sans selection:bg-[#5266EB] selection:text-white">

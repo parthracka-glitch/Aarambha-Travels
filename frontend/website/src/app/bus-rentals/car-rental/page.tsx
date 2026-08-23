@@ -6,30 +6,17 @@ import { ArrowRight, ChevronLeft, Car, Sparkles, Star, CheckCircle2, ShieldCheck
 import Navbar from '@/components/layout/Navbar';
 import Footer from '@/components/layout/Footer';
 import CompanyLocationSection from '@/components/home/CompanyLocationSection';
-import { FLEET_VEHICLES, SHARED_CAR_CONTACT } from '@/constants/carsData';
-import { getFleetVehicles } from '@/services/fleet.service';
+import { FLEET_VEHICLES, SHARED_CAR_CONTACT, CarVehicle } from '@/constants/carsData';
+import { fetchLiveFleetVehicles } from '@/services/fleet.service';
 
 export default function CarRentalSubsectionPage() {
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
-  const [fleetList, setFleetList] = useState<any[]>(FLEET_VEHICLES);
+  const [fleetList, setFleetList] = useState<CarVehicle[]>(FLEET_VEHICLES);
 
   useEffect(() => {
-    getFleetVehicles().then(data => {
+    fetchLiveFleetVehicles().then(data => {
       if (Array.isArray(data) && data.length > 0) {
-        const formatted = data.map(v => ({
-          id: v._id || v.id,
-          name: v.name,
-          category: v.specs?.bodyType || (v.categoryId?.name) || 'Hatchback',
-          pricePerDay: v.dailyRate || 2500,
-          image: Array.isArray(v.images) && v.images[0] ? v.images[0] : '/images/fleet/wagonr_vxi_2025.jpg',
-          description: `${v.name} self-drive rental vehicle with full insurance and doorstep pickup.`,
-          specs: {
-            transmission: v.specs?.transmission || 'Manual',
-            fuelType: v.specs?.fuel || 'Petrol',
-            passengers: v.specs?.seats || 5,
-          },
-        }));
-        setFleetList(formatted);
+        setFleetList(data);
       }
     }).catch(() => {});
   }, []);

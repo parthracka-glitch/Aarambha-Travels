@@ -12,7 +12,8 @@ import {
 
 export async function fetchLiveBusRates() {
   try {
-    const data = await apiFetch<any[]>('/api/fleet/buses');
+    const res = await apiFetch<any>('/api/fleet/buses');
+    const data = Array.isArray(res) ? res : (Array.isArray(res?.data) ? res.data : null);
     if (Array.isArray(data) && data.length > 0) {
       return data;
     }

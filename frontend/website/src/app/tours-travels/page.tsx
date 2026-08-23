@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { Search, MapPin, Star, ArrowUpRight, Sparkles, Globe, MessageCircle, Share2, Compass, Phone, Calendar, ShieldCheck, Check, Info, CreditCard, ArrowRight, X } from 'lucide-react';
 import Navbar from '@/components/layout/Navbar';
@@ -10,14 +10,24 @@ import FAQSection from '@/components/home/FAQSection';
 import WhatsAppEnquiryForm from '@/components/home/WhatsAppEnquiryForm';
 import CompanyLocationSection from '@/components/home/CompanyLocationSection';
 import BookingModal, { BookingModalItem } from '@/components/booking/BookingModal';
-import { TOUR_PACKAGES, SHARED_TOUR_CONTACT } from '@/constants/toursData';
+import { TOUR_PACKAGES, SHARED_TOUR_CONTACT, TourPackage } from '@/constants/toursData';
+import { fetchLiveTourPackages } from '@/services/tours.service';
 
 export default function ToursCatalogPage() {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedDuration, setSelectedDuration] = useState('all');
   const [selectedBookingTour, setSelectedBookingTour] = useState<BookingModalItem | null>(null);
+  const [packagesList, setPackagesList] = useState<TourPackage[]>(TOUR_PACKAGES);
 
-  const filteredPackages = TOUR_PACKAGES.filter((pkg) => {
+  useEffect(() => {
+    fetchLiveTourPackages().then((data) => {
+      if (Array.isArray(data) && data.length > 0) {
+        setPackagesList(data);
+      }
+    });
+  }, []);
+
+  const filteredPackages = packagesList.filter((pkg) => {
     const matchesSearch =
       pkg.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
       pkg.destination.toLowerCase().includes(searchQuery.toLowerCase()) ||

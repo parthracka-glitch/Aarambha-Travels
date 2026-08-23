@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useParams } from 'next/navigation';
 import { CheckCircle2, XCircle, ChevronDown, ChevronUp, ShieldCheck, ArrowLeft, Calendar, Phone, MessageCircle, MapPin, Sparkles, AlertCircle, Info, Star, CreditCard, User, Car, ArrowRight } from 'lucide-react';
@@ -8,17 +8,29 @@ import Navbar from '@/components/layout/Navbar';
 import Footer from '@/components/layout/Footer';
 import TermsConditionsSection from '@/components/shared/TermsConditionsSection';
 import BookingModal, { BookingModalItem } from '@/components/booking/BookingModal';
-import { TOUR_PACKAGES, SHARED_TOUR_CONTACT } from '@/constants/toursData';
+import { TOUR_PACKAGES, SHARED_TOUR_CONTACT, TourPackage } from '@/constants/toursData';
+import { fetchLiveTourPackageBySlug } from '@/services/tours.service';
 
 export default function TourPackageDetailPage() {
   const params = useParams();
   const slug = params?.slug as string;
 
-  const tour = TOUR_PACKAGES.find((t) => t.slug === slug || t.id === slug) || TOUR_PACKAGES[0];
-
-  const [selectedImage, setSelectedImage] = useState(tour.image);
+  const defaultTour = TOUR_PACKAGES.find((t) => t.slug === slug || t.id === slug) || TOUR_PACKAGES[0];
+  const [tour, setTour] = useState<TourPackage>(defaultTour);
+  const [selectedImage, setSelectedImage] = useState(defaultTour.image);
   const [openDay, setOpenDay] = useState<number | null>(1);
   const [isBookingModalOpen, setIsBookingModalOpen] = useState(false);
+
+  useEffect(() => {
+    if (slug) {
+      fetchLiveTourPackageBySlug(slug).then((liveTour) => {
+        if (liveTour) {
+          setTour(liveTour);
+          setSelectedImage(liveTour.image);
+        }
+      });
+    }
+  }, [slug]);
 
   const modalItem: BookingModalItem = {
     id: tour.id,
