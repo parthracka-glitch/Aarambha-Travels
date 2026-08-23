@@ -1,0 +1,31 @@
+services:
+  - type: web
+    name: aarambha-backend-api
+    env: node
+    region: singapore
+    plan: free
+    rootDir: backend
+    buildCommand: npm install && npm run build
+    startCommand: npm start
+    healthCheckPath: /api/health
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 8000
+      - key: MONGODB_URI
+        sync: false
+      - key: SECRET_KEY
+        generateValue: true
+      - key: RAZORPAY_TOURS_KEY_ID
+        sync: false
+      - key: RAZORPAY_TOURS_KEY_SECRET
+        sync: false
+      - key: RAZORPAY_FLEET_KEY_ID
+        sync: false
+      - key: RAZORPAY_FLEET_KEY_SECRET
+        sync: false
+      - key: GOOGLE_CLIENT_ID
+        sync: false
+      - key: GOOGLE_CLIENT_SECRET
+        sync: false

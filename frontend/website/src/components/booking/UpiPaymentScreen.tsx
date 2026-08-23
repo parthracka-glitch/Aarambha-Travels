@@ -49,7 +49,8 @@ export default function UpiPaymentScreen({
 
   // Fetch configured UPI ID from backend if available
   useEffect(() => {
-    fetch('http://127.0.0.1:8000/api/settings/public')
+    const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://127.0.0.1:8000';
+    fetch(`${apiUrl}/api/settings/public`)
       .then((res) => res.json())
       .then((data) => {
         if (data.upi_id) setUpiId(data.upi_id);
@@ -237,8 +238,8 @@ export default function UpiPaymentScreen({
           </p>
         </div>
 
-        {/* Copy UPI ID Button */}
-        <div className="pt-1 flex flex-wrap items-center justify-center gap-2">
+        {/* Copy UPI ID & Mobile Pay Buttons */}
+        <div className="pt-1 flex flex-col sm:flex-row flex-wrap items-center justify-center gap-2">
           <button
             type="button"
             onClick={handleCopyUpi}
@@ -247,6 +248,14 @@ export default function UpiPaymentScreen({
             {copiedUpi ? <Check className="w-3.5 h-3.5 text-emerald-600" /> : <Copy className="w-3.5 h-3.5 text-[#5266EB]" />}
             <span>{copiedUpi ? 'UPI ID Copied!' : `Copy UPI ID: ${upiId}`}</span>
           </button>
+
+          <a
+            href={`upi://pay?pa=${encodeURIComponent(upiId)}&pn=${encodeURIComponent(payeeName)}&am=${depositAmount}&cu=INR&tn=${encodeURIComponent(`Booking ${bookingCode}`)}`}
+            className="inline-flex items-center gap-1.5 px-4 py-2 rounded-full bg-[#5266EB]/10 hover:bg-[#5266EB]/20 text-[#5266EB] border border-[#5266EB]/30 text-xs font-bold transition-colors cursor-pointer"
+          >
+            <Smartphone className="w-3.5 h-3.5" />
+            <span>Open in UPI App (Mobile)</span>
+          </a>
         </div>
       </div>
 

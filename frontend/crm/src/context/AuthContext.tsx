@@ -19,7 +19,7 @@ export interface AuthContextType {
 
 export const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-const API = 'http://127.0.0.1:8000';
+const API = (import.meta as any).env?.VITE_API_URL || 'http://127.0.0.1:8000';
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [activeVertical, setActiveVertical] = useState<'all' | 'tours' | 'fleet'>('all');

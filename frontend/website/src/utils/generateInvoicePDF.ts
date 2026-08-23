@@ -710,6 +710,83 @@ export function generateCarRentalInvoiceHTML(data: InvoiceData): string {
       letter-spacing: 0.5px;
     }
 
+    @media screen and (max-width: 768px) {
+      body {
+        padding: 0;
+        background: #FFFFFF;
+      }
+      .page {
+        width: 100% !important;
+        min-height: auto !important;
+        margin: 60px 0 0 0 !important;
+        box-shadow: none !important;
+        border-radius: 0 !important;
+      }
+      .page-body {
+        padding: 20px 16px !important;
+      }
+      .header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 16px;
+      }
+      .invoice-right {
+        text-align: left;
+        width: 100%;
+      }
+      .invoice-meta-card {
+        width: 100%;
+      }
+      .info-grid {
+        grid-template-columns: 1fr !important;
+        gap: 16px;
+        padding: 14px 16px;
+      }
+      .rental-details-grid {
+        grid-template-columns: 1fr 1fr;
+      }
+      .totals-wrap {
+        justify-content: stretch;
+      }
+      .totals-table {
+        width: 100% !important;
+      }
+      .note-section {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 16px;
+      }
+      .action-bar {
+        padding: 0 16px;
+      }
+      .action-title {
+        font-size: 11px;
+      }
+      .btn-action {
+        padding: 7px 12px;
+        font-size: 10px;
+      }
+      .footer {
+        padding: 12px 16px;
+        flex-direction: column;
+        gap: 8px;
+        text-align: center;
+      }
+      .tc-header {
+        flex-direction: column;
+        gap: 12px;
+      }
+      .tc-title-block {
+        text-align: left;
+      }
+      .tc-footer {
+        padding: 12px 16px;
+        flex-direction: column;
+        gap: 8px;
+        text-align: center;
+      }
+    }
+
     @media print {
       body {
         background: #fff;
@@ -1767,6 +1844,83 @@ export function generateToursInvoiceHTML(data: InvoiceData): string {
       color: var(--primary);
       font-weight: 700;
       letter-spacing: 0.5px;
+    }
+
+    @media screen and (max-width: 768px) {
+      body {
+        padding: 0;
+        background: #FFFFFF;
+      }
+      .page {
+        width: 100% !important;
+        min-height: auto !important;
+        margin: 60px 0 0 0 !important;
+        box-shadow: none !important;
+        border-radius: 0 !important;
+      }
+      .page-body {
+        padding: 20px 16px !important;
+      }
+      .header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 16px;
+      }
+      .invoice-right {
+        text-align: left;
+        width: 100%;
+      }
+      .invoice-meta-card {
+        width: 100%;
+      }
+      .info-grid {
+        grid-template-columns: 1fr !important;
+        gap: 16px;
+        padding: 14px 16px;
+      }
+      .tour-details-grid {
+        grid-template-columns: 1fr 1fr;
+      }
+      .totals-wrap {
+        justify-content: stretch;
+      }
+      .totals-table {
+        width: 100% !important;
+      }
+      .note-section {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 16px;
+      }
+      .action-bar {
+        padding: 0 16px;
+      }
+      .action-title {
+        font-size: 11px;
+      }
+      .btn-action {
+        padding: 7px 12px;
+        font-size: 10px;
+      }
+      .footer {
+        padding: 12px 16px;
+        flex-direction: column;
+        gap: 8px;
+        text-align: center;
+      }
+      .tc-header {
+        flex-direction: column;
+        gap: 12px;
+      }
+      .tc-title-block {
+        text-align: left;
+      }
+      .tc-footer {
+        padding: 12px 16px;
+        flex-direction: column;
+        gap: 8px;
+        text-align: center;
+      }
     }
 
     @media print {

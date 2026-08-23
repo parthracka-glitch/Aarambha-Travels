@@ -6,6 +6,7 @@ import { Download, Calendar, User, Car, Compass, ArrowLeft, BookOpen, Clock, Che
 import Navbar from '@/components/layout/Navbar';
 import Footer from '@/components/layout/Footer';
 import { generateInvoicePDF, getNextInvoiceNumber, type InvoiceData } from '@/utils/generateInvoicePDF';
+import { apiFetch } from '@/services/api-client';
 
 interface LocalBooking {
   id: string;
@@ -54,8 +55,8 @@ export default function MyBookingsPage() {
       // Fetch live bookings from backend to check if admin verified
       try {
         const [fleetRes, toursRes] = await Promise.all([
-          fetch('http://127.0.0.1:8000/api/fleet/bookings').then(r => r.json()).catch(() => []),
-          fetch('http://127.0.0.1:8000/api/tours/bookings').then(r => r.json()).catch(() => []),
+          apiFetch<any[]>('/api/fleet/bookings').catch(() => []),
+          apiFetch<any[]>('/api/tours/bookings').catch(() => []),
         ]);
 
         const backendAll = [

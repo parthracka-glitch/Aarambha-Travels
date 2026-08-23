@@ -1,0 +1,23 @@
+{
+  "name": "aarambha-tours-and-travels-monorepo",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Aarambha Tours & Travels full-stack monorepo (Express API + Next.js Website + Vite CRM)",
+  "scripts": {
+    "dev": "npm run dev:all",
+    "dev:all": "concurrently -n \"BACKEND,WEBSITE,CRM\" -c \"blue,green,magenta\" \"npm run dev --prefix backend\" \"npm run dev --prefix frontend/website\" \"npm run dev --prefix frontend/crm\"",
+    "dev:backend": "npm run dev --prefix backend",
+    "dev:website": "npm run dev --prefix frontend/website",
+    "dev:crm": "npm run dev --prefix frontend/crm",
+    "build:all": "npm run build --prefix backend && npm run build --prefix frontend/website && npm run build --prefix frontend/crm",
+    "build:backend": "npm run build --prefix backend",
+    "build:website": "npm run build --prefix frontend/website",
+    "build:crm": "npm run build --prefix frontend/crm",
+    "start:backend": "npm run start --prefix backend",
+    "start:website": "npm run start --prefix frontend/website",
+    "start:crm": "npm run preview --prefix frontend/crm"
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.2"
+  }
+}
