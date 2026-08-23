@@ -30,7 +30,9 @@ export function formatBusDataFromApi(liveBuses: any[] | null) {
       outstationAcRates: OUTSTATION_AC_RATES,
       outstationNonAcRates: OUTSTATION_NON_AC_RATES,
       urbaniaPerDayRates: URBANIA_PER_DAY_RATES,
+      urbaniaPerKmRates: URBANIA_PER_DAY_RATES,
       urbaniaLocalPackage: URBANIA_LOCAL_PACKAGE,
+      urbaniaLocalRates: URBANIA_LOCAL_PACKAGE,
       urbaniaPuneMumbai: URBANIA_PUNE_MUMBAI,
       puneMumbaiCabs: PUNE_MUMBAI_CAB_PACKAGES,
     };
@@ -145,7 +147,9 @@ export function formatBusDataFromApi(liveBuses: any[] | null) {
     outstationAcRates: outstationAcRates.length ? outstationAcRates : OUTSTATION_AC_RATES,
     outstationNonAcRates: outstationNonAcRates.length ? outstationNonAcRates : OUTSTATION_NON_AC_RATES,
     urbaniaPerDayRates: urbaniaPerDayRates.length ? urbaniaPerDayRates : URBANIA_PER_DAY_RATES,
+    urbaniaPerKmRates: urbaniaPerDayRates.length ? urbaniaPerDayRates : URBANIA_PER_DAY_RATES,
     urbaniaLocalPackage: urbaniaLocalPackage.length ? urbaniaLocalPackage : URBANIA_LOCAL_PACKAGE,
+    urbaniaLocalRates: urbaniaLocalPackage.length ? urbaniaLocalPackage : URBANIA_LOCAL_PACKAGE,
     urbaniaPuneMumbai: urbaniaPuneMumbai.length ? urbaniaPuneMumbai : URBANIA_PUNE_MUMBAI,
     puneMumbaiCabs: puneMumbaiCabs.length ? puneMumbaiCabs : PUNE_MUMBAI_CAB_PACKAGES,
   };

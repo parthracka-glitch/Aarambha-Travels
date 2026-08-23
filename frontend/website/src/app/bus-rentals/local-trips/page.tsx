@@ -106,7 +106,7 @@ export default function BusRentalLocalTripsPage() {
 
               {/* MOBILE CARDS VIEW (< 768px) */}
               <div className="grid grid-cols-1 gap-4 md:hidden">
-                {ratesData.localAcRates.map((rate: any) => (
+                {(ratesData?.localAcRates || []).map((rate: any) => (
                   <div key={rate.id} className="bg-white rounded-2xl border border-gray-200 shadow-sm p-4 space-y-3">
                     <div className="flex items-center justify-between border-b border-gray-100 pb-2.5">
                       <div className="flex items-center gap-2">
@@ -158,7 +158,7 @@ export default function BusRentalLocalTripsPage() {
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-gray-100 text-gray-700">
-                    {ratesData.localAcRates.map((rate: any) => (
+                    {(ratesData?.localAcRates || []).map((rate: any) => (
                       <tr key={rate.id} className="hover:bg-gray-50 transition-colors">
                         <td className="py-4 px-4 font-bold text-gray-900 flex items-center gap-2">
                           <Bus className="w-4 h-4 text-[#5266EB]" />
@@ -197,7 +197,7 @@ export default function BusRentalLocalTripsPage() {
 
               {/* MOBILE CARDS VIEW (< 768px) */}
               <div className="grid grid-cols-1 gap-4 md:hidden">
-                {ratesData.localNonAcRates.map((rate: any) => (
+                {(ratesData?.localNonAcRates || []).map((rate: any) => (
                   <div key={rate.id} className="bg-white rounded-2xl border border-gray-200 shadow-sm p-4 space-y-3">
                     <div className="flex items-center justify-between border-b border-gray-100 pb-2.5">
                       <div className="flex items-center gap-2">
@@ -249,7 +249,7 @@ export default function BusRentalLocalTripsPage() {
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-gray-100 text-gray-700">
-                    {ratesData.localNonAcRates.map((rate: any) => (
+                    {(ratesData?.localNonAcRates || []).map((rate: any) => (
                       <tr key={rate.id} className="hover:bg-gray-50 transition-colors">
                         <td className="py-4 px-4 font-bold text-gray-900 flex items-center gap-2">
                           <Bus className="w-4 h-4 text-gray-600" />
@@ -287,7 +287,7 @@ export default function BusRentalLocalTripsPage() {
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
-                {ratesData.urbaniaLocalRates.map((rate: any) => (
+                {(ratesData?.urbaniaLocalRates || ratesData?.urbaniaLocalPackage || []).map((rate: any) => (
                   <div key={rate.id} className="bg-white rounded-3xl border border-gray-200 shadow-sm p-5 sm:p-6 space-y-4 hover:shadow-md transition-all">
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-3">

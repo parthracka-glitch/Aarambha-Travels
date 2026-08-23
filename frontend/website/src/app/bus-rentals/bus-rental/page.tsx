@@ -105,12 +105,11 @@ export default function BusRentalOutstationPage() {
                   <Sparkles className="w-5 h-5 text-[#5266EB]" />
                   <div>
                     <h2 className="font-syne text-lg sm:text-xl font-extrabold">Pune → Mumbai 5-Seater & 7-Seater Cabs with Driver</h2>
-                    <p className="text-xs text-gray-500">Dedicated Chauffeur Driven Cars for Airport Transfer & Outstation Travel (Up to 350 KM)</p>
                   </div>
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
-                  {ratesData.puneMumbaiCabs.map((cab: any) => (
+                  {(ratesData?.puneMumbaiCabs || []).map((cab: any) => (
                     <div key={cab.id} className="bg-gradient-to-br from-white to-blue-50/40 rounded-3xl border border-blue-100 shadow-sm p-5 sm:p-6 space-y-4 hover:shadow-md transition-all">
                       <div className="flex items-center justify-between">
                         <div className="flex items-center gap-3">
@@ -166,7 +165,7 @@ export default function BusRentalOutstationPage() {
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
-                  {ratesData.urbaniaPuneMumbai.map((rate: any) => (
+                  {(ratesData?.urbaniaPuneMumbai || []).map((rate: any) => (
                     <div key={rate.id} className="bg-white rounded-3xl border border-gray-200 shadow-sm p-5 sm:p-6 space-y-4 hover:shadow-md transition-all">
                       <div className="flex items-center justify-between">
                         <div className="flex items-center gap-3">
@@ -192,7 +191,7 @@ export default function BusRentalOutstationPage() {
                         </div>
                         <div className="bg-gray-50 rounded-xl p-2.5">
                           <span className="text-gray-500 block mb-0.5 text-[10px]">Extra KM</span>
-                          <span className="font-bold text-xs sm:text-sm">₹{rate.extraKmRate}/km</span>
+                          <span className="font-bold text-xs sm:text-sm">{rate.extraKmRate}/km</span>
                         </div>
                         <div className="bg-gray-50 rounded-xl p-2.5">
                           <span className="text-gray-500 block mb-0.5 text-[10px]">DA / Tolls</span>
@@ -227,7 +226,7 @@ export default function BusRentalOutstationPage() {
 
               {/* MOBILE CARDS VIEW (< 768px) */}
               <div className="grid grid-cols-1 gap-4 md:hidden">
-                {ratesData.outstationAcRates.map((rate: any) => (
+                {(ratesData?.outstationAcRates || []).map((rate: any) => (
                   <div key={rate.id} className="bg-white rounded-2xl border border-gray-200 shadow-sm p-4 space-y-3">
                     <div className="flex items-center justify-between border-b border-gray-100 pb-2.5">
                       <div className="flex items-center gap-2">
@@ -282,7 +281,7 @@ export default function BusRentalOutstationPage() {
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-gray-100 text-gray-700">
-                    {ratesData.outstationAcRates.map((rate: any) => (
+                    {(ratesData?.outstationAcRates || []).map((rate: any) => (
                       <tr key={rate.id} className="hover:bg-gray-50 transition-colors">
                         <td className="py-4 px-4 font-bold text-gray-900 flex items-center gap-2">
                           <Bus className="w-4 h-4 text-[#5266EB]" />
@@ -322,7 +321,7 @@ export default function BusRentalOutstationPage() {
 
               {/* MOBILE CARDS VIEW (< 768px) */}
               <div className="grid grid-cols-1 gap-4 md:hidden">
-                {ratesData.outstationNonAcRates.map((rate: any) => (
+                {(ratesData?.outstationNonAcRates || []).map((rate: any) => (
                   <div key={rate.id} className="bg-white rounded-2xl border border-gray-200 shadow-sm p-4 space-y-3">
                     <div className="flex items-center justify-between border-b border-gray-100 pb-2.5">
                       <div className="flex items-center gap-2">
@@ -377,7 +376,7 @@ export default function BusRentalOutstationPage() {
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-gray-100 text-gray-700">
-                    {ratesData.outstationNonAcRates.map((rate: any) => (
+                    {(ratesData?.outstationNonAcRates || []).map((rate: any) => (
                       <tr key={rate.id} className="hover:bg-gray-50 transition-colors">
                         <td className="py-4 px-4 font-bold text-gray-900 flex items-center gap-2">
                           <Bus className="w-4 h-4 text-gray-600" />
@@ -416,7 +415,7 @@ export default function BusRentalOutstationPage() {
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
-                {ratesData.urbaniaPerKmRates.map((urbania: any) => (
+                {(ratesData?.urbaniaPerKmRates || ratesData?.urbaniaPerDayRates || []).map((urbania: any) => (
                   <div key={urbania.id} className="bg-white rounded-3xl border border-gray-200 shadow-sm p-5 sm:p-6 space-y-4 hover:shadow-md transition-all">
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-3">
