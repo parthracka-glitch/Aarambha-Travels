@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { X, Calendar, MapPin, Trash2, CheckCircle2, Car, Compass, ArrowRight } from 'lucide-react';
+import { X, Calendar, MapPin, Trash2, CheckCircle2, Car, Compass, ArrowRight, Clock } from 'lucide-react';
 import Link from 'next/link';
 
 export interface SavedBooking {
@@ -15,6 +15,9 @@ export interface SavedBooking {
   guestsCount: number;
   totalPrice: number;
   depositPaid: number;
+  depositPrice?: number;
+  utrNumber?: string;
+  paymentStatus?: string;
   customerName: string;
   email: string;
   customerEmail?: string;
@@ -203,20 +206,30 @@ export default function MyBookingsDrawer({ isOpen, onClose }: MyBookingsDrawerPr
                       <Calendar className="w-3 h-3 text-gray-400" /> {booking.startDate} — {booking.endDate}
                     </p>
                     <span className="text-[10px] font-bold text-emerald-600 block">
-                      Deposit Paid: ₹{booking.depositPaid}
+                      Deposit: ₹{booking.depositPaid?.toLocaleString('en-IN') || booking.depositPrice} {booking.utrNumber ? `(UTR: ${booking.utrNumber})` : ''}
                     </span>
                   </div>
                 </div>
 
-                {/* Actions */}
+                {/* Actions & Dynamic Verification Status */}
                 <div className="pt-2 border-t border-gray-100 flex items-center justify-between text-xs">
-                  <span className="inline-flex items-center gap-1 text-[10px] font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full">
-                    <CheckCircle2 className="w-3 h-3 text-emerald-600" /> Confirmed
-                  </span>
+                  {booking.status === 'pending_verification' || booking.status === 'Pending Verification' ? (
+                    <span className="inline-flex items-center gap-1 text-[10px] font-bold text-amber-800 bg-amber-50 border border-amber-200 px-2.5 py-0.5 rounded-full">
+                      <Clock className="w-3 h-3 text-amber-600" /> Verification Pending
+                    </span>
+                  ) : booking.status === 'Cancelled' || booking.status === 'Rejected' ? (
+                    <span className="inline-flex items-center gap-1 text-[10px] font-bold text-red-700 bg-red-50 border border-red-200 px-2.5 py-0.5 rounded-full">
+                      <X className="w-3 h-3 text-red-600" /> Cancelled
+                    </span>
+                  ) : (
+                    <span className="inline-flex items-center gap-1 text-[10px] font-bold text-emerald-700 bg-emerald-50 border border-emerald-200 px-2.5 py-0.5 rounded-full">
+                      <CheckCircle2 className="w-3 h-3 text-emerald-600" /> Confirmed
+                    </span>
+                  )}
 
                   <button
                     onClick={() => handleCancelBooking(booking.id)}
-                    className="text-[10px] font-bold text-gray-400 hover:text-red-500 flex items-center gap-1 transition-colors"
+                    className="text-[10px] font-bold text-gray-400 hover:text-red-500 flex items-center gap-1 transition-colors cursor-pointer"
                   >
                     <Trash2 className="w-3 h-3" /> Cancel
                   </button>

@@ -147,9 +147,9 @@ export default function MyBookingsPage() {
       totalAmount: b.totalPrice,
       depositPaid: b.depositPaid,
       balanceAmount: b.totalPrice - b.depositPaid,
-      paymentMode: 'Razorpay',
-      paymentStatus: b.status === 'Confirmed' ? 'Partially Paid' : b.status,
-      transactionId: b.id,
+      paymentMode: 'Direct UPI',
+      paymentStatus: b.status === 'Confirmed' ? 'Partially Paid' : 'Verification Pending',
+      transactionId: b.utrNumber || b.id,
     };
 
     generateInvoicePDF(invoiceData);

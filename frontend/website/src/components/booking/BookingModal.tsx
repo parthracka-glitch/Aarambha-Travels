@@ -1,11 +1,13 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { X, Calendar, User, Phone, Mail, Lock, CheckCircle2, ShieldCheck, CreditCard, Download, ArrowRight, LogOut, Users, Plus, Minus, ExternalLink, AlertCircle } from 'lucide-react';
+import { X, Calendar, User, Phone, Mail, Lock, CheckCircle2, ShieldCheck, CreditCard, Download, ArrowRight, LogOut, Users, Plus, Minus, ExternalLink, AlertCircle, QrCode } from 'lucide-react';
 import GoogleAuthButton from '../auth/GoogleAuthButton';
 import { apiFetch } from '@/services/api-client';
 import { generateInvoicePDF, getNextInvoiceNumber, type InvoiceData } from '@/utils/generateInvoicePDF';
-import UpiPaymentScreen from './UpiPaymentScreen';
+import UPIPaymentVerificationSection from './UPIPaymentVerificationSection';
+import { SHARED_BUS_CONTACT } from '@/constants/busData';
+import { SHARED_CAR_CONTACT } from '@/constants/carsData';
 
 export interface BookingModalItem {
   id: string;
@@ -94,6 +96,7 @@ export default function BookingModal({ isOpen, onClose, item, onSuccess }: Booki
   const [isSuccess, setIsSuccess] = useState(false);
   const [isPaymentStep, setIsPaymentStep] = useState(false);
   const [bookingRef, setBookingRef] = useState('');
+  const [submittedUtr, setSubmittedUtr] = useState('');
   const [invoiceNumber, setInvoiceNumber] = useState('');
   const [termsAccepted, setTermsAccepted] = useState(false);
   const [validationError, setValidationError] = useState('');
@@ -261,7 +264,7 @@ export default function BookingModal({ isOpen, onClose, item, onSuccess }: Booki
     setCurrentUser(null);
   };
 
-  const handleSubmitBooking = async (e: React.FormEvent) => {
+  const handleProceedToPayment = (e: React.FormEvent) => {
     e.preventDefault();
     setValidationError('');
 
@@ -287,19 +290,25 @@ export default function BookingModal({ isOpen, onClose, item, onSuccess }: Booki
       return;
     }
 
-    setIsSubmitting(true);
     const refNo = (item.type === 'car' ? 'FL-' : 'TR-') + Math.floor(100000 + Math.random() * 900000);
     const invNum = getNextInvoiceNumber(item.type === 'car' ? 'car' : 'tour');
     setBookingRef(refNo);
     setInvoiceNumber(invNum);
+    setIsPaymentStep(true);
+  };
+
+  const handleConfirmUpiPayment = async ({ utrNumber, paymentScreenshot }: { utrNumber: string; paymentScreenshot?: string }) => {
+    if (!item) return;
+    setIsSubmitting(true);
+    setSubmittedUtr(utrNumber);
 
     const calculatedTotal = item.type === 'tour' ? item.price * Math.max(1, guests) : item.price;
     const calculatedDeposit = item.type === 'tour' ? (item.deposit || 2999) * Math.max(1, guests) : (item.deposit || 500);
     const calculatedBalance = Math.max(0, calculatedTotal - calculatedDeposit);
 
     const bookingPayload = {
-      id: refNo,
-      bookingCode: refNo,
+      id: bookingRef,
+      bookingCode: bookingRef,
       type: item.type === 'car' ? 'Fleet' : 'Tours',
       title: item.title,
       packageName: item.title,
@@ -327,8 +336,11 @@ export default function BookingModal({ isOpen, onClose, item, onSuccess }: Booki
       termsAccepted: true,
       termsAcceptedAt: new Date().toISOString(),
       termsVersion: '2026.1-STANDARD',
-      status: 'Confirmed',
-      paymentMethod: 'Direct Confirmation',
+      status: 'pending_verification',
+      paymentStatus: 'Verification Pending',
+      paymentMethod: 'Direct UPI',
+      utrNumber: utrNumber,
+      paymentScreenshot: paymentScreenshot,
       createdAt: new Date().toISOString(),
     };
 
@@ -355,6 +367,7 @@ export default function BookingModal({ isOpen, onClose, item, onSuccess }: Booki
     }
 
     setIsSubmitting(false);
+    setIsPaymentStep(false);
     setIsSuccess(true);
     if (onSuccess) onSuccess();
   };
@@ -363,6 +376,7 @@ export default function BookingModal({ isOpen, onClose, item, onSuccess }: Booki
     setIsSuccess(false);
     setIsPaymentStep(false);
     setIsSubmitting(false);
+    setSubmittedUtr('');
     onClose();
   };
 
@@ -380,97 +394,124 @@ export default function BookingModal({ isOpen, onClose, item, onSuccess }: Booki
         </button>
 
         {isSuccess ? (
-          /* ─── SCREEN 1: SUCCESS VOUCHER & INVOICE ─────────────────── */
-          <div className="p-8 text-center space-y-6 overflow-y-auto">
-            <div className="w-16 h-16 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center mx-auto shadow-sm">
-              <CheckCircle2 className="w-10 h-10" />
+          /* ─── SCREEN 1: PROVISIONAL VOUCHER & PAYMENT IN VERIFICATION ─── */
+          <div className="p-6 sm:p-8 text-center space-y-5 overflow-y-auto max-h-[85vh]">
+            <div className="w-16 h-16 rounded-full bg-amber-100 text-amber-600 flex items-center justify-center mx-auto shadow-sm">
+              <ShieldCheck className="w-10 h-10" />
             </div>
 
-            <div className="space-y-2">
-              <span className="text-[10px] font-extrabold text-emerald-600 uppercase tracking-widest block font-syne">
-                RESERVATION CONFIRMED
+            <div className="space-y-1.5">
+              <span className="text-[10px] font-extrabold text-amber-700 bg-amber-100 px-3 py-1 rounded-full uppercase tracking-widest inline-block font-syne border border-amber-200">
+                PROVISIONAL BOOKING • VERIFICATION IN PROGRESS
               </span>
-              <h3 className="font-syne text-2xl font-extrabold text-[#111111]">
+              <h3 className="font-syne text-2xl font-extrabold text-gray-900 pt-1">
                 Booking Reference #{bookingRef}
               </h3>
-              <p className="text-xs text-gray-500 leading-relaxed max-w-xs mx-auto">
-                Thank you, <strong className="text-[#111111]">{fullName || 'Valued Guest'}</strong>! Your booking for <strong className="text-[#111111]">{item.title}</strong> is locked for <strong className="text-[#111111]">{guests} {guests > 1 ? 'Travelers' : 'Traveler'}</strong> with a ₹{item.type === 'tour' ? item.deposit * guests : item.deposit} deposit.
+              <p className="text-xs text-gray-600 leading-relaxed max-w-sm mx-auto">
+                Thank you, <strong className="text-gray-900">{fullName || 'Valued Guest'}</strong>! Your booking request and UPI UTR reference have been recorded.
               </p>
             </div>
 
-            <div className="bg-[#F8F9FA] rounded-2xl p-4 text-xs space-y-2 text-left border border-gray-200/80">
+            {/* Verification Notice Advisory */}
+            <div className="p-3.5 bg-blue-50 border border-blue-200 rounded-2xl text-[11px] text-blue-900 text-left space-y-1">
+              <div className="font-bold flex items-center gap-1.5">
+                <span>🛡️</span>
+                <span>Accounts Verification Desk</span>
+              </div>
+              <p className="leading-relaxed text-blue-800">
+                Our accounts team is cross-checking UTR <strong className="font-mono">{submittedUtr}</strong> with incoming bank credit. Your confirmed status will activate shortly.
+              </p>
+            </div>
+
+            <div className="bg-[#F8F9FA] rounded-2xl p-4 text-xs space-y-2.5 text-left border border-gray-200/80">
               <div className="flex justify-between text-gray-600">
-                <span>Item / Package:</span> <strong className="text-[#000000]">{item.title}</strong>
+                <span>Package / Vehicle:</span> <strong className="text-gray-900">{item.title}</strong>
               </div>
               {item.type === 'tour' && (
                 <div className="flex justify-between text-gray-600">
-                  <span>Travelers (Pax):</span> <strong className="text-[#000000]">{guests} Person{guests > 1 ? 's' : ''}</strong>
+                  <span>Travelers (Pax):</span> <strong className="text-gray-900">{guests} Person{guests > 1 ? 's' : ''}</strong>
                 </div>
               )}
               <div className="flex justify-between text-gray-600">
                 <span>Total Package Fare:</span> <strong className="text-gray-900 font-bold">₹{item.type === 'tour' ? (item.price * guests).toLocaleString('en-IN') : item.price.toLocaleString('en-IN')}</strong>
               </div>
               <div className="flex justify-between text-gray-600">
-                <span>Deposit Paid:</span> <strong className="text-[#5266EB] font-bold">₹{item.type === 'tour' ? (item.deposit * guests).toLocaleString('en-IN') : item.deposit.toLocaleString('en-IN')} (Success)</strong>
+                <span>Advance Deposit Submitted:</span> <strong className="text-emerald-700 font-bold">₹{item.type === 'tour' ? (item.deposit * guests).toLocaleString('en-IN') : item.deposit.toLocaleString('en-IN')}</strong>
               </div>
               <div className="flex justify-between text-gray-600">
-                <span>Invoice No.:</span> <strong className="font-mono text-[#000000]">{invoiceNumber}</strong>
+                <span>Submitted UTR / Ref:</span> <strong className="font-mono text-gray-900">{submittedUtr || 'Recorded'}</strong>
               </div>
               <div className="flex justify-between text-gray-600">
-                <span>Account:</span> <strong className="text-[#000000]">{currentUser?.email || email}</strong>
+                <span>Invoice Slip No.:</span> <strong className="font-mono text-gray-900">{invoiceNumber}</strong>
               </div>
               <div className="flex justify-between text-gray-600">
-                <span>Status:</span> <span className="px-2 py-0.5 rounded-full bg-[#9CB4E8]/20 text-[#171721] font-bold text-[10px] border border-[#9CB4E8]/30">Confirmed</span>
+                <span>Current Status:</span> <span className="px-2.5 py-0.5 rounded-full bg-amber-100 text-amber-800 font-bold text-[10px] border border-amber-300">Pending Bank Verification</span>
               </div>
             </div>
 
-            {/* Download Invoice Button */}
-            <button
-              onClick={() => {
-                const totalAmt = item.type === 'tour' ? item.price * Math.max(1, guests) : item.price;
-                const depAmt = item.type === 'tour' ? item.deposit * Math.max(1, guests) : item.deposit;
-                const invoiceData: InvoiceData = {
-                  invoiceNumber,
-                  invoiceDate: new Date().toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' }),
-                  bookingType: item.type === 'car' ? 'car' : 'tour',
-                  bookingCode: bookingRef,
-                  customerName: fullName || 'Valued Guest',
-                  customerPhone: phone || 'N/A',
-                  customerEmail: email || 'N/A',
-                  ...(item.type === 'car' ? {
-                    carModel: item.title,
-                    rentalStartDate: startDate,
-                    rentalEndDate: endDate,
-                    numberOfDays: Math.max(1, Math.ceil((new Date(endDate).getTime() - new Date(startDate).getTime()) / 86400000)),
-                    perDayRate: item.price,
-                    subtotal: item.price,
-                  } : {
-                    packageName: item.title,
-                    travelDates: `${startDate} → ${endDate}`,
-                    numberOfTravelers: Math.max(1, guests),
-                    perPersonPrice: item.price,
-                    subtotal: totalAmt,
-                  }),
-                  totalAmount: totalAmt,
-                  depositPaid: depAmt,
-                  balanceAmount: Math.max(0, totalAmt - depAmt),
-                  paymentMode: 'Razorpay',
-                  paymentStatus: 'Partially Paid',
-                  transactionId: bookingRef,
-                };
-                generateInvoicePDF(invoiceData);
-              }}
-              className="w-full py-3.5 rounded-full bg-[#5266EB] hover:bg-[#3E51D4] text-[#EDEDF3] text-xs font-bold transition-colors shadow-md flex items-center justify-center gap-2"
-            >
-              <Download className="w-4 h-4" /> Download Invoice PDF
-            </button>
+            {/* Action Buttons */}
+            <div className="space-y-2 pt-1">
+              <button
+                type="button"
+                onClick={() => {
+                  const wpPhone = item.type === 'tour' ? SHARED_BUS_CONTACT.whatsappPhone : SHARED_CAR_CONTACT.whatsappPhone;
+                  const msg = `*AARAMBHA BOOKING VERIFICATION DESK*%0A🔖 *Booking Code:* ${bookingRef}%0A👤 *Name:* ${fullName}%0A💰 *Deposit:* ₹${item.type === 'tour' ? item.deposit * guests : item.deposit}%0A🔢 *UTR:* ${submittedUtr}%0A_Please verify my UPI transfer and confirm._`;
+                  window.open(`https://wa.me/91${wpPhone}?text=${encodeURIComponent(msg)}`, '_blank');
+                }}
+                className="w-full py-3 rounded-2xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold font-syne transition-all shadow-md flex items-center justify-center gap-2 cursor-pointer"
+              >
+                <Phone className="w-4 h-4" /> Direct WhatsApp Desk Verification
+              </button>
 
-            <button
-              onClick={handleResetAndClose}
-              className="w-full py-3 rounded-full border border-gray-200 bg-white text-[#000000] text-xs font-bold hover:bg-gray-50 transition-colors"
-            >
-              View My Bookings
-            </button>
+              <button
+                type="button"
+                onClick={() => {
+                  const totalAmt = item.type === 'tour' ? item.price * Math.max(1, guests) : item.price;
+                  const depAmt = item.type === 'tour' ? item.deposit * Math.max(1, guests) : item.deposit;
+                  const invoiceData: InvoiceData = {
+                    invoiceNumber,
+                    invoiceDate: new Date().toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' }),
+                    bookingType: item.type === 'car' ? 'car' : 'tour',
+                    bookingCode: bookingRef,
+                    customerName: fullName || 'Valued Guest',
+                    customerPhone: phone || 'N/A',
+                    customerEmail: email || 'N/A',
+                    ...(item.type === 'car' ? {
+                      carModel: item.title,
+                      rentalStartDate: startDate,
+                      rentalEndDate: endDate,
+                      numberOfDays: Math.max(1, Math.ceil((new Date(endDate).getTime() - new Date(startDate).getTime()) / 86400000)),
+                      perDayRate: item.price,
+                      subtotal: item.price,
+                    } : {
+                      packageName: item.title,
+                      travelDates: `${startDate} → ${endDate}`,
+                      numberOfTravelers: Math.max(1, guests),
+                      perPersonPrice: item.price,
+                      subtotal: totalAmt,
+                    }),
+                    totalAmount: totalAmt,
+                    depositPaid: depAmt,
+                    balanceAmount: Math.max(0, totalAmt - depAmt),
+                    paymentMode: 'Direct UPI',
+                    paymentStatus: 'Partially Paid',
+                    transactionId: submittedUtr || bookingRef,
+                  };
+                  generateInvoicePDF(invoiceData);
+                }}
+                className="w-full py-3 rounded-2xl bg-gray-900 hover:bg-black text-white text-xs font-bold transition-all shadow-sm flex items-center justify-center gap-2 cursor-pointer"
+              >
+                <Download className="w-4 h-4" /> Download Provisional Invoice PDF
+              </button>
+
+              <button
+                type="button"
+                onClick={handleResetAndClose}
+                className="w-full py-2.5 rounded-2xl border border-gray-200 bg-white text-gray-700 text-xs font-bold hover:bg-gray-50 transition-colors cursor-pointer"
+              >
+                Done / View My Bookings
+              </button>
+            </div>
           </div>
         ) : !currentUser ? (
           /* ─── SCREEN 2: MANDATORY AUTHENTICATION / SIGNUP STEP ─────────── */
@@ -640,9 +681,25 @@ export default function BookingModal({ isOpen, onClose, item, onSuccess }: Booki
             </div>
 
           </div>
+        ) : isPaymentStep ? (
+          /* ─── SCREEN 3: DYNAMIC UPI QR & UTR VERIFICATION SCREEN ──────── */
+          <div className="p-6 overflow-y-auto flex-1 min-h-0 max-h-[85vh]">
+            <UPIPaymentVerificationSection
+              bookingCode={bookingRef}
+              itemTitle={item.title}
+              itemType={item.type}
+              totalPrice={item.type === 'tour' ? item.price * Math.max(1, guests) : item.price}
+              depositAmount={item.type === 'tour' ? (item.deposit || 2999) * Math.max(1, guests) : (item.deposit || 500)}
+              customerName={fullName}
+              customerPhone={phone}
+              onConfirmPayment={handleConfirmUpiPayment}
+              onBack={() => setIsPaymentStep(false)}
+              isSubmitting={isSubmitting}
+            />
+          </div>
         ) : (
-          /* ─── SCREEN 3: VERIFIED BOOKING CONFIRMATION FORM ────────────── */
-          <form onSubmit={handleSubmitBooking} className="flex flex-col flex-1 min-h-0 overflow-hidden">
+          /* ─── SCREEN 4: VERIFIED BOOKING DETAILS ENTRY FORM ───────────── */
+          <form onSubmit={handleProceedToPayment} className="flex flex-col flex-1 min-h-0 overflow-hidden">
             
             {/* Modal Header Card (Fixed top) */}
             <div className="bg-[#171721] text-[#EDEDF3] p-5 relative overflow-hidden flex items-center gap-4 flex-shrink-0">
@@ -686,7 +743,7 @@ export default function BookingModal({ isOpen, onClose, item, onSuccess }: Booki
                 <button
                   type="button"
                   onClick={handleLogout}
-                  className="text-[10px] font-bold text-[#5266EB] hover:underline flex items-center gap-1"
+                  className="text-[10px] font-bold text-[#5266EB] hover:underline flex items-center gap-1 cursor-pointer"
                 >
                   <LogOut className="w-3 h-3" /> Log Out
                 </button>
@@ -720,11 +777,19 @@ export default function BookingModal({ isOpen, onClose, item, onSuccess }: Booki
                           <button
                             key={m}
                             type="button"
-                            onClick={() => handleMonthChange(m)}
-                            className={`flex-1 py-1.5 px-2 text-[11px] font-bold rounded-lg transition-all whitespace-nowrap ${
+                            onClick={() => {
+                              setSelectedMonth(m);
+                              const match = activeBatches.find((b: any) => b.month === m);
+                              if (match) {
+                                setSelectedBatchId(match.id);
+                                setStartDate(match.startDate);
+                                setEndDate(match.endDate);
+                              }
+                            }}
+                            className={`px-3 py-1 rounded-lg text-xs font-bold transition-all shrink-0 cursor-pointer font-syne ${
                               selectedMonth === m
-                                ? 'bg-[#5266EB] text-white shadow-sm'
-                                : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
+                                ? 'bg-[#5266EB] text-white shadow-xs'
+                                : 'text-gray-500 hover:text-gray-900'
                             }`}
                           >
                             {m}
@@ -733,49 +798,39 @@ export default function BookingModal({ isOpen, onClose, item, onSuccess }: Booki
                       </div>
                     )}
 
-                    {/* Date Options Cards for Selected Month */}
-                    <div className="space-y-2 pt-0.5">
-                      {activeBatches.filter((b: any) => !selectedMonth || b.month === selectedMonth).map((slot: any) => {
-                        const isSelected = selectedBatchId === slot.id;
-                        const isSoldOut = slot.status === 'full' || slot.status === 'disabled';
-                        return (
-                          <button
-                            key={slot.id}
-                            type="button"
-                            disabled={isSoldOut}
-                            onClick={() => !isSoldOut && handleBatchSelect(slot.id)}
-                            className={`w-full p-3 rounded-xl border text-left transition-all flex items-center justify-between ${
-                              isSoldOut
-                                ? 'border-gray-200 bg-gray-50 opacity-60 cursor-not-allowed'
-                                : isSelected
-                                ? 'border-2 border-[#5266EB] bg-white shadow-sm'
-                                : 'border-gray-200 bg-white hover:border-gray-300'
-                            }`}
-                          >
-                            <div className="flex items-center gap-3">
-                              <div className={`w-4 h-4 rounded-full border-2 flex items-center justify-center ${
-                                isSelected ? 'border-[#5266EB] bg-[#5266EB]' : 'border-gray-300'
-                              }`}>
-                                {isSelected && <div className="w-1.5 h-1.5 rounded-full bg-white" />}
-                              </div>
-                              <div>
-                                <span className="font-bold text-xs text-gray-900 block font-syne">
-                                  📅 {slot.label}
+                    {/* Specific Batch Selection Grid */}
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 pt-1 max-h-48 overflow-y-auto">
+                      {activeBatches
+                        .filter((b: any) => !selectedMonth || b.month === selectedMonth)
+                        .map((b: any) => {
+                          const isSelected = selectedBatchId === b.id;
+                          return (
+                            <button
+                              key={b.id}
+                              type="button"
+                              onClick={() => {
+                                setSelectedBatchId(b.id);
+                                setStartDate(b.startDate);
+                                setEndDate(b.endDate);
+                              }}
+                              className={`p-2.5 rounded-xl border text-left transition-all cursor-pointer flex flex-col justify-between ${
+                                isSelected
+                                  ? 'bg-[#5266EB]/10 border-[#5266EB] shadow-xs'
+                                  : 'bg-white border-gray-200 hover:border-gray-300'
+                              }`}
+                            >
+                              <div className="flex items-center justify-between gap-1">
+                                <span className={`text-xs font-bold font-syne ${isSelected ? 'text-[#5266EB]' : 'text-gray-900'}`}>
+                                  {b.label}
                                 </span>
-                                <span className="text-[10px] text-gray-500 font-medium">
-                                  {slot.tag}
-                                </span>
+                                {isSelected && <CheckCircle2 className="w-3.5 h-3.5 text-[#5266EB] shrink-0" />}
                               </div>
-                            </div>
-
-                            <span className={`text-[10px] font-bold px-2.5 py-0.5 rounded-full ${
-                              isSelected ? 'bg-[#9CB4E8]/20 text-[#171721] border border-[#9CB4E8]/30' : 'bg-gray-100 text-gray-500'
-                            }`}>
-                              {isSelected ? '✓ Selected' : 'Select'}
-                            </span>
-                          </button>
-                        );
-                      })}
+                              <span className="text-[10px] text-gray-500 mt-1 block">
+                                {b.tag || 'Standard Group Batch'}
+                              </span>
+                            </button>
+                          );
+                        })}
                     </div>
                   </div>
                 )
@@ -783,11 +838,12 @@ export default function BookingModal({ isOpen, onClose, item, onSuccess }: Booki
                 <div className="grid grid-cols-2 gap-3">
                   <div className="space-y-1">
                     <label className="font-bold text-gray-700 flex items-center gap-1">
-                      <Calendar className="w-3.5 h-3.5 text-gray-400" /> Pick-up Date
+                      <Calendar className="w-3.5 h-3.5 text-gray-400" /> Pick-up Date *
                     </label>
                     <input
                       type="date"
                       required
+                      min={new Date().toISOString().split('T')[0]}
                       value={startDate}
                       onChange={(e) => setStartDate(e.target.value)}
                       className="w-full bg-[#F8F9FA] border border-gray-200 rounded-xl px-3 py-2 text-xs focus:outline-none focus:border-[#5266EB]"
@@ -795,11 +851,12 @@ export default function BookingModal({ isOpen, onClose, item, onSuccess }: Booki
                   </div>
                   <div className="space-y-1">
                     <label className="font-bold text-gray-700 flex items-center gap-1">
-                      <Calendar className="w-3.5 h-3.5 text-gray-400" /> Return Date
+                      <Calendar className="w-3.5 h-3.5 text-gray-400" /> Return Date *
                     </label>
                     <input
                       type="date"
                       required
+                      min={startDate}
                       value={endDate}
                       onChange={(e) => setEndDate(e.target.value)}
                       className="w-full bg-[#F8F9FA] border border-gray-200 rounded-xl px-3 py-2 text-xs focus:outline-none focus:border-[#5266EB]"
@@ -808,26 +865,26 @@ export default function BookingModal({ isOpen, onClose, item, onSuccess }: Booki
                 </div>
               )}
 
-              {/* ─── DEDICATED NUMBER OF TRAVELERS / PILGRIMS SELECTION BOX (TOURS ONLY) ─── */}
+              {/* Number of Pilgrims / Travelers (For Tours) */}
               {item.type === 'tour' && (
-                <div className="space-y-3 bg-[#FAFAFC] border border-gray-200 p-4 rounded-2xl shadow-xs">
+                <div className="space-y-2 bg-[#FAFAFC] border border-gray-200 p-4 rounded-2xl">
                   <div className="flex items-center justify-between">
                     <label className="font-bold text-[#000000] flex items-center gap-1.5 text-xs font-syne">
-                      <Users className="w-4 h-4 text-[#5266EB]" /> Number of Travelers / Pilgrims *
+                      <Users className="w-4 h-4 text-[#5266EB]" /> Number of Pilgrims / Travelers *
                     </label>
-                    <span className="text-[10px] font-extrabold text-[#171721] bg-[#9CB4E8]/20 px-2.5 py-0.5 rounded-full uppercase tracking-wider font-syne border border-[#9CB4E8]/30">
-                      {guests} {guests > 1 ? 'Pilgrims' : 'Pilgrim'}
+                    <span className="text-[10px] font-extrabold text-[#5266EB] bg-[#5266EB]/10 px-2 py-0.5 rounded-full">
+                      {guests} Pax Selected
                     </span>
                   </div>
 
-                  {/* Quick Selection Buttons */}
-                  <div className="flex items-center gap-1.5 overflow-x-auto pb-0.5">
-                    {[1, 2, 3, 4, 5, 6].map((num) => (
+                  {/* Quick Preset Buttons */}
+                  <div className="grid grid-cols-4 gap-2">
+                    {[1, 2, 4, 6].map((num) => (
                       <button
                         key={num}
                         type="button"
                         onClick={() => setGuests(num)}
-                        className={`flex-1 py-1.5 px-2 text-xs font-bold rounded-xl transition-all whitespace-nowrap border ${
+                        className={`flex-1 py-1.5 px-2 text-xs font-bold rounded-xl transition-all whitespace-nowrap border cursor-pointer ${
                           guests === num
                             ? 'bg-[#5266EB] text-white border-[#5266EB] shadow-xs'
                             : 'bg-white text-gray-700 border-gray-200 hover:border-[#5266EB]/40 hover:bg-[#5266EB]/5'
@@ -939,11 +996,11 @@ export default function BookingModal({ isOpen, onClose, item, onSuccess }: Booki
                 <div className="flex items-center gap-2">
                   <CheckCircle2 className="w-4 h-4 text-emerald-600" />
                   <span className="font-bold text-emerald-900 text-xs">
-                    Direct Instant Confirmation:
+                    Direct Advance Payment:
                   </span>
                 </div>
                 <span className="font-syne text-xs font-extrabold text-emerald-700 bg-emerald-100 px-2.5 py-0.5 rounded-full">
-                  Instant Voucher & Invoice
+                  UPI QR & 1-Click Mobile Pay
                 </span>
               </div>
 
@@ -1008,8 +1065,8 @@ export default function BookingModal({ isOpen, onClose, item, onSuccess }: Booki
                     : 'bg-[#5266EB] hover:bg-[#3E51D4] cursor-pointer hover:scale-102 active:scale-98 shadow-[#5266EB]/30'
                 }`}
               >
-                <CheckCircle2 className="w-4 h-4 text-white" />
-                <span>{isSubmitting ? 'Confirming Reservation...' : 'Direct Confirm Booking Now'}</span>
+                <QrCode className="w-4 h-4 text-white" />
+                <span>Proceed to UPI Payment</span>
                 <ArrowRight className="w-3.5 h-3.5" />
               </button>
             </div>
