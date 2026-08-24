@@ -32,7 +32,7 @@ export function formatTourPackageFromApi(apiPkg: any, fallback?: TourPackage): T
       const startTag = firstBatch.label ? firstBatch.label.split('–')[0].trim() : firstBatch.startDate;
       datesLabel = `${startTag} Onwards (${batchDates.length} Batches)`;
     } else {
-      datesLabel = 'Flexible / Custom Dates';
+      datesLabel = '';
     }
   }
 

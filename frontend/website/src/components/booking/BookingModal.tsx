@@ -702,7 +702,7 @@ export default function BookingModal({ isOpen, onClose, item, onSuccess }: Booki
               
               {/* Dates / Fixed Departure Batch Selection */}
               {item.type === 'tour' ? (
-                activeBatches.length > 0 ? (
+                activeBatches.length > 0 && (
                   <div className="space-y-2.5 bg-[#FAFAFC] border border-gray-200 p-4 rounded-2xl">
                     <div className="flex items-center justify-between">
                       <label className="font-bold text-[#000000] flex items-center gap-1.5 text-xs font-syne">
@@ -776,56 +776,6 @@ export default function BookingModal({ isOpen, onClose, item, onSuccess }: Booki
                           </button>
                         );
                       })}
-                    </div>
-                  </div>
-                ) : (
-                  <div className="space-y-3 bg-[#FAFAFC] border border-gray-200 p-4 rounded-2xl">
-                    <div className="flex items-center justify-between">
-                      <label className="font-bold text-[#000000] flex items-center gap-1.5 text-xs font-syne">
-                        <Calendar className="w-4 h-4 text-[#5266EB]" /> Preferred Departure Date *
-                      </label>
-                      <span className="text-[9px] font-extrabold text-[#5266EB] bg-[#5266EB]/10 px-2.5 py-0.5 rounded-full uppercase tracking-wider border border-[#5266EB]/20">
-                        Flexible / Custom Date
-                      </span>
-                    </div>
-
-                    <p className="text-[11px] text-gray-500 leading-relaxed">
-                      No fixed public batches are scheduled. Choose your custom departure date below:
-                    </p>
-
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                      <div className="space-y-1">
-                        <label className="text-[10px] font-bold text-gray-600 uppercase font-syne">
-                          Departure Date *
-                        </label>
-                        <input
-                          type="date"
-                          required
-                          min={new Date().toISOString().split('T')[0]}
-                          value={startDate}
-                          onChange={(e) => {
-                            setStartDate(e.target.value);
-                            const startD = new Date(e.target.value);
-                            startD.setDate(startD.getDate() + 3);
-                            setEndDate(startD.toISOString().split('T')[0]);
-                          }}
-                          className="w-full px-3 py-2 bg-white border border-gray-200 rounded-xl text-xs font-bold text-gray-900 focus:outline-none focus:border-[#5266EB]"
-                        />
-                      </div>
-
-                      <div className="space-y-1">
-                        <label className="text-[10px] font-bold text-gray-600 uppercase font-syne">
-                          Return Date
-                        </label>
-                        <input
-                          type="date"
-                          required
-                          min={startDate}
-                          value={endDate}
-                          onChange={(e) => setEndDate(e.target.value)}
-                          className="w-full px-3 py-2 bg-white border border-gray-200 rounded-xl text-xs font-bold text-gray-900 focus:outline-none focus:border-[#5266EB]"
-                        />
-                      </div>
                     </div>
                   </div>
                 )

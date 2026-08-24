@@ -202,7 +202,7 @@ export default function TourPackageDetailPage() {
               </div>
 
               {/* Live Departure Batches & Dates (Synced with Admin Panel) */}
-              {tour.batchDates && tour.batchDates.length > 0 ? (
+              {tour.batchDates && tour.batchDates.length > 0 && (
                 <div className="space-y-4">
                   <div className="flex flex-col sm:flex-row sm:items-center justify-between border-b border-gray-200 pb-3 gap-2">
                     <div>
@@ -302,28 +302,6 @@ export default function TourPackageDetailPage() {
                         );
                       })}
                   </div>
-                </div>
-              ) : (
-                <div className="rounded-2xl bg-[#FAFAFC] border border-gray-200 p-5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-                  <div className="flex items-center gap-3">
-                    <div className="p-2.5 rounded-xl bg-[#5266EB]/10 text-[#5266EB] shrink-0">
-                      <Calendar className="w-5 h-5" />
-                    </div>
-                    <div>
-                      <h4 className="font-syne font-bold text-xs sm:text-sm text-gray-900">
-                        Flexible & Custom Departure Dates
-                      </h4>
-                      <p className="text-xs text-gray-500 font-normal">
-                        Depart on any date of your choice. Custom travel dates can be chosen directly during booking.
-                      </p>
-                    </div>
-                  </div>
-                  <button
-                    onClick={() => setIsBookingModalOpen(true)}
-                    className="py-2.5 px-4 rounded-xl bg-[#5266EB] text-white text-xs font-bold font-syne uppercase tracking-wider hover:bg-[#3E51D4] transition-all shadow-sm shrink-0 cursor-pointer"
-                  >
-                    Choose Travel Date
-                  </button>
                 </div>
               )}
 
