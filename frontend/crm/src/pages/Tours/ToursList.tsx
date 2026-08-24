@@ -7,17 +7,7 @@ import { Loader } from '@/components/common/Loader';
 import { formatCurrency } from '@/utils/formatCurrency';
 import { useAutoRefresh } from '@/hooks/useRealtimeSync';
 
-const DEFAULT_BATCHES = [
-  { id: 'aug-1', month: 'August', label: '04 Aug – 10 Aug 2026', tag: 'Batch #1 (Early Aug)', startDate: '2026-08-04', endDate: '2026-08-10', status: 'available' },
-  { id: 'aug-2', month: 'August', label: '14 Aug – 20 Aug 2026', tag: 'Batch #2 (Mid Aug)', startDate: '2026-08-14', endDate: '2026-08-20', status: 'available' },
-  { id: 'aug-3', month: 'August', label: '24 Aug – 30 Aug 2026', tag: 'Batch #3 (Late Aug)', startDate: '2026-08-24', endDate: '2026-08-30', status: 'available' },
-  { id: 'sep-1', month: 'September', label: '04 Sep – 10 Sep 2026', tag: 'Batch #1 (Early Sep)', startDate: '2026-09-04', endDate: '2026-09-10', status: 'available' },
-  { id: 'sep-2', month: 'September', label: '14 Sep – 20 Sep 2026', tag: 'Batch #2 (Mid Sep)', startDate: '2026-09-14', endDate: '2026-09-20', status: 'available' },
-  { id: 'sep-3', month: 'September', label: '24 Sep – 30 Sep 2026', tag: 'Batch #3 (Late Sep)', startDate: '2026-09-24', endDate: '2026-09-30', status: 'available' },
-  { id: 'oct-1', month: 'October', label: '04 Oct – 10 Oct 2026', tag: 'Batch #1 (Early Oct)', startDate: '2026-10-04', endDate: '2026-10-10', status: 'available' },
-  { id: 'oct-2', month: 'October', label: '14 Oct – 20 Oct 2026', tag: 'Batch #2 (Mid Oct)', startDate: '2026-10-14', endDate: '2026-10-20', status: 'available' },
-  { id: 'oct-3', month: 'October', label: '24 Oct – 30 Oct 2026', tag: 'Batch #3 (Late Oct)', startDate: '2026-10-24', endDate: '2026-10-30', status: 'available' },
-];
+const DEFAULT_BATCHES: any[] = [];
 
 export default function ToursView() {
   const navigate = useNavigate();
@@ -82,15 +72,17 @@ export default function ToursView() {
     e.preventDefault();
     try {
       const payload = {
+        ...(editingPkg || {}),
         ...form,
         inclusions: typeof form.inclusions === 'string' ? form.inclusions.split(',').map(s => s.trim()) : form.inclusions,
         images: editingPkg?.images || ['https://images.unsplash.com/photo-1626621341517-bbf3d9990a23?q=80&w=800&auto=format&fit=crop'],
         itineraries: editingPkg?.itineraries || [{ dayNumber: 1, title: 'Day 1 Exploration', description: 'Sightseeing and city tour.' }],
-        batchDates: editingPkg?.batchDates || DEFAULT_BATCHES,
+        batchDates: editingPkg?.batchDates !== undefined ? editingPkg.batchDates : [],
       };
 
       if (editingPkg) {
-        await updatePackage(editingPkg._id || editingPkg.id, payload);
+        const pkgId = editingPkg._id || editingPkg.id || editingPkg.slug;
+        await updatePackage(pkgId, payload);
       } else {
         await createPackage(payload);
       }
@@ -111,13 +103,13 @@ export default function ToursView() {
   // ─── BATCH DATES MANAGEMENT HANDLERS ──────────────────────────────
   const handleOpenManageBatches = (pkg: any) => {
     setActiveBatchPkg(pkg);
-    let loadedBatches = DEFAULT_BATCHES;
-    if (pkg.batchDates && Array.isArray(pkg.batchDates) && pkg.batchDates.length > 0) {
+    let loadedBatches: any[] = [];
+    if (pkg.batchDates !== undefined && Array.isArray(pkg.batchDates)) {
       loadedBatches = pkg.batchDates;
     } else {
       try {
         const stored = localStorage.getItem('aarambha_package_batches_' + (pkg.slug || pkg._id || pkg.id));
-        if (stored) loadedBatches = JSON.parse(stored);
+        if (stored !== null) loadedBatches = JSON.parse(stored);
       } catch (_e) {}
     }
     setPkgBatches(loadedBatches);
@@ -162,16 +154,14 @@ export default function ToursView() {
   const handleSaveAllBatches = async () => {
     if (!activeBatchPkg) return;
     try {
-      const pkgId = activeBatchPkg._id || activeBatchPkg.id;
+      const pkgId = activeBatchPkg._id || activeBatchPkg.id || activeBatchPkg.slug;
       const updatedPayload = {
         ...activeBatchPkg,
         batchDates: pkgBatches,
       };
 
-      // Persist to Express API backend if available
-      try {
-        await updatePackage(pkgId, updatedPayload);
-      } catch (_e) {}
+      // Persist to Express API backend
+      await updatePackage(pkgId, updatedPayload);
 
       // Persist to LocalStorage for instant live customer site sync
       try {
@@ -231,7 +221,7 @@ export default function ToursView() {
       {/* Packages Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
         {packages.map((pkg: any, i: number) => {
-          const dateCount = pkg.batchDates?.length || DEFAULT_BATCHES.length;
+          const dateCount = Array.isArray(pkg.batchDates) ? pkg.batchDates.length : 0;
           return (
             <div key={i} className="bg-white rounded-[24px] border border-gray-100 p-5 shadow-aether-card flex flex-col justify-between hover:shadow-md transition-shadow">
               <div>

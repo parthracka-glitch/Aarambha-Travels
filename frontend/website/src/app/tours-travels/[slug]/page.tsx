@@ -20,6 +20,8 @@ export default function TourPackageDetailPage() {
   const [selectedImage, setSelectedImage] = useState(defaultTour.image);
   const [openDay, setOpenDay] = useState<number | null>(1);
   const [isBookingModalOpen, setIsBookingModalOpen] = useState(false);
+  const [selectedBatchId, setSelectedBatchId] = useState<string | undefined>(undefined);
+  const [batchMonthFilter, setBatchMonthFilter] = useState('All');
 
   useEffect(() => {
     if (slug) {
@@ -40,6 +42,13 @@ export default function TourPackageDetailPage() {
     image: tour.image,
     price: tour.basePrice,
     deposit: tour.depositPrice || 2999,
+    batchDates: tour.batchDates,
+    initialBatchId: selectedBatchId,
+  };
+
+  const handleBookBatch = (batchId: string) => {
+    setSelectedBatchId(batchId);
+    setIsBookingModalOpen(true);
   };
 
   const toggleDay = (dayNum: number) => {
@@ -191,6 +200,132 @@ export default function TourPackageDetailPage() {
                   ))}
                 </div>
               </div>
+
+              {/* Live Departure Batches & Dates (Synced with Admin Panel) */}
+              {tour.batchDates && tour.batchDates.length > 0 ? (
+                <div className="space-y-4">
+                  <div className="flex flex-col sm:flex-row sm:items-center justify-between border-b border-gray-200 pb-3 gap-2">
+                    <div>
+                      <h2 className="font-syne text-xl font-bold text-[#000000] tracking-tight flex items-center gap-2">
+                        <Calendar className="w-5 h-5 text-[#5266EB]" />
+                        <span>Upcoming Departure Batches & Live Dates</span>
+                      </h2>
+                      <p className="text-xs text-gray-500 font-normal mt-0.5">
+                        Select an official departure batch to lock your seats with ₹{tour.depositPrice || 2500} advance
+                      </p>
+                    </div>
+                    <span className="self-start sm:self-auto text-xs font-bold text-[#5266EB] bg-[#5266EB]/10 px-3 py-1 rounded-full border border-[#5266EB]/20">
+                      {tour.batchDates.length} Scheduled Batches
+                    </span>
+                  </div>
+
+                  {/* Month Filter Tabs (if multiple months exist) */}
+                  {Array.from(new Set(tour.batchDates.map((b) => b.month || 'Other'))).length > 1 && (
+                    <div className="flex flex-wrap gap-2 pt-1">
+                      <button
+                        onClick={() => setBatchMonthFilter('All')}
+                        className={`px-3.5 py-1.5 rounded-full text-xs font-bold font-syne transition-all cursor-pointer ${
+                          batchMonthFilter === 'All'
+                            ? 'bg-[#5266EB] text-white shadow-sm'
+                            : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                        }`}
+                      >
+                        All Months ({tour.batchDates.length})
+                      </button>
+                      {Array.from(new Set(tour.batchDates.map((b) => b.month || 'Other'))).map((month) => (
+                        <button
+                          key={month}
+                          onClick={() => setBatchMonthFilter(month)}
+                          className={`px-3.5 py-1.5 rounded-full text-xs font-bold font-syne transition-all cursor-pointer ${
+                            batchMonthFilter === month
+                              ? 'bg-[#5266EB] text-white shadow-sm'
+                              : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                          }`}
+                        >
+                          {month}
+                        </button>
+                      ))}
+                    </div>
+                  )}
+
+                  {/* Batch Cards Grid */}
+                  <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3.5">
+                    {tour.batchDates
+                      .filter((b) => batchMonthFilter === 'All' || b.month === batchMonthFilter)
+                      .map((batch) => {
+                        const isFull = batch.status === 'full';
+                        return (
+                          <div
+                            key={batch.id}
+                            className={`p-4 rounded-2xl border transition-all flex flex-col justify-between space-y-3 relative ${
+                              isFull
+                                ? 'bg-gray-50 border-gray-200 opacity-75'
+                                : 'bg-white border-gray-200 hover:border-[#5266EB]/50 hover:shadow-md'
+                            }`}
+                          >
+                            <div className="space-y-1.5">
+                              <div className="flex items-center justify-between gap-2">
+                                <span className="text-[10px] font-bold uppercase tracking-wider text-[#5266EB] bg-[#5266EB]/10 px-2 py-0.5 rounded-md">
+                                  {batch.tag || `${batch.month} Batch`}
+                                </span>
+                                <span
+                                  className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${
+                                    isFull
+                                      ? 'bg-red-100 text-red-700'
+                                      : 'bg-emerald-100 text-emerald-700'
+                                  }`}
+                                >
+                                  {isFull ? 'Batch Full' : 'Available'}
+                                </span>
+                              </div>
+                              <h4 className="font-syne font-bold text-xs sm:text-sm text-gray-900 pt-1">
+                                {batch.label}
+                              </h4>
+                              <p className="text-[11px] text-gray-500">
+                                {tour.durationLabel}
+                              </p>
+                            </div>
+
+                            <button
+                              disabled={isFull}
+                              onClick={() => handleBookBatch(batch.id)}
+                              className={`w-full py-2.5 px-3 rounded-xl text-xs font-bold font-syne uppercase tracking-wider flex items-center justify-center gap-1.5 transition-all cursor-pointer ${
+                                isFull
+                                  ? 'bg-gray-200 text-gray-400 cursor-not-allowed'
+                                  : 'bg-[#5266EB] text-white hover:bg-[#3E51D4] shadow-sm'
+                              }`}
+                            >
+                              <span>{isFull ? 'Sold Out' : 'Select & Book'}</span>
+                              {!isFull && <ArrowRight className="w-3.5 h-3.5" />}
+                            </button>
+                          </div>
+                        );
+                      })}
+                  </div>
+                </div>
+              ) : (
+                <div className="rounded-2xl bg-[#FAFAFC] border border-gray-200 p-5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+                  <div className="flex items-center gap-3">
+                    <div className="p-2.5 rounded-xl bg-[#5266EB]/10 text-[#5266EB] shrink-0">
+                      <Calendar className="w-5 h-5" />
+                    </div>
+                    <div>
+                      <h4 className="font-syne font-bold text-xs sm:text-sm text-gray-900">
+                        Flexible & Custom Departure Dates
+                      </h4>
+                      <p className="text-xs text-gray-500 font-normal">
+                        Depart on any date of your choice. Custom travel dates can be chosen directly during booking.
+                      </p>
+                    </div>
+                  </div>
+                  <button
+                    onClick={() => setIsBookingModalOpen(true)}
+                    className="py-2.5 px-4 rounded-xl bg-[#5266EB] text-white text-xs font-bold font-syne uppercase tracking-wider hover:bg-[#3E51D4] transition-all shadow-sm shrink-0 cursor-pointer"
+                  >
+                    Choose Travel Date
+                  </button>
+                </div>
+              )}
 
               {/* Day-by-Day Detailed Itinerary */}
               <div className="space-y-4">

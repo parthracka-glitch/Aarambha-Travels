@@ -16,9 +16,11 @@ export const createPackageSchema = z.object({
   durationNights: z.number().min(0),
   basePrice: z.number().min(0),
   depositPrice: z.number().min(0),
+  datesLabel: z.string().optional(),
   destinationId: z.string().optional(),
   images: z.array(z.string()).optional(),
   inclusions: z.array(z.string()).optional(),
+  batchDates: z.array(z.any()).optional(),
   itineraries: z.array(z.object({
     dayNumber: z.number(),
     title: z.string(),
@@ -27,6 +29,8 @@ export const createPackageSchema = z.object({
     stayDetails: z.string().optional(),
   })).optional(),
 });
+
+export const updatePackageSchema = createPackageSchema.partial();
 
 export const createTourInquirySchema = z.object({
   customerName: z.string().min(1),

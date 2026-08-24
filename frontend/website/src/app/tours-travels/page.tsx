@@ -308,6 +308,7 @@ export default function ToursCatalogPage() {
                           image: pkg.image,
                           price: pkg.basePrice,
                           deposit: pkg.depositPrice || 2999,
+                          batchDates: pkg.batchDates,
                         })
                       }
                       className="w-full py-3 px-3 rounded-xl bg-[#5266EB] hover:bg-[#3E51D4] text-[#EDEDF3] font-extrabold text-xs tracking-wider uppercase transition-all shadow-md shadow-[#5266EB]/20 flex items-center justify-center gap-2 hover:scale-[1.01] active:scale-99 cursor-pointer"

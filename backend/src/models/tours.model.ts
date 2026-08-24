@@ -61,15 +61,23 @@ const TourBatchDateSchema = new Schema<ITourBatchDate>({
 export interface ITourPackage extends Document {
   slug: string;
   title: string;
+  subtitle?: string;
   description: string;
+  overview?: string;
+  datesLabel?: string;
   durationDays: number;
   durationNights: number;
   basePrice: number;
   depositPrice: number;
   destinationId?: string;
+  destination?: string;
+  state?: string;
   isActive: boolean;
   images: string[];
+  sites?: string[];
   inclusions: string[];
+  exclusions?: string[];
+  terms?: string[];
   itineraries: ITourItinerary[];
   batchDates?: ITourBatchDate[];
   createdAt: Date;
@@ -78,15 +86,23 @@ export interface ITourPackage extends Document {
 const TourPackageSchema = new Schema<ITourPackage>({
   slug: { type: String, required: true, unique: true, index: true },
   title: { type: String, required: true },
+  subtitle: { type: String },
   description: { type: String, required: true },
+  overview: { type: String },
+  datesLabel: { type: String },
   durationDays: { type: Number, required: true },
   durationNights: { type: Number, required: true },
   basePrice: { type: Number, required: true },
   depositPrice: { type: Number, required: true },
   destinationId: { type: Schema.Types.ObjectId, ref: 'TourDestination' },
+  destination: { type: String },
+  state: { type: String },
   isActive: { type: Boolean, default: true },
   images: [{ type: String }],
+  sites: [{ type: String }],
   inclusions: [{ type: String }],
+  exclusions: [{ type: String }],
+  terms: [{ type: String }],
   itineraries: [TourItinerarySchema],
   batchDates: [TourBatchDateSchema],
   createdAt: { type: Date, default: Date.now },

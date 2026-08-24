@@ -268,6 +268,7 @@ function PortalContent() {
                                 image: tour.image,
                                 price: tour.basePrice,
                                 deposit: tour.depositPrice || 2999,
+                                batchDates: tour.batchDates,
                               })
                             }
                             className="w-full py-2.5 rounded-xl bg-[#5266EB] hover:bg-[#3E51D4] text-[#EDEDF3] font-bold text-xs transition-all shadow-sm flex items-center justify-center gap-1.5 cursor-pointer"

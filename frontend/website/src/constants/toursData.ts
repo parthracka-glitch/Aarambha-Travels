@@ -77,7 +77,7 @@ export const TOUR_PACKAGES: TourPackage[] = [
     durationDays: 3,
     durationNights: 2,
     durationLabel: '3 Days / 2 Nights',
-    datesLabel: '7 Aug 2026 – 10 Aug 2026',
+    datesLabel: 'Flexible / Custom Dates',
     basePrice: 6499,
     priceDisplay: '₹6,499 per person',
     depositPrice: 1999,
@@ -147,9 +147,7 @@ export const TOUR_PACKAGES: TourPackage[] = [
         highlights: ['Ghrishneshwar Jyotirlinga Darshan', 'Conch & Temple Blessings', 'Comfortable AC Return Transfer'],
       },
     ],
-    batchDates: [
-      { id: 'jyotirlinga-aug-1', month: 'August', label: '07 Aug – 10 Aug 2026', tag: 'Auspicious Shravan Departure', startDate: '2026-08-07', endDate: '2026-08-10', status: 'available' },
-    ],
+    batchDates: [],
     overview: 'Embark on a soul-cleansing 3-day spiritual pilgrimage covering 3 sacred Jyotirlingas (Mahakaleshwar, Omkareshwar, Ghrishneshwar) alongside 15 holy temples, Shaktipeeths, and majestic Maheshwar ghats with New Urbania Pushback AC comfort.',
   },
   {
@@ -162,7 +160,7 @@ export const TOUR_PACKAGES: TourPackage[] = [
     durationDays: 6,
     durationNights: 3,
     durationLabel: '6 Days / 3 Nights (AC hotel)',
-    datesLabel: '13 Aug 2026 – 19 Aug 2026',
+    datesLabel: 'Flexible / Custom Dates',
     basePrice: 12999,
     lowerSeatPrice: 13999,
     upperSeatPrice: 12999,
@@ -253,9 +251,7 @@ export const TOUR_PACKAGES: TourPackage[] = [
         highlights: ['Comfortable AC Coach Return', 'Group Photo & Divine Blessings'],
       },
     ],
-    batchDates: [
-      { id: 'krishna-aug-1', month: 'August', label: '13 Aug – 19 Aug 2026', tag: 'Janmashtami Special Batch', startDate: '2026-08-13', endDate: '2026-08-19', status: 'available' },
-    ],
+    batchDates: [],
     overview: 'Experience the divine grace of Lord Krishna across sacred Mathura-Vrindavan, Banke Bihari, Prem Mandir, and Barsana, complemented by powerful blessings at Khatu Shyam Baba, Taj Mahal Agra, and Ujjain Mahakal Jyotirlinga in 2x2 AC Sleeper Coach luxury.',
   },
   {
@@ -268,7 +264,7 @@ export const TOUR_PACKAGES: TourPackage[] = [
     durationDays: 6,
     durationNights: 5,
     durationLabel: '6 Days',
-    datesLabel: '7 Aug 2026 – 12 Aug 2026',
+    datesLabel: 'Flexible / Custom Dates',
     basePrice: 10999,
     priceDisplay: '₹10,999 per person',
     depositPrice: 2999,
@@ -347,9 +343,7 @@ export const TOUR_PACKAGES: TourPackage[] = [
         highlights: ['Comfortable Return Journey', 'Divine Blessings & Prasad'],
       },
     ],
-    batchDates: [
-      { id: 'tirupati-aug-1', month: 'August', label: '07 Aug – 12 Aug 2026', tag: 'Grand South Pilgrimage Departure', startDate: '2026-08-07', endDate: '2026-08-12', status: 'available' },
-    ],
+    batchDates: [],
     overview: 'Embark on a sanctified South Indian pilgrimage to seek the divine blessings of Lord Venkateswara at Tirupati Balaji, Sri Mallikarjuna Jyotirlinga at Srisailam, Srikalahasti, and Kolhapur Mahalakshmi Mata traveling comfortably in New Urbania AC Pushback Bus.',
   },
 ];

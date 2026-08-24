@@ -563,16 +563,16 @@ export default function BusRentalHomePage() {
       </section>
 
       {/* ─── 8. DEDICATED BUS RENTALS FAQS ────────────────────────── */}
-      <FAQSection mode="cars" />
+      <FAQSection mode="buses" />
 
       {/* ─── 9. DEDICATED BUS RENTALS WHATSAPP INQUIRY FORM ───────── */}
-      <WhatsAppEnquiryForm mode="cars" />
+      <WhatsAppEnquiryForm mode="buses" />
 
       {/* ─── 10. LOCATION & CONTACT ───────────────────────────────── */}
-      <CompanyLocationSection mode="cars" />
+      <CompanyLocationSection mode="buses" />
 
       {/* ─── 11. TERMS & CONDITIONS ───────────────────────────────── */}
-      <TermsConditionsSection mode="cars" />
+      <TermsConditionsSection mode="buses" />
 
       <Footer />
 

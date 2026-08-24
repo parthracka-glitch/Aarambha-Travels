@@ -9,6 +9,33 @@ export function formatTourPackageFromApi(apiPkg: any, fallback?: TourPackage): T
   const durationDays = Number(apiPkg.durationDays ?? apiPkg.duration_days ?? match.durationDays);
   const durationNights = Number(apiPkg.durationNights ?? apiPkg.duration_nights ?? match.durationNights);
 
+  // Extract live batch dates with exact respect for empty array []
+  let batchDates: any[] = [];
+  if (apiPkg && Array.isArray(apiPkg.batchDates)) {
+    batchDates = apiPkg.batchDates;
+  } else if (apiPkg && Array.isArray(apiPkg.batches)) {
+    batchDates = apiPkg.batches;
+  } else if (apiPkg && Array.isArray(apiPkg.batch_dates)) {
+    batchDates = apiPkg.batch_dates;
+  } else if (match && Array.isArray(match.batchDates)) {
+    batchDates = match.batchDates;
+  }
+
+  // Derive dynamic live datesLabel
+  let datesLabel = apiPkg.datesLabel || apiPkg.dates_label;
+  if (!datesLabel) {
+    if (batchDates.length === 1) {
+      datesLabel = batchDates[0].label;
+    } else if (batchDates.length > 1) {
+      const availableBatches = batchDates.filter((b: any) => b.status !== 'disabled');
+      const firstBatch = availableBatches[0] || batchDates[0];
+      const startTag = firstBatch.label ? firstBatch.label.split('–')[0].trim() : firstBatch.startDate;
+      datesLabel = `${startTag} Onwards (${batchDates.length} Batches)`;
+    } else {
+      datesLabel = 'Flexible / Custom Dates';
+    }
+  }
+
   return {
     ...match,
     id: apiPkg._id || apiPkg.id || match.id,
@@ -20,7 +47,7 @@ export function formatTourPackageFromApi(apiPkg: any, fallback?: TourPackage): T
     durationDays,
     durationNights,
     durationLabel: `${durationDays} Days / ${durationNights} Nights`,
-    datesLabel: match.datesLabel || 'Multiple Batches Available',
+    datesLabel,
     basePrice,
     priceDisplay: `₹${basePrice.toLocaleString('en-IN')}`,
     depositPrice,
@@ -45,19 +72,19 @@ export function formatTourPackageFromApi(apiPkg: any, fallback?: TourPackage): T
           highlights: Array.isArray(it.highlights) ? it.highlights : [],
         }))
       : match.itinerary,
-    batchDates: Array.isArray(apiPkg.batchDates) && apiPkg.batchDates.length > 0 ? apiPkg.batchDates : match.batchDates,
+    batchDates,
   };
 }
 
 export function formatTourPackagesFromApi(liveList: any[] | null): TourPackage[] {
   if (!Array.isArray(liveList) || liveList.length === 0) {
-    return TOUR_PACKAGES;
+    return TOUR_PACKAGES.map(p => formatTourPackageFromApi(p, p));
   }
 
   // Map each static package to its live API counterpart, plus any new packages from API
   const matched = TOUR_PACKAGES.map(staticPkg => {
     const apiMatch = liveList.find(a => a.slug === staticPkg.slug || a._id === staticPkg.id || a.id === staticPkg.id);
-    return apiMatch ? formatTourPackageFromApi(apiMatch, staticPkg) : staticPkg;
+    return apiMatch ? formatTourPackageFromApi(apiMatch, staticPkg) : formatTourPackageFromApi(staticPkg, staticPkg);
   });
 
   // Add any completely new packages created in CRM that don't match static ones

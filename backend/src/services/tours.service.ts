@@ -19,19 +19,46 @@ export class ToursService {
 
   // Packages
   static async createPackage(data: any) {
-    const pkg = await TourPackage.create(data);
+    let pkg: any;
+    if (mongoose.connection.readyState === 1) {
+      try {
+        pkg = await TourPackage.create(data);
+      } catch (_e) {}
+    }
+    const saved = localStore.addTourPackage(pkg ? pkg.toObject() : { ...data, _id: 'pkg-' + Date.now(), id: data.slug || 'pkg-' + Date.now() });
     realtimeService.broadcast('TOURS_UPDATED');
-    return pkg;
+    return pkg || saved;
   }
 
   static async listPackages() {
-    return TourPackage.find({ isActive: true }).populate('destinationId');
+    let list: any[] = [];
+    if (mongoose.connection.readyState === 1) {
+      try {
+        list = await TourPackage.find({ isActive: true }).populate('destinationId');
+      } catch (_e) {}
+    }
+    if (list && list.length > 0) {
+      return list;
+    }
+    const localList = localStore.getTourPackages();
+    if (localList && localList.length > 0) {
+      return localList;
+    }
+    return list;
   }
 
   static async getPackageBySlugOrId(slugOrId: string) {
-    let pkg = await TourPackage.findOne({ slug: slugOrId }).populate('destinationId');
-    if (!pkg && slugOrId.match(/^[0-9a-fA-F]{24}$/)) {
-      pkg = await TourPackage.findById(slugOrId).populate('destinationId');
+    let pkg: any = null;
+    if (mongoose.connection.readyState === 1) {
+      try {
+        pkg = await TourPackage.findOne({ slug: slugOrId }).populate('destinationId');
+        if (!pkg && slugOrId.match(/^[0-9a-fA-F]{24}$/)) {
+          pkg = await TourPackage.findById(slugOrId).populate('destinationId');
+        }
+      } catch (_e) {}
+    }
+    if (!pkg) {
+      pkg = localStore.getTourPackageByIdOrSlug(slugOrId);
     }
     if (!pkg) {
       const error: any = new Error('Package not found');
@@ -42,23 +69,36 @@ export class ToursService {
   }
 
   static async updatePackage(id: string, data: any) {
-    const pkg = await TourPackage.findByIdAndUpdate(id, data, { new: true });
-    if (!pkg) {
-      const error: any = new Error('Package not found');
-      error.statusCode = 404;
-      throw error;
+    let pkg: any = null;
+    if (mongoose.connection.readyState === 1) {
+      try {
+        if (id.match(/^[0-9a-fA-F]{24}$/)) {
+          pkg = await TourPackage.findByIdAndUpdate(id, data, { new: true });
+        }
+        if (!pkg) {
+          pkg = await TourPackage.findOneAndUpdate({ slug: id }, data, { new: true });
+        }
+        if (!pkg && data.slug) {
+          pkg = await TourPackage.findOneAndUpdate({ slug: data.slug }, data, { new: true });
+        }
+      } catch (_e) {}
     }
+    const localUpdated = localStore.updateTourPackage(id, data);
     realtimeService.broadcast('TOURS_UPDATED');
-    return pkg;
+    return pkg || localUpdated || data;
   }
 
   static async deletePackage(id: string) {
-    const pkg = await TourPackage.findByIdAndDelete(id);
-    if (!pkg) {
-      const error: any = new Error('Package not found');
-      error.statusCode = 404;
-      throw error;
+    if (mongoose.connection.readyState === 1) {
+      try {
+        if (id.match(/^[0-9a-fA-F]{24}$/)) {
+          await TourPackage.findByIdAndDelete(id);
+        } else {
+          await TourPackage.findOneAndDelete({ slug: id });
+        }
+      } catch (_e) {}
     }
+    localStore.deleteTourPackage(id);
     realtimeService.broadcast('TOURS_UPDATED');
     return { message: 'Package deleted successfully' };
   }

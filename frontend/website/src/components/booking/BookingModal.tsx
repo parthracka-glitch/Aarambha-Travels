@@ -15,6 +15,8 @@ export interface BookingModalItem {
   image: string;
   price: number;
   deposit: number;
+  batchDates?: any[];
+  initialBatchId?: string;
 }
 
 interface BookingModalProps {
@@ -23,21 +25,6 @@ interface BookingModalProps {
   item: BookingModalItem | null;
   onSuccess?: () => void;
 }
-
-const FIXED_TOUR_BATCHES = [
-  // August 3 fixed options
-  { id: 'aug-1', month: 'August', label: '04 Aug – 10 Aug 2026', tag: 'Batch #1 (Early Aug)', startDate: '2026-08-04', endDate: '2026-08-10', status: 'available' },
-  { id: 'aug-2', month: 'August', label: '14 Aug – 20 Aug 2026', tag: 'Batch #2 (Mid Aug)', startDate: '2026-08-14', endDate: '2026-08-20', status: 'available' },
-  { id: 'aug-3', month: 'August', label: '24 Aug – 30 Aug 2026', tag: 'Batch #3 (Late Aug)', startDate: '2026-08-24', endDate: '2026-08-30', status: 'available' },
-  // September 3 fixed options
-  { id: 'sep-1', month: 'September', label: '04 Sep – 10 Sep 2026', tag: 'Batch #1 (Early Sep)', startDate: '2026-09-04', endDate: '2026-09-10', status: 'available' },
-  { id: 'sep-2', month: 'September', label: '14 Sep – 20 Sep 2026', tag: 'Batch #2 (Mid Sep)', startDate: '2026-09-14', endDate: '2026-09-20', status: 'available' },
-  { id: 'sep-3', month: 'September', label: '24 Sep – 30 Sep 2026', tag: 'Batch #3 (Late Sep)', startDate: '2026-09-24', endDate: '2026-09-30', status: 'available' },
-  // October 3 fixed options
-  { id: 'oct-1', month: 'October', label: '04 Oct – 10 Oct 2026', tag: 'Batch #1 (Early Oct)', startDate: '2026-10-04', endDate: '2026-10-10', status: 'available' },
-  { id: 'oct-2', month: 'October', label: '14 Oct – 20 Oct 2026', tag: 'Batch #2 (Mid Oct)', startDate: '2026-10-14', endDate: '2026-10-20', status: 'available' },
-  { id: 'oct-3', month: 'October', label: '24 Oct – 30 Oct 2026', tag: 'Batch #3 (Late Oct)', startDate: '2026-10-24', endDate: '2026-10-30', status: 'available' },
-];
 
 export default function BookingModal({ isOpen, onClose, item, onSuccess }: BookingModalProps) {
   // Current user authentication state
@@ -53,29 +40,52 @@ export default function BookingModal({ isOpen, onClose, item, onSuccess }: Booki
   const [authLoading, setAuthLoading] = useState(false);
 
   const activeBatches = React.useMemo(() => {
-    if (!item) return FIXED_TOUR_BATCHES;
-    try {
-      const stored = localStorage.getItem('aarambha_package_batches_' + item.id);
-      if (stored) {
-        const parsed = JSON.parse(stored);
-        if (Array.isArray(parsed) && parsed.length >= 3) return parsed;
-      }
-    } catch (_e) {}
-    if ((item as any)?.batchDates && Array.isArray((item as any).batchDates) && (item as any).batchDates.length >= 3) {
+    if (!item) return [];
+    if (item.batchDates !== undefined && Array.isArray(item.batchDates)) {
+      return item.batchDates;
+    }
+    if ((item as any)?.batchDates !== undefined && Array.isArray((item as any).batchDates)) {
       return (item as any).batchDates;
     }
-    return FIXED_TOUR_BATCHES;
+    return [];
   }, [item]);
 
   const availableMonths: string[] = React.useMemo(() => {
-    const months: string[] = Array.from(new Set<string>(activeBatches.map((b: any) => String(b.month))));
-    return months.length > 0 ? months : ['August', 'September', 'October'];
+    const months: string[] = Array.from(new Set<string>(activeBatches.map((b: any) => String(b.month)).filter(Boolean)));
+    return months;
   }, [activeBatches]);
 
-  const [selectedMonth, setSelectedMonth] = useState<string>(availableMonths[0] || 'August');
-  const [selectedBatchId, setSelectedBatchId] = useState(activeBatches[0]?.id || FIXED_TOUR_BATCHES[0].id);
-  const [startDate, setStartDate] = useState(activeBatches[0]?.startDate || FIXED_TOUR_BATCHES[0].startDate);
-  const [endDate, setEndDate] = useState(activeBatches[0]?.endDate || FIXED_TOUR_BATCHES[0].endDate);
+  const [selectedMonth, setSelectedMonth] = useState<string>(availableMonths[0] || '');
+  const [selectedBatchId, setSelectedBatchId] = useState(activeBatches[0]?.id || '');
+  const [startDate, setStartDate] = useState(activeBatches[0]?.startDate || '');
+  const [endDate, setEndDate] = useState(activeBatches[0]?.endDate || '');
+
+  // Synchronize selected batch when activeBatches or item changes
+  useEffect(() => {
+    if (activeBatches.length > 0) {
+      let targetBatch = activeBatches[0];
+      if (item?.initialBatchId) {
+        const found = activeBatches.find((b: any) => b.id === item.initialBatchId);
+        if (found) targetBatch = found;
+      }
+      setSelectedMonth(targetBatch.month || availableMonths[0] || '');
+      setSelectedBatchId(targetBatch.id);
+      setStartDate(targetBatch.startDate || new Date().toISOString().split('T')[0]);
+      setEndDate(targetBatch.endDate || new Date(Date.now() + 86400000 * 3).toISOString().split('T')[0]);
+    } else {
+      setSelectedMonth('');
+      setSelectedBatchId('');
+      if (!startDate) {
+        const today = new Date();
+        today.setDate(today.getDate() + 1);
+        const startStr = today.toISOString().split('T')[0];
+        setStartDate(startStr);
+        const end = new Date(today);
+        end.setDate(end.getDate() + 3);
+        setEndDate(end.toISOString().split('T')[0]);
+      }
+    }
+  }, [item, activeBatches, availableMonths]);
   const [fullName, setFullName] = useState('');
   const [email, setEmail] = useState('');
   const [phone, setPhone] = useState('');
@@ -692,79 +702,133 @@ export default function BookingModal({ isOpen, onClose, item, onSuccess }: Booki
               
               {/* Dates / Fixed Departure Batch Selection */}
               {item.type === 'tour' ? (
-                <div className="space-y-2.5 bg-[#FAFAFC] border border-gray-200 p-4 rounded-2xl">
-                  <div className="flex items-center justify-between">
-                    <label className="font-bold text-[#000000] flex items-center gap-1.5 text-xs font-syne">
-                      <Calendar className="w-4 h-4 text-[#5266EB]" /> Select Tour Batch Date *
-                    </label>
-                    <span className="text-[9px] font-extrabold text-[#171721] bg-[#9CB4E8]/20 px-2 py-0.5 rounded-full uppercase tracking-wider border border-[#9CB4E8]/30">
-                      {activeBatches.filter((b: any) => b.month === selectedMonth).length} Departure Dates
-                    </span>
-                  </div>
+                activeBatches.length > 0 ? (
+                  <div className="space-y-2.5 bg-[#FAFAFC] border border-gray-200 p-4 rounded-2xl">
+                    <div className="flex items-center justify-between">
+                      <label className="font-bold text-[#000000] flex items-center gap-1.5 text-xs font-syne">
+                        <Calendar className="w-4 h-4 text-[#5266EB]" /> Select Tour Batch Date *
+                      </label>
+                      <span className="text-[9px] font-extrabold text-[#171721] bg-[#9CB4E8]/20 px-2 py-0.5 rounded-full uppercase tracking-wider border border-[#9CB4E8]/30">
+                        {activeBatches.filter((b: any) => !selectedMonth || b.month === selectedMonth).length} Departure Dates
+                      </span>
+                    </div>
 
-                  {/* Month Switcher Tabs */}
-                  <div className="flex items-center gap-1.5 p-1 bg-white rounded-xl border border-gray-200 overflow-x-auto">
-                    {availableMonths.map((m: string) => (
-                      <button
-                        key={m}
-                        type="button"
-                        onClick={() => handleMonthChange(m)}
-                        className={`flex-1 py-1.5 px-2 text-[11px] font-bold rounded-lg transition-all whitespace-nowrap ${
-                          selectedMonth === m
-                            ? 'bg-[#5266EB] text-white shadow-sm'
-                            : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
-                        }`}
-                      >
-                        {m}
-                      </button>
-                    ))}
-                  </div>
+                    {/* Month Switcher Tabs */}
+                    {availableMonths.length > 1 && (
+                      <div className="flex items-center gap-1.5 p-1 bg-white rounded-xl border border-gray-200 overflow-x-auto">
+                        {availableMonths.map((m: string) => (
+                          <button
+                            key={m}
+                            type="button"
+                            onClick={() => handleMonthChange(m)}
+                            className={`flex-1 py-1.5 px-2 text-[11px] font-bold rounded-lg transition-all whitespace-nowrap ${
+                              selectedMonth === m
+                                ? 'bg-[#5266EB] text-white shadow-sm'
+                                : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
+                            }`}
+                          >
+                            {m}
+                          </button>
+                        ))}
+                      </div>
+                    )}
 
-                  {/* Date Options Cards for Selected Month */}
-                  <div className="space-y-2 pt-0.5">
-                    {activeBatches.filter((b: any) => b.month === selectedMonth).map((slot: any) => {
-                      const isSelected = selectedBatchId === slot.id;
-                      const isSoldOut = slot.status === 'full' || slot.status === 'disabled';
-                      return (
-                        <button
-                          key={slot.id}
-                          type="button"
-                          disabled={isSoldOut}
-                          onClick={() => !isSoldOut && handleBatchSelect(slot.id)}
-                          className={`w-full p-3 rounded-xl border text-left transition-all flex items-center justify-between ${
-                            isSoldOut
-                              ? 'border-gray-200 bg-gray-50 opacity-60 cursor-not-allowed'
-                              : isSelected
-                              ? 'border-2 border-[#5266EB] bg-white shadow-sm'
-                              : 'border-gray-200 bg-white hover:border-gray-300'
-                          }`}
-                        >
-                          <div className="flex items-center gap-3">
-                            <div className={`w-4 h-4 rounded-full border-2 flex items-center justify-center ${
-                              isSelected ? 'border-[#5266EB] bg-[#5266EB]' : 'border-gray-300'
+                    {/* Date Options Cards for Selected Month */}
+                    <div className="space-y-2 pt-0.5">
+                      {activeBatches.filter((b: any) => !selectedMonth || b.month === selectedMonth).map((slot: any) => {
+                        const isSelected = selectedBatchId === slot.id;
+                        const isSoldOut = slot.status === 'full' || slot.status === 'disabled';
+                        return (
+                          <button
+                            key={slot.id}
+                            type="button"
+                            disabled={isSoldOut}
+                            onClick={() => !isSoldOut && handleBatchSelect(slot.id)}
+                            className={`w-full p-3 rounded-xl border text-left transition-all flex items-center justify-between ${
+                              isSoldOut
+                                ? 'border-gray-200 bg-gray-50 opacity-60 cursor-not-allowed'
+                                : isSelected
+                                ? 'border-2 border-[#5266EB] bg-white shadow-sm'
+                                : 'border-gray-200 bg-white hover:border-gray-300'
+                            }`}
+                          >
+                            <div className="flex items-center gap-3">
+                              <div className={`w-4 h-4 rounded-full border-2 flex items-center justify-center ${
+                                isSelected ? 'border-[#5266EB] bg-[#5266EB]' : 'border-gray-300'
+                              }`}>
+                                {isSelected && <div className="w-1.5 h-1.5 rounded-full bg-white" />}
+                              </div>
+                              <div>
+                                <span className="font-bold text-xs text-gray-900 block font-syne">
+                                  📅 {slot.label}
+                                </span>
+                                <span className="text-[10px] text-gray-500 font-medium">
+                                  {slot.tag}
+                                </span>
+                              </div>
+                            </div>
+
+                            <span className={`text-[10px] font-bold px-2.5 py-0.5 rounded-full ${
+                              isSelected ? 'bg-[#9CB4E8]/20 text-[#171721] border border-[#9CB4E8]/30' : 'bg-gray-100 text-gray-500'
                             }`}>
-                              {isSelected && <div className="w-1.5 h-1.5 rounded-full bg-white" />}
-                            </div>
-                            <div>
-                              <span className="font-bold text-xs text-gray-900 block font-syne">
-                                📅 {slot.label}
-                              </span>
-                              <span className="text-[10px] text-gray-500 font-medium">
-                                {slot.tag}
-                              </span>
-                            </div>
-                          </div>
-
-                          <span className={`text-[10px] font-bold px-2.5 py-0.5 rounded-full ${
-                            isSelected ? 'bg-[#9CB4E8]/20 text-[#171721] border border-[#9CB4E8]/30' : 'bg-gray-100 text-gray-500'
-                          }`}>
-                            {isSelected ? '✓ Selected' : 'Select'}
-                          </span>
-                        </button>
-                      );
-                    })}
+                              {isSelected ? '✓ Selected' : 'Select'}
+                            </span>
+                          </button>
+                        );
+                      })}
+                    </div>
                   </div>
-                </div>
+                ) : (
+                  <div className="space-y-3 bg-[#FAFAFC] border border-gray-200 p-4 rounded-2xl">
+                    <div className="flex items-center justify-between">
+                      <label className="font-bold text-[#000000] flex items-center gap-1.5 text-xs font-syne">
+                        <Calendar className="w-4 h-4 text-[#5266EB]" /> Preferred Departure Date *
+                      </label>
+                      <span className="text-[9px] font-extrabold text-[#5266EB] bg-[#5266EB]/10 px-2.5 py-0.5 rounded-full uppercase tracking-wider border border-[#5266EB]/20">
+                        Flexible / Custom Date
+                      </span>
+                    </div>
+
+                    <p className="text-[11px] text-gray-500 leading-relaxed">
+                      No fixed public batches are scheduled. Choose your custom departure date below:
+                    </p>
+
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                      <div className="space-y-1">
+                        <label className="text-[10px] font-bold text-gray-600 uppercase font-syne">
+                          Departure Date *
+                        </label>
+                        <input
+                          type="date"
+                          required
+                          min={new Date().toISOString().split('T')[0]}
+                          value={startDate}
+                          onChange={(e) => {
+                            setStartDate(e.target.value);
+                            const startD = new Date(e.target.value);
+                            startD.setDate(startD.getDate() + 3);
+                            setEndDate(startD.toISOString().split('T')[0]);
+                          }}
+                          className="w-full px-3 py-2 bg-white border border-gray-200 rounded-xl text-xs font-bold text-gray-900 focus:outline-none focus:border-[#5266EB]"
+                        />
+                      </div>
+
+                      <div className="space-y-1">
+                        <label className="text-[10px] font-bold text-gray-600 uppercase font-syne">
+                          Return Date
+                        </label>
+                        <input
+                          type="date"
+                          required
+                          min={startDate}
+                          value={endDate}
+                          onChange={(e) => setEndDate(e.target.value)}
+                          className="w-full px-3 py-2 bg-white border border-gray-200 rounded-xl text-xs font-bold text-gray-900 focus:outline-none focus:border-[#5266EB]"
+                        />
+                      </div>
+                    </div>
+                  </div>
+                )
               ) : (
                 <div className="grid grid-cols-2 gap-3">
                   <div className="space-y-1">

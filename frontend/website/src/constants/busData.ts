@@ -181,12 +181,12 @@ export const BUS_CAROUSEL_IMAGES: BusCarouselImage[] = [
   { src: '/images/fleet/bus_urbania.jpg', alt: 'Force Urbania Tempo Traveller', label: 'Urbania' },
 ];
 
-// ── Contact Info (shared with car rentals) ───────────────────────────────────
+// ── Contact Info for Bus Rentals ───────────────────────────────────────────
 
 export const SHARED_BUS_CONTACT = {
-  callPhone: '7820802985',
-  callPhoneDisplay: '+91 78208 02985',
-  whatsappPhone: '8208211478',
-  whatsappPhoneDisplay: '+91 82082 11478',
+  callPhone: '9067617451',
+  callPhoneDisplay: '+91 90676 17451',
+  whatsappPhone: '9021878717',
+  whatsappPhoneDisplay: '+91 90218 78717',
   address: 'Green Hills Society, Near Mastan Hotel, Mangdewadi, Katraj, Pune - 411046, Maharashtra',
 };

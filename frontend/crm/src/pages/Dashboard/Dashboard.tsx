@@ -296,7 +296,7 @@ export default function DashboardView() {
                           {formatCurrency(pkg.depositPrice || pkg.deposit_price || 500)}
                         </td>
                         <td className="py-3.5 px-4 text-gray-600 font-semibold">
-                          {pkg.batchDates?.length || 9} Available Batches
+                          {Array.isArray(pkg.batchDates) ? pkg.batchDates.length : 0} Available Batches
                         </td>
                         <td className="py-3.5 px-4 text-right">
                           <button

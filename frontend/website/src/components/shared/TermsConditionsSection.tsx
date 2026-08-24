@@ -4,8 +4,9 @@ import React, { useState } from 'react';
 import { ShieldAlert, FileText, CheckCircle2, Car, Compass, ShieldCheck, AlertCircle, Phone } from 'lucide-react';
 import { SHARED_TOUR_CONTACT } from '@/constants/toursData';
 import { SHARED_CAR_CONTACT } from '@/constants/carsData';
+import { SHARED_BUS_CONTACT } from '@/constants/busData';
 
-export type TermsMode = 'all' | 'cars' | 'tours';
+export type TermsMode = 'all' | 'cars' | 'tours' | 'buses';
 
 const CAR_RENTAL_TERMS = [
   {
@@ -31,6 +32,33 @@ const CAR_RENTAL_TERMS = [
   {
     title: 'Comprehensive Insurance & Damage Protocol',
     description: 'Vehicles include zero-depreciation comprehensive insurance coverage for major incidents. Minor body scratches, tyre punctures, or interior upholstery stains caused by misuse/negligence are deductible up to the security deposit amount.',
+  },
+];
+
+const BUS_RENTAL_TERMS = [
+  {
+    title: 'Time & Kilometre Calculation Standard',
+    description: 'Time and KM calculations start and end from office to office. Running limit is standard 300 KM per day for outstation trips.',
+  },
+  {
+    title: 'Operating Hours & Night Charges',
+    description: 'Service time starts 6:00 AM to 10:00 PM. Night charges apply from 12:00 AM to 6:00 AM; extra charges apply after 10:00 PM.',
+  },
+  {
+    title: 'Driver Allowance & Per-Day DA',
+    description: 'Driver allowance (DA) / food allowance is charged as specified on the rate card (e.g. ₹400/day or food provided by the client).',
+  },
+  {
+    title: 'Tolls, Parking & Interstate Permits',
+    description: 'Interstate entry taxes, toll taxes, parking fees, and service tax are charged as actuals and payable directly during the trip.',
+  },
+  {
+    title: 'Extra Kilometres & Hours Protocol',
+    description: 'Transparent extra per-km and extra hourly charges apply beyond the included package limits as per the official rate card.',
+  },
+  {
+    title: 'Fuel Price Variation Policy',
+    description: 'Quoted prices are based on current diesel fuel prices. Any government fuel price escalation will result in a proportionate rate variation.',
   },
 ];
 
@@ -68,7 +96,7 @@ const COMMON_PLATFORM_TERMS = [
   },
   {
     title: '24/7 Helpline & Roadside Support',
-    description: `Our dedicated Pune travel desk (Tours: +91 ${SHARED_TOUR_CONTACT.phone1} / +91 ${SHARED_TOUR_CONTACT.phone2} • Car Rentals Call: ${SHARED_CAR_CONTACT.callPhoneDisplay} • WhatsApp: ${SHARED_CAR_CONTACT.whatsappPhoneDisplay}) operates 24/7 to provide continuous assistance, route guidance, and pilgrimage support throughout your journey.`,
+    description: `Our dedicated Pune travel desk (Tours & Bus Rentals: +91 ${SHARED_BUS_CONTACT.callPhone} / +91 ${SHARED_BUS_CONTACT.whatsappPhone} • Car Rentals Call: ${SHARED_CAR_CONTACT.callPhoneDisplay} • WhatsApp: ${SHARED_CAR_CONTACT.whatsappPhoneDisplay}) operates 24/7 to provide continuous assistance, route guidance, and pilgrimage support throughout your journey.`,
   },
   {
     title: 'Data Privacy & Traveler Security',
@@ -77,11 +105,19 @@ const COMMON_PLATFORM_TERMS = [
 ];
 
 export default function TermsConditionsSection({ mode = 'all' }: { mode?: TermsMode }) {
-  const [activeTab, setActiveTab] = useState<'cars' | 'tours' | 'common'>(
-    mode === 'cars' ? 'cars' : mode === 'tours' ? 'tours' : 'cars'
+  const [activeTab, setActiveTab] = useState<'cars' | 'tours' | 'buses' | 'common'>(
+    mode === 'cars' ? 'cars' : mode === 'buses' ? 'buses' : mode === 'tours' ? 'tours' : 'cars'
   );
 
   const currentMode = mode === 'all' ? activeTab : mode;
+
+  const currentTerms = currentMode === 'cars'
+    ? CAR_RENTAL_TERMS
+    : currentMode === 'buses'
+    ? BUS_RENTAL_TERMS
+    : currentMode === 'tours'
+    ? TOUR_PACKAGE_TERMS
+    : COMMON_PLATFORM_TERMS;
 
   return (
     <section className="py-16 bg-[#FAFAFC] border-t border-gray-200">
@@ -92,17 +128,27 @@ export default function TermsConditionsSection({ mode = 'all' }: { mode?: TermsM
           <span className={`inline-flex items-center gap-1.5 px-3.5 py-1 rounded-full text-xs font-extrabold font-syne uppercase tracking-wider ${
             currentMode === 'cars'
               ? 'bg-[#5266EB]/10 text-[#5266EB] border border-[#5266EB]/30'
+              : currentMode === 'buses'
+              ? 'bg-[#5266EB]/10 text-[#5266EB] border border-[#5266EB]/30'
               : currentMode === 'tours'
               ? 'bg-[#9CB4E8]/20 text-[#171721] border border-[#9CB4E8]/40'
               : 'bg-[#EDEDF3] text-slate-700 border border-[#AFB2CE]/30'
           }`}>
             <FileText className="w-3.5 h-3.5" />
-            {currentMode === 'cars' ? 'CAR RENTAL TERMS & GUIDELINES' : currentMode === 'tours' ? 'PILGRIMAGE TOUR TRAVEL TERMS' : 'OFFICIAL TERMS & POLICIES'}
+            {currentMode === 'cars'
+              ? 'CAR RENTAL TERMS & GUIDELINES'
+              : currentMode === 'buses'
+              ? 'BUS RENTAL TERMS & GUIDELINES'
+              : currentMode === 'tours'
+              ? 'PILGRIMAGE TOUR TRAVEL TERMS'
+              : 'OFFICIAL TERMS & POLICIES'}
           </span>
 
           <h2 className="font-syne text-3xl sm:text-4xl font-extrabold text-[#000000] tracking-tight">
             {currentMode === 'cars'
               ? 'Self-Drive Car Rental Terms & Conditions'
+              : currentMode === 'buses'
+              ? 'Bus & Urbania Fleet Rental Guidelines'
               : currentMode === 'tours'
               ? 'Tours & Travels Pilgrimage Booking Terms'
               : 'Terms & Conditions Policy'}
@@ -111,90 +157,80 @@ export default function TermsConditionsSection({ mode = 'all' }: { mode?: TermsM
           <p className="text-xs text-gray-500 max-w-xl mx-auto leading-relaxed font-normal">
             {currentMode === 'cars'
               ? 'Review the official security deposit, verification guidelines, fuel policies, and insurance coverage for self-drive vehicle rentals.'
+              : currentMode === 'buses'
+              ? 'Review the official rules, driver allowance, permit fees, and kilometre calculation standards for bus rentals.'
               : currentMode === 'tours'
               ? 'Clear, transparent booking policies, advance confirmation rules, substitute traveler permissions, and inclusion guidelines for all pilgrimage departures.'
-              : 'Transparent rules and guidelines for a smooth, hassle-free rental and travel experience with Aarambha.'}
+              : 'Official terms and regulatory standards governing all vehicle rentals, pilgrimage bookings, and guest services.'}
           </p>
-
-          {/* Mode Selector Tabs (only shown when mode === 'all') */}
-          {mode === 'all' && (
-            <div className="pt-3 flex flex-wrap items-center justify-center gap-2">
-              <button
-                onClick={() => setActiveTab('cars')}
-                className={`px-5 py-2 rounded-full text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer ${
-                  activeTab === 'cars'
-                    ? 'bg-[#5266EB] text-[#EDEDF3] shadow-md'
-                    : 'bg-white text-gray-600 border border-gray-200 hover:border-gray-300'
-                }`}
-              >
-                <Car className="w-3.5 h-3.5" />
-                <span>Car Rental Terms</span>
-              </button>
-
-              <button
-                onClick={() => setActiveTab('tours')}
-                className={`px-5 py-2 rounded-full text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer ${
-                  activeTab === 'tours'
-                    ? 'bg-[#171721] text-[#EDEDF3] shadow-md'
-                    : 'bg-white text-gray-600 border border-gray-200 hover:border-gray-300'
-                }`}
-              >
-                <Compass className="w-3.5 h-3.5" />
-                <span>Tour Package Terms</span>
-              </button>
-
-              <button
-                onClick={() => setActiveTab('common')}
-                className={`px-5 py-2 rounded-full text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer ${
-                  activeTab === 'common'
-                    ? 'bg-[#272735] text-[#EDEDF3] shadow-md'
-                    : 'bg-white text-gray-600 border border-gray-200 hover:border-gray-300'
-                }`}
-              >
-                <ShieldCheck className="w-3.5 h-3.5 text-[#9CB4E8]" />
-                <span>Common Platform Terms</span>
-              </button>
-            </div>
-          )}
         </div>
 
-        {/* Terms Box Container */}
-        <div className={`rounded-3xl border p-6 sm:p-8 space-y-6 bg-white shadow-sm transition-all duration-300 ${
-          currentMode === 'cars'
-            ? 'border-[#5266EB]/30'
-            : currentMode === 'tours'
-            ? 'border-[#9CB4E8]/40'
-            : 'border-gray-200'
-        }`}>
+        {/* Tab Switcher (Visible only in 'all' mode) */}
+        {mode === 'all' && (
+          <div className="flex flex-wrap items-center justify-center gap-2 pb-4">
+            <button
+              onClick={() => setActiveTab('cars')}
+              className={`px-5 py-2.5 rounded-full text-xs font-bold font-syne uppercase tracking-wider flex items-center gap-2 transition-all cursor-pointer ${
+                activeTab === 'cars'
+                  ? 'bg-[#5266EB] text-white shadow-md shadow-[#5266EB]/20'
+                  : 'bg-white text-gray-600 hover:bg-gray-100 border border-gray-200'
+              }`}
+            >
+              <Car className="w-3.5 h-3.5" />
+              <span>Car Rental</span>
+            </button>
+
+            <button
+              onClick={() => setActiveTab('buses')}
+              className={`px-5 py-2.5 rounded-full text-xs font-bold font-syne uppercase tracking-wider flex items-center gap-2 transition-all cursor-pointer ${
+                activeTab === 'buses'
+                  ? 'bg-[#5266EB] text-white shadow-md shadow-[#5266EB]/20'
+                  : 'bg-white text-gray-600 hover:bg-gray-100 border border-gray-200'
+              }`}
+            >
+              <Car className="w-3.5 h-3.5" />
+              <span>Bus Rental</span>
+            </button>
+
+            <button
+              onClick={() => setActiveTab('tours')}
+              className={`px-5 py-2.5 rounded-full text-xs font-bold font-syne uppercase tracking-wider flex items-center gap-2 transition-all cursor-pointer ${
+                activeTab === 'tours'
+                  ? 'bg-[#171721] text-[#9CB4E8] shadow-md shadow-black/20'
+                  : 'bg-white text-gray-600 hover:bg-gray-100 border border-gray-200'
+              }`}
+            >
+              <Compass className="w-3.5 h-3.5 text-[#9CB4E8]" />
+              <span>Tour Terms</span>
+            </button>
+
+            <button
+              onClick={() => setActiveTab('common')}
+              className={`px-5 py-2.5 rounded-full text-xs font-bold font-syne uppercase tracking-wider flex items-center gap-2 transition-all cursor-pointer ${
+                activeTab === 'common'
+                  ? 'bg-[#5266EB] text-[#EDEDF3] shadow-md shadow-[#5266EB]/20'
+                  : 'bg-white text-gray-600 hover:bg-gray-100 border border-gray-200'
+              }`}
+            >
+              <ShieldCheck className="w-3.5 h-3.5" />
+              <span>General</span>
+            </button>
+          </div>
+        )}
+
+        {/* ─── TERMS CARDS CONTAINER ─── */}
+        <div className="rounded-3xl bg-white border border-gray-200 p-6 sm:p-10 shadow-sm space-y-8">
           
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-4 border-b border-gray-100">
-            <div className="flex items-center gap-2 text-[#000000] font-syne font-bold text-base">
-              <ShieldAlert className={`w-5 h-5 shrink-0 ${
-                currentMode === 'cars' ? 'text-[#5266EB]' : currentMode === 'tours' ? 'text-[#171721]' : 'text-[#000000]'
-              }`} />
-              <span>
-                {currentMode === 'cars'
-                  ? 'Self-Drive Vehicle Agreement & Operational Guidelines'
-                  : currentMode === 'tours'
-                  ? 'Pilgrimage Tour Regulations & Advance Booking Agreement'
-                  : 'Common Platform Terms & Conditions'}
-              </span>
-            </div>
-            <span className="text-[10px] font-extrabold uppercase px-3 py-1 rounded-full bg-[#EDEDF3] text-gray-700 self-start sm:self-auto shrink-0">
-              Active Policy • 2026
-            </span>
+          <div className="flex items-center gap-2 text-[#000000] font-syne font-bold text-base pb-4 border-b border-gray-100">
+            <ShieldAlert className="w-5 h-5 text-[#5266EB]" />
+            <span>Policy Guidelines & Agreement Details</span>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {(currentMode === 'cars'
-              ? CAR_RENTAL_TERMS
-              : currentMode === 'tours'
-              ? TOUR_PACKAGE_TERMS
-              : COMMON_PLATFORM_TERMS
-            ).map((term, index) => (
-              <div key={index} className="flex items-start gap-3.5 p-4 rounded-2xl bg-[#FAFAFC] border border-gray-200 hover:border-gray-300 transition-colors">
-                <div className={`p-1.5 rounded-full mt-0.5 shrink-0 ${
-                  currentMode === 'cars'
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {currentTerms.map((term, index) => (
+              <div key={index} className="flex items-start gap-3.5 p-4 rounded-2xl bg-[#FAFAFC] border border-gray-100 hover:border-gray-200 transition-colors">
+                <div className={`p-2 rounded-xl shrink-0 ${
+                  currentMode === 'cars' || currentMode === 'buses'
                     ? 'bg-[#5266EB]/10 text-[#5266EB]'
                     : currentMode === 'tours'
                     ? 'bg-[#9CB4E8]/20 text-[#171721]'
@@ -215,12 +251,14 @@ export default function TermsConditionsSection({ mode = 'all' }: { mode?: TermsM
           </div>
 
           {/* Quick Helpline Support Callout */}
-          <div className="pt-4 border-t border-gray-100 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-gray-500">
+          <div className="pt-6 border-t border-gray-100 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-gray-500">
             <div className="flex items-center gap-2 text-center sm:text-left">
               <AlertCircle className="w-4 h-4 text-[#5266EB] shrink-0" />
               <span>
                 {currentMode === 'cars'
                   ? 'For self-drive queries or breakdown assistance: Call +91 78208 02985 or WhatsApp +91 82082 11478.'
+                  : currentMode === 'buses'
+                  ? 'For bus rental queries or assistance: Call +91 90676 17451 or WhatsApp +91 90218 78717.'
                   : 'For yatra booking queries or darshan assistance: Call +91 90676 17451 / +91 90218 78717.'}
               </span>
             </div>
@@ -243,6 +281,24 @@ export default function TermsConditionsSection({ mode = 'all' }: { mode?: TermsM
                     <span>WA: {SHARED_CAR_CONTACT.whatsappPhoneDisplay}</span>
                   </a>
                 </>
+              ) : currentMode === 'buses' ? (
+                <>
+                  <a
+                    href={`tel:+91${SHARED_BUS_CONTACT.callPhone}`}
+                    className="inline-flex items-center gap-1.5 font-bold text-[#5266EB] hover:text-[#3E51D4] font-syne"
+                  >
+                    <Phone className="w-3.5 h-3.5" />
+                    <span>Call {SHARED_BUS_CONTACT.callPhoneDisplay}</span>
+                  </a>
+                  <a
+                    href={`https://wa.me/91${SHARED_BUS_CONTACT.whatsappPhone}`}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="inline-flex items-center gap-1.5 font-bold text-[#5266EB] hover:underline font-syne"
+                  >
+                    <span>WA: {SHARED_BUS_CONTACT.whatsappPhoneDisplay}</span>
+                  </a>
+                </>
               ) : (
                 <a
                   href={`tel:+91${SHARED_TOUR_CONTACT.phone1}`}
@@ -254,7 +310,6 @@ export default function TermsConditionsSection({ mode = 'all' }: { mode?: TermsM
               )}
             </div>
           </div>
-
         </div>
 
         {/* ─── DEDICATED LEGAL DOCUMENTS CARDS ─── */}

@@ -8,7 +8,9 @@ import { apiFetch } from '@/services/api-client';
 import { fetchLiveFleetVehicles } from '@/services/fleet.service';
 import { fetchLiveTourPackages } from '@/services/tours.service';
 
-export default function WhatsAppEnquiryForm({ mode = 'cars' }: { mode?: 'cars' | 'tours' }) {
+import { BUS_CAROUSEL_IMAGES } from '@/constants/busData';
+
+export default function WhatsAppEnquiryForm({ mode = 'cars' }: { mode?: 'cars' | 'tours' | 'buses' }) {
   const [carsList, setCarsList] = useState<CarVehicle[]>(FLEET_VEHICLES);
   const [toursList, setToursList] = useState<TourPackage[]>(TOUR_PACKAGES);
 
@@ -22,6 +24,17 @@ export default function WhatsAppEnquiryForm({ mode = 'cars' }: { mode?: 'cars' |
     message: '',
   });
   const [carSubmitted, setCarSubmitted] = useState(false);
+
+  // Bus Rental Form State
+  const [busForm, setBusForm] = useState({
+    name: '',
+    phone: '',
+    busType: '13-seater-urbania',
+    date: '',
+    pickupLocation: 'Pune (Local / Outstation)',
+    message: '',
+  });
+  const [busSubmitted, setBusSubmitted] = useState(false);
 
   // Tour Form State
   const [tourForm, setTourForm] = useState({
@@ -44,7 +57,60 @@ export default function WhatsAppEnquiryForm({ mode = 'cars' }: { mode?: 'cars' |
   }, []);
 
   const carWhatsAppNumber = '918208211478';
+  const busWhatsAppNumber = '919021878717';
   const tourWhatsAppNumber = '919067617451';
+
+  const busFleetOptions = [
+    { id: '13-seater-urbania', label: '13-Seater Force Urbania (Luxury AC)' },
+    { id: '17-seater-urbania', label: '17-Seater Force Urbania (Luxury AC)' },
+    { id: '20-seater-ac', label: '20-Seater AC Luxury Bus' },
+    { id: '27-seater-ac', label: '27-Seater AC Coach' },
+    { id: '35-seater-ac', label: '35-Seater AC Luxury Bus' },
+    { id: '45-seater-ac', label: '45-Seater AC Coach' },
+    { id: '17-seater-nonac', label: '17-Seater Non-AC Bus' },
+    { id: '32-seater-nonac', label: '32-Seater Non-AC Bus' },
+    { id: '49-seater-nonac', label: '49-Seater Non-AC Bus' },
+    { id: 'pune-mumbai-5s', label: 'Pune → Mumbai Sedan Cab (5-Seater with Driver)' },
+    { id: 'pune-mumbai-7s', label: 'Pune → Mumbai MPV Cab (7-Seater with Driver)' },
+  ];
+
+  // Handle Bus Form Submit
+  const handleBusSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    const foundBus = busFleetOptions.find(b => b.id === busForm.busType);
+    const busName = foundBus ? foundBus.label : busForm.busType;
+
+    const textMessage = 
+      `*AARAMBHA BUS RENTAL INQUIRY*%0A` +
+      `━━━━━━━━━━━━━━━━━━━━%0A` +
+      `👤 *Name:* ${busForm.name}%0A` +
+      `📞 *Phone:* ${busForm.phone}%0A` +
+      `🚌 *Selected Bus / Vehicle:* ${busName}%0A` +
+      `📅 *Journey Date:* ${busForm.date || 'Flexible'}%0A` +
+      `📍 *Pickup / Route:* ${busForm.pickupLocation}%0A` +
+      `📝 *Notes:* ${busForm.message || 'Please confirm availability & pricing.'}%0A` +
+      `━━━━━━━━━━━━━━━━━━━━%0A` +
+      `_Sent via Aarambha Bus Rentals Hub_`;
+
+    const whatsappUrl = `https://wa.me/${busWhatsAppNumber}?text=${textMessage}`;
+
+    try {
+      await apiFetch('/api/fleet/inquiries', {
+        method: 'POST',
+        body: JSON.stringify({
+          name: busForm.name,
+          phone: busForm.phone,
+          carName: busName,
+          date: busForm.date,
+          pickupLocation: busForm.pickupLocation,
+          message: busForm.message,
+        }),
+      }).catch(() => {});
+    } catch (_err) {}
+
+    setBusSubmitted(true);
+    window.open(whatsappUrl, '_blank');
+  };
 
   // Handle Car Form Submit
   const handleCarSubmit = async (e: React.FormEvent) => {
@@ -127,7 +193,7 @@ export default function WhatsAppEnquiryForm({ mode = 'cars' }: { mode?: 'cars' |
       
       {/* Ambient Glows */}
       <div className={`absolute top-1/3 left-1/4 w-[500px] h-[300px] blur-[130px] rounded-full pointer-events-none ${
-        mode === 'cars' ? 'bg-[#5266EB]/10' : 'bg-[#9CB4E8]/10'
+        mode === 'cars' ? 'bg-[#5266EB]/10' : mode === 'buses' ? 'bg-[#5266EB]/10' : 'bg-[#9CB4E8]/10'
       }`} />
 
       <div className="max-w-4xl mx-auto px-6 lg:px-12 relative z-10 space-y-10">
@@ -135,17 +201,27 @@ export default function WhatsAppEnquiryForm({ mode = 'cars' }: { mode?: 'cars' |
         {/* Section Header */}
         <div className="text-center space-y-3">
           <span className="inline-flex items-center gap-1.5 px-3.5 py-1 rounded-full bg-white/10 border border-white/20 text-[#EDEDF3] text-xs font-extrabold font-syne uppercase tracking-wider backdrop-blur-md">
-            <MessageSquare className={`w-3.5 h-3.5 ${mode === 'cars' ? 'text-[#5266EB]' : 'text-[#9CB4E8]'}`} />
-            {mode === 'cars' ? 'SELF-DRIVE FLEET WHATSAPP INQUIRY' : 'TOUR PACKAGES WHATSAPP INQUIRY'}
+            <MessageSquare className={`w-3.5 h-3.5 ${mode === 'cars' || mode === 'buses' ? 'text-[#5266EB]' : 'text-[#9CB4E8]'}`} />
+            {mode === 'cars'
+              ? 'SELF-DRIVE FLEET WHATSAPP INQUIRY'
+              : mode === 'buses'
+              ? 'BUS RENTALS & URBANIA WHATSAPP INQUIRY'
+              : 'TOUR PACKAGES WHATSAPP INQUIRY'}
           </span>
 
           <h2 className="font-syne text-3xl sm:text-4xl font-extrabold text-[#EDEDF3] tracking-tight">
-            {mode === 'cars' ? 'Car Rental WhatsApp Inquiry' : 'Tour Package WhatsApp Inquiry'}
+            {mode === 'cars'
+              ? 'Car Rental WhatsApp Inquiry'
+              : mode === 'buses'
+              ? 'Bus Rental WhatsApp Inquiry'
+              : 'Tour Package WhatsApp Inquiry'}
           </h2>
 
           <p className="text-xs text-[#AFB2CE] max-w-xl mx-auto leading-relaxed font-normal">
             {mode === 'cars'
               ? 'Select your preferred self-drive vehicle below to send a direct WhatsApp inquiry to our office hotline.'
+              : mode === 'buses'
+              ? 'Select your preferred bus or Urbania configuration below to send an instant WhatsApp inquiry.'
               : 'Select your preferred tour package below to send a direct WhatsApp inquiry to our office hotline.'}
           </p>
         </div>
@@ -282,6 +358,147 @@ export default function WhatsAppEnquiryForm({ mode = 'cars' }: { mode?: 'cars' |
                 >
                   <MessageSquare className="w-4 h-4 fill-white" />
                   <span>Send Car Inquiry on WhatsApp</span>
+                  <ArrowRight className="w-4 h-4" />
+                </button>
+
+              </form>
+            )}
+
+          </div>
+        )}
+
+        {/* 🚌 BOX: BUS RENTALS DEDICATED WHATSAPP INQUIRY BOX */}
+        {mode === 'buses' && (
+          <div className="rounded-3xl border p-6 sm:p-10 space-y-6 shadow-2xl transition-all duration-300 bg-[#272735]/80 border-[#5266EB]/30">
+            
+            {/* Box Header */}
+            <div className="flex items-center justify-between pb-4 border-b border-[#5266EB]/20">
+              <div className="flex items-center gap-3">
+                <div className="p-2.5 rounded-2xl bg-[#5266EB]/20 text-[#5266EB] border border-[#5266EB]/30">
+                  <Car className="w-5 h-5" />
+                </div>
+                <div>
+                  <h3 className="font-syne text-xl font-bold text-[#EDEDF3] flex items-center gap-2">
+                    Bus & Urbania Fleet Inquiry
+                  </h3>
+                  <p className="text-xs text-[#9CB4E8]">Direct Bus Hire & Chauffeur Desk</p>
+                </div>
+              </div>
+              <span className="px-3 py-1 rounded-full bg-[#5266EB]/20 text-[#9CB4E8] text-xs font-bold font-syne border border-[#5266EB]/30 uppercase">
+                Buses & Urbania
+              </span>
+            </div>
+
+            {busSubmitted ? (
+              <div className="text-center py-8 space-y-3">
+                <div className="w-16 h-16 bg-[#5266EB]/20 text-[#5266EB] rounded-full flex items-center justify-center mx-auto border border-[#5266EB]/40 animate-bounce">
+                  <CheckCircle2 className="w-8 h-8" />
+                </div>
+                <h4 className="font-syne text-2xl font-bold text-[#EDEDF3]">Bus Inquiry Sent!</h4>
+                <p className="text-xs text-gray-300">WhatsApp opened with your selected bus rental inquiry.</p>
+                <button
+                  onClick={() => setBusSubmitted(false)}
+                  className="mt-2 text-xs font-bold text-[#9CB4E8] underline cursor-pointer"
+                >
+                  Send Another Bus Inquiry
+                </button>
+              </div>
+            ) : (
+              <form onSubmit={handleBusSubmit} className="space-y-5 text-xs">
+                
+                {/* Select Bus Model Dropdown */}
+                <div className="space-y-1.5">
+                  <label className="font-bold text-[#9CB4E8] uppercase tracking-wider flex items-center gap-1.5 text-xs">
+                    <Car className="w-4 h-4 text-[#9CB4E8]" /> Select Bus / Urbania Option <span className="text-[#5266EB]">*</span>
+                  </label>
+                  <select
+                    name="busType"
+                    value={busForm.busType}
+                    onChange={(e) => setBusForm({ ...busForm, busType: e.target.value })}
+                    className="w-full bg-[#171721] border border-[#5266EB]/30 rounded-xl p-3.5 text-xs sm:text-sm text-[#EDEDF3] focus:outline-none focus:border-[#5266EB] font-syne font-bold cursor-pointer"
+                  >
+                    {busFleetOptions.map((opt) => (
+                      <option key={opt.id} value={opt.id} className="bg-[#171721] text-white">
+                        🚌 {opt.label}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+                  <div className="space-y-1.5">
+                    <label className="font-bold text-[#EDEDF3] flex items-center gap-1.5">
+                      <User className="w-3.5 h-3.5 text-[#9CB4E8]" /> Full Name *
+                    </label>
+                    <input
+                      type="text"
+                      required
+                      value={busForm.name}
+                      onChange={(e) => setBusForm({ ...busForm, name: e.target.value })}
+                      placeholder="e.g. Sachin Jadhav"
+                      className="w-full bg-[#171721] border border-white/15 rounded-xl p-3.5 text-xs text-white placeholder:text-gray-500 focus:outline-none focus:border-[#5266EB]"
+                    />
+                  </div>
+
+                  <div className="space-y-1.5">
+                    <label className="font-bold text-[#EDEDF3] flex items-center gap-1.5">
+                      <Phone className="w-3.5 h-3.5 text-[#9CB4E8]" /> WhatsApp Number *
+                    </label>
+                    <input
+                      type="tel"
+                      required
+                      value={busForm.phone}
+                      onChange={(e) => setBusForm({ ...busForm, phone: e.target.value })}
+                      placeholder="e.g. +91 90218 78717"
+                      className="w-full bg-[#171721] border border-white/15 rounded-xl p-3.5 text-xs text-white placeholder:text-gray-500 focus:outline-none focus:border-[#5266EB]"
+                    />
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+                  <div className="space-y-1.5">
+                    <label className="font-bold text-[#EDEDF3] flex items-center gap-1.5">
+                      <Calendar className="w-3.5 h-3.5 text-[#9CB4E8]" /> Journey Date
+                    </label>
+                    <input
+                      type="date"
+                      value={busForm.date}
+                      onChange={(e) => setBusForm({ ...busForm, date: e.target.value })}
+                      className="w-full bg-[#171721] border border-white/15 rounded-xl p-3.5 text-xs text-white focus:outline-none focus:border-[#5266EB]"
+                    />
+                  </div>
+
+                  <div className="space-y-1.5">
+                    <label className="font-bold text-[#EDEDF3] flex items-center gap-1.5">
+                      <MapPin className="w-3.5 h-3.5 text-[#9CB4E8]" /> Pickup / Route
+                    </label>
+                    <input
+                      type="text"
+                      value={busForm.pickupLocation}
+                      onChange={(e) => setBusForm({ ...busForm, pickupLocation: e.target.value })}
+                      placeholder="e.g. Pune to Mahabaleshwar / Mumbai / Local"
+                      className="w-full bg-[#171721] border border-white/15 rounded-xl p-3.5 text-xs text-white placeholder:text-gray-500 focus:outline-none focus:border-[#5266EB]"
+                    />
+                  </div>
+                </div>
+
+                <div className="space-y-1.5">
+                  <label className="font-bold text-[#EDEDF3]">Message / Special Requirement</label>
+                  <textarea
+                    rows={3}
+                    value={busForm.message}
+                    onChange={(e) => setBusForm({ ...busForm, message: e.target.value })}
+                    placeholder="e.g. 2-day outstation trip, AC coach required, 25 passengers..."
+                    className="w-full bg-[#171721] border border-white/15 rounded-xl p-3.5 text-xs text-white placeholder:text-gray-500 focus:outline-none focus:border-[#5266EB] resize-none"
+                  />
+                </div>
+
+                <button
+                  type="submit"
+                  className="w-full py-4 rounded-xl bg-[#5266EB] hover:bg-[#3E51D4] text-[#EDEDF3] font-extrabold uppercase tracking-wider transition-all flex items-center justify-center gap-2 shadow-lg shadow-[#5266EB]/20 cursor-pointer hover:scale-[1.01]"
+                >
+                  <MessageSquare className="w-4 h-4 fill-white" />
+                  <span>Send Bus Inquiry on WhatsApp</span>
                   <ArrowRight className="w-4 h-4" />
                 </button>
 

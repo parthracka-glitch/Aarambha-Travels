@@ -6,6 +6,7 @@ interface LocalDBData {
   fleetBookings: any[];
   toursInquiries: any[];
   fleetInquiries: any[];
+  toursPackages: any[];
 }
 
 const DATA_DIR = path.join(__dirname, '../../data');
@@ -16,6 +17,7 @@ const INITIAL_DATA: LocalDBData = {
   fleetBookings: [],
   toursInquiries: [],
   fleetInquiries: [],
+  toursPackages: [],
 };
 
 class LocalStore {
@@ -128,6 +130,52 @@ class LocalStore {
   }
   deleteFleetInquiry(id: string) {
     this.data.fleetInquiries = this.data.fleetInquiries.filter(i => i._id !== id && i.id !== id);
+    this.save();
+  }
+
+  // Tours Packages
+  getTourPackages() {
+    if (!this.data.toursPackages) this.data.toursPackages = [];
+    return this.data.toursPackages;
+  }
+  setTourPackages(pkgs: any[]) {
+    this.data.toursPackages = pkgs;
+    this.save();
+  }
+  addTourPackage(pkg: any) {
+    if (!this.data.toursPackages) this.data.toursPackages = [];
+    this.data.toursPackages.push(pkg);
+    this.save();
+    return pkg;
+  }
+  getTourPackageByIdOrSlug(idOrSlug: string) {
+    if (!this.data.toursPackages) this.data.toursPackages = [];
+    return this.data.toursPackages.find(p => p._id === idOrSlug || p.id === idOrSlug || p.slug === idOrSlug) || null;
+  }
+  updateTourPackage(idOrSlug: string, data: any) {
+    if (!this.data.toursPackages) this.data.toursPackages = [];
+    const idx = this.data.toursPackages.findIndex(p => p._id === idOrSlug || p.id === idOrSlug || p.slug === idOrSlug || (data.slug && p.slug === data.slug));
+    if (idx !== -1) {
+      this.data.toursPackages[idx] = {
+        ...this.data.toursPackages[idx],
+        ...data,
+      };
+      this.save();
+      return this.data.toursPackages[idx];
+    } else {
+      const newPkg = {
+        _id: idOrSlug.startsWith('pkg-') ? idOrSlug : 'pkg-' + Date.now(),
+        id: idOrSlug,
+        ...data,
+      };
+      this.data.toursPackages.push(newPkg);
+      this.save();
+      return newPkg;
+    }
+  }
+  deleteTourPackage(idOrSlug: string) {
+    if (!this.data.toursPackages) this.data.toursPackages = [];
+    this.data.toursPackages = this.data.toursPackages.filter(p => p._id !== idOrSlug && p.id !== idOrSlug && p.slug !== idOrSlug);
     this.save();
   }
 }

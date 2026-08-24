@@ -3,12 +3,14 @@
 import React from 'react';
 import { MapPin, Phone, Mail, Clock, MessageSquare, ExternalLink, ShieldCheck, Compass } from 'lucide-react';
 
-export default function CompanyLocationSection({ mode = 'all' }: { mode?: 'cars' | 'tours' | 'all' }) {
+export default function CompanyLocationSection({ mode = 'all' }: { mode?: 'cars' | 'buses' | 'tours' | 'all' }) {
   const whatsappUrl = mode === 'cars'
     ? "https://wa.me/918208211478?text=Hi%20Aarambha%20Car%20Rentals,%20I%20would%20like%20to%20inquire%20about%20self-drive%20car%20rentals."
+    : mode === 'buses'
+    ? "https://wa.me/919021878717?text=Hi%20Aarambha%20Bus%20Rentals,%20I%20would%20like%20to%20inquire%20about%20bus%20hire."
     : mode === 'tours'
     ? "https://wa.me/919067617451?text=Hi%20Aarambha%20Tours%20%26%20Travels,%20I%20would%20like%20to%20inquire%20about%20pilgrimage%20tour%20packages."
-    : "https://wa.me/919067617451?text=Hi%20Aarambha%20Tours%20%26%20Car%20Rentals,%20I%20would%20like%20to%20inquire%20about%20your%20services.";
+    : "https://wa.me/919021878717?text=Hi%20Aarambha%20Tours%20%26%20Car%20Rentals,%20I%20would%20like%20to%20inquire%20about%20your%20services.";
 
   const phoneUrl = mode === 'cars' ? "tel:+917820802985" : "tel:+919067617451";
   const googleMapsUrl = "https://maps.google.com/?q=Green+Hills+Society+Katraj+Pune+Maharashtra+411046";
@@ -21,18 +23,36 @@ export default function CompanyLocationSection({ mode = 'all' }: { mode?: 'cars'
         <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 border-b border-gray-100 pb-6">
           <div className="space-y-2">
             <span className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-extrabold font-syne uppercase tracking-wider ${
-              mode === 'cars' ? 'bg-[#5266EB]/10 text-[#5266EB] border border-[#5266EB]/30' : 'bg-[#9CB4E8]/20 text-[#171721] border border-[#9CB4E8]/40'
+              mode === 'cars'
+                ? 'bg-[#5266EB]/10 text-[#5266EB] border border-[#5266EB]/30'
+                : mode === 'buses'
+                ? 'bg-[#5266EB]/10 text-[#5266EB] border border-[#5266EB]/30'
+                : 'bg-[#9CB4E8]/20 text-[#171721] border border-[#9CB4E8]/40'
             }`}>
               <MapPin className="w-3.5 h-3.5" />
-              {mode === 'cars' ? 'CAR RENTALS HQ & CONTACT' : mode === 'tours' ? 'TOURS HQ & CONTACT' : 'LOCATION & CONTACT'}
+              {mode === 'cars'
+                ? 'CAR RENTALS HQ & CONTACT'
+                : mode === 'buses'
+                ? 'BUS RENTALS HQ & CONTACT'
+                : mode === 'tours'
+                ? 'TOURS HQ & CONTACT'
+                : 'LOCATION & CONTACT'}
             </span>
             <h2 className="font-syne text-3xl sm:text-4xl font-extrabold text-[#000000] tracking-tight">
-              {mode === 'cars' ? 'Visit Central Fleet HQ & Connect' : mode === 'tours' ? 'Visit Travel Desk HQ & Connect' : 'Visit Our HQ & Connect With Us'}
+              {mode === 'cars'
+                ? 'Visit Central Fleet HQ & Connect'
+                : mode === 'buses'
+                ? 'Visit Bus Fleet Desk & Connect'
+                : mode === 'tours'
+                ? 'Visit Travel Desk HQ & Connect'
+                : 'Visit Our HQ & Connect With Us'}
             </h2>
           </div>
           <p className="text-xs text-gray-500 max-w-md leading-relaxed font-normal">
             {mode === 'cars'
               ? 'Have questions about self-drive vehicle availability or doorstep Pune delivery? Speak directly with our 24/7 fleet support desk.'
+              : mode === 'buses'
+              ? 'Have questions about bus hire, tempo travellers, or Urbania outstation packages? Speak directly with our 24/7 bus support desk.'
               : mode === 'tours'
               ? 'Have questions about pilgrimage tour itineraries or custom family packages? Speak directly with our 24/7 tour assistance team.'
               : 'Have questions about tour itineraries or self-drive vehicle availability? Speak directly with our 24/7 support team or drop by our central office.'}
@@ -54,7 +74,7 @@ export default function CompanyLocationSection({ mode = 'all' }: { mode?: 'cars'
                   </div>
                   <div>
                     <h3 className="font-['Amita','Yatra_One','Rozha_One',serif] text-xl font-bold text-[#000000] leading-none">
-                      आरंभ <span className="font-syne text-sm font-bold text-gray-700 font-sans">Tours & Car Rentals</span>
+                      आरंभ <span className="font-syne text-sm font-bold text-gray-700 font-sans">Tours & Travels</span>
                     </h3>
                     <p className="text-[11px] text-gray-500 mt-0.5">Government Registered Travel & Fleet Agency</p>
                   </div>
@@ -88,7 +108,7 @@ export default function CompanyLocationSection({ mode = 'all' }: { mode?: 'cars'
                   <div>
                     <h4 className="font-bold text-[#000000] text-xs font-syne">Support Desk</h4>
                     <p className="text-gray-500 text-[11px] leading-relaxed mt-0.5">
-                      24/7 Operations & On-Trip Roadside Assistance
+                      24/7 Operations & On-Trip Support
                     </p>
                   </div>
                 </div>
@@ -104,6 +124,11 @@ export default function CompanyLocationSection({ mode = 'all' }: { mode?: 'cars'
                       <>
                         <p className="text-gray-900 font-bold text-[11px] mt-0.5">Call: +91 78208 02985</p>
                         <p className="text-[#5266EB] font-bold text-[10px]">WhatsApp: +91 82082 11478</p>
+                      </>
+                    ) : mode === 'buses' ? (
+                      <>
+                        <p className="text-gray-900 font-bold text-[11px] mt-0.5">Call: +91 90676 17451</p>
+                        <p className="text-[#5266EB] font-bold text-[10px]">WhatsApp: +91 90218 78717</p>
                       </>
                     ) : (
                       <>
