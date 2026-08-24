@@ -35,7 +35,7 @@ import { fetchLiveVehicleById } from '@/services/fleet.service';
 import GoogleAuthButton from '@/components/auth/GoogleAuthButton';
 
 import { generateInvoicePDF, getNextInvoiceNumber, type InvoiceData } from '@/utils/generateInvoicePDF';
-import UpiPaymentScreen from '@/components/booking/UpiPaymentScreen';
+import UPIPaymentVerificationSection from '@/components/booking/UPIPaymentVerificationSection';
 
 export default function CarBookingCheckoutPage() {
   const params = useParams();
@@ -75,7 +75,6 @@ export default function CarBookingCheckoutPage() {
   const [specialRequests, setSpecialRequests] = useState('');
   const [termsAccepted, setTermsAccepted] = useState(false);
   const [validationError, setValidationError] = useState('');
-  const [isPaymentStep, setIsPaymentStep] = useState(false);
   const [bookingRef, setBookingRef] = useState('');
 
   // Inline Quick Auth state
@@ -207,7 +206,52 @@ export default function CarBookingCheckoutPage() {
   const [additionalDriver, setAdditionalDriver] = useState(false);
 
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isPaymentStep, setIsPaymentStep] = useState(false);
+  const [submittedUtr, setSubmittedUtr] = useState('');
+  const [liveBookingStatus, setLiveBookingStatus] = useState<'pending_verification' | 'Confirmed' | 'Rejected'>('pending_verification');
   const [bookingSuccess, setBookingSuccess] = useState<any>(null);
+
+  // Live polling for booking status confirmation from Admin CRM
+  useEffect(() => {
+    if (!bookingSuccess || !bookingSuccess.refNo) return;
+
+    let intervalId: any;
+    const pollStatus = async () => {
+      try {
+        const res = await apiFetch<any[]>('/api/fleet/bookings/sync-status', {
+          method: 'POST',
+          body: JSON.stringify({ codes: [bookingSuccess.refNo] }),
+        });
+
+        if (Array.isArray(res) && res.length > 0) {
+          const matched = res[0];
+          if (matched.status === 'Confirmed') {
+            setLiveBookingStatus('Confirmed');
+            try {
+              const existingStr = localStorage.getItem('aarambha_user_bookings');
+              if (existingStr) {
+                const list = JSON.parse(existingStr);
+                const updated = list.map((b: any) =>
+                  (b.id === bookingSuccess.refNo || b.bookingCode === bookingSuccess.refNo)
+                    ? { ...b, status: 'Confirmed', verifiedAt: matched.verifiedAt }
+                    : b
+                );
+                localStorage.setItem('aarambha_user_bookings', JSON.stringify(updated));
+                window.dispatchEvent(new Event('aarambha_booking_updated'));
+              }
+            } catch (_e) {}
+          } else if (matched.status === 'Rejected') {
+            setLiveBookingStatus('Rejected');
+          }
+        }
+      } catch (_e) {}
+    };
+
+    intervalId = setInterval(pollStatus, 2500);
+    pollStatus();
+
+    return () => clearInterval(intervalId);
+  }, [bookingSuccess]);
 
   // Date Change Handler with automatic range correction
   const handlePickupDateChange = (newDate: string) => {
@@ -240,9 +284,9 @@ export default function CarBookingCheckoutPage() {
   const extraDriverFee = additionalDriver ? 400 : 0;
 
   const grandTotalCost = baseRentalCost + doorstepFee + zeroDepFee + childSeatFee + extraDriverFee;
-  const depositAmount = 1;
+  const depositAmount = 500;
 
-  const handleBookingSubmit = async (e: React.FormEvent) => {
+  const handleBookingSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     setValidationError('');
 
@@ -277,10 +321,17 @@ export default function CarBookingCheckoutPage() {
       return;
     }
 
-    setIsSubmitting(true);
     const refNo = 'FL-' + Math.floor(100000 + Math.random() * 900000);
-    const invNum = getNextInvoiceNumber('car');
     setBookingRef(refNo);
+    setIsPaymentStep(true);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  const handleConfirmUpiPayment = async ({ utrNumber, paymentScreenshot }: { utrNumber: string; paymentScreenshot?: string }) => {
+    setIsSubmitting(true);
+    setSubmittedUtr(utrNumber);
+    const refNo = bookingRef || 'FL-' + Math.floor(100000 + Math.random() * 900000);
+    const invNum = getNextInvoiceNumber('car');
 
     const bookingPayload = {
       id: refNo,
@@ -297,7 +348,7 @@ export default function CarBookingCheckoutPage() {
       guestsCount: 1,
       totalPrice: grandTotalCost,
       totalAmount: grandTotalCost,
-      depositPaid: depositAmount || 500,
+      depositPaid: 500,
       customerName: fullName.trim(),
       customerEmail: (currentUser?.email || email.trim()).toLowerCase(),
       email: (currentUser?.email || email.trim()).toLowerCase(),
@@ -316,8 +367,10 @@ export default function CarBookingCheckoutPage() {
       termsAccepted: true,
       termsAcceptedAt: new Date().toISOString(),
       termsVersion: '2026.1-STANDARD',
-      status: 'Confirmed',
-      paymentMethod: 'Direct Confirmation',
+      status: 'pending_verification',
+      paymentMethod: 'Direct UPI',
+      utrNumber,
+      paymentScreenshot: paymentScreenshot || '',
       createdAt: new Date().toISOString(),
     };
 
@@ -343,19 +396,23 @@ export default function CarBookingCheckoutPage() {
     }
 
     setIsSubmitting(false);
+    setIsPaymentStep(false);
     setBookingSuccess({
       refNo,
       fullName: fullName.trim(),
       phone: phone.trim(),
       email: email.trim(),
+      licenseNumber: licenseNumber.trim().toUpperCase(),
       pickupDate,
       returnDate,
       days: computedDays,
       pickupLocation,
       totalCost: grandTotalCost,
-      depositPaid: depositAmount || 500,
+      depositPaid: 500,
       invoiceNumber: invNum,
+      utrNumber,
     });
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   const handleDownloadInvoice = () => {
@@ -434,25 +491,62 @@ export default function CarBookingCheckoutPage() {
       <section className="py-12 bg-[#FAFAFC]">
         <div className="max-w-7xl mx-auto px-6 lg:px-12">
           
-          {bookingSuccess ? (
-            /* SUCCESS CONFIRMATION VOUCHER */
+          {isPaymentStep ? (
+            /* STEP 2: UPI PAYMENT VERIFICATION SCREEN */
+            <div className="max-w-2xl mx-auto">
+              <UPIPaymentVerificationSection
+                bookingCode={bookingRef}
+                itemTitle={vehicle.name}
+                itemType="car"
+                totalPrice={grandTotalCost}
+                depositAmount={500}
+                customerName={fullName}
+                customerPhone={phone}
+                onConfirmPayment={handleConfirmUpiPayment}
+                onBack={() => setIsPaymentStep(false)}
+                isSubmitting={isSubmitting}
+              />
+            </div>
+          ) : bookingSuccess ? (
+            /* SUCCESS CONFIRMATION / PROVISIONAL VOUCHER */
             <div className="max-w-2xl mx-auto bg-white rounded-3xl border border-gray-200 p-8 sm:p-10 shadow-2xl space-y-6 text-center">
-              <div className="w-20 h-20 bg-[#5266EB]/10 text-[#5266EB] rounded-full flex items-center justify-center mx-auto border-4 border-[#5266EB]/20 shadow-inner">
-                <CheckCircle2 className="w-10 h-10" />
-              </div>
+              {liveBookingStatus === 'Confirmed' ? (
+                <div className="w-20 h-20 bg-emerald-50 text-emerald-600 rounded-full flex items-center justify-center mx-auto border-4 border-emerald-100 shadow-inner animate-bounce">
+                  <CheckCircle2 className="w-10 h-10" />
+                </div>
+              ) : (
+                <div className="w-20 h-20 bg-amber-50 text-amber-600 rounded-full flex items-center justify-center mx-auto border-4 border-amber-100 shadow-inner animate-pulse">
+                  <Clock className="w-10 h-10" />
+                </div>
+              )}
 
               <div className="space-y-2">
-                <span className="px-3 py-1 bg-[#9CB4E8]/20 text-[#171721] text-xs font-extrabold rounded-full uppercase tracking-wider font-syne border border-[#9CB4E8]/40">
-                  RESERVATION CONFIRMED
-                </span>
+                {liveBookingStatus === 'Confirmed' ? (
+                  <span className="px-3.5 py-1 bg-emerald-100 text-emerald-900 text-xs font-extrabold rounded-full uppercase tracking-wider font-syne border border-emerald-300">
+                    ✓ RESERVATION CONFIRMED & VERIFIED
+                  </span>
+                ) : (
+                  <span className="px-3.5 py-1 bg-amber-100 text-amber-900 text-xs font-extrabold rounded-full uppercase tracking-wider font-syne border border-amber-300">
+                    ⏳ UNDER VERIFICATION • PROVISIONAL BOOKING
+                  </span>
+                )}
+
                 <h2 className="font-syne text-3xl font-extrabold text-[#000000]">
                   Booking #{bookingSuccess.refNo}
                 </h2>
-                <p className="text-xs text-gray-500 max-w-md mx-auto leading-relaxed font-normal">
-                  Congratulations <strong className="text-[#000000]">{bookingSuccess.fullName}</strong>! Your self-drive vehicle <strong className="text-[#000000]">{vehicle.name}</strong> is reserved with a ₹500 deposit.
-                </p>
+
+                {liveBookingStatus === 'Confirmed' ? (
+                  <p className="text-xs text-emerald-700 max-w-md mx-auto leading-relaxed font-semibold">
+                    Great news <strong className="text-black">{bookingSuccess.fullName}</strong>! Your payment has been verified by the Admin and your self-drive vehicle <strong className="text-black">{vehicle.name}</strong> is officially confirmed!
+                  </p>
+                ) : (
+                  <p className="text-xs text-gray-600 max-w-md mx-auto leading-relaxed">
+                    Thank you <strong className="text-black">{bookingSuccess.fullName}</strong>! We have received your advance lock deposit (UTR: <span className="font-mono font-bold text-indigo-700">{bookingSuccess.utrNumber || submittedUtr}</span>). Our desk is verifying it right now.
+                  </p>
+                )}
               </div>
 
+              {/* Booking Summary Box */}
               <div className="bg-gray-50/80 rounded-2xl p-6 border border-gray-200/80 text-left text-xs space-y-3">
                 <div className="flex justify-between pb-2 border-b border-gray-200">
                   <span className="text-gray-500">Vehicle:</span>
@@ -471,8 +565,12 @@ export default function CarBookingCheckoutPage() {
                   <strong className="text-[#000000] font-mono">{bookingSuccess.licenseNumber}</strong>
                 </div>
                 <div className="flex justify-between pb-2 border-b border-gray-200">
-                  <span className="text-gray-500">Online Lock Deposit Paid:</span>
-                  <strong className="text-[#5266EB] font-bold">₹500 (Confirmed)</strong>
+                  <span className="text-gray-500">Submitted UTR:</span>
+                  <strong className="text-indigo-700 font-mono font-bold">{bookingSuccess.utrNumber || submittedUtr}</strong>
+                </div>
+                <div className="flex justify-between pb-2 border-b border-gray-200">
+                  <span className="text-gray-500">Lock Deposit:</span>
+                  <strong className="text-[#5266EB] font-bold">₹500 (Submitted via UPI)</strong>
                 </div>
                 <div className="flex justify-between pt-1 text-sm font-extrabold text-[#000000]">
                   <span>Total Amount Payable at Pickup:</span>
@@ -482,21 +580,30 @@ export default function CarBookingCheckoutPage() {
 
               {/* Action Buttons */}
               <div className="space-y-3 pt-2">
-                <button
-                  onClick={handleDownloadInvoice}
-                  className="w-full py-4 bg-[#5266EB] hover:bg-[#3E51D4] text-[#EDEDF3] rounded-2xl font-bold text-xs uppercase tracking-wider transition-all shadow-lg shadow-[#5266EB]/20 flex items-center justify-center gap-2"
-                >
-                  <FileText className="w-4 h-4" /> Download Official PDF Invoice
-                </button>
+                {liveBookingStatus === 'Confirmed' ? (
+                  <button
+                    onClick={handleDownloadInvoice}
+                    className="w-full py-4 bg-emerald-600 hover:bg-emerald-700 text-white rounded-2xl font-bold text-xs uppercase tracking-wider transition-all shadow-lg shadow-emerald-600/30 flex items-center justify-center gap-2 cursor-pointer"
+                  >
+                    <FileText className="w-4 h-4" /> Download Official Confirmed Tax Invoice
+                  </button>
+                ) : (
+                  <button
+                    onClick={handleDownloadInvoice}
+                    className="w-full py-4 bg-[#5266EB] hover:bg-[#3E51D4] text-white rounded-2xl font-bold text-xs uppercase tracking-wider transition-all shadow-lg shadow-[#5266EB]/20 flex items-center justify-center gap-2 cursor-pointer"
+                  >
+                    <FileText className="w-4 h-4" /> Download Provisional Booking Receipt
+                  </button>
+                )}
 
                 <div className="flex flex-col sm:flex-row gap-3">
                   <a
-                    href={bookingSuccess.whatsappUrl}
+                    href={`https://wa.me/918208211478?text=${encodeURIComponent(`Hi Aarambha Travels, I have submitted UPI payment for Car Booking #${bookingSuccess.refNo} (Vehicle: ${vehicle.name}, UTR: ${bookingSuccess.utrNumber || submittedUtr}). Please confirm.`)}`}
                     target="_blank"
                     rel="noreferrer"
-                    className="flex-1 py-3.5 bg-gray-900 hover:bg-black text-white rounded-2xl font-bold text-xs uppercase tracking-wider transition-all text-center block shadow-md"
+                    className="flex-1 py-3.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-2xl font-bold text-xs uppercase tracking-wider transition-all text-center block shadow-md"
                   >
-                    Send on WhatsApp
+                    Notify Desk on WhatsApp
                   </a>
                   <Link
                     href="/my-bookings"
@@ -928,7 +1035,7 @@ export default function CarBookingCheckoutPage() {
 
                     <div className="flex justify-between pt-1 text-xs text-emerald-600 font-bold bg-emerald-50 p-2.5 rounded-xl border border-emerald-100">
                       <span>Lock Vehicle Deposit (Payable Now):</span>
-                      <span>₹1 (100% Refundable)</span>
+                      <span>₹500 (100% Refundable Deposit)</span>
                     </div>
                   </div>
 
@@ -982,13 +1089,13 @@ export default function CarBookingCheckoutPage() {
                         : 'bg-[#5266EB] hover:bg-[#3E51D4] text-[#EDEDF3] shadow-[#5266EB]/20 cursor-pointer hover:scale-[1.01] active:scale-98'
                     }`}
                   >
-                    <CheckCircle2 className="w-4 h-4 text-white" />
-                    <span>{isSubmitting ? 'Confirming Reservation...' : 'Direct Confirm Booking Now'}</span>
+                    <CreditCard className="w-4 h-4 text-white" />
+                    <span>{isSubmitting ? 'Validating...' : 'Proceed to UPI Advance Payment (₹500)'}</span>
                     <ArrowRight className="w-4 h-4" />
                   </button>
 
                   <p className="text-[10px] text-gray-400 text-center leading-relaxed">
-                    🔒 Free cancellation up to 24 hours prior to pickup date. Remaining balance payable at vehicle delivery.
+                    🔒 Official UPI QR code with instant UTR verification. Remaining balance payable at vehicle delivery.
                   </p>
 
                 </div>

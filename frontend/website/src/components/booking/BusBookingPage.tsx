@@ -22,6 +22,7 @@ import {
   Check,
   ExternalLink,
   AlertCircle,
+  CreditCard,
 } from 'lucide-react';
 import Navbar from '@/components/layout/Navbar';
 import Footer from '@/components/layout/Footer';
@@ -30,6 +31,7 @@ import { apiFetch } from '@/services/api-client';
 import GoogleAuthButton from '@/components/auth/GoogleAuthButton';
 import { generateInvoicePDF, getNextInvoiceNumber, type InvoiceData } from '@/utils/generateInvoicePDF';
 import { BUS_RULES_AND_GUIDELINES, SHARED_BUS_CONTACT } from '@/constants/busData';
+import UPIPaymentVerificationSection from '@/components/booking/UPIPaymentVerificationSection';
 
 export interface BusBookingConfig {
   busType: string;
@@ -72,7 +74,52 @@ export default function BusBookingPage({ config }: { config: BusBookingConfig })
   const [authLoading, setAuthLoading] = useState(false);
 
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isPaymentStep, setIsPaymentStep] = useState(false);
+  const [submittedUtr, setSubmittedUtr] = useState('');
+  const [liveBookingStatus, setLiveBookingStatus] = useState<'pending_verification' | 'Confirmed' | 'Rejected'>('pending_verification');
   const [bookingSuccess, setBookingSuccess] = useState<any>(null);
+
+  // Live polling for booking status confirmation from Admin CRM
+  React.useEffect(() => {
+    if (!bookingSuccess || !bookingSuccess.refNo) return;
+
+    let intervalId: any;
+    const pollStatus = async () => {
+      try {
+        const res = await apiFetch<any[]>('/api/fleet/bookings/sync-status', {
+          method: 'POST',
+          body: JSON.stringify({ codes: [bookingSuccess.refNo] }),
+        });
+
+        if (Array.isArray(res) && res.length > 0) {
+          const matched = res[0];
+          if (matched.status === 'Confirmed') {
+            setLiveBookingStatus('Confirmed');
+            try {
+              const existingStr = localStorage.getItem('aarambha_user_bookings');
+              if (existingStr) {
+                const list = JSON.parse(existingStr);
+                const updated = list.map((b: any) =>
+                  (b.id === bookingSuccess.refNo || b.bookingCode === bookingSuccess.refNo)
+                    ? { ...b, status: 'Confirmed', verifiedAt: matched.verifiedAt }
+                    : b
+                );
+                localStorage.setItem('aarambha_user_bookings', JSON.stringify(updated));
+                window.dispatchEvent(new Event('aarambha_booking_updated'));
+              }
+            } catch (_e) {}
+          } else if (matched.status === 'Rejected') {
+            setLiveBookingStatus('Rejected');
+          }
+        }
+      } catch (_e) {}
+    };
+
+    intervalId = setInterval(pollStatus, 2500);
+    pollStatus();
+
+    return () => clearInterval(intervalId);
+  }, [bookingSuccess]);
 
   // Sync user from localStorage
   React.useEffect(() => {
@@ -142,35 +189,42 @@ export default function BusBookingPage({ config }: { config: BusBookingConfig })
           email: email.trim().toLowerCase(),
           phone: phone.trim(),
           password: authPassword,
-          createdAt: new Date().toISOString(),
         };
-
         registeredUsers.push(newUser);
         try {
           localStorage.setItem('aarambha_registered_users', JSON.stringify(registeredUsers));
-        } catch (_e) {}
-
-        const profile = { name: newUser.name, email: newUser.email, phone: newUser.phone, loggedIn: true };
-        try {
-          localStorage.setItem('aarambha_user', JSON.stringify(profile));
+          localStorage.setItem('aarambha_user', JSON.stringify({ ...newUser, loggedIn: true }));
           window.dispatchEvent(new Event('aarambha_auth_changed'));
         } catch (_e) {}
 
-        setCurrentUser(profile);
+        setCurrentUser({ ...newUser });
       } else {
-        const existing = registeredUsers.find((u) => u.email.toLowerCase() === email.trim().toLowerCase());
-        if (existing && existing.password && existing.password !== authPassword) {
-          setValidationError('Incorrect password. Please try again.');
+        const existing = registeredUsers.find(
+          (u) => u.email.toLowerCase() === email.trim().toLowerCase() && u.password === authPassword
+        );
+        if (!existing) {
+          const guestProfile = {
+            name: fullName.trim() || email.split('@')[0],
+            email: email.trim().toLowerCase(),
+            phone: phone.trim() || '+91 82082 11478',
+            loggedIn: true,
+          };
+          try {
+            localStorage.setItem('aarambha_user', JSON.stringify(guestProfile));
+            window.dispatchEvent(new Event('aarambha_auth_changed'));
+          } catch (_e) {}
+          setCurrentUser(guestProfile);
+          setFullName(guestProfile.name);
+          setPhone(guestProfile.phone);
           return;
         }
 
         const profile = {
-          name: existing ? existing.name : (fullName || email.split('@')[0] || 'Valued Member'),
-          email: email.trim().toLowerCase(),
-          phone: existing ? existing.phone : (phone || '+91 82082 11478'),
+          name: existing.name,
+          email: existing.email,
+          phone: existing.phone,
           loggedIn: true,
         };
-
         try {
           localStorage.setItem('aarambha_user', JSON.stringify(profile));
           window.dispatchEvent(new Event('aarambha_auth_changed'));
@@ -195,7 +249,7 @@ export default function BusBookingPage({ config }: { config: BusBookingConfig })
   const totalCost = config.basePrice;
   const depositAmount = 500;
 
-  const handleBookingSubmit = async (e: React.FormEvent) => {
+  const handleBookingSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     setValidationError('');
 
@@ -224,10 +278,17 @@ export default function BusBookingPage({ config }: { config: BusBookingConfig })
       return;
     }
 
-    setIsSubmitting(true);
     const refNo = 'BUS-' + Math.floor(100000 + Math.random() * 900000);
-    const invNum = getNextInvoiceNumber('car');
     setBookingRef(refNo);
+    setIsPaymentStep(true);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  const handleConfirmUpiPayment = async ({ utrNumber, paymentScreenshot }: { utrNumber: string; paymentScreenshot?: string }) => {
+    setIsSubmitting(true);
+    setSubmittedUtr(utrNumber);
+    const refNo = bookingRef || 'BUS-' + Math.floor(100000 + Math.random() * 900000);
+    const invNum = getNextInvoiceNumber('car');
 
     const bookingPayload = {
       id: refNo,
@@ -245,7 +306,7 @@ export default function BusBookingPage({ config }: { config: BusBookingConfig })
       guestsCount: config.seats,
       totalPrice: totalCost,
       totalAmount: totalCost,
-      depositPaid: depositAmount,
+      depositPaid: 500,
       customerName: fullName.trim(),
       customerEmail: (currentUser?.email || email.trim()).toLowerCase(),
       email: (currentUser?.email || email.trim()).toLowerCase(),
@@ -258,8 +319,10 @@ export default function BusBookingPage({ config }: { config: BusBookingConfig })
       termsAccepted: true,
       termsAcceptedAt: new Date().toISOString(),
       termsVersion: '2026.1-STANDARD',
-      status: 'Confirmed',
-      paymentMethod: 'Direct Confirmation',
+      status: 'pending_verification',
+      paymentMethod: 'Direct UPI',
+      utrNumber,
+      paymentScreenshot: paymentScreenshot || '',
       createdAt: new Date().toISOString(),
     };
 
@@ -285,6 +348,7 @@ export default function BusBookingPage({ config }: { config: BusBookingConfig })
     }
 
     setIsSubmitting(false);
+    setIsPaymentStep(false);
     setBookingSuccess({
       refNo,
       fullName: fullName.trim(),
@@ -293,9 +357,11 @@ export default function BusBookingPage({ config }: { config: BusBookingConfig })
       travelDate,
       returnDate,
       totalCost,
-      depositPaid: depositAmount,
+      depositPaid: 500,
       invoiceNumber: invNum,
+      utrNumber,
     });
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   const handleDownloadInvoice = () => {
@@ -324,45 +390,139 @@ export default function BusBookingPage({ config }: { config: BusBookingConfig })
     generateInvoicePDF(invoiceData);
   };
 
+  /* ─── UPI PAYMENT STEP ────────────────────────────────────────── */
+  if (isPaymentStep) {
+    return (
+      <div className="min-h-screen bg-[#FAFAFC] text-[#18181B] flex flex-col font-sans">
+        <Navbar vertical="fleet" />
+        <section className="flex-1 py-12 px-6">
+          <div className="max-w-2xl mx-auto">
+            <UPIPaymentVerificationSection
+              bookingCode={bookingRef}
+              itemTitle={`${config.busType} (${config.acType})`}
+              itemType="car"
+              totalPrice={totalCost}
+              depositAmount={500}
+              customerName={fullName}
+              customerPhone={phone}
+              onConfirmPayment={handleConfirmUpiPayment}
+              onBack={() => setIsPaymentStep(false)}
+              isSubmitting={isSubmitting}
+            />
+          </div>
+        </section>
+        <Footer />
+      </div>
+    );
+  }
+
   /* ─── BOOKING SUCCESS SCREEN ──────────────────────────────────── */
   if (bookingSuccess) {
     return (
       <div className="min-h-screen bg-[#FAFAFC] text-[#18181B] flex flex-col font-sans">
         <Navbar vertical="fleet" />
         <section className="flex-1 flex items-center justify-center py-16 px-6">
-          <div className="max-w-lg w-full bg-white rounded-3xl border border-gray-200 shadow-2xl p-8 sm:p-10 text-center space-y-6">
-            <div className="w-20 h-20 mx-auto rounded-full bg-green-100 flex items-center justify-center">
-              <CheckCircle2 className="w-10 h-10 text-green-600" />
-            </div>
-            <h2 className="font-syne text-2xl sm:text-3xl font-extrabold text-green-700">
-              Booking Confirmed!
-            </h2>
-            <p className="text-sm text-gray-500">
-              Your bus has been reserved successfully. You will receive a confirmation shortly.
-            </p>
+          <div className="max-w-2xl w-full bg-white rounded-3xl border border-gray-200 shadow-2xl p-8 sm:p-10 text-center space-y-6">
+            {liveBookingStatus === 'Confirmed' ? (
+              <div className="w-20 h-20 bg-emerald-50 text-emerald-600 rounded-full flex items-center justify-center mx-auto border-4 border-emerald-100 shadow-inner animate-bounce">
+                <CheckCircle2 className="w-10 h-10" />
+              </div>
+            ) : (
+              <div className="w-20 h-20 bg-amber-50 text-amber-600 rounded-full flex items-center justify-center mx-auto border-4 border-amber-100 shadow-inner animate-pulse">
+                <Clock className="w-10 h-10" />
+              </div>
+            )}
 
-            <div className="bg-gray-50 rounded-2xl p-5 text-left space-y-3 text-xs border border-gray-200">
-              <div className="flex justify-between"><span className="text-gray-500">Reference No.</span><span className="font-bold text-[#5266EB]">{bookingSuccess.refNo}</span></div>
-              <div className="flex justify-between"><span className="text-gray-500">Bus Type</span><span className="font-bold">{config.busType} ({config.acType})</span></div>
-              <div className="flex justify-between"><span className="text-gray-500">Service</span><span className="font-bold capitalize">{config.serviceType}{config.route ? ` — ${config.route}` : ''}</span></div>
-              <div className="flex justify-between"><span className="text-gray-500">Travel Date</span><span className="font-bold">{bookingSuccess.travelDate}</span></div>
-              <div className="flex justify-between"><span className="text-gray-500">Customer</span><span className="font-bold">{bookingSuccess.fullName}</span></div>
-              <div className="flex justify-between"><span className="text-gray-500">Total Amount</span><span className="font-bold text-green-700">₹{bookingSuccess.totalCost.toLocaleString('en-IN')}</span></div>
+            <div className="space-y-2">
+              {liveBookingStatus === 'Confirmed' ? (
+                <span className="px-3.5 py-1 bg-emerald-100 text-emerald-900 text-xs font-extrabold rounded-full uppercase tracking-wider font-syne border border-emerald-300">
+                  ✓ BUS RESERVATION OFFICIALLY CONFIRMED
+                </span>
+              ) : (
+                <span className="px-3.5 py-1 bg-amber-100 text-amber-900 text-xs font-extrabold rounded-full uppercase tracking-wider font-syne border border-amber-300">
+                  ⏳ UNDER VERIFICATION • PROVISIONAL BUS BOOKING
+                </span>
+              )}
+
+              <h2 className="font-syne text-2xl sm:text-3xl font-extrabold text-[#000000]">
+                Booking #{bookingSuccess.refNo}
+              </h2>
+
+              {liveBookingStatus === 'Confirmed' ? (
+                <p className="text-xs text-emerald-700 max-w-md mx-auto leading-relaxed font-semibold">
+                  Congratulations <strong className="text-black">{bookingSuccess.fullName}</strong>! Your payment has been verified by the Admin and your bus booking for <strong className="text-black">{config.busType}</strong> is officially confirmed!
+                </p>
+              ) : (
+                <p className="text-xs text-gray-600 max-w-md mx-auto leading-relaxed">
+                  Thank you <strong className="text-black">{bookingSuccess.fullName}</strong>! We have received your advance lock deposit (UTR: <span className="font-mono font-bold text-indigo-700">{bookingSuccess.utrNumber || submittedUtr}</span>). Our desk is verifying it right now.
+                </p>
+              )}
             </div>
 
-            <div className="flex flex-col sm:flex-row gap-3 pt-2">
-              <button
-                onClick={handleDownloadInvoice}
-                className="flex-1 inline-flex items-center justify-center gap-2 px-5 py-3 rounded-full bg-[#5266EB] text-white font-bold text-xs uppercase tracking-wider hover:bg-[#3E51D4] transition-all"
-              >
-                <FileText className="w-4 h-4" /> Download Invoice
-              </button>
-              <Link
-                href={config.backLink}
-                className="flex-1 inline-flex items-center justify-center gap-2 px-5 py-3 rounded-full bg-gray-100 text-gray-700 font-bold text-xs uppercase tracking-wider hover:bg-gray-200 transition-all"
-              >
-                <ArrowRight className="w-4 h-4" /> Back to Rates
-              </Link>
+            <div className="bg-gray-50/80 rounded-2xl p-6 border border-gray-200/80 text-left text-xs space-y-3">
+              <div className="flex justify-between pb-2 border-b border-gray-200">
+                <span className="text-gray-500">Bus Type:</span>
+                <strong className="text-[#000000] font-syne">{config.busType} ({config.acType})</strong>
+              </div>
+              <div className="flex justify-between pb-2 border-b border-gray-200">
+                <span className="text-gray-500">Service Route:</span>
+                <strong className="text-[#000000] capitalize">{config.serviceType}{config.route ? ` — ${config.route}` : ''}</strong>
+              </div>
+              <div className="flex justify-between pb-2 border-b border-gray-200">
+                <span className="text-gray-500">Travel Date:</span>
+                <strong className="text-[#000000]">{bookingSuccess.travelDate}</strong>
+              </div>
+              <div className="flex justify-between pb-2 border-b border-gray-200">
+                <span className="text-gray-500">Pickup Location:</span>
+                <strong className="text-[#000000]">{pickupLocation}</strong>
+              </div>
+              <div className="flex justify-between pb-2 border-b border-gray-200">
+                <span className="text-gray-500">Submitted UTR:</span>
+                <strong className="text-indigo-700 font-mono font-bold">{bookingSuccess.utrNumber || submittedUtr}</strong>
+              </div>
+              <div className="flex justify-between pb-2 border-b border-gray-200">
+                <span className="text-gray-500">Lock Deposit:</span>
+                <strong className="text-[#5266EB] font-bold">₹500 (Submitted via UPI)</strong>
+              </div>
+              <div className="flex justify-between pt-1 text-sm font-extrabold text-[#000000]">
+                <span>Balance Payable to Driver:</span>
+                <span className="text-[#5266EB] font-syne">₹{(bookingSuccess.totalCost - 500).toLocaleString('en-IN')}</span>
+              </div>
+            </div>
+
+            <div className="space-y-3 pt-2">
+              {liveBookingStatus === 'Confirmed' ? (
+                <button
+                  onClick={handleDownloadInvoice}
+                  className="w-full py-4 bg-emerald-600 hover:bg-emerald-700 text-white rounded-2xl font-bold text-xs uppercase tracking-wider transition-all shadow-lg shadow-emerald-600/30 flex items-center justify-center gap-2 cursor-pointer"
+                >
+                  <FileText className="w-4 h-4" /> Download Official Confirmed Tax Invoice
+                </button>
+              ) : (
+                <button
+                  onClick={handleDownloadInvoice}
+                  className="w-full py-4 bg-[#5266EB] hover:bg-[#3E51D4] text-white rounded-2xl font-bold text-xs uppercase tracking-wider transition-all shadow-lg shadow-[#5266EB]/20 flex items-center justify-center gap-2 cursor-pointer"
+                >
+                  <FileText className="w-4 h-4" /> Download Provisional Booking Receipt
+                </button>
+              )}
+
+              <div className="flex flex-col sm:flex-row gap-3">
+                <a
+                  href={`https://wa.me/918208211478?text=${encodeURIComponent(`Hi Aarambha Travels, I have submitted UPI payment for Bus Booking #${bookingSuccess.refNo} (${config.busType}, UTR: ${bookingSuccess.utrNumber || submittedUtr}). Please confirm.`)}`}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="flex-1 py-3.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-2xl font-bold text-xs uppercase tracking-wider transition-all text-center block shadow-md"
+                >
+                  Notify Desk on WhatsApp
+                </a>
+                <Link
+                  href="/my-bookings"
+                  className="flex-1 py-3.5 border border-gray-300 bg-white hover:bg-gray-50 text-[#111111] rounded-2xl font-bold text-xs uppercase tracking-wider transition-all text-center block"
+                >
+                  View My Bookings
+                </Link>
+              </div>
             </div>
           </div>
         </section>
@@ -643,8 +803,12 @@ export default function BusBookingPage({ config }: { config: BusBookingConfig })
                   <div className="space-y-2 text-xs">
                     <div className="flex justify-between"><span className="text-gray-500">{config.serviceType === 'local' ? 'Package (8 Hrs / 80 KM)' : 'Package Rate'}</span><span className="font-bold">₹{config.basePrice.toLocaleString('en-IN')}</span></div>
                     <div className="border-t border-gray-100 pt-2 flex justify-between font-bold text-sm">
-                      <span>Total</span>
-                      <span className="text-green-700">₹{totalCost.toLocaleString('en-IN')}</span>
+                      <span>Total Estimated Cost</span>
+                      <span className="text-emerald-700">₹{totalCost.toLocaleString('en-IN')}</span>
+                    </div>
+                    <div className="flex justify-between pt-1 text-xs text-emerald-600 font-bold bg-emerald-50 p-2.5 rounded-xl border border-emerald-100">
+                      <span>Lock Vehicle Deposit (Payable Now):</span>
+                      <span>₹500 (100% Refundable)</span>
                     </div>
                   </div>
 
@@ -665,17 +829,18 @@ export default function BusBookingPage({ config }: { config: BusBookingConfig })
                 <button
                   type="submit"
                   disabled={isSubmitting}
-                  className="w-full py-4 rounded-2xl bg-[#5266EB] hover:bg-[#3E51D4] text-white font-extrabold text-sm uppercase tracking-wider transition-all shadow-xl hover:shadow-2xl hover:scale-[1.02] active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                  className="w-full py-4 rounded-2xl bg-[#5266EB] hover:bg-[#3E51D4] text-white font-extrabold text-xs uppercase tracking-wider transition-all shadow-xl hover:shadow-2xl hover:scale-[1.02] active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 cursor-pointer"
                 >
                   {isSubmitting ? (
                     <>
                       <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                      Confirming...
+                      Validating...
                     </>
                   ) : (
                     <>
-                      <CheckCircle2 className="w-5 h-5" />
-                      Confirm Booking
+                      <CreditCard className="w-4 h-4" />
+                      Proceed to UPI Advance Payment (₹500)
+                      <ArrowRight className="w-4 h-4" />
                     </>
                   )}
                 </button>
