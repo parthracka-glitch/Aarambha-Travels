@@ -66,24 +66,24 @@ export default function Navbar({ vertical = 'home' }: { vertical?: 'tours' | 'fl
           <div className="flex items-center shrink-0">
             <Link
               href="/"
-              className="flex items-center gap-3 group hover:opacity-95 transition-opacity"
+              className="flex items-center gap-3 group hover:opacity-95 transition-all"
             >
-              <div className="relative w-10 h-10 sm:w-11 sm:h-11 rounded-xl overflow-hidden bg-white p-0.5 ring-1 ring-white/20 shadow-lg shadow-black/30 group-hover:scale-105 transition-transform shrink-0">
+              <div className="relative w-11 h-11 sm:w-12 sm:h-12 rounded-2xl overflow-hidden bg-white p-0.5 ring-2 ring-[#D3592B]/30 shadow-lg shadow-black/40 group-hover:scale-105 transition-transform shrink-0">
                 <img
-                  src="/images/logo.jpeg"
+                  src="/images/aarambha_logo.png"
                   alt="आरंभ Tours & Travels Logo"
-                  className="w-full h-full object-contain rounded-lg"
+                  className="w-full h-full object-contain rounded-xl"
+                  onError={(e) => { (e.target as HTMLElement).setAttribute('src', '/logo.png'); }}
                 />
               </div>
               <div className="flex flex-col justify-center">
                 <div className="flex items-baseline gap-1">
-                  <span className="font-['Amita','Yatra_One','Rozha_One',serif] text-2xl sm:text-3xl font-bold tracking-wide text-white drop-shadow-sm leading-none">
+                  <span className="aarambha-logo-3d text-2xl sm:text-3xl font-bold tracking-wide leading-none select-none">
                     आरंभ
                   </span>
-                  <span className="text-[#5266EB] font-black text-2xl sm:text-3xl leading-none">.</span>
                 </div>
-                <span className="text-[8.5px] sm:text-[9.5px] font-extrabold text-[#AFB2CE] uppercase tracking-[0.2em] leading-none mt-1 group-hover:text-gray-300 transition-colors">
-                  Tours & Travels
+                <span className="aarambha-sub-3d text-[8px] sm:text-[9px] font-extrabold text-[#D4C4BC] tracking-[0.25em] leading-none mt-1 group-hover:text-white transition-colors">
+                  TOURS AND TRAVELS
                 </span>
               </div>
             </Link>

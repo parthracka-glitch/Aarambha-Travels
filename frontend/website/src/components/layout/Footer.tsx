@@ -25,22 +25,22 @@ export default function Footer() {
             {/* Left Column (Brand & Newsletter) */}
             <div className="lg:col-span-5 space-y-4">
               <Link href="/" className="inline-flex items-center gap-3 group">
-                <div className="w-11 h-11 rounded-xl overflow-hidden bg-white p-0.5 ring-1 ring-gray-200 shadow-md">
+                <div className="w-12 h-12 rounded-2xl overflow-hidden bg-white p-0.5 ring-2 ring-[#D3592B]/20 shadow-md shrink-0">
                   <img
-                    src="/images/logo.jpeg"
+                    src="/images/aarambha_logo.png"
                     alt="आरंभ Logo"
-                    className="w-full h-full object-contain rounded-lg"
+                    className="w-full h-full object-contain rounded-xl"
+                    onError={(e) => { (e.target as HTMLElement).setAttribute('src', '/logo.png'); }}
                   />
                 </div>
                 <div>
                   <div className="flex items-baseline gap-1">
-                    <span className="font-['Amita','Yatra_One','Rozha_One',serif] text-2xl sm:text-3xl font-bold text-[#000000] leading-none">
+                    <span className="aarambha-logo-3d-light text-2xl sm:text-3xl font-bold leading-none select-none">
                       आरंभ
                     </span>
-                    <span className="text-[#5266EB] font-black text-2xl sm:text-3xl leading-none">.</span>
                   </div>
-                  <p className="text-[9px] font-extrabold text-[#AFB2CE] uppercase tracking-[0.2em] leading-none mt-1">
-                    Tours & Travels • Self-Drive Rentals
+                  <p className="font-['Syne',sans-serif] text-[9px] font-extrabold text-[#3A231A] tracking-[0.25em] leading-none mt-1">
+                    ✦ TOURS AND TRAVELS ✦
                   </p>
                 </div>
               </Link>

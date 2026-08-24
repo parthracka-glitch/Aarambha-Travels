@@ -129,7 +129,7 @@ export function generateCarRentalInvoiceHTML(data: InvoiceData): string {
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link
-    href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Syne:wght@600;700;800&display=swap"
+    href="https://fonts.googleapis.com/css2?family=Amita:wght@400;700&family=Gotu&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Rozha+One&family=Syne:wght@600;700;800&family=Yatra+One&display=swap"
     rel="stylesheet" />
   <style>
     :root {
@@ -195,52 +195,44 @@ export function generateCarRentalInvoiceHTML(data: InvoiceData): string {
     }
 
     .brand-logo-wrap {
-      width: 58px;
-      height: 58px;
-      border-radius: 14px;
+      width: 68px;
+      height: 68px;
+      border-radius: 16px;
       background: #FFFFFF;
-      border: 1px solid var(--border-subtle);
+      border: 1.5px solid #F1E5DF;
       padding: 3px;
       display: flex;
       align-items: center;
       justify-content: center;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.04);
+      box-shadow: 0 4px 14px rgba(211, 89, 43, 0.15);
+      flex-shrink: 0;
     }
 
     .brand-logo {
       width: 100%;
       height: 100%;
       object-fit: contain;
-      border-radius: 10px;
+      border-radius: 12px;
     }
 
-    .brand-name {
-      font-size: 19px;
-      font-weight: 800;
-      color: var(--dark);
-      letter-spacing: -0.4px;
-      line-height: 1.1;
-      display: flex;
-      align-items: center;
-      gap: 4px;
-    }
-
-    .brand-name .dot {
-      color: var(--primary);
-      font-size: 22px;
-      line-height: 0;
-    }
-
-    .brand-tagline {
-      font-size: 9px;
+    .brand-marathi-3d {
+      font-family: 'Yatra One', 'Rozha One', 'Tiro Devanagari Marathi', 'Amita', serif;
+      font-size: 30px;
       font-weight: 700;
-      color: var(--primary);
-      letter-spacing: 1.8px;
+      color: #D3592B;
+      letter-spacing: 0.04em;
+      line-height: 1;
+      text-shadow: 0 1px 0 #7A2E12, 0 2px 0 #5E200B, 0 3px 0 #421506, 0 4px 6px rgba(40, 15, 6, 0.35);
+    }
+
+    .brand-english-sub {
+      font-family: 'Syne', sans-serif;
+      font-size: 9px;
+      font-weight: 800;
+      letter-spacing: 2.5px;
       text-transform: uppercase;
-      margin: 4px 0 6px;
-      display: inline-flex;
-      align-items: center;
-      gap: 5px;
+      color: #3A231A;
+      margin: 3px 0 5px;
     }
 
     .brand-address {
@@ -910,16 +902,13 @@ export function generateCarRentalInvoiceHTML(data: InvoiceData): string {
       <div class="header">
         <div class="brand-left">
           <div class="brand-logo-wrap">
-            <img src="/images/logo.jpeg" alt="Aarambha Logo" class="brand-logo" onerror="this.src='/logo.jpeg';" />
+            <img src="/images/aarambha_logo.png" alt="Aarambha Logo" class="brand-logo" onerror="this.src='/logo.png';" />
           </div>
           <div class="brand-text">
-            <div class="brand-name">
-              <span>Aarambha Car Rentals</span>
-              <span class="dot">.</span>
-            </div>
-            <div class="brand-tagline">Self-Drive Fleet &middot; Pune, Maharashtra</div>
+            <div class="brand-marathi-3d">आरंभ</div>
+            <div class="brand-english-sub">✦ TOURS AND TRAVELS ✦</div>
             <div class="brand-address">
-              Green Hills Soc, Katraj, Pune, Maharashtra 411046<br>
+              Self-Drive Fleet &middot; Green Hills Soc, Katraj, Pune, Maharashtra 411046<br>
               Call: +91 78208 02985 &nbsp;&middot;&nbsp; WhatsApp: +91 82082 11478<br>
               support@aarambhatravels.in &nbsp;&middot;&nbsp; booking@aarambhatravels.in
             </div>
@@ -1227,7 +1216,7 @@ export function generateToursInvoiceHTML(data: InvoiceData): string {
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link
-    href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Syne:wght@600;700;800&display=swap"
+    href="https://fonts.googleapis.com/css2?family=Amita:wght@400;700&family=Gotu&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Rozha+One&family=Syne:wght@600;700;800&family=Yatra+One&display=swap"
     rel="stylesheet" />
   <style>
     :root {
@@ -1293,52 +1282,44 @@ export function generateToursInvoiceHTML(data: InvoiceData): string {
     }
 
     .brand-logo-wrap {
-      width: 58px;
-      height: 58px;
-      border-radius: 14px;
+      width: 68px;
+      height: 68px;
+      border-radius: 16px;
       background: #FFFFFF;
-      border: 1px solid var(--border-subtle);
+      border: 1.5px solid #F1E5DF;
       padding: 3px;
       display: flex;
       align-items: center;
       justify-content: center;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.04);
+      box-shadow: 0 4px 14px rgba(211, 89, 43, 0.15);
+      flex-shrink: 0;
     }
 
     .brand-logo {
       width: 100%;
       height: 100%;
       object-fit: contain;
-      border-radius: 10px;
+      border-radius: 12px;
     }
 
-    .brand-name {
-      font-size: 19px;
-      font-weight: 800;
-      color: var(--dark);
-      letter-spacing: -0.4px;
-      line-height: 1.1;
-      display: flex;
-      align-items: center;
-      gap: 4px;
-    }
-
-    .brand-name .dot {
-      color: var(--primary);
-      font-size: 22px;
-      line-height: 0;
-    }
-
-    .brand-tagline {
-      font-size: 9px;
+    .brand-marathi-3d {
+      font-family: 'Yatra One', 'Rozha One', 'Tiro Devanagari Marathi', 'Amita', serif;
+      font-size: 30px;
       font-weight: 700;
-      color: var(--primary);
-      letter-spacing: 1.8px;
+      color: #D3592B;
+      letter-spacing: 0.04em;
+      line-height: 1;
+      text-shadow: 0 1px 0 #7A2E12, 0 2px 0 #5E200B, 0 3px 0 #421506, 0 4px 6px rgba(40, 15, 6, 0.35);
+    }
+
+    .brand-english-sub {
+      font-family: 'Syne', sans-serif;
+      font-size: 9px;
+      font-weight: 800;
+      letter-spacing: 2.5px;
       text-transform: uppercase;
-      margin: 4px 0 6px;
-      display: inline-flex;
-      align-items: center;
-      gap: 5px;
+      color: #3A231A;
+      margin: 3px 0 5px;
     }
 
     .brand-address {
@@ -2046,16 +2027,13 @@ export function generateToursInvoiceHTML(data: InvoiceData): string {
       <div class="header">
         <div class="brand-left">
           <div class="brand-logo-wrap">
-            <img src="/images/logo.jpeg" alt="Aarambha Logo" class="brand-logo" onerror="this.src='/logo.jpeg';" />
+            <img src="/images/aarambha_logo.png" alt="Aarambha Logo" class="brand-logo" onerror="this.src='/logo.png';" />
           </div>
           <div class="brand-text">
-            <div class="brand-name">
-              <span>आरंभ Tours &amp; Travels</span>
-              <span class="dot">.</span>
-            </div>
-            <div class="brand-tagline">Pilgrimage &amp; Group Yatra Specialists &middot; Pune</div>
+            <div class="brand-marathi-3d">आरंभ</div>
+            <div class="brand-english-sub">✦ TOURS AND TRAVELS ✦</div>
             <div class="brand-address">
-              Green Hills Soc, Katraj, Pune, Maharashtra 411046<br>
+              Pilgrimage &amp; Group Yatra Specialists &middot; Pune, Maharashtra 411046<br>
               +91 90676 17451 &nbsp;&middot;&nbsp; +91 90218 78717<br>
               support@aarambhatravels.in &nbsp;&middot;&nbsp; booking@aarambhatravels.in
             </div>

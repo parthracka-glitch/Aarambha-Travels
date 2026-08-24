@@ -57,15 +57,15 @@ export function Sidebar({ isOpen = false, onClose }: SidebarProps) {
         {/* Brand Header & Mobile Close */}
         <div className="px-2 flex items-center justify-between">
           <div className="flex items-center gap-2.5">
-            <div className="w-9 h-9 rounded-xl bg-white p-0.5 ring-1 ring-white/20 shadow-sm shrink-0 overflow-hidden">
-              <img src="/logo.jpeg" alt="आरंभ Logo" className="w-full h-full object-contain" />
+            <div className="w-10 h-10 rounded-xl bg-white p-0.5 ring-2 ring-[#D3592B]/30 shadow-md shrink-0 overflow-hidden">
+              <img src="/images/aarambha_logo.png" alt="आरंभ Logo" className="w-full h-full object-contain rounded-lg" onError={(e) => { (e.target as HTMLElement).setAttribute('src', '/logo.png'); }} />
             </div>
             <div>
               <h1 className="font-extrabold text-sm text-[#EDEDF3] tracking-tight flex items-center gap-1.5 leading-none">
-                <span className="font-['Mukta',sans-serif] text-base font-bold text-[#5266EB]">आरंभ</span>
-                <span className="text-[10px] font-medium text-[#AFB2CE]">CRM</span>
+                <span className="font-['Yatra_One','Rozha_One','Tiro_Devanagari_Marathi',serif] text-lg font-bold text-[#D3592B] drop-shadow-[0_1px_2px_rgba(0,0,0,0.6)]">आरंभ</span>
+                <span className="text-[10px] font-bold text-[#AFB2CE] uppercase tracking-wider">CRM</span>
               </h1>
-              <p className="text-[10px] font-medium text-[#AFB2CE] mt-0.5">Tours & Fleet Admin</p>
+              <p className="font-['Syne',sans-serif] text-[8.5px] font-bold text-[#AFB2CE] uppercase tracking-widest mt-1">TOURS & FLEET</p>
             </div>
           </div>
 

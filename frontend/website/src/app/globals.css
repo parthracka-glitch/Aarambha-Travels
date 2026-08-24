@@ -75,9 +75,46 @@ h1, h2 {
 }
 
 .brand-marathi-logo {
-  font-family: 'Amita', 'Yatra One', 'Rozha One', 'Gotu', 'Mukta', serif;
+  font-family: 'Yatra One', 'Rozha One', 'Tiro Devanagari Marathi', 'Amita', serif;
   font-weight: 700;
   letter-spacing: 0.03em;
+}
+
+/* Official 3D Embossed Aarambha Logo Typography */
+.aarambha-logo-3d {
+  font-family: 'Yatra One', 'Rozha One', 'Tiro Devanagari Marathi', 'Amita', serif;
+  font-weight: 700;
+  color: #D3592B;
+  background: linear-gradient(180deg, #E66F3A 0%, #D3592B 45%, #B44218 85%, #8C300E 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  filter: drop-shadow(0 1px 0 #7A2E12)
+          drop-shadow(0 2px 0 #5E200B)
+          drop-shadow(0 3px 0 #421506)
+          drop-shadow(0 5px 6px rgba(0, 0, 0, 0.45));
+  display: inline-block;
+  transform: translateZ(0);
+}
+
+.aarambha-logo-3d-light {
+  font-family: 'Yatra One', 'Rozha One', 'Tiro Devanagari Marathi', 'Amita', serif;
+  font-weight: 700;
+  color: #C85227;
+  background: linear-gradient(180deg, #E06834 0%, #C85227 50%, #9E3710 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  filter: drop-shadow(0 1px 0 #853114)
+          drop-shadow(0 2px 0 #61210B)
+          drop-shadow(0 3px 4px rgba(60, 20, 8, 0.3));
+  display: inline-block;
+}
+
+.aarambha-sub-3d {
+  font-family: 'Syne', 'Outfit', sans-serif;
+  font-weight: 800;
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+  color: #AFB2CE;
 }
 
 .font-syne {

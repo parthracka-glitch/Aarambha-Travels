@@ -37,14 +37,14 @@ export default function LoginPage() {
       <div className="relative w-full max-w-md">
         {/* Brand */}
         <div className="text-center mb-8">
-          <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-white p-1 border border-white/20 mb-3 shadow-2xl overflow-hidden">
-            <img src="/logo.jpeg" alt="आरंभ Logo" className="w-full h-full object-contain" />
+          <div className="inline-flex items-center justify-center w-18 h-18 rounded-2xl bg-white p-1 ring-2 ring-[#D3592B]/40 mb-3 shadow-2xl overflow-hidden">
+            <img src="/images/aarambha_logo.png" alt="आरंभ Logo" className="w-full h-full object-contain rounded-xl" onError={(e) => { (e.target as HTMLElement).setAttribute('src', '/logo.png'); }} />
           </div>
           <h1 className="text-[#EDEDF3] font-black text-2xl tracking-tight flex items-center justify-center gap-2">
-            <span className="text-[#5266EB] font-['Rozha_One','Mukta',serif] text-3xl font-normal">आरंभ</span>
-            <span>CRM</span>
+            <span className="font-['Yatra_One','Rozha_One','Tiro_Devanagari_Marathi',serif] text-3xl font-bold text-[#D3592B] drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)]">आरंभ</span>
+            <span className="text-white font-extrabold">CRM</span>
           </h1>
-          <p className="text-[#AFB2CE] text-xs mt-1">Tours, Travels & Fleet Admin Portal</p>
+          <p className="font-['Syne',sans-serif] text-[9.5px] font-bold text-[#D4C4BC] uppercase tracking-[0.25em] mt-1">✦ TOURS AND TRAVELS ADMIN ✦</p>
         </div>
 
         {/* Card */}
