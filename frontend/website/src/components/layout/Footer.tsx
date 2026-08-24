@@ -88,7 +88,7 @@ export default function Footer() {
                 <ul className="space-y-2 text-gray-600">
                   {isCarsActive ? (
                     <>
-                      <li><Link href="/bus-rentals" className="hover:text-[#5266EB] transition-colors font-medium">Bus Rentals</Link></li>
+                      <li><Link href="/bus-rentals" className="hover:text-[#5266EB] transition-colors font-medium">Bus & Car Rentals</Link></li>
                       <li><Link href="/bus-rentals/bus-rental" className="hover:text-[#5266EB] transition-colors">Outstation Bus Hire</Link></li>
                       <li><Link href="/bus-rentals/local-trips" className="hover:text-[#5266EB] transition-colors">Pune Local Trips</Link></li>
                       <li><Link href="/bus-rentals/car-rental" className="hover:text-[#5266EB] transition-colors">Self-Drive Fleet</Link></li>
@@ -102,7 +102,7 @@ export default function Footer() {
                   ) : (
                     <>
                       <li><Link href="/tours-travels" className="hover:text-[#5266EB] transition-colors">Tour Packages</Link></li>
-                      <li><Link href="/bus-rentals" className="hover:text-[#5266EB] transition-colors font-medium">Bus Rentals</Link></li>
+                      <li><Link href="/bus-rentals" className="hover:text-[#5266EB] transition-colors font-medium">Bus & Car Rentals</Link></li>
                       <li><Link href="/bus-rentals/car-rental" className="hover:text-[#5266EB] transition-colors">Self-Drive Fleet</Link></li>
                     </>
                   )}

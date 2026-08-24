@@ -79,7 +79,7 @@ export default function EpicHeroShowcase() {
                   </motion.span>
 
                   <h2 className="font-syne text-3xl sm:text-5xl lg:text-6xl font-black uppercase tracking-tight drop-shadow-2xl group-hover:scale-105 group-hover:tracking-wider transition-all duration-500 text-white">
-                    TOURS & TRAVELS
+                    TOUR PACKAGES
                   </h2>
 
                   <p className="text-[11px] sm:text-xs text-[#EDEDF3] mt-2 max-w-xs leading-snug group-hover:text-white transition-colors">
@@ -130,7 +130,7 @@ export default function EpicHeroShowcase() {
                   </motion.span>
 
                   <h2 className="font-syne text-3xl sm:text-5xl lg:text-6xl font-black uppercase tracking-tight drop-shadow-2xl group-hover:scale-105 group-hover:tracking-wider transition-all duration-500 text-white">
-                    BUS RENTALS
+                    BUS AND CAR RENTALS
                   </h2>
 
                   <p className="text-[11px] sm:text-xs text-gray-300 mt-2 max-w-xs leading-snug group-hover:text-white transition-colors">
@@ -233,7 +233,7 @@ export default function EpicHeroShowcase() {
                     Aarambha Experiences
                   </span>
                   <h1 className="font-syne text-3xl sm:text-5xl lg:text-6xl font-black uppercase tracking-tight text-white drop-shadow-2xl leading-tight">
-                    TOURS &<br className="hidden sm:block" /> TRAVELS
+                    TOUR<br className="hidden sm:block" /> PACKAGES
                   </h1>
                 </motion.div>
 
@@ -310,7 +310,7 @@ export default function EpicHeroShowcase() {
                     Bus & Fleet Rentals
                   </span>
                   <h1 className="font-syne text-3xl sm:text-5xl lg:text-6xl font-black uppercase tracking-tight text-white drop-shadow-2xl leading-tight">
-                    BUS<br className="hidden sm:block" /> RENTALS
+                    BUS AND CAR<br className="hidden sm:block" /> RENTALS
                   </h1>
                 </motion.div>
 

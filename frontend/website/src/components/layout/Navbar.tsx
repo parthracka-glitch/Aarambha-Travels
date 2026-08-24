@@ -110,7 +110,7 @@ export default function Navbar({ vertical = 'home' }: { vertical?: 'tours' | 'fl
               }`}
             >
               <Compass className="w-3.5 h-3.5" />
-              <span>Tours & Travels</span>
+              <span>Tour Packages</span>
               {isToursActive && (
                 <span className="absolute -bottom-1 left-0 w-full h-[2px] bg-[#9CB4E8] rounded-full" />
               )}
@@ -123,7 +123,7 @@ export default function Navbar({ vertical = 'home' }: { vertical?: 'tours' | 'fl
               }`}
             >
               <Car className="w-3.5 h-3.5" />
-              <span>Bus Rentals</span>
+              <span>Bus & Car Rentals</span>
               {isCarsActive && (
                 <span className="absolute -bottom-1 left-0 w-full h-[2px] bg-[#5266EB] rounded-full" />
               )}
@@ -214,7 +214,7 @@ export default function Navbar({ vertical = 'home' }: { vertical?: 'tours' | 'fl
                 }`}
               >
                 <Compass className="w-4 h-4" />
-                <span>Tours & Travels</span>
+                <span>Tour Packages</span>
               </Link>
 
               <Link
@@ -227,7 +227,7 @@ export default function Navbar({ vertical = 'home' }: { vertical?: 'tours' | 'fl
                 }`}
               >
                 <Car className="w-4 h-4" />
-                <span>Bus Rentals</span>
+                <span>Bus & Car Rentals</span>
               </Link>
             </div>
 
@@ -256,7 +256,7 @@ export default function Navbar({ vertical = 'home' }: { vertical?: 'tours' | 'fl
               >
                 <div className="flex items-center gap-2">
                   {isToursActive && <span className="w-1.5 h-1.5 rounded-full bg-[#9CB4E8]" />}
-                  <span>Tours & Travels</span>
+                  <span>Tour Packages</span>
                 </div>
                 <ChevronRight className="w-4 h-4 text-white/20 group-hover:text-white/60 transition-colors" />
               </Link>
@@ -270,7 +270,7 @@ export default function Navbar({ vertical = 'home' }: { vertical?: 'tours' | 'fl
               >
                 <div className="flex items-center gap-2">
                   {isCarsActive && <span className="w-1.5 h-1.5 rounded-full bg-[#5266EB]" />}
-                  <span>Bus Rentals</span>
+                  <span>Bus & Car Rentals</span>
                 </div>
                 <ChevronRight className="w-4 h-4 text-white/20 group-hover:text-white/60 transition-colors" />
               </Link>

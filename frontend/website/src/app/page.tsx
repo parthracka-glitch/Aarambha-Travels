@@ -120,7 +120,7 @@ function PortalContent() {
                 SPOTLIGHT GLIMPSE
               </span>
               <h2 className="font-syne text-3xl sm:text-4xl font-extrabold text-[#000000] tracking-tight">
-                Famous Tours & Self-Drive Fleet
+                Famous Tour Packages & Bus/Car Fleet
               </h2>
               <p className="text-xs text-gray-500 mt-1 font-normal">
                 Discover top-rated departure packages and popular luxury self-drive cars.
@@ -148,7 +148,7 @@ function PortalContent() {
                 }`}
               >
                 <Compass className="w-3.5 h-3.5" />
-                <span>3 Famous Tours</span>
+                <span>3 Tour Packages</span>
               </button>
               <button
                 onClick={() => setSpotlightTab('cars')}
