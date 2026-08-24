@@ -10,6 +10,7 @@ router.get('/packages', ToursController.listPackages);
 router.get('/packages/:slug', ToursController.getPackageBySlug);
 router.post('/inquiries', ToursController.createInquiry);
 router.post('/bookings', ToursController.createBooking);
+router.post('/bookings/sync-status', ToursController.syncBookingStatus);
 
 // Protected Admin routes
 router.use(authenticateAdmin);

@@ -54,14 +54,21 @@ export default function MyBookingsPage() {
 
       // Fetch live bookings from backend to check if admin verified
       try {
+        const codes = localList.map(b => b.id || b.bookingCode || b.booking_code).filter(Boolean);
         const [fleetRes, toursRes] = await Promise.all([
-          apiFetch<any[]>('/api/fleet/bookings').catch(() => []),
-          apiFetch<any[]>('/api/tours/bookings').catch(() => []),
+          apiFetch<any[]>('/api/fleet/bookings/sync-status', {
+            method: 'POST',
+            body: JSON.stringify({ codes, email: userEmail }),
+          }).catch(() => []),
+          apiFetch<any[]>('/api/tours/bookings/sync-status', {
+            method: 'POST',
+            body: JSON.stringify({ codes, email: userEmail }),
+          }).catch(() => []),
         ]);
 
         const backendAll = [
-          ...(Array.isArray(fleetRes) ? fleetRes.map((x: any) => ({ ...x, _type: 'car' })) : []),
-          ...(Array.isArray(toursRes) ? toursRes.map((x: any) => ({ ...x, _type: 'tour' })) : []),
+          ...(Array.isArray(fleetRes) ? fleetRes : []),
+          ...(Array.isArray(toursRes) ? toursRes : []),
         ];
 
         // Merge updated status from backend into local list
@@ -69,13 +76,18 @@ export default function MyBookingsPage() {
         localList = localList.map(local => {
           const match = backendAll.find(b => 
             (b.bookingCode && b.bookingCode === local.id) ||
-            (b.booking_code && b.booking_code === local.id) ||
-            (b._id && b._id === local.id) ||
-            (b.id && b.id === local.id)
+            (b.id && b.id === local.id) ||
+            (b.bookingCode && b.bookingCode === local.bookingCode)
           );
           if (match && match.status && match.status !== local.status) {
             changed = true;
-            return { ...local, status: match.status, rejectionReason: match.rejectionReason };
+            return { 
+              ...local, 
+              status: match.status, 
+              rejectionReason: match.rejectionReason, 
+              verifiedAt: match.verifiedAt,
+              utrNumber: match.utrNumber || local.utrNumber
+            };
           }
           return local;
         });

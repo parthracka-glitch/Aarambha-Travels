@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import { X, Calendar, MapPin, Trash2, CheckCircle2, Car, Compass, ArrowRight, Clock } from 'lucide-react';
 import Link from 'next/link';
+import { apiFetch } from '@/services/api-client';
 
 export interface SavedBooking {
   id: string;
@@ -37,33 +38,72 @@ export default function MyBookingsDrawer({ isOpen, onClose }: MyBookingsDrawerPr
   const [user, setUser] = useState<{ name?: string; email: string } | null>(null);
   const [bookings, setBookings] = useState<SavedBooking[]>([]);
 
-  const loadUserBookings = () => {
+  const loadUserBookings = async () => {
     try {
       const rawUser = localStorage.getItem('aarambha_user');
-      if (!rawUser) {
-        setUser(null);
-        setBookings([]);
-        return;
-      }
-      const parsedUser = JSON.parse(rawUser);
-      setUser(parsedUser);
-
-      if (!parsedUser || !parsedUser.email) {
-        setBookings([]);
-        return;
+      let userEmail = '';
+      if (rawUser) {
+        const parsedUser = JSON.parse(rawUser);
+        setUser(parsedUser);
+        userEmail = (parsedUser.email || '').toLowerCase().trim();
       }
 
-      const userEmail = parsedUser.email.toLowerCase().trim();
       const stored = localStorage.getItem('aarambha_user_bookings');
-      if (stored) {
-        const all: any[] = JSON.parse(stored);
+      let all: any[] = stored ? JSON.parse(stored) : [];
+
+      if (all.length > 0) {
+        try {
+          const codes = all.map(b => b.id || b.bookingCode || b.booking_code).filter(Boolean);
+          const [fleetRes, toursRes] = await Promise.all([
+            apiFetch<any[]>('/api/fleet/bookings/sync-status', {
+              method: 'POST',
+              body: JSON.stringify({ codes, email: userEmail }),
+            }).catch(() => []),
+            apiFetch<any[]>('/api/tours/bookings/sync-status', {
+              method: 'POST',
+              body: JSON.stringify({ codes, email: userEmail }),
+            }).catch(() => []),
+          ]);
+
+          const backendAll = [
+            ...(Array.isArray(fleetRes) ? fleetRes : []),
+            ...(Array.isArray(toursRes) ? toursRes : []),
+          ];
+
+          let changed = false;
+          all = all.map(local => {
+            const match = backendAll.find(b => 
+              (b.bookingCode && b.bookingCode === local.id) ||
+              (b.id && b.id === local.id) ||
+              (b.bookingCode && b.bookingCode === local.bookingCode)
+            );
+            if (match && match.status && match.status !== local.status) {
+              changed = true;
+              return { 
+                ...local, 
+                status: match.status, 
+                rejectionReason: match.rejectionReason, 
+                verifiedAt: match.verifiedAt,
+                utrNumber: match.utrNumber || local.utrNumber
+              };
+            }
+            return local;
+          });
+
+          if (changed) {
+            localStorage.setItem('aarambha_user_bookings', JSON.stringify(all));
+          }
+        } catch (_e) {}
+      }
+
+      if (userEmail) {
         const userSpecific = all.filter((b) => {
           const bEmail = (b.customerEmail || b.email || b.accountEmail || b.userEmail || '').toLowerCase().trim();
           return bEmail === userEmail;
         });
         setBookings(userSpecific);
       } else {
-        setBookings([]);
+        setBookings(all);
       }
     } catch (err) {
       console.error('Failed to load saved bookings:', err);

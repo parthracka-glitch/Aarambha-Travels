@@ -13,6 +13,7 @@ router.get('/buses', BusController.listBuses);
 router.get('/buses/:id', BusController.getBusById);
 router.post('/inquiries', FleetController.createInquiry);
 router.post('/bookings', FleetController.createBooking);
+router.post('/bookings/sync-status', FleetController.syncBookingStatus);
 
 // Protected Admin routes
 router.use(authenticateAdmin);

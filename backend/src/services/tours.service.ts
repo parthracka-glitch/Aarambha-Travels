@@ -304,6 +304,58 @@ export class ToursService {
     return updated || { _id: id, id, status, rejectionReason, verifiedAt: new Date().toISOString() };
   }
 
+  static async syncBookingStatus(codes?: string[], email?: string) {
+    const filter: any = {};
+    if (Array.isArray(codes) && codes.length > 0) {
+      filter.$or = [
+        { bookingCode: { $in: codes } },
+        { _id: { $in: codes.filter(c => mongoose.Types.ObjectId.isValid(c)) } }
+      ];
+    } else if (email) {
+      filter.customerEmail = new RegExp(`^${email.trim()}$`, 'i');
+    } else {
+      return [];
+    }
+
+    if (mongoose.connection.readyState === 1) {
+      try {
+        const list = await TourBooking.find(filter).select('bookingCode status utrNumber rejectionReason verifiedAt depositPaid totalAmount');
+        return list.map(b => ({
+          id: b.bookingCode,
+          bookingCode: b.bookingCode,
+          status: b.status,
+          utrNumber: b.utrNumber,
+          rejectionReason: b.rejectionReason,
+          verifiedAt: b.verifiedAt,
+          depositPaid: b.depositPaid,
+          totalAmount: b.totalAmount,
+        }));
+      } catch (_e) {}
+    }
+
+    const localList = localStore.getToursBookings();
+    return localList
+      .filter((b: any) => {
+        if (Array.isArray(codes) && codes.length > 0) {
+          return codes.includes(b.bookingCode) || codes.includes(b.id) || codes.includes(b._id);
+        }
+        if (email) {
+          return (b.customerEmail || b.email || '').toLowerCase() === email.toLowerCase();
+        }
+        return false;
+      })
+      .map((b: any) => ({
+        id: b.bookingCode || b.id,
+        bookingCode: b.bookingCode || b.id,
+        status: b.status,
+        utrNumber: b.utrNumber,
+        rejectionReason: b.rejectionReason,
+        verifiedAt: b.verifiedAt,
+        depositPaid: b.depositPaid,
+        totalAmount: b.totalAmount,
+      }));
+  }
+
   static async listBookings() {
     if (mongoose.connection.readyState === 1) {
       try {

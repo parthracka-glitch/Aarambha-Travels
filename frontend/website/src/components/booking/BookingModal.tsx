@@ -100,6 +100,50 @@ export default function BookingModal({ isOpen, onClose, item, onSuccess }: Booki
   const [invoiceNumber, setInvoiceNumber] = useState('');
   const [termsAccepted, setTermsAccepted] = useState(false);
   const [validationError, setValidationError] = useState('');
+  const [liveBookingStatus, setLiveBookingStatus] = useState<'pending_verification' | 'Confirmed' | 'Rejected'>('pending_verification');
+
+  // Live poll backend status while customer is on the provisional screen
+  useEffect(() => {
+    if (!isSuccess || !bookingRef || !item) return;
+
+    let intervalId: any;
+    const pollStatus = async () => {
+      try {
+        const endpoint = item.type === 'tour' ? '/api/tours/bookings/sync-status' : '/api/fleet/bookings/sync-status';
+        const res = await apiFetch<any[]>(endpoint, {
+          method: 'POST',
+          body: JSON.stringify({ codes: [bookingRef] }),
+        });
+
+        if (Array.isArray(res) && res.length > 0) {
+          const matched = res[0];
+          if (matched.status === 'Confirmed') {
+            setLiveBookingStatus('Confirmed');
+            try {
+              const existingStr = localStorage.getItem('aarambha_user_bookings');
+              if (existingStr) {
+                const list = JSON.parse(existingStr);
+                const updated = list.map((b: any) =>
+                  (b.id === bookingRef || b.bookingCode === bookingRef)
+                    ? { ...b, status: 'Confirmed', verifiedAt: matched.verifiedAt }
+                    : b
+                );
+                localStorage.setItem('aarambha_user_bookings', JSON.stringify(updated));
+                window.dispatchEvent(new Event('aarambha_booking_updated'));
+              }
+            } catch (_e) {}
+          } else if (matched.status === 'Rejected') {
+            setLiveBookingStatus('Rejected');
+          }
+        }
+      } catch (_e) {}
+    };
+
+    intervalId = setInterval(pollStatus, 2500);
+    pollStatus();
+
+    return () => clearInterval(intervalId);
+  }, [isSuccess, bookingRef, item?.type]);
 
   // Sync auth state on mount and upon auth changes
   useEffect(() => {
@@ -394,34 +438,62 @@ export default function BookingModal({ isOpen, onClose, item, onSuccess }: Booki
         </button>
 
         {isSuccess ? (
-          /* ─── SCREEN 1: PROVISIONAL VOUCHER & PAYMENT IN VERIFICATION ─── */
+          /* ─── SCREEN 1: PROVISIONAL VOUCHER & PAYMENT IN VERIFICATION / CONFIRMED ─── */
           <div className="p-6 sm:p-8 text-center space-y-5 overflow-y-auto max-h-[85vh]">
-            <div className="w-16 h-16 rounded-full bg-amber-100 text-amber-600 flex items-center justify-center mx-auto shadow-sm">
-              <ShieldCheck className="w-10 h-10" />
-            </div>
+            {liveBookingStatus === 'Confirmed' ? (
+              <div className="w-16 h-16 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center mx-auto shadow-md animate-bounce">
+                <CheckCircle2 className="w-10 h-10 text-emerald-600" />
+              </div>
+            ) : (
+              <div className="w-16 h-16 rounded-full bg-amber-100 text-amber-600 flex items-center justify-center mx-auto shadow-sm">
+                <ShieldCheck className="w-10 h-10" />
+              </div>
+            )}
 
             <div className="space-y-1.5">
-              <span className="text-[10px] font-extrabold text-amber-700 bg-amber-100 px-3 py-1 rounded-full uppercase tracking-widest inline-block font-syne border border-amber-200">
-                PROVISIONAL BOOKING • VERIFICATION IN PROGRESS
-              </span>
+              {liveBookingStatus === 'Confirmed' ? (
+                <span className="text-[10px] font-extrabold text-emerald-800 bg-emerald-100 px-3 py-1 rounded-full uppercase tracking-widest inline-block font-syne border border-emerald-300">
+                  🎉 BOOKING OFFICIALLY CONFIRMED & VERIFIED
+                </span>
+              ) : (
+                <span className="text-[10px] font-extrabold text-amber-700 bg-amber-100 px-3 py-1 rounded-full uppercase tracking-widest inline-block font-syne border border-amber-200">
+                  PROVISIONAL BOOKING • VERIFICATION IN PROGRESS
+                </span>
+              )}
               <h3 className="font-syne text-2xl font-extrabold text-gray-900 pt-1">
                 Booking Reference #{bookingRef}
               </h3>
               <p className="text-xs text-gray-600 leading-relaxed max-w-sm mx-auto">
-                Thank you, <strong className="text-gray-900">{fullName || 'Valued Guest'}</strong>! Your booking request and UPI UTR reference have been recorded.
+                {liveBookingStatus === 'Confirmed' ? (
+                  <>Congratulations, <strong className="text-gray-900">{fullName || 'Valued Guest'}</strong>! Your payment has been verified and your departure is locked.</>
+                ) : (
+                  <>Thank you, <strong className="text-gray-900">{fullName || 'Valued Guest'}</strong>! Your booking request and UPI UTR reference have been recorded.</>
+                )}
               </p>
             </div>
 
-            {/* Verification Notice Advisory */}
-            <div className="p-3.5 bg-blue-50 border border-blue-200 rounded-2xl text-[11px] text-blue-900 text-left space-y-1">
-              <div className="font-bold flex items-center gap-1.5">
-                <span>🛡️</span>
-                <span>Accounts Verification Desk</span>
+            {/* Status Advisory Banner */}
+            {liveBookingStatus === 'Confirmed' ? (
+              <div className="p-3.5 bg-emerald-50 border border-emerald-200 rounded-2xl text-[11px] text-emerald-900 text-left space-y-1">
+                <div className="font-bold flex items-center gap-1.5">
+                  <CheckCircle2 className="w-4 h-4 text-emerald-600" />
+                  <span>Payment Verified by Admin</span>
+                </div>
+                <p className="leading-relaxed text-emerald-800">
+                  Your advance deposit has been reconciled. You can download your official confirmed invoice below or view it anytime in My Bookings.
+                </p>
               </div>
-              <p className="leading-relaxed text-blue-800">
-                Our accounts team is cross-checking UTR <strong className="font-mono">{submittedUtr}</strong> with incoming bank credit. Your confirmed status will activate shortly.
-              </p>
-            </div>
+            ) : (
+              <div className="p-3.5 bg-blue-50 border border-blue-200 rounded-2xl text-[11px] text-blue-900 text-left space-y-1">
+                <div className="font-bold flex items-center gap-1.5">
+                  <span>🛡️</span>
+                  <span>Accounts Verification Desk</span>
+                </div>
+                <p className="leading-relaxed text-blue-800">
+                  Our accounts team is cross-checking UTR <strong className="font-mono">{submittedUtr}</strong> with incoming bank credit. This page will update automatically once verified!
+                </p>
+              </div>
+            )}
 
             <div className="bg-[#F8F9FA] rounded-2xl p-4 text-xs space-y-2.5 text-left border border-gray-200/80">
               <div className="flex justify-between text-gray-600">
@@ -436,32 +508,43 @@ export default function BookingModal({ isOpen, onClose, item, onSuccess }: Booki
                 <span>Total Package Fare:</span> <strong className="text-gray-900 font-bold">₹{item.type === 'tour' ? (item.price * guests).toLocaleString('en-IN') : item.price.toLocaleString('en-IN')}</strong>
               </div>
               <div className="flex justify-between text-gray-600">
-                <span>Advance Deposit Submitted:</span> <strong className="text-emerald-700 font-bold">₹{item.type === 'tour' ? (item.deposit * guests).toLocaleString('en-IN') : item.deposit.toLocaleString('en-IN')}</strong>
+                <span>Advance Deposit Paid:</span> <strong className="text-emerald-700 font-bold">₹{item.type === 'tour' ? (item.deposit * guests).toLocaleString('en-IN') : item.deposit.toLocaleString('en-IN')}</strong>
               </div>
               <div className="flex justify-between text-gray-600">
-                <span>Submitted UTR / Ref:</span> <strong className="font-mono text-gray-900">{submittedUtr || 'Recorded'}</strong>
+                <span>UTR / Ref No.:</span> <strong className="font-mono text-gray-900">{submittedUtr || 'Recorded'}</strong>
               </div>
               <div className="flex justify-between text-gray-600">
                 <span>Invoice Slip No.:</span> <strong className="font-mono text-gray-900">{invoiceNumber}</strong>
               </div>
               <div className="flex justify-between text-gray-600">
-                <span>Current Status:</span> <span className="px-2.5 py-0.5 rounded-full bg-amber-100 text-amber-800 font-bold text-[10px] border border-amber-300">Pending Bank Verification</span>
+                <span>Current Status:</span>
+                {liveBookingStatus === 'Confirmed' ? (
+                  <span className="px-2.5 py-0.5 rounded-full bg-emerald-100 text-emerald-800 font-bold text-[10px] border border-emerald-300">
+                    🟢 Confirmed & Verified
+                  </span>
+                ) : (
+                  <span className="px-2.5 py-0.5 rounded-full bg-amber-100 text-amber-800 font-bold text-[10px] border border-amber-300">
+                    🟡 Pending Bank Verification
+                  </span>
+                )}
               </div>
             </div>
 
             {/* Action Buttons */}
             <div className="space-y-2 pt-1">
-              <button
-                type="button"
-                onClick={() => {
-                  const wpPhone = item.type === 'tour' ? SHARED_BUS_CONTACT.whatsappPhone : SHARED_CAR_CONTACT.whatsappPhone;
-                  const msg = `*AARAMBHA BOOKING VERIFICATION DESK*%0A🔖 *Booking Code:* ${bookingRef}%0A👤 *Name:* ${fullName}%0A💰 *Deposit:* ₹${item.type === 'tour' ? item.deposit * guests : item.deposit}%0A🔢 *UTR:* ${submittedUtr}%0A_Please verify my UPI transfer and confirm._`;
-                  window.open(`https://wa.me/91${wpPhone}?text=${encodeURIComponent(msg)}`, '_blank');
-                }}
-                className="w-full py-3 rounded-2xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold font-syne transition-all shadow-md flex items-center justify-center gap-2 cursor-pointer"
-              >
-                <Phone className="w-4 h-4" /> Direct WhatsApp Desk Verification
-              </button>
+              {liveBookingStatus !== 'Confirmed' && (
+                <button
+                  type="button"
+                  onClick={() => {
+                    const wpPhone = item.type === 'tour' ? SHARED_BUS_CONTACT.whatsappPhone : SHARED_CAR_CONTACT.whatsappPhone;
+                    const msg = `*AARAMBHA BOOKING VERIFICATION DESK*%0A🔖 *Booking Code:* ${bookingRef}%0A👤 *Name:* ${fullName}%0A💰 *Deposit:* ₹${item.type === 'tour' ? item.deposit * guests : item.deposit}%0A🔢 *UTR:* ${submittedUtr}%0A_Please verify my UPI transfer and confirm._`;
+                    window.open(`https://wa.me/91${wpPhone}?text=${encodeURIComponent(msg)}`, '_blank');
+                  }}
+                  className="w-full py-3 rounded-2xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold font-syne transition-all shadow-md flex items-center justify-center gap-2 cursor-pointer"
+                >
+                  <Phone className="w-4 h-4" /> Direct WhatsApp Desk Verification
+                </button>
+              )}
 
               <button
                 type="button"
@@ -494,23 +577,25 @@ export default function BookingModal({ isOpen, onClose, item, onSuccess }: Booki
                     depositPaid: depAmt,
                     balanceAmount: Math.max(0, totalAmt - depAmt),
                     paymentMode: 'Direct UPI',
-                    paymentStatus: 'Partially Paid',
+                    paymentStatus: liveBookingStatus === 'Confirmed' ? 'Confirmed & Verified' : 'Partially Paid',
                     transactionId: submittedUtr || bookingRef,
                   };
                   generateInvoicePDF(invoiceData);
                 }}
-                className="w-full py-3 rounded-2xl bg-gray-900 hover:bg-black text-white text-xs font-bold transition-all shadow-sm flex items-center justify-center gap-2 cursor-pointer"
+                className={`w-full py-3 rounded-2xl text-white text-xs font-bold transition-all shadow-sm flex items-center justify-center gap-2 cursor-pointer ${
+                  liveBookingStatus === 'Confirmed' ? 'bg-[#5266EB] hover:bg-[#3E51D4]' : 'bg-gray-900 hover:bg-black'
+                }`}
               >
-                <Download className="w-4 h-4" /> Download Provisional Invoice PDF
+                <Download className="w-4 h-4" /> {liveBookingStatus === 'Confirmed' ? 'Download Confirmed Tax Invoice PDF' : 'Download Provisional Invoice PDF'}
               </button>
 
-              <button
-                type="button"
-                onClick={handleResetAndClose}
-                className="w-full py-2.5 rounded-2xl border border-gray-200 bg-white text-gray-700 text-xs font-bold hover:bg-gray-50 transition-colors cursor-pointer"
+              <a
+                href="/my-bookings"
+                className="w-full py-2.5 rounded-2xl border border-gray-200 bg-white text-gray-700 text-xs font-bold hover:bg-gray-50 transition-colors flex items-center justify-center gap-1.5 cursor-pointer block"
               >
-                Done / View My Bookings
-              </button>
+                <span>Go to My Bookings Page</span>
+                <ArrowRight className="w-3.5 h-3.5" />
+              </a>
             </div>
           </div>
         ) : !currentUser ? (

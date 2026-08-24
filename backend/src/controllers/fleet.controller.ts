@@ -143,6 +143,16 @@ export class FleetController {
     }
   }
 
+  static async syncBookingStatus(req: Request, res: Response, next: NextFunction): Promise<void> {
+    try {
+      const { codes, email } = req.body;
+      const list = await FleetService.syncBookingStatus(codes, email);
+      res.json(list);
+    } catch (err) {
+      next(err);
+    }
+  }
+
   static async verifyBooking(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
       const { status, rejectionReason, rejection_reason } = req.body;

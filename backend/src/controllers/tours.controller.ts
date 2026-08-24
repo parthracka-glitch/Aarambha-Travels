@@ -115,6 +115,16 @@ export class ToursController {
     }
   }
 
+  static async syncBookingStatus(req: Request, res: Response, next: NextFunction): Promise<void> {
+    try {
+      const { codes, email } = req.body;
+      const list = await ToursService.syncBookingStatus(codes, email);
+      res.json(list);
+    } catch (err) {
+      next(err);
+    }
+  }
+
   static async listBookings(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
       const list = await ToursService.listBookings();
