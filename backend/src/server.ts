@@ -13,7 +13,8 @@ const PORT = process.env.PORT || 8000;
 
 // Middleware
 app.use(cors({ origin: true, credentials: true }));
-app.use(express.json({ limit: '2mb' }));
+app.use(express.json({ limit: '15mb' }));
+app.use(express.urlencoded({ limit: '15mb', extended: true }));
 
 // Performance headers middleware
 app.use((_req, res, next) => {

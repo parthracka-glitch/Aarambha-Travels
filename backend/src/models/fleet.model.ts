@@ -113,6 +113,7 @@ export interface IFleetBooking extends Document {
   razorpayPaymentId?: string;
   utrNumber?: string;
   paymentMethod?: string;
+  paymentScreenshot?: string;
   verifiedAt?: Date;
   verifiedBy?: string;
   rejectionReason?: string;
@@ -145,6 +146,7 @@ const FleetBookingSchema = new Schema<IFleetBooking>({
   razorpayPaymentId: { type: String },
   utrNumber: { type: String, index: true },
   paymentMethod: { type: String, default: 'UPI_QR' },
+  paymentScreenshot: { type: String },
   verifiedAt: { type: Date },
   verifiedBy: { type: String },
   rejectionReason: { type: String },

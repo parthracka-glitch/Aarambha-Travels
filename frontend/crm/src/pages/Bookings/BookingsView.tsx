@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { Link } from 'react-router-dom';
-import { RefreshCw, Plus, Trash2, FileDown, Filter, FileSpreadsheet, Calendar as CalendarIcon, CheckCircle, XCircle, AlertTriangle, Copy, Check, Clock, QrCode, Phone, MessageSquare } from 'lucide-react';
+import { RefreshCw, Plus, Trash2, FileDown, Filter, FileSpreadsheet, Calendar as CalendarIcon, CheckCircle, XCircle, AlertTriangle, Copy, Check, Clock, QrCode, Phone, MessageSquare, Image as ImageIcon, Eye, Download, X } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
 import { getToursBookings, getToursPackages, createToursBooking, deleteToursBooking, verifyToursBooking } from '@/api/tours.api';
 import { getFleetBookings, getFleetVehicles, createFleetBooking, deleteFleetBooking, pickupFleetBooking, returnFleetBooking, refundFleetBooking, verifyFleetBooking } from '@/api/fleet.api';
@@ -25,6 +25,7 @@ export default function BookingsView() {
   const [selectedBooking, setSelectedBooking] = useState<any>(null);
   const [isInvoiceOpen, setIsInvoiceOpen] = useState(false);
   const [isOfflineModalOpen, setIsOfflineModalOpen] = useState(false);
+  const [viewingScreenshot, setViewingScreenshot] = useState<{ url: string; bookingCode: string; customerName: string; utrNumber?: string; deposit?: number; bookingObj?: any } | null>(null);
 
   // ── Filters ──────────────────────────────────────────────────────────────
   const [filterSection, setFilterSection] = useState<'all' | 'tours' | 'fleet'>('all');
@@ -91,6 +92,9 @@ export default function BookingsView() {
                 totalAmount: local.totalPrice || local.totalAmount,
                 depositPaid: local.depositPaid || 1,
                 type: isCar ? 'Fleet' : 'Tours',
+                utrNumber: local.utrNumber || local.utr_number || '',
+                paymentScreenshot: local.paymentScreenshot || local.payment_screenshot || '',
+                paymentMethod: local.paymentMethod || 'Direct UPI',
               });
             }
           });
@@ -708,16 +712,39 @@ export default function BookingsView() {
                 </div>
               </div>
 
-              {/* UTR if present */}
-              {b.utrNumber && (
-                <div className="flex items-center justify-between bg-[#5266EB]/5 p-2 rounded-xl border border-[#5266EB]/20 text-xs">
-                  <div className="font-mono font-bold text-[#5266EB] text-[11px]">UTR: {b.utrNumber}</div>
-                  <button
-                    onClick={() => handleCopyUtr(b._id || b.id, b.utrNumber)}
-                    className="text-gray-500 hover:text-black p-1"
-                  >
-                    {copiedUtrId === (b._id || b.id) ? <Check className="w-3.5 h-3.5 text-emerald-600" /> : <Copy className="w-3.5 h-3.5" />}
-                  </button>
+              {/* UTR & Payment Screenshot if present */}
+              {(b.utrNumber || b.paymentScreenshot || b.payment_screenshot) && (
+                <div className="space-y-1.5">
+                  {b.utrNumber && (
+                    <div className="flex items-center justify-between bg-[#5266EB]/5 p-2 rounded-xl border border-[#5266EB]/20 text-xs">
+                      <div className="font-mono font-bold text-[#5266EB] text-[11px]">UTR: {b.utrNumber}</div>
+                      <button
+                        onClick={() => handleCopyUtr(b._id || b.id, b.utrNumber)}
+                        className="text-gray-500 hover:text-black p-1"
+                      >
+                        {copiedUtrId === (b._id || b.id) ? <Check className="w-3.5 h-3.5 text-emerald-600" /> : <Copy className="w-3.5 h-3.5" />}
+                      </button>
+                    </div>
+                  )}
+
+                  {(b.paymentScreenshot || b.payment_screenshot) && (
+                    <button
+                      type="button"
+                      onClick={() => setViewingScreenshot({
+                        url: b.paymentScreenshot || b.payment_screenshot,
+                        bookingCode: code,
+                        customerName: name,
+                        utrNumber: b.utrNumber,
+                        deposit: depositPaid,
+                        bookingObj: b,
+                      })}
+                      className="w-full py-2 px-3 rounded-xl bg-purple-50 hover:bg-purple-100 border border-purple-200 text-purple-900 font-bold text-xs flex items-center justify-center gap-1.5 transition-all shadow-xs cursor-pointer active:scale-98"
+                    >
+                      <ImageIcon className="w-3.5 h-3.5 text-purple-600" />
+                      <span>View Payment Screenshot</span>
+                      <Eye className="w-3.5 h-3.5 text-purple-500" />
+                    </button>
+                  )}
                 </div>
               )}
 
@@ -892,7 +919,7 @@ export default function BookingsView() {
                     {/* UTR & Payment Method Column */}
                     <td className="px-5 py-4">
                       {b.utrNumber ? (
-                        <div className="space-y-1">
+                        <div className="space-y-1.5">
                           <div className="inline-flex items-center gap-1.5 font-mono text-[11px] font-bold text-[#5266EB] bg-[#5266EB]/10 px-2.5 py-1 rounded-lg border border-[#5266EB]/20">
                             <span>UTR: {b.utrNumber}</span>
                             <button
@@ -900,14 +927,55 @@ export default function BookingsView() {
                               title="Copy UTR"
                               className="text-gray-500 hover:text-black cursor-pointer"
                             >
-                              {copiedUtrId === (b._id || b.id) ? <Check className="w-3 h-3 text-emerald-600" /> : <Copy className="w-3 h-3" />}
+                              {copiedUtrId === (b._id || b.id) ? <Check className="w-3 h-3 text-emerald-600" /> : <Copy className="w-3.5 h-3.5" />}
                             </button>
                           </div>
+
+                          {(b.paymentScreenshot || b.payment_screenshot) && (
+                            <div>
+                              <button
+                                type="button"
+                                onClick={() => setViewingScreenshot({
+                                  url: b.paymentScreenshot || b.payment_screenshot,
+                                  bookingCode: code,
+                                  customerName: name,
+                                  utrNumber: b.utrNumber,
+                                  deposit: depositPaid,
+                                  bookingObj: b,
+                                })}
+                                className="inline-flex items-center gap-1 text-[10px] font-bold text-purple-700 bg-purple-50 hover:bg-purple-100 border border-purple-200 px-2 py-0.5 rounded-md transition-colors cursor-pointer shadow-xs"
+                              >
+                                <ImageIcon className="w-3 h-3 text-purple-600" />
+                                <span>Receipt Screenshot</span>
+                                <Eye className="w-2.5 h-2.5 text-purple-500" />
+                              </button>
+                            </div>
+                          )}
+
                           <span className="text-[10px] text-gray-400 block">Mode: Direct UPI QR</span>
                         </div>
                       ) : (
-                        <div className="text-[11px] font-mono text-gray-500">
-                          {b.paymentMethod || b.razorpayPaymentId || 'Offline / Cash'}
+                        <div className="space-y-1">
+                          <div className="text-[11px] font-mono text-gray-500">
+                            {b.paymentMethod || b.razorpayPaymentId || 'Offline / Cash'}
+                          </div>
+                          {(b.paymentScreenshot || b.payment_screenshot) && (
+                            <button
+                              type="button"
+                              onClick={() => setViewingScreenshot({
+                                url: b.paymentScreenshot || b.payment_screenshot,
+                                bookingCode: code,
+                                customerName: name,
+                                utrNumber: b.utrNumber,
+                                deposit: depositPaid,
+                                bookingObj: b,
+                              })}
+                              className="inline-flex items-center gap-1 text-[10px] font-bold text-purple-700 bg-purple-50 hover:bg-purple-100 border border-purple-200 px-2 py-0.5 rounded-md transition-colors cursor-pointer shadow-xs"
+                            >
+                              <ImageIcon className="w-3 h-3 text-purple-600" />
+                              <span>Receipt Screenshot</span>
+                            </button>
+                          )}
                         </div>
                       )}
                     </td>
@@ -1314,6 +1382,111 @@ export default function BookingsView() {
           );
         })()}
       </Modal>
+
+      {/* ─── PAYMENT SCREENSHOT VERIFICATION LIGHTBOX MODAL ──────── */}
+      {viewingScreenshot && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm animate-fade-in select-none">
+          <div className="bg-white rounded-3xl max-w-xl w-full max-h-[92vh] flex flex-col shadow-2xl border border-gray-100 overflow-hidden">
+            
+            {/* Modal Header */}
+            <div className="p-4 sm:p-5 bg-[#171721] text-white flex items-center justify-between">
+              <div className="flex items-center gap-2.5">
+                <div className="w-8 h-8 rounded-full bg-[#5266EB] text-white flex items-center justify-center">
+                  <ImageIcon className="w-4 h-4" />
+                </div>
+                <div>
+                  <h3 className="text-sm sm:text-base font-bold">
+                    Payment Receipt Screenshot
+                  </h3>
+                  <p className="text-[10px] text-gray-400">
+                    Ref: <span className="font-mono text-emerald-400 font-bold">{viewingScreenshot.bookingCode}</span> • Customer: {viewingScreenshot.customerName}
+                  </p>
+                </div>
+              </div>
+
+              <button
+                onClick={() => setViewingScreenshot(null)}
+                className="w-8 h-8 rounded-full bg-white/10 text-white flex items-center justify-center hover:bg-white/20 transition-colors cursor-pointer"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+
+            {/* Info Summary Strip */}
+            <div className="bg-gray-50 border-b border-gray-200 px-5 py-3 flex items-center justify-between text-xs">
+              <div>
+                <span className="text-[10px] text-gray-500 uppercase font-bold block">Submitted UTR No.</span>
+                <span className="font-mono font-bold text-indigo-700 text-xs sm:text-sm">
+                  {viewingScreenshot.utrNumber || 'N/A'}
+                </span>
+              </div>
+              <div className="text-right">
+                <span className="text-[10px] text-gray-500 uppercase font-bold block">Advance Deposit Amount</span>
+                <span className="font-extrabold text-emerald-600 text-xs sm:text-sm">
+                  ₹{viewingScreenshot.deposit?.toLocaleString('en-IN') || 0}
+                </span>
+              </div>
+            </div>
+
+            {/* Screenshot Image Body */}
+            <div className="flex-1 overflow-y-auto p-4 sm:p-6 bg-gray-100 flex items-center justify-center min-h-[250px]">
+              <img
+                src={viewingScreenshot.url}
+                alt={`Payment proof for ${viewingScreenshot.bookingCode}`}
+                className="max-h-[52vh] w-auto max-w-full rounded-2xl shadow-md object-contain border border-gray-200 bg-white"
+              />
+            </div>
+
+            {/* Modal Actions */}
+            <div className="p-4 bg-white border-t border-gray-100 flex items-center justify-between gap-2 flex-wrap">
+              <a
+                href={viewingScreenshot.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                download={`Payment_Proof_${viewingScreenshot.bookingCode}.png`}
+                className="px-4 py-2 rounded-xl bg-gray-100 hover:bg-gray-200 text-gray-700 font-bold text-xs flex items-center gap-1.5 transition-colors cursor-pointer"
+              >
+                <Download className="w-3.5 h-3.5" />
+                <span>Open Full Size</span>
+              </a>
+
+              <div className="flex items-center gap-2">
+                {!isViewer && viewingScreenshot.bookingObj?.status === 'pending_verification' && (
+                  <>
+                    <button
+                      onClick={() => {
+                        handleApproveBooking(viewingScreenshot.bookingObj);
+                        setViewingScreenshot(null);
+                      }}
+                      className="px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs flex items-center gap-1.5 shadow-sm transition-all cursor-pointer"
+                    >
+                      <CheckCircle className="w-4 h-4" />
+                      <span>Approve & Confirm</span>
+                    </button>
+                    <button
+                      onClick={() => {
+                        handleRejectBooking(viewingScreenshot.bookingObj);
+                        setViewingScreenshot(null);
+                      }}
+                      className="px-3 py-2 rounded-xl bg-red-50 hover:bg-red-100 text-red-700 font-bold text-xs border border-red-200 transition-colors cursor-pointer"
+                    >
+                      <XCircle className="w-4 h-4" />
+                      <span>Reject</span>
+                    </button>
+                  </>
+                )}
+                <button
+                  onClick={() => setViewingScreenshot(null)}
+                  className="px-4 py-2 rounded-xl border border-gray-200 text-gray-600 font-bold text-xs hover:bg-gray-50 cursor-pointer"
+                >
+                  Close
+                </button>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      )}
 
     </div>
   );
