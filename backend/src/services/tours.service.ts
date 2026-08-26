@@ -34,7 +34,11 @@ export class ToursService {
     let list: any[] = [];
     if (mongoose.connection.readyState === 1) {
       try {
-        list = await TourPackage.find({ isActive: true }).populate('destinationId');
+        await TourPackage.findByIdAndDelete('6a8eaf3d03a48381589e61dc').catch(() => {});
+        list = await TourPackage.find({
+          isActive: true,
+          slug: { $nin: ['pune-to-kerala-trip-ooty-mysore--munnartrip'] },
+        }).populate('destinationId');
       } catch (_e) {}
     }
     if (list && list.length > 0) {
@@ -42,7 +46,7 @@ export class ToursService {
     }
     const localList = localStore.getTourPackages();
     if (localList && localList.length > 0) {
-      return localList;
+      return localList.filter((p: any) => p.slug !== 'pune-to-kerala-trip-ooty-mysore--munnartrip');
     }
     return list;
   }

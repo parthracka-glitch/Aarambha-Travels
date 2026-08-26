@@ -90,7 +90,7 @@ export default function ToursCatalogPage() {
                 href="#packages-catalog"
                 className="btn-red-pill text-xs font-bold px-8 py-3.5 rounded-full bg-[#5266EB] hover:bg-[#3E51D4] text-[#EDEDF3] hover:scale-105 transition-all inline-flex items-center gap-2 shadow-2xl shadow-[#5266EB]/40"
               >
-                <span>View All 3 Yatra Packages</span>
+                <span>Explore All Tour Packages</span>
                 <Compass className="w-4 h-4" />
               </a>
 
@@ -129,7 +129,7 @@ export default function ToursCatalogPage() {
           
           <div className="text-gray-600 font-semibold flex items-center gap-2">
             <span className="w-2 h-2 rounded-full bg-[#5266EB] animate-pulse" />
-            Showing {filteredPackages.length} Sacred Pilgrimage Packages
+            Showing {filteredPackages.length} Tour & Yatra Packages
           </div>
 
           <div className="flex flex-wrap items-center gap-3 w-full sm:w-auto">

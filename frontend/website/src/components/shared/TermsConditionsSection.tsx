@@ -65,7 +65,7 @@ const BUS_RENTAL_TERMS = [
 const TOUR_PACKAGE_TERMS = [
   {
     title: 'Booking Confirmation & Advance Amount Policy',
-    description: 'Tour package bookings are confirmed strictly upon receipt of the specified advance deposit amount (₹1,999 for 3 Jyotirlinga Yatra / ₹2,999 for Krishna Yatra & Tirupati Balaji). The remaining package balance must be cleared prior to departure.',
+    description: 'Tour package bookings are confirmed strictly upon receipt of the specified advance deposit amount (₹1,999 for 3 Jyotirlinga Yatra / ₹2,999 for Krishna Yatra & Tirupati Balaji / ₹4,999 for South India Premium Tour). The remaining package balance must be cleared prior to departure.',
   },
   {
     title: 'Strict Cancellation & No Refund Policy',
@@ -77,7 +77,7 @@ const TOUR_PACKAGE_TERMS = [
   },
   {
     title: 'Hotel Accommodation & Room Sharing Basis',
-    description: 'Standard package accommodation includes comfortable verified hotel stays arranged on a 4–5 person sharing basis (or 4-person sharing for Krishna Yatra / Tirupati Balaji) with clean amenities and sanitized bedding.',
+    description: 'Standard package accommodation includes comfortable verified hotel stays arranged on a 3 to 4 person sharing basis (or 4–5 person sharing for 3 Jyotirlinga Yatra) with clean amenities and sanitized bedding.',
   },
   {
     title: 'Dedicated AC Fleet & Transportation Protocol',
