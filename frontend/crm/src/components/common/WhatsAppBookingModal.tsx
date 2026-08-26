@@ -1,7 +1,8 @@
 import React, { useState, useEffect, useRef } from 'react';
 import {
   X, MessageSquare, Copy, Check, Send, Phone, User, Calendar, Car, Compass,
-  Sparkles, RefreshCw, AlertCircle, ShieldCheck, MapPin, DollarSign, Edit3, Users
+  Sparkles, RefreshCw, AlertCircle, ShieldCheck, MapPin, DollarSign, Edit3, Users,
+  CheckCircle2, AlertTriangle, RotateCcw
 } from 'lucide-react';
 import {
   BookingDataInput,
@@ -11,6 +12,9 @@ import {
   extractBookingDetails,
   renderBookingTemplate,
   getRecommendedTemplateId,
+  sanitizeWhatsAppPhone,
+  isValidWhatsAppPhone,
+  formatDisplayPhone,
   MessageTemplate
 } from '@/utils/whatsappTemplates';
 
@@ -29,6 +33,7 @@ export function WhatsAppBookingModal({
 }: WhatsAppBookingModalProps) {
   const [selectedTemplateId, setSelectedTemplateId] = useState<string>('');
   const [messageText, setMessageText] = useState<string>('');
+  const [recipientPhone, setRecipientPhone] = useState<string>('');
   const [copied, setCopied] = useState<boolean>(false);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
@@ -37,7 +42,7 @@ export function WhatsAppBookingModal({
   const availableTemplates = getTemplatesForBooking(booking);
   const insertableVars = isTour ? TOUR_INSERTABLE_VARIABLES : FLEET_INSERTABLE_VARIABLES;
 
-  // Initialize template whenever modal opens or booking changes
+  // Initialize modal state on open or booking change
   useEffect(() => {
     if (isOpen && booking) {
       const templates = getTemplatesForBooking(booking);
@@ -54,11 +59,19 @@ export function WhatsAppBookingModal({
         const parsed = renderBookingTemplate(matchedTemplate.template, booking);
         setMessageText(parsed);
       }
+
+      // Initialize recipient phone to customer's booking phone
+      const initialPhone = bookingDetails.raw_customer_phone || bookingDetails.clean_phone || '';
+      setRecipientPhone(initialPhone);
       setCopied(false);
     }
   }, [isOpen, booking, defaultTemplateId]);
 
   if (!isOpen || !booking) return null;
+
+  const cleanRecipient = sanitizeWhatsAppPhone(recipientPhone);
+  const isPhoneValid = isValidWhatsAppPhone(recipientPhone);
+  const isModifiedFromBooking = recipientPhone !== (bookingDetails.raw_customer_phone || '');
 
   // Change Template Handler
   const handleSelectTemplate = (template: MessageTemplate) => {
@@ -76,6 +89,11 @@ export function WhatsAppBookingModal({
       const parsed = renderBookingTemplate(matchedTemplate.template, booking);
       setMessageText(parsed);
     }
+  };
+
+  // Reset Recipient Phone to original booking phone
+  const handleResetRecipientPhone = () => {
+    setRecipientPhone(bookingDetails.raw_customer_phone || '');
   };
 
   // Insert Variable at Cursor Position
@@ -116,18 +134,15 @@ export function WhatsAppBookingModal({
     }
   };
 
-  // Open in WhatsApp
+  // Open in WhatsApp (Guaranteed destination to customer's booking phone)
   const handleSendWhatsApp = () => {
-    const rawPhone = bookingDetails.clean_phone;
-    if (!rawPhone) {
-      alert('No valid customer phone number found for this booking.');
+    if (!cleanRecipient || !isPhoneValid) {
+      alert('Please enter a valid 10-digit customer WhatsApp phone number before sending.');
       return;
     }
 
-    // Ensure 91 country code for Indian numbers if not already provided with 91 or +
-    const formattedPhone = rawPhone.length === 10 ? `91${rawPhone}` : rawPhone;
     const encodedText = encodeURIComponent(messageText);
-    const whatsappUrl = `https://wa.me/${formattedPhone}?text=${encodedText}`;
+    const whatsappUrl = `https://wa.me/${cleanRecipient}?text=${encodedText}`;
 
     window.open(whatsappUrl, '_blank', 'noopener,noreferrer');
   };
@@ -165,8 +180,8 @@ export function WhatsAppBookingModal({
               </div>
               <p className="text-xs text-gray-300 mt-0.5">
                 {isTour
-                  ? 'Send curated itinerary confirmations, driver allotments & tour balance reminders.'
-                  : 'Send vehicle handover notices, hub pickup maps & deposit refund confirmations.'}
+                  ? 'Send curated itinerary confirmations, driver allotments & tour balance reminders to customer.'
+                  : 'Send vehicle handover notices, hub pickup maps & deposit refund confirmations to customer.'}
               </p>
             </div>
           </div>
@@ -188,19 +203,19 @@ export function WhatsAppBookingModal({
             isTour ? 'bg-emerald-50/40 border-emerald-100' : 'bg-slate-50 border-slate-200/80'
           }`}>
             
-            {/* Customer Column */}
+            {/* Customer Details Column */}
             <div className="space-y-1 md:border-r border-gray-200/80 pr-2">
               <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wider block flex items-center gap-1">
-                <User className="w-3 h-3 text-emerald-600" /> Customer Details
+                <User className="w-3 h-3 text-emerald-600" /> Customer Name
               </span>
               <div className="font-bold text-sm text-gray-900 truncate">
                 {bookingDetails.customer_name}
               </div>
               <div className="flex items-center gap-1.5 text-[11px] text-gray-600">
-                <span className="font-mono">{bookingDetails.customer_phone || 'No Phone'}</span>
-                {bookingDetails.customer_phone && (
+                <span className="font-mono">{bookingDetails.display_phone}</span>
+                {cleanRecipient && (
                   <a
-                    href={`tel:${bookingDetails.customer_phone}`}
+                    href={`tel:${cleanRecipient}`}
                     className="p-1 rounded-md bg-blue-50 text-blue-600 hover:bg-blue-100"
                     title="Call Customer"
                   >
@@ -270,7 +285,60 @@ export function WhatsAppBookingModal({
 
           </div>
 
-          {/* 2. DEDICATED TEMPLATE SELECTION CHIPS */}
+          {/* 2. RECIPIENT WHATSAPP NUMBER ROUTING BOX (CRITICAL WORKFLOW) */}
+          <div className="bg-gradient-to-r from-emerald-50/80 to-green-50/50 border border-emerald-200/90 rounded-2xl p-3.5 flex items-center justify-between gap-3 flex-wrap">
+            <div className="space-y-1 flex-1 min-w-[260px]">
+              <div className="flex items-center gap-2">
+                <label htmlFor="recipient-phone-input" className="font-bold text-emerald-950 text-xs flex items-center gap-1.5">
+                  <Phone className="w-3.5 h-3.5 text-emerald-700" />
+                  <span>Recipient Customer WhatsApp Number:</span>
+                </label>
+                {isPhoneValid ? (
+                  <span className="inline-flex items-center gap-1 text-[10px] font-bold text-emerald-800 bg-emerald-100 border border-emerald-300 px-2 py-0.5 rounded-full">
+                    <CheckCircle2 className="w-3 h-3 text-emerald-600" />
+                    {isModifiedFromBooking ? 'Custom Recipient' : 'Booking Phone Verified'}
+                  </span>
+                ) : (
+                  <span className="inline-flex items-center gap-1 text-[10px] font-bold text-amber-800 bg-amber-100 border border-amber-300 px-2 py-0.5 rounded-full">
+                    <AlertTriangle className="w-3 h-3 text-amber-600" /> Needs Valid Phone
+                  </span>
+                )}
+              </div>
+              <p className="text-[10px] text-emerald-800/80">
+                Message will be directly dispatched to this client number via <span className="font-mono font-bold">wa.me/{cleanRecipient || '...'}</span>
+              </p>
+            </div>
+
+            {/* Editable Input Box */}
+            <div className="flex items-center gap-2">
+              <div className="relative flex items-center">
+                <span className="absolute left-3 font-mono font-bold text-xs text-gray-500 select-none">
+                  🇮🇳
+                </span>
+                <input
+                  id="recipient-phone-input"
+                  type="text"
+                  value={recipientPhone}
+                  onChange={(e) => setRecipientPhone(e.target.value)}
+                  placeholder="Enter 10-digit phone"
+                  className="pl-9 pr-3 py-1.5 bg-white border border-emerald-300 rounded-xl font-mono font-bold text-xs text-gray-900 focus:outline-none focus:ring-2 focus:ring-emerald-500 shadow-inner w-44"
+                />
+              </div>
+
+              {isModifiedFromBooking && (
+                <button
+                  type="button"
+                  onClick={handleResetRecipientPhone}
+                  className="px-2.5 py-1.5 rounded-xl bg-white hover:bg-gray-100 border border-gray-200 text-gray-600 text-[10px] font-bold flex items-center gap-1 transition-colors"
+                  title="Revert to customer's booking phone"
+                >
+                  <RotateCcw className="w-2.5 h-2.5" /> Revert
+                </button>
+              )}
+            </div>
+          </div>
+
+          {/* 3. DEDICATED TEMPLATE SELECTION CHIPS */}
           <div className="space-y-2">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
@@ -319,7 +387,7 @@ export function WhatsAppBookingModal({
             </div>
           </div>
 
-          {/* 3. QUICK INSERT VARIABLE TAGS */}
+          {/* 4. QUICK INSERT VARIABLE TAGS */}
           <div className="space-y-1.5 pt-1">
             <div className="flex items-center justify-between text-[11px]">
               <span className="text-gray-500 font-semibold flex items-center gap-1">
@@ -354,10 +422,10 @@ export function WhatsAppBookingModal({
             </div>
           </div>
 
-          {/* 4. LIVE EDITABLE MESSAGE PREVIEW BOX */}
+          {/* 5. LIVE EDITABLE MESSAGE PREVIEW BOX */}
           <div className="space-y-1.5">
             <div className="flex items-center justify-between">
-              <label className="font-bold text-gray-800 text-xs flex items-center gap-1.5">
+              <label htmlFor="whatsapp-draft-textarea" className="font-bold text-gray-800 text-xs flex items-center gap-1.5">
                 <span>Message Draft (WhatsApp Formatted):</span>
                 <span className="text-[10px] text-gray-400 font-normal">
                   Review and edit any word before sending
@@ -370,10 +438,11 @@ export function WhatsAppBookingModal({
 
             <div className="relative rounded-2xl border border-gray-200 bg-[#FAF9F5] focus-within:border-emerald-500 focus-within:ring-2 focus-within:ring-emerald-500/20 transition-all overflow-hidden shadow-inner">
               <textarea
+                id="whatsapp-draft-textarea"
                 ref={textareaRef}
                 value={messageText}
                 onChange={(e) => setMessageText(e.target.value)}
-                rows={11}
+                rows={10}
                 className="w-full p-4 bg-transparent text-gray-800 font-sans text-xs sm:text-sm leading-relaxed resize-y focus:outline-none placeholder-gray-400"
                 placeholder="Type your WhatsApp message draft here..."
               />
@@ -382,7 +451,7 @@ export function WhatsAppBookingModal({
 
         </div>
 
-        {/* 5. MODAL FOOTER ACTIONS */}
+        {/* 6. MODAL FOOTER ACTIONS */}
         <div className="px-5 py-4 border-t border-gray-100 bg-gray-50 flex items-center justify-between gap-3 flex-wrap">
           
           <div className="flex items-center gap-2">
@@ -421,10 +490,15 @@ export function WhatsAppBookingModal({
             <button
               type="button"
               onClick={handleSendWhatsApp}
-              className="px-6 py-2.5 rounded-xl bg-gradient-to-r from-emerald-600 to-green-600 hover:from-emerald-700 hover:to-green-700 text-white font-extrabold text-xs flex items-center gap-2 shadow-md shadow-emerald-600/30 transition-all hover:scale-102 active:scale-98 cursor-pointer"
+              disabled={!isPhoneValid}
+              className={`px-6 py-2.5 rounded-xl font-extrabold text-xs flex items-center gap-2 shadow-md transition-all ${
+                isPhoneValid
+                  ? 'bg-gradient-to-r from-emerald-600 to-green-600 hover:from-emerald-700 hover:to-green-700 text-white shadow-emerald-600/30 hover:scale-102 active:scale-98 cursor-pointer'
+                  : 'bg-gray-300 text-gray-500 cursor-not-allowed shadow-none'
+              }`}
             >
               <Send className="w-4 h-4" />
-              <span>🟢 Open in WhatsApp & Send</span>
+              <span>🟢 Open in WhatsApp & Send ({cleanRecipient ? `+${cleanRecipient}` : 'No Phone'})</span>
             </button>
           </div>
 

@@ -14,6 +14,13 @@ export interface BookingDataInput {
   customerPhone?: string;
   customer_phone?: string;
   phone?: string;
+  mobile?: string;
+  contactNumber?: string;
+  contact_number?: string;
+  userPhone?: string;
+  guestPhone?: string;
+  customerDetails?: { phone?: string; customerPhone?: string; name?: string };
+  user?: { phone?: string; email?: string; name?: string };
   customerEmail?: string;
   customer_email?: string;
   email?: string;
@@ -72,6 +79,8 @@ export interface ExtractedBookingDetails {
   vertical: BookingVertical;
   customer_name: string;
   customer_phone: string;
+  raw_customer_phone: string;
+  display_phone: string;
   customer_email: string;
   booking_id: string;
   raw_code: string;
@@ -94,6 +103,7 @@ export interface ExtractedBookingDetails {
   status: string;
   is_fleet: boolean;
   clean_phone: string;
+  is_phone_valid: boolean;
 }
 
 export const DEFAULT_COMPANY_NAME = 'Aarambha Tours & Travels';
@@ -114,6 +124,51 @@ function extractTime(dtStr?: string, defaultFallback = '09:00 AM'): string {
   } catch {
     return defaultFallback;
   }
+}
+
+/**
+ * Strips non-digits, strips leading zeros, and standardizes 10-digit Indian numbers with 91 country code
+ */
+export function sanitizeWhatsAppPhone(phone: string | null | undefined): string {
+  if (!phone) return '';
+  let clean = String(phone).replace(/[^0-9]/g, '');
+  if (!clean) return '';
+
+  // If 11 digits starting with 0 (e.g. 09822012345), strip leading 0
+  if (clean.length === 11 && clean.startsWith('0')) {
+    clean = clean.substring(1);
+  }
+
+  // If 10 digits (e.g. 9822012345), prefix with 91 (India)
+  if (clean.length === 10) {
+    clean = `91${clean}`;
+  }
+
+  return clean;
+}
+
+/**
+ * Checks if a sanitized phone number has a valid length (e.g. 10-15 digits)
+ */
+export function isValidWhatsAppPhone(phone: string | null | undefined): boolean {
+  if (!phone) return false;
+  const clean = sanitizeWhatsAppPhone(phone);
+  return clean.length >= 10 && clean.length <= 15;
+}
+
+/**
+ * Format a phone number for user-friendly display (e.g. +91 98220 12345)
+ */
+export function formatDisplayPhone(phone: string | null | undefined): string {
+  if (!phone) return '';
+  const clean = sanitizeWhatsAppPhone(phone);
+  if (!clean) return phone;
+
+  if (clean.startsWith('91') && clean.length === 12) {
+    const main = clean.substring(2);
+    return `+91 ${main.substring(0, 5)} ${main.substring(5)}`;
+  }
+  return `+${clean}`;
 }
 
 /**
@@ -167,6 +222,8 @@ export function extractBookingDetails(raw: BookingDataInput | null | undefined):
       vertical: 'tour',
       customer_name: 'Valued Customer',
       customer_phone: '',
+      raw_customer_phone: '',
+      display_phone: 'No Phone Provided',
       customer_email: '',
       booking_id: '#TR-0000',
       raw_code: 'TR-0000',
@@ -189,6 +246,7 @@ export function extractBookingDetails(raw: BookingDataInput | null | undefined):
       status: 'Confirmed',
       is_fleet: false,
       clean_phone: '',
+      is_phone_valid: false,
     };
   }
 
@@ -208,18 +266,30 @@ export function extractBookingDetails(raw: BookingDataInput | null | undefined):
     raw.name ||
     'Valued Customer';
 
-  const customerPhone =
+  // Multi-field customer phone resolution
+  const rawCustomerPhone =
     raw.customerPhone ||
     raw.customer_phone ||
     raw.phone ||
+    raw.mobile ||
+    raw.contactNumber ||
+    raw.contact_number ||
+    raw.userPhone ||
+    raw.guestPhone ||
+    raw.customerDetails?.phone ||
+    raw.customerDetails?.customerPhone ||
+    raw.user?.phone ||
     '';
 
-  const cleanPhone = customerPhone.replace(/[^0-9]/g, '');
+  const cleanPhone = sanitizeWhatsAppPhone(rawCustomerPhone);
+  const displayPhone = formatDisplayPhone(rawCustomerPhone);
+  const isPhoneValid = isValidWhatsAppPhone(rawCustomerPhone);
 
   const customerEmail =
     raw.customerEmail ||
     raw.customer_email ||
     raw.email ||
+    raw.user?.email ||
     '';
 
   const vehicleName =
@@ -318,7 +388,9 @@ export function extractBookingDetails(raw: BookingDataInput | null | undefined):
   return {
     vertical,
     customer_name: customerName,
-    customer_phone: customerPhone,
+    customer_phone: rawCustomerPhone,
+    raw_customer_phone: rawCustomerPhone,
+    display_phone: displayPhone,
     customer_email: customerEmail,
     booking_id: bookingIdFormatted,
     raw_code: rawCode,
@@ -341,6 +413,7 @@ export function extractBookingDetails(raw: BookingDataInput | null | undefined):
     status: raw.status || 'Confirmed',
     is_fleet: isFleet,
     clean_phone: cleanPhone,
+    is_phone_valid: isPhoneValid,
   };
 }
 
