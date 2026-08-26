@@ -1,5 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
 import { ToursService } from '../services/tours.service';
+import { extractOptionalAuth } from '../middlewares/auth.middleware';
 
 export class ToursController {
   // Destinations
@@ -118,7 +119,8 @@ export class ToursController {
   static async syncBookingStatus(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
       const { codes, email } = req.body;
-      const list = await ToursService.syncBookingStatus(codes, email);
+      const authUser = (req as any).user || extractOptionalAuth(req);
+      const list = await ToursService.syncBookingStatus(codes, email, authUser);
       res.json(list);
     } catch (err) {
       next(err);

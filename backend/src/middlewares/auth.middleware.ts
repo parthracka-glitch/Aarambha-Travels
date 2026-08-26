@@ -54,6 +54,25 @@ export const verifyToken = (token: string): any => {
 };
 
 /**
+ * Extracts optional auth user payload from request without throwing 401
+ */
+export const extractOptionalAuth = (req: Request): { id?: string; email?: string; role?: string } | undefined => {
+  const authHeader = req.headers.authorization;
+  let token: string | undefined;
+
+  if (authHeader && authHeader.startsWith('Bearer ')) {
+    token = authHeader.split(' ')[1];
+  } else if (req.cookies?.access_token) {
+    const cookieToken = req.cookies.access_token;
+    token = cookieToken.startsWith('Bearer ') ? cookieToken.split(' ')[1] : cookieToken;
+  }
+
+  if (!token) return undefined;
+  const decoded = verifyToken(token);
+  return decoded ? { id: decoded.sub, email: decoded.email, role: decoded.role } : undefined;
+};
+
+/**
  * Express Middleware: Authenticate Admin with Token & Token Version Invalidation
  */
 export const authenticateAdmin = async (req: AuthRequest, res: Response, next: NextFunction): Promise<void> => {

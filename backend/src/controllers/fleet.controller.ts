@@ -1,5 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
 import { FleetService } from '../services/fleet.service';
+import { extractOptionalAuth } from '../middlewares/auth.middleware';
 
 export class FleetController {
   // Categories
@@ -146,7 +147,8 @@ export class FleetController {
   static async syncBookingStatus(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
       const { codes, email } = req.body;
-      const list = await FleetService.syncBookingStatus(codes, email);
+      const authUser = (req as any).user || extractOptionalAuth(req);
+      const list = await FleetService.syncBookingStatus(codes, email, authUser);
       res.json(list);
     } catch (err) {
       next(err);

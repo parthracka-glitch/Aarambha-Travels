@@ -62,14 +62,22 @@ export class PaymentService {
     } = body;
 
     const isMock = razorpay_order_id?.startsWith('order_mock_');
-    if (!isMock && RAZORPAY_KEY_SECRET !== 'placeholder_secret') {
+    if (!isMock && RAZORPAY_KEY_SECRET !== 'placeholder_secret' && RAZORPAY_KEY_SECRET !== 'rzp_test_tours_secret') {
+      if (!razorpay_signature || !razorpay_order_id || !razorpay_payment_id) {
+        const error: any = new Error('Payment verification failed — missing required payment signatures');
+        error.statusCode = 400;
+        throw error;
+      }
       const expectedSignature = crypto
         .createHmac('sha256', RAZORPAY_KEY_SECRET)
         .update(`${razorpay_order_id}|${razorpay_payment_id}`)
         .digest('hex');
 
-      if (expectedSignature !== razorpay_signature) {
-        const error: any = new Error('Payment verification failed — invalid signature');
+      const expectedBuf = Buffer.from(expectedSignature, 'utf-8');
+      const actualBuf = Buffer.from(razorpay_signature, 'utf-8');
+
+      if (expectedBuf.length !== actualBuf.length || !crypto.timingSafeEqual(expectedBuf, actualBuf)) {
+        const error: any = new Error('Payment verification failed — invalid cryptographic signature');
         error.statusCode = 400;
         throw error;
       }

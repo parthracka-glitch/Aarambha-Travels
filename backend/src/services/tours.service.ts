@@ -310,15 +310,48 @@ export class ToursService {
     return updated || { _id: id, id, status, rejectionReason, verifiedAt: new Date().toISOString() };
   }
 
-  static async syncBookingStatus(codes?: string[], email?: string) {
+  static async syncBookingStatus(codes?: string[], email?: string, authUser?: { email?: string; role?: string }) {
     const filter: any = {};
-    if (Array.isArray(codes) && codes.length > 0) {
+    const sanitizedCodes = Array.isArray(codes) ? codes.filter(c => typeof c === 'string' && c.trim().length > 0) : [];
+    
+    // Authorization & Ownership Verification:
+    // If requesting by email, verify user owns that email unless admin
+    if (email && email.trim()) {
+      const cleanEmail = email.trim().toLowerCase();
+      if (authUser && authUser.email) {
+        const userEmail = authUser.email.toLowerCase();
+        const isAdmin = authUser.role === 'superadmin' || authUser.role === 'viewer';
+        if (!isAdmin && userEmail !== cleanEmail) {
+          const error: any = new Error('Unauthorized: You cannot access bookings belonging to another account.');
+          error.statusCode = 403;
+          throw error;
+        }
+      }
+      
+      // If sanitized codes are also provided, restrict to intersection for double verification
+      if (sanitizedCodes.length > 0) {
+        filter.$and = [
+          {
+            $or: [
+              { bookingCode: { $in: sanitizedCodes } },
+              { _id: { $in: sanitizedCodes.filter(c => mongoose.Types.ObjectId.isValid(c)) } },
+            ],
+          },
+          { customerEmail: new RegExp(`^${cleanEmail}$`, 'i') },
+        ];
+      } else if (authUser) {
+        // Authenticated user querying their own bookings
+        filter.customerEmail = new RegExp(`^${cleanEmail}$`, 'i');
+      } else {
+        // Unauthenticated client querying without codes is rejected to prevent enumeration
+        return [];
+      }
+    } else if (sanitizedCodes.length > 0) {
+      // Queried by explicit booking codes possessed by the client
       filter.$or = [
-        { bookingCode: { $in: codes } },
-        { _id: { $in: codes.filter(c => mongoose.Types.ObjectId.isValid(c)) } }
+        { bookingCode: { $in: sanitizedCodes } },
+        { _id: { $in: sanitizedCodes.filter(c => mongoose.Types.ObjectId.isValid(c)) } },
       ];
-    } else if (email) {
-      filter.customerEmail = new RegExp(`^${email.trim()}$`, 'i');
     } else {
       return [];
     }
@@ -342,10 +375,10 @@ export class ToursService {
     const localList = localStore.getToursBookings();
     return localList
       .filter((b: any) => {
-        if (Array.isArray(codes) && codes.length > 0) {
-          return codes.includes(b.bookingCode) || codes.includes(b.id) || codes.includes(b._id);
+        if (sanitizedCodes.length > 0) {
+          return sanitizedCodes.includes(b.bookingCode) || sanitizedCodes.includes(b.id) || sanitizedCodes.includes(b._id);
         }
-        if (email) {
+        if (email && authUser) {
           return (b.customerEmail || b.email || '').toLowerCase() === email.toLowerCase();
         }
         return false;
