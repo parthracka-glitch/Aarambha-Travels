@@ -1,6 +1,13 @@
 import type { Metadata, Viewport } from 'next';
 import Script from 'next/script';
+import dynamic from 'next/dynamic';
 import './globals.css';
+
+const CookieConsentBanner = dynamic(
+  () => import('@/components/legal/CookieConsentBanner'),
+  { ssr: false }
+);
+
 
 export const viewport: Viewport = {
   width: 'device-width',
@@ -51,6 +58,7 @@ export default function RootLayout({
       </head>
       <body className="antialiased selection:bg-[#5266EB] selection:text-white">
         {children}
+        <CookieConsentBanner />
         <Script
           src="https://checkout.razorpay.com/v1/checkout.js"
           strategy="lazyOnload"

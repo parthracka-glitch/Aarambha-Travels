@@ -23,7 +23,7 @@ export default function Footer() {
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 items-start">
             
             {/* Left Column (Brand & Newsletter) */}
-            <div className="lg:col-span-5 space-y-4">
+            <div className="lg:col-span-4 space-y-4">
               <Link href="/" className="inline-flex items-center gap-3 group">
                 <div className="w-12 h-12 rounded-2xl overflow-hidden bg-white p-0.5 ring-2 ring-[#D3592B]/20 shadow-md shrink-0">
                   <img
@@ -46,7 +46,7 @@ export default function Footer() {
               </Link>
 
               <h2 className="font-syne text-xl sm:text-2xl font-bold text-[#000000] tracking-tight pt-1">
-                Don’t Miss a Journey
+                Don't Miss a Journey
               </h2>
               <p className="text-xs text-gray-500 max-w-md">
                 Subscribe to आरंभ for exclusive holiday package deals and luxury self-drive offers.
@@ -70,19 +70,10 @@ export default function Footer() {
               </form>
             </div>
 
-            {/* Right Columns (3 Columns: Quick Link, Services, Social Media) */}
-            <div className="lg:col-span-7 grid grid-cols-1 sm:grid-cols-3 gap-6 text-xs">
+            {/* Right Columns (4 Columns: Services, Legal, Company, Social) */}
+            <div className="lg:col-span-8 grid grid-cols-2 sm:grid-cols-4 gap-6 text-xs">
               
-              <div className="space-y-3">
-                <h3 className="font-bold text-[#000000] text-xs font-syne uppercase tracking-wider">Quick Links & Legal</h3>
-                <ul className="space-y-2 text-gray-600">
-                  <li><Link href="/car-rentals/about" className="hover:text-[#5266EB] transition-colors">About Us</Link></li>
-                  <li><Link href="/terms-and-conditions" className="hover:text-[#5266EB] transition-colors font-medium">Standard Terms & Conditions</Link></li>
-                  <li><Link href="/nda" className="hover:text-[#5266EB] transition-colors font-medium">Non-Disclosure Agreement (NDA)</Link></li>
-                  <li><Link href="/terms" className="hover:text-[#5266EB] transition-colors">Rental & Tour Policies</Link></li>
-                </ul>
-              </div>
-
+              {/* Services */}
               <div className="space-y-3">
                 <h3 className="font-bold text-[#000000] text-xs font-syne uppercase tracking-wider">Services</h3>
                 <ul className="space-y-2 text-gray-600">
@@ -97,39 +88,73 @@ export default function Footer() {
                     <>
                       <li><Link href="/tours-travels" className="hover:text-[#5266EB] transition-colors">Tour Packages</Link></li>
                       <li><Link href="/tours-travels" className="hover:text-[#5266EB] transition-colors">Curated Departures</Link></li>
-                      <li><Link href="/terms" className="hover:text-[#5266EB] transition-colors">Tour Terms</Link></li>
+                      <li><Link href="/bus-rentals" className="hover:text-[#5266EB] transition-colors font-medium">Bus & Car Rentals</Link></li>
                     </>
                   ) : (
                     <>
                       <li><Link href="/tours-travels" className="hover:text-[#5266EB] transition-colors">Tour Packages</Link></li>
                       <li><Link href="/bus-rentals" className="hover:text-[#5266EB] transition-colors font-medium">Bus & Car Rentals</Link></li>
                       <li><Link href="/bus-rentals/car-rental" className="hover:text-[#5266EB] transition-colors">Self-Drive Fleet</Link></li>
+                      <li><Link href="/car-rentals/about" className="hover:text-[#5266EB] transition-colors">About Us</Link></li>
                     </>
                   )}
                 </ul>
               </div>
 
+              {/* Legal & Policies */}
+              <div className="space-y-3">
+                <h3 className="font-bold text-[#000000] text-xs font-syne uppercase tracking-wider">Legal</h3>
+                <ul className="space-y-2 text-gray-600">
+                  <li><Link href="/legal" className="hover:text-[#5266EB] transition-colors font-semibold text-[#5266EB]">All Legal Documents ↗</Link></li>
+                  <li><Link href="/legal/privacy-policy" className="hover:text-[#5266EB] transition-colors">Privacy Policy</Link></li>
+                  <li><Link href="/legal/refund-policy" className="hover:text-[#5266EB] transition-colors">Refund & Cancellation</Link></li>
+                  <li><Link href="/legal/cookie-policy" className="hover:text-[#5266EB] transition-colors">Cookie Policy</Link></li>
+                  <li><Link href="/terms" className="hover:text-[#5266EB] transition-colors">Rental & Tour Policies</Link></li>
+                  <li><Link href="/terms-and-conditions" className="hover:text-[#5266EB] transition-colors">Standard Terms</Link></li>
+                </ul>
+              </div>
+
+              {/* More Legal */}
+              <div className="space-y-3">
+                <h3 className="font-bold text-[#000000] text-xs font-syne uppercase tracking-wider">Compliance</h3>
+                <ul className="space-y-2 text-gray-600">
+                  <li><Link href="/legal/disclaimer" className="hover:text-[#5266EB] transition-colors">Disclaimer</Link></li>
+                  <li><Link href="/legal/acceptable-use" className="hover:text-[#5266EB] transition-colors">Acceptable Use</Link></li>
+                  <li><Link href="/legal/community-guidelines" className="hover:text-[#5266EB] transition-colors">Community Guidelines</Link></li>
+                  <li><Link href="/legal/accessibility" className="hover:text-[#5266EB] transition-colors">Accessibility</Link></li>
+                  <li><Link href="/legal/security-policy" className="hover:text-[#5266EB] transition-colors">Security Policy</Link></li>
+                  <li><Link href="/nda" className="hover:text-[#5266EB] transition-colors">NDA</Link></li>
+                </ul>
+              </div>
+
+              {/* Social */}
               <div className="space-y-3">
                 <h3 className="font-bold text-[#000000] text-xs font-syne uppercase tracking-wider">Social Media</h3>
                 <ul className="space-y-2 text-gray-600">
                   <li><a href="https://facebook.com" target="_blank" rel="noreferrer" className="hover:text-[#5266EB] transition-colors">Facebook</a></li>
                   <li><a href="https://instagram.com" target="_blank" rel="noreferrer" className="hover:text-[#5266EB] transition-colors">Instagram</a></li>
-                  <li><a href="https://twitter.com" target="_blank" rel="noreferrer" className="hover:text-[#5266EB] transition-colors">Twitter</a></li>
+                  <li><a href="https://twitter.com" target="_blank" rel="noreferrer" className="hover:text-[#5266EB] transition-colors">Twitter / X</a></li>
+                  <li><Link href="/faq" className="hover:text-[#5266EB] transition-colors">FAQ</Link></li>
                 </ul>
               </div>
 
             </div>
-
           </div>
 
-          {/* Bottom Copyright Bar with Legal Document Links */}
+          {/* Bottom Copyright Bar */}
           <div className="pt-6 border-t border-gray-200 flex flex-col sm:flex-row items-center justify-between gap-4 text-[11px] text-gray-500">
-            <div className="flex flex-wrap items-center justify-center sm:justify-start gap-x-4 gap-y-1">
+            <div className="flex flex-wrap items-center justify-center sm:justify-start gap-x-3 gap-y-1">
               <p>© Copyright 2026 आरंभ Tours & Car Rentals. All rights reserved.</p>
               <span className="hidden sm:inline text-gray-300">•</span>
-              <Link href="/terms-and-conditions" className="hover:text-[#5266EB] underline transition-colors">Website Standard Terms</Link>
+              <Link href="/legal/privacy-policy" className="hover:text-[#5266EB] underline transition-colors">Privacy</Link>
               <span className="text-gray-300">•</span>
-              <Link href="/nda" className="hover:text-[#5266EB] underline transition-colors">Non-Disclosure Agreement</Link>
+              <Link href="/legal/refund-policy" className="hover:text-[#5266EB] underline transition-colors">Refunds</Link>
+              <span className="text-gray-300">•</span>
+              <Link href="/terms-and-conditions" className="hover:text-[#5266EB] underline transition-colors">Terms</Link>
+              <span className="text-gray-300">•</span>
+              <Link href="/legal/cookie-policy" className="hover:text-[#5266EB] underline transition-colors">Cookies</Link>
+              <span className="text-gray-300">•</span>
+              <Link href="/nda" className="hover:text-[#5266EB] underline transition-colors">NDA</Link>
             </div>
 
             <button
