@@ -3,12 +3,12 @@ import { hashPassword } from '../middlewares/auth.middleware';
 
 export const seedDatabase = async (): Promise<void> => {
   try {
-    // 1. Seed & Update Admin Users (2 Super Admins + 1 Viewer)
+    // 1. Seed & Update Admin Users (2 Super Admins + 1 Viewer with 12-Round Bcrypt Hashes)
     const hashedSuperAdmin = await hashPassword('Admin@123');
     const hashedViewer = await hashPassword('Viewer@123');
 
     // Super Admin 1: Primary Admin
-    const existingSuperAdmin1 = await AdminUser.findOne({ email: 'admin@aarambhatravels.in' });
+    const existingSuperAdmin1 = await AdminUser.findOne({ email: 'admin@aarambhatravels.in' }).select('+hashedPassword');
     if (!existingSuperAdmin1) {
       await AdminUser.create({
         name: 'Kushal Parakh',
@@ -16,15 +16,20 @@ export const seedDatabase = async (): Promise<void> => {
         hashedPassword: hashedSuperAdmin,
         role: 'superadmin',
         isActive: true,
+        tokenVersion: 0,
+        failedLoginAttempts: 0,
       });
       console.log('[Seed] Superadmin 1 created: admin@aarambhatravels.in / Admin@123');
     } else {
       existingSuperAdmin1.role = 'superadmin';
+      existingSuperAdmin1.hashedPassword = hashedSuperAdmin;
+      existingSuperAdmin1.failedLoginAttempts = 0;
+      existingSuperAdmin1.lockUntil = undefined;
       await existingSuperAdmin1.save();
     }
 
     // Super Admin 2: Operations Super Admin
-    const existingSuperAdmin2 = await AdminUser.findOne({ email: 'admin2@aarambhatravels.in' });
+    const existingSuperAdmin2 = await AdminUser.findOne({ email: 'admin2@aarambhatravels.in' }).select('+hashedPassword');
     if (!existingSuperAdmin2) {
       await AdminUser.create({
         name: 'Pravin (Operations Head)',
@@ -32,15 +37,20 @@ export const seedDatabase = async (): Promise<void> => {
         hashedPassword: hashedSuperAdmin,
         role: 'superadmin',
         isActive: true,
+        tokenVersion: 0,
+        failedLoginAttempts: 0,
       });
       console.log('[Seed] Superadmin 2 created: admin2@aarambhatravels.in / Admin@123');
     } else {
       existingSuperAdmin2.role = 'superadmin';
+      existingSuperAdmin2.hashedPassword = hashedSuperAdmin;
+      existingSuperAdmin2.failedLoginAttempts = 0;
+      existingSuperAdmin2.lockUntil = undefined;
       await existingSuperAdmin2.save();
     }
 
     // Viewer 1: Booking Viewer
-    const existingViewer1 = await AdminUser.findOne({ email: 'viewer1@aarambhatravels.in' });
+    const existingViewer1 = await AdminUser.findOne({ email: 'viewer1@aarambhatravels.in' }).select('+hashedPassword');
     if (!existingViewer1) {
       await AdminUser.create({
         name: 'Booking Viewer',
@@ -48,10 +58,15 @@ export const seedDatabase = async (): Promise<void> => {
         hashedPassword: hashedViewer,
         role: 'viewer',
         isActive: true,
+        tokenVersion: 0,
+        failedLoginAttempts: 0,
       });
       console.log('[Seed] Viewer 1 created: viewer1@aarambhatravels.in / Viewer@123');
     } else {
       existingViewer1.role = 'viewer';
+      existingViewer1.hashedPassword = hashedViewer;
+      existingViewer1.failedLoginAttempts = 0;
+      existingViewer1.lockUntil = undefined;
       await existingViewer1.save();
     }
 

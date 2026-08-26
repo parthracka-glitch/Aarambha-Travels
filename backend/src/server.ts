@@ -5,22 +5,28 @@ import { connectDB } from './config/db';
 import { seedDatabase } from './utils/seed';
 import { registerRoutes } from './routes';
 import { errorHandler } from './middlewares/error.middleware';
+import { securityHeadersMiddleware } from './middlewares/auth.middleware';
+import { generalApiLimiter } from './middlewares/rateLimit.middleware';
 
 dotenv.config();
 
 const app = express();
 const PORT = process.env.PORT || 8000;
 
+// Security and Performance Headers
+app.use(securityHeadersMiddleware);
+app.use((_req, res, next) => {
+  res.setHeader('Keep-Alive', 'timeout=5, max=1000');
+  next();
+});
+
 // Middleware
 app.use(cors({ origin: true, credentials: true }));
 app.use(express.json({ limit: '15mb' }));
 app.use(express.urlencoded({ limit: '15mb', extended: true }));
 
-// Performance headers middleware
-app.use((_req, res, next) => {
-  res.setHeader('Keep-Alive', 'timeout=5, max=1000');
-  next();
-});
+// General Rate Limiter for all incoming traffic
+app.use(generalApiLimiter);
 
 // Routes Registration
 registerRoutes(app);

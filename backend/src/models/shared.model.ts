@@ -8,20 +8,71 @@ export interface IAdminUser extends Document {
   role: 'superadmin' | 'viewer';
   roleId?: string;
   isActive: boolean;
+  tokenVersion: number;
+  failedLoginAttempts: number;
+  lockUntil?: Date;
+  lastLoginAt?: Date;
+  passwordResetToken?: string;
+  passwordResetExpires?: Date;
   createdAt: Date;
 }
 
 const AdminUserSchema = new Schema<IAdminUser>({
   name: { type: String, required: true },
-  email: { type: String, required: true, unique: true, index: true },
-  hashedPassword: { type: String, required: true },
+  email: { type: String, required: true, unique: true, index: true, lowercase: true, trim: true },
+  hashedPassword: { type: String, required: true, select: false },
   role: { type: String, enum: ['superadmin', 'viewer'], default: 'viewer' },
   roleId: { type: String },
   isActive: { type: Boolean, default: true },
+  tokenVersion: { type: Number, default: 0 },
+  failedLoginAttempts: { type: Number, default: 0 },
+  lockUntil: { type: Date },
+  lastLoginAt: { type: Date },
+  passwordResetToken: { type: String, select: false },
+  passwordResetExpires: { type: Date },
   createdAt: { type: Date, default: Date.now },
 });
 
 export const AdminUser = mongoose.model<IAdminUser>('AdminUser', AdminUserSchema);
+
+// ─── Customer / Web User ──────────────────────────────
+export interface IUser extends Document {
+  name: string;
+  email: string;
+  phone?: string;
+  hashedPassword: string;
+  role: 'customer' | 'viewer' | 'superadmin';
+  isEmailVerified: boolean;
+  emailVerificationToken?: string;
+  emailVerificationExpires?: Date;
+  passwordResetToken?: string;
+  passwordResetExpires?: Date;
+  tokenVersion: number;
+  failedLoginAttempts: number;
+  lockUntil?: Date;
+  lastLoginAt?: Date;
+  createdAt: Date;
+}
+
+const UserSchema = new Schema<IUser>({
+  name: { type: String, required: true, trim: true },
+  email: { type: String, required: true, unique: true, index: true, lowercase: true, trim: true },
+  phone: { type: String, trim: true },
+  hashedPassword: { type: String, required: true, select: false },
+  role: { type: String, enum: ['customer', 'viewer', 'superadmin'], default: 'customer' },
+  isEmailVerified: { type: Boolean, default: false },
+  emailVerificationToken: { type: String, select: false },
+  emailVerificationExpires: { type: Date },
+  passwordResetToken: { type: String, select: false },
+  passwordResetExpires: { type: Date },
+  tokenVersion: { type: Number, default: 0 },
+  failedLoginAttempts: { type: Number, default: 0 },
+  lockUntil: { type: Date },
+  lastLoginAt: { type: Date },
+  createdAt: { type: Date, default: Date.now },
+});
+
+export const User = mongoose.model<IUser>('User', UserSchema);
 
 // ─── Role ──────────────────────────────────────────────
 export interface IRole extends Document {
