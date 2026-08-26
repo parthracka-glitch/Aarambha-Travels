@@ -1,11 +1,12 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { Plus, RefreshCw, FileDown, Receipt } from 'lucide-react';
+import { Plus, RefreshCw, FileDown, Receipt, MessageSquare } from 'lucide-react';
 import { getPromoCodes, createPromoCode } from '@/api/finance.api';
 import { getToursBookings } from '@/api/tours.api';
 import { getFleetBookings } from '@/api/fleet.api';
 import { Badge } from '@/components/common/Badge';
 import { Modal } from '@/components/common/Modal';
 import { Loader } from '@/components/common/Loader';
+import { WhatsAppBookingModal } from '@/components/common/WhatsAppBookingModal';
 import { formatCurrency } from '@/utils/formatCurrency';
 import { formatDate } from '@/utils/formatDate';
 import { generateInvoicePDF, getNextInvoiceNumber, type InvoiceData } from '@/utils/generateInvoicePDF';
@@ -18,6 +19,7 @@ export default function FinanceView() {
   const [allBookings, setAllBookings] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [whatsAppModalBooking, setWhatsAppModalBooking] = useState<any | null>(null);
 
   const [form, setForm] = useState({
     code: '', discountPercentage: 15, maxDiscountAmount: 2000, validVertical: 'all'
@@ -185,12 +187,22 @@ export default function FinanceView() {
                         </span>
                       </td>
                       <td className="px-5 py-4 text-right">
-                        <button
-                          onClick={() => handleDownloadInvoice(b)}
-                          className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-[#111827] hover:bg-black text-white rounded-full text-[11px] font-bold transition-all"
-                        >
-                          <FileDown className="w-3 h-3" /> PDF
-                        </button>
+                        <div className="flex items-center justify-end gap-1.5">
+                          <button
+                            type="button"
+                            onClick={() => setWhatsAppModalBooking(b)}
+                            className="inline-flex items-center gap-1 px-2.5 py-1.5 bg-emerald-50 hover:bg-emerald-100 text-emerald-700 border border-emerald-200 rounded-full text-[11px] font-bold transition-all cursor-pointer"
+                            title="Send WhatsApp Balance / Payment Reminder"
+                          >
+                            <MessageSquare className="w-3 h-3 text-emerald-600" /> Remind
+                          </button>
+                          <button
+                            onClick={() => handleDownloadInvoice(b)}
+                            className="inline-flex items-center gap-1 px-3 py-1.5 bg-[#111827] hover:bg-black text-white rounded-full text-[11px] font-bold transition-all cursor-pointer"
+                          >
+                            <FileDown className="w-3 h-3" /> PDF
+                          </button>
+                        </div>
                       </td>
                     </tr>
                   );
@@ -267,6 +279,14 @@ export default function FinanceView() {
           </button>
         </form>
       </Modal>
+
+      {/* WhatsApp Interactive Dispatch & Reminder Modal */}
+      <WhatsAppBookingModal
+        isOpen={Boolean(whatsAppModalBooking)}
+        onClose={() => setWhatsAppModalBooking(null)}
+        booking={whatsAppModalBooking}
+        defaultTemplateId="payment_reminder"
+      />
     </div>
   );
 }

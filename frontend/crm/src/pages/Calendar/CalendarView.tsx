@@ -2,7 +2,7 @@ import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import {
   ChevronLeft, ChevronRight, Calendar as CalendarIcon, Filter, Download,
   Printer, Users, Car, Compass, CheckCircle2, ArrowUpRight, ArrowDownLeft,
-  Search, Eye, FileSpreadsheet, FileText, Info, RefreshCw, X, Clock, MapPin, Phone
+  Search, Eye, FileSpreadsheet, FileText, Info, RefreshCw, X, Clock, MapPin, Phone, MessageSquare
 } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
 import { getToursBookings, getToursPackages } from '@/api/tours.api';
@@ -10,6 +10,7 @@ import { getFleetBookings, getFleetVehicles } from '@/api/fleet.api';
 import { Loader } from '@/components/common/Loader';
 import { Badge } from '@/components/common/Badge';
 import { Modal } from '@/components/common/Modal';
+import { WhatsAppBookingModal } from '@/components/common/WhatsAppBookingModal';
 import { formatDate } from '@/utils/formatDate';
 import { formatCurrency } from '@/utils/formatCurrency';
 import {
@@ -89,6 +90,7 @@ export default function CalendarView() {
 
   // Single Booking Detail Modal
   const [selectedBookingDetail, setSelectedBookingDetail] = useState<UnifiedEvent | null>(null);
+  const [whatsAppModalBooking, setWhatsAppModalBooking] = useState<any | null>(null);
 
   // Selected Package in "Packages & Members" Explorer tab
   const [explorerPackageId, setExplorerPackageId] = useState<string>('');
@@ -1385,6 +1387,31 @@ export default function CalendarView() {
 
             <div className="flex items-center gap-2 pt-2">
               <button
+                type="button"
+                onClick={() => {
+                  setWhatsAppModalBooking({
+                    bookingCode: selectedBookingDetail.bookingCode,
+                    customerName: selectedBookingDetail.customerName,
+                    customerPhone: selectedBookingDetail.customerPhone,
+                    customerEmail: selectedBookingDetail.customerEmail,
+                    vehicleName: selectedBookingDetail.vehicleName,
+                    packageName: selectedBookingDetail.packageName,
+                    pickupDate: selectedBookingDetail.departureDate,
+                    dropoffDate: selectedBookingDetail.returnDate,
+                    travelDate: selectedBookingDetail.departureDate,
+                    totalAmount: selectedBookingDetail.totalAmount,
+                    depositPaid: selectedBookingDetail.depositPaid,
+                    status: selectedBookingDetail.status,
+                    type: selectedBookingDetail.type === 'fleet' ? 'Fleet' : 'Tours',
+                  });
+                }}
+                className="flex-1 py-2.5 rounded-xl bg-emerald-50 hover:bg-emerald-100 text-emerald-700 border border-emerald-200 text-xs font-bold transition-all flex items-center justify-center gap-1.5 shadow-xs cursor-pointer"
+              >
+                <MessageSquare className="w-3.5 h-3.5 text-emerald-600" />
+                <span>WhatsApp Message</span>
+              </button>
+
+              <button
                 onClick={() => {
                   generateInvoicePDF({
                     invoiceNumber: `INV-${selectedBookingDetail.bookingCode}`,
@@ -1409,15 +1436,22 @@ export default function CalendarView() {
                     paymentStatus: selectedBookingDetail.status,
                   });
                 }}
-                className="w-full py-2.5 rounded-xl bg-[#111827] text-white hover:bg-gray-800 text-xs font-bold transition-all flex items-center justify-center gap-1.5 shadow-sm"
+                className="flex-1 py-2.5 rounded-xl bg-[#111827] text-white hover:bg-gray-800 text-xs font-bold transition-all flex items-center justify-center gap-1.5 shadow-sm cursor-pointer"
               >
                 <FileText className="w-3.5 h-3.5" />
-                <span>Generate Official Invoice</span>
+                <span>Generate Invoice</span>
               </button>
             </div>
           </div>
         </Modal>
       )}
+
+      {/* WhatsApp Interactive Dispatch & Reminder Modal */}
+      <WhatsAppBookingModal
+        isOpen={Boolean(whatsAppModalBooking)}
+        onClose={() => setWhatsAppModalBooking(null)}
+        booking={whatsAppModalBooking}
+      />
 
     </div>
   );

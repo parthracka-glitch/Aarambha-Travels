@@ -1,9 +1,10 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { Plus, RefreshCw, Pencil, Trash2, Car, Bus, Users, Search, CheckCircle, AlertTriangle, ShieldCheck, Tag, Sparkles, Layers, Check, X } from 'lucide-react';
+import { Plus, RefreshCw, Pencil, Trash2, Car, Bus, Users, Search, CheckCircle, AlertTriangle, ShieldCheck, Tag, Sparkles, Layers, Check, X, MessageSquare } from 'lucide-react';
 import { getFleetVehicles, getFleetCategories, createVehicle, updateVehicle, deleteVehicle } from '@/api/fleet.api';
 import { getBusRates, createBusRate, updateBusRate, deleteBusRate } from '@/api/bus.api';
 import { Modal } from '@/components/common/Modal';
 import { Loader } from '@/components/common/Loader';
+import { WhatsAppBookingModal } from '@/components/common/WhatsAppBookingModal';
 import { formatCurrency } from '@/utils/formatCurrency';
 import { useAutoRefresh } from '@/hooks/useRealtimeSync';
 
@@ -53,6 +54,7 @@ export default function FleetView() {
   const [busLoading, setBusLoading] = useState(true);
   const [isBusModalOpen, setIsBusModalOpen] = useState(false);
   const [editingBus, setEditingBus] = useState<any | null>(null);
+  const [whatsAppModalBooking, setWhatsAppModalBooking] = useState<any | null>(null);
 
   const [searchQuery, setSearchQuery] = useState('');
 
@@ -1018,31 +1020,49 @@ export default function FleetView() {
                     <span className="text-[10px] text-gray-400 block font-medium">Daily Rate</span>
                     <span className="font-bold text-gray-900 text-xs">{formatCurrency(car.dailyRate || 2500)}</span>
                   </div>
-                  <button
-                    onClick={() => {
-                      setEditingVeh(car);
-                      setCarForm({
-                        name: car.name || '',
-                        regNumber: car.regNumber || '',
-                        categoryId: car.categoryId?._id || car.categoryId || categories[0]?._id || '',
-                        vehicleType: car.vehicleType || 'car',
-                        dailyRate: car.dailyRate || 2500,
+                  <div className="flex items-center gap-1">
+                    <button
+                      type="button"
+                      onClick={() => setWhatsAppModalBooking({
+                        vehicleName: car.name,
+                        vehicleNumber: car.regNumber,
+                        regNumber: car.regNumber,
+                        totalAmount: car.dailyRate || 2500,
                         securityDeposit: car.securityDeposit || 3000,
-                        status: car.status || 'Available',
-                        image: Array.isArray(car.images) && car.images[0] ? car.images[0] : '/images/fleet/wagonr_vxi_2025.jpg',
-                        bodyType: car.specs?.bodyType || 'Hatchback',
-                        transmission: car.specs?.transmission || 'Manual',
-                        fuel: car.specs?.fuel || 'Petrol',
-                        seats: car.specs?.seats || 5,
-                        engine: car.specs?.engine || '',
-                        horsepower: car.specs?.horsepower || 85,
-                      });
-                      setIsCarModalOpen(true);
-                    }}
-                    className="p-1.5 text-gray-500 hover:text-[#5266EB] hover:bg-blue-50 rounded-lg transition-colors cursor-pointer"
-                  >
-                    <Pencil className="w-3.5 h-3.5" />
-                  </button>
+                        type: 'Fleet',
+                        serviceType: 'Self-Drive Rental',
+                      })}
+                      className="p-1.5 text-emerald-600 hover:bg-emerald-50 rounded-lg transition-colors cursor-pointer"
+                      title="Dispatch / Share Car via WhatsApp"
+                    >
+                      <MessageSquare className="w-3.5 h-3.5" />
+                    </button>
+                    <button
+                      onClick={() => {
+                        setEditingVeh(car);
+                        setCarForm({
+                          name: car.name || '',
+                          regNumber: car.regNumber || '',
+                          categoryId: car.categoryId?._id || car.categoryId || categories[0]?._id || '',
+                          vehicleType: car.vehicleType || 'car',
+                          dailyRate: car.dailyRate || 2500,
+                          securityDeposit: car.securityDeposit || 3000,
+                          status: car.status || 'Available',
+                          image: Array.isArray(car.images) && car.images[0] ? car.images[0] : '/images/fleet/wagonr_vxi_2025.jpg',
+                          bodyType: car.specs?.bodyType || 'Hatchback',
+                          transmission: car.specs?.transmission || 'Manual',
+                          fuel: car.specs?.fuel || 'Petrol',
+                          seats: car.specs?.seats || 5,
+                          engine: car.specs?.engine || '',
+                          horsepower: car.specs?.horsepower || 85,
+                        });
+                        setIsCarModalOpen(true);
+                      }}
+                      className="p-1.5 text-gray-500 hover:text-[#5266EB] hover:bg-blue-50 rounded-lg transition-colors cursor-pointer"
+                    >
+                      <Pencil className="w-3.5 h-3.5" />
+                    </button>
+                  </div>
                 </div>
               </div>
             </div>
@@ -1184,6 +1204,14 @@ export default function FleetView() {
           </div>
         </form>
       </Modal>
+
+      {/* WhatsApp Interactive Dispatch & Reminder Modal */}
+      <WhatsAppBookingModal
+        isOpen={Boolean(whatsAppModalBooking)}
+        onClose={() => setWhatsAppModalBooking(null)}
+        booking={whatsAppModalBooking}
+        defaultTemplateId="vehicle_handover"
+      />
 
     </div>
   );

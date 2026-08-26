@@ -7,6 +7,7 @@ import { getFleetBookings, getFleetVehicles, createFleetBooking, deleteFleetBook
 import { Badge } from '@/components/common/Badge';
 import { Modal } from '@/components/common/Modal';
 import { Loader } from '@/components/common/Loader';
+import { WhatsAppBookingModal } from '@/components/common/WhatsAppBookingModal';
 import { statusColor } from '@/utils/statusColor';
 import { formatDate } from '@/utils/formatDate';
 import { formatCurrency } from '@/utils/formatCurrency';
@@ -25,6 +26,7 @@ export default function BookingsView() {
   const [selectedBooking, setSelectedBooking] = useState<any>(null);
   const [isInvoiceOpen, setIsInvoiceOpen] = useState(false);
   const [isOfflineModalOpen, setIsOfflineModalOpen] = useState(false);
+  const [whatsAppModalBooking, setWhatsAppModalBooking] = useState<any | null>(null);
   const [viewingScreenshot, setViewingScreenshot] = useState<{ url: string; bookingCode: string; customerName: string; utrNumber?: string; deposit?: number; bookingObj?: any } | null>(null);
 
   // ── Filters ──────────────────────────────────────────────────────────────
@@ -677,14 +679,14 @@ export default function BookingsView() {
                       >
                         <Phone className="w-3 h-3" /> Call
                       </a>
-                      <a
-                        href={`https://wa.me/${cleanPhone.startsWith('91') ? cleanPhone : `91${cleanPhone}`}?text=${encodeURIComponent(`Hello ${name}, regarding your Aarambha booking #${code}.`)}`}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="px-2 py-1 rounded-lg bg-emerald-50 text-emerald-700 font-bold flex items-center gap-1 text-[10px] border border-emerald-200"
+                      <button
+                        type="button"
+                        onClick={() => setWhatsAppModalBooking(b)}
+                        className="px-2 py-1 rounded-lg bg-emerald-50 hover:bg-emerald-100 text-emerald-700 font-bold flex items-center gap-1 text-[10px] border border-emerald-200 transition-colors cursor-pointer"
+                        title="Share / Dispatch via WhatsApp"
                       >
                         <MessageSquare className="w-3 h-3" /> WhatsApp
-                      </a>
+                      </button>
                     </div>
                   </div>
                 )}
@@ -1090,6 +1092,16 @@ export default function BookingsView() {
                           </button>
                         )}
 
+                        {/* WhatsApp Dispatch & Reminder Modal Trigger */}
+                        <button
+                          type="button"
+                          onClick={() => setWhatsAppModalBooking(b)}
+                          title="Open WhatsApp Booking Dispatch & Reminders"
+                          className="px-3 py-1.5 bg-emerald-50 hover:bg-emerald-100 text-emerald-700 border border-emerald-200 hover:border-emerald-300 rounded-full text-[11px] font-bold shadow-xs transition-all flex items-center gap-1 cursor-pointer active:scale-95"
+                        >
+                          <MessageSquare className="w-3 h-3 text-emerald-600" /> WhatsApp
+                        </button>
+
                         {/* Excel Single Export */}
                         <button
                           onClick={() => exportToExcel([b])}
@@ -1487,6 +1499,13 @@ export default function BookingsView() {
           </div>
         </div>
       )}
+
+      {/* WhatsApp Interactive Dispatch & Reminder Modal */}
+      <WhatsAppBookingModal
+        isOpen={Boolean(whatsAppModalBooking)}
+        onClose={() => setWhatsAppModalBooking(null)}
+        booking={whatsAppModalBooking}
+      />
 
     </div>
   );
