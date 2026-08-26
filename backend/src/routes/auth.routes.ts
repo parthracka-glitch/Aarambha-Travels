@@ -4,6 +4,7 @@ import { authenticateUser } from '../middlewares/auth.middleware';
 import { validateRequest } from '../middlewares/validate.middleware';
 import {
   authRateLimiter,
+  registrationRateLimiter,
   passwordResetRateLimiter,
   emailVerificationRateLimiter,
 } from '../middlewares/rateLimit.middleware';
@@ -20,7 +21,8 @@ const router = Router();
 
 // Authentication Endpoints with Brute-Force Rate Limiting
 router.post('/login', authRateLimiter, validateRequest(loginSchema), AuthController.login);
-router.post('/register', authRateLimiter, validateRequest(registerSchema), AuthController.register);
+// Registration uses BOTH per-IP registration limiter AND general auth limiter
+router.post('/register', registrationRateLimiter, authRateLimiter, validateRequest(registerSchema), AuthController.register);
 
 // Email Verification Endpoints
 router.post('/verify-email', emailVerificationRateLimiter, validateRequest(verifyEmailSchema), AuthController.verifyEmail);

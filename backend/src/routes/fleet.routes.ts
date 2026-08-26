@@ -2,6 +2,21 @@ import { Router } from 'express';
 import { FleetController } from '../controllers/fleet.controller';
 import { BusController } from '../controllers/bus.controller';
 import { authenticateAdmin, requireSuperAdmin } from '../middlewares/auth.middleware';
+import { validateRequest } from '../middlewares/validate.middleware';
+import {
+  bookingCreationLimiter,
+  inquiryCreationLimiter,
+  syncStatusLimiter,
+} from '../middlewares/rateLimit.middleware';
+import {
+  createFleetCategorySchema,
+  createVehicleSchema,
+  createFleetInquirySchema,
+} from '../validators/fleet.validator';
+import {
+  createFleetBookingSchema,
+  syncStatusSchema,
+} from '../validators/booking.validator';
 
 const router = Router();
 
@@ -11,9 +26,9 @@ router.get('/vehicles', FleetController.listVehicles);
 router.get('/vehicles/:id', FleetController.getVehicleById);
 router.get('/buses', BusController.listBuses);
 router.get('/buses/:id', BusController.getBusById);
-router.post('/inquiries', FleetController.createInquiry);
-router.post('/bookings', FleetController.createBooking);
-router.post('/bookings/sync-status', FleetController.syncBookingStatus);
+router.post('/inquiries', inquiryCreationLimiter, validateRequest(createFleetInquirySchema), FleetController.createInquiry);
+router.post('/bookings', bookingCreationLimiter, validateRequest(createFleetBookingSchema), FleetController.createBooking);
+router.post('/bookings/sync-status', syncStatusLimiter, validateRequest(syncStatusSchema), FleetController.syncBookingStatus);
 
 // Protected Admin routes
 router.use(authenticateAdmin);
@@ -24,9 +39,9 @@ router.put('/buses/:id', requireSuperAdmin, BusController.updateBus);
 router.delete('/buses/:id', requireSuperAdmin, BusController.deleteBus);
 
 // Admin Vehicle & Category Management (SuperAdmin only)
-router.post('/categories', requireSuperAdmin, FleetController.createCategory);
-router.post('/vehicles', requireSuperAdmin, FleetController.createVehicle);
-router.put('/vehicles/:id', requireSuperAdmin, FleetController.updateVehicle);
+router.post('/categories', requireSuperAdmin, validateRequest(createFleetCategorySchema), FleetController.createCategory);
+router.post('/vehicles', requireSuperAdmin, validateRequest(createVehicleSchema), FleetController.createVehicle);
+router.put('/vehicles/:id', requireSuperAdmin, validateRequest(createVehicleSchema.partial()), FleetController.updateVehicle);
 router.delete('/vehicles/:id', requireSuperAdmin, FleetController.deleteVehicle);
 router.delete('/inquiries/:id', requireSuperAdmin, FleetController.deleteInquiry);
 router.get('/inquiries', FleetController.listInquiries);
@@ -40,4 +55,3 @@ router.put('/bookings/:id/refund', requireSuperAdmin, FleetController.refundDepo
 router.delete('/bookings/:id', requireSuperAdmin, FleetController.deleteBooking);
 
 export default router;
-

@@ -3,7 +3,18 @@ import jwt from 'jsonwebtoken';
 import bcrypt from 'bcryptjs';
 import { AdminUser, User, AuditLog } from '../models/shared.model';
 
-const JWT_SECRET = process.env.SECRET_KEY || 'aarambha-super-secret-key-change-in-production-2026';
+// ─── JWT Secret — Must come from environment, never hardcoded ────────────────
+// In production the app will refuse to start if SECRET_KEY is missing.
+// In development a fallback is used only to ease local setup.
+const _JWT_SECRET_RAW = process.env.SECRET_KEY;
+if (!_JWT_SECRET_RAW && process.env.NODE_ENV === 'production') {
+  throw new Error(
+    '[SECURITY] SECRET_KEY environment variable is not set. ' +
+    'Server refuses to start without a valid JWT secret in production.'
+  );
+}
+const JWT_SECRET = _JWT_SECRET_RAW || 'aarambha-super-secret-key-change-in-production-2026';
+
 const BCRYPT_SALT_ROUNDS = 12; // Enterprise-grade password hashing work factor
 const TOKEN_EXPIRY = '24h';    // Strict 24-hour access token lifetime
 

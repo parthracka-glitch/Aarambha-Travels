@@ -36,8 +36,8 @@ export function createRateLimiter(options: RateLimitOptions) {
 
   return async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     const now = Date.now();
-    const clientIp = req.ip || req.socket.remoteAddress || 'unknown';
-    
+    const clientIp = (req.ip || req.socket.remoteAddress || 'unknown').replace('::ffff:', '');
+
     // Generate unique key (IP + optional identifier like email from body)
     let key: string;
     if (options.keyGenerator) {
@@ -103,6 +103,10 @@ export function createRateLimiter(options: RateLimitOptions) {
   };
 }
 
+// ─────────────────────────────────────────────────────────────────────────────
+// Auth Rate Limiters
+// ─────────────────────────────────────────────────────────────────────────────
+
 /**
  * Strict authentication rate limiter:
  * Max 5 failed/total login attempts per 15 minutes per IP & Email
@@ -112,6 +116,19 @@ export const authRateLimiter = createRateLimiter({
   maxRequests: 5,
   message: 'Too many login attempts from this device or account. For security, please wait 15 minutes before trying again.',
   auditAction: 'LOGIN_RATE_LIMITED_BRUTE_FORCE_PREVENTED',
+});
+
+/**
+ * Account registration rate limiter:
+ * Max 3 new account registrations per IP per hour
+ * Prevents mass account creation bots
+ */
+export const registrationRateLimiter = createRateLimiter({
+  windowMs: 60 * 60 * 1000, // 1 hour
+  maxRequests: 3,
+  message: 'Too many account registrations from this device. Please wait 1 hour before registering another account.',
+  keyGenerator: (req) => (req.ip || 'unknown').replace('::ffff:', ''),
+  auditAction: 'REGISTRATION_RATE_LIMITED_BOT_PREVENTED',
 });
 
 /**
@@ -135,6 +152,53 @@ export const emailVerificationRateLimiter = createRateLimiter({
   message: 'Too many email verification attempts. Please wait 15 minutes before trying again.',
 });
 
+// ─────────────────────────────────────────────────────────────────────────────
+// Booking & Inquiry Rate Limiters (Abuse Prevention)
+// ─────────────────────────────────────────────────────────────────────────────
+
+/**
+ * Booking creation rate limiter:
+ * Max 10 booking submissions per IP per hour
+ * Prevents automated booking spam and inventory exhaustion attacks
+ */
+export const bookingCreationLimiter = createRateLimiter({
+  windowMs: 60 * 60 * 1000, // 1 hour
+  maxRequests: 10,
+  message: 'Too many booking submissions from this device. Please wait before submitting another booking.',
+  keyGenerator: (req) => (req.ip || 'unknown').replace('::ffff:', ''),
+  auditAction: 'BOOKING_CREATION_RATE_LIMITED',
+});
+
+/**
+ * Inquiry creation rate limiter:
+ * Max 5 inquiries per IP per 30 minutes
+ * Prevents inquiry spam and scraping of contact workflows
+ */
+export const inquiryCreationLimiter = createRateLimiter({
+  windowMs: 30 * 60 * 1000, // 30 minutes
+  maxRequests: 5,
+  message: 'Too many inquiry submissions from this device. Please wait 30 minutes before submitting another inquiry.',
+  keyGenerator: (req) => (req.ip || 'unknown').replace('::ffff:', ''),
+  auditAction: 'INQUIRY_CREATION_RATE_LIMITED',
+});
+
+/**
+ * Booking sync-status rate limiter (anti-enumeration):
+ * Max 20 status sync requests per IP per minute
+ * Prevents automated polling to enumerate valid booking codes or emails
+ */
+export const syncStatusLimiter = createRateLimiter({
+  windowMs: 60 * 1000, // 1 minute
+  maxRequests: 20,
+  message: 'Too many status requests. Please wait before checking your booking status again.',
+  keyGenerator: (req) => (req.ip || 'unknown').replace('::ffff:', ''),
+  auditAction: 'SYNC_STATUS_RATE_LIMITED_ENUMERATION_PREVENTED',
+});
+
+// ─────────────────────────────────────────────────────────────────────────────
+// General API Rate Limiter
+// ─────────────────────────────────────────────────────────────────────────────
+
 /**
  * General Public API rate limiter:
  * Max 120 requests per minute
@@ -142,6 +206,6 @@ export const emailVerificationRateLimiter = createRateLimiter({
 export const generalApiLimiter = createRateLimiter({
   windowMs: 60 * 1000, // 1 minute
   maxRequests: 120,
-  keyGenerator: (req) => req.ip || 'unknown',
+  keyGenerator: (req) => (req.ip || 'unknown').replace('::ffff:', ''),
   message: 'Rate limit exceeded. Please slow down your requests.',
 });

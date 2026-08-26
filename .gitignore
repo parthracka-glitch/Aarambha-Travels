@@ -12,10 +12,26 @@ build/
 *.js.map
 *.tsbuildinfo
 
-# Environment
+# ─── ENVIRONMENT & SECRET FILES ──────────────────────────────────────────────
+# These files contain secrets and must NEVER be committed to version control.
+# Use .env.example as a template and populate on each deployment environment.
 .env
 .env.local
+.env.development
+.env.production
+.env.staging
+.env.test
 .env.*.local
+backend/.env
+frontend/website/.env.local
+frontend/website/.env.production
+frontend/crm/.env
+frontend/crm/.env.production
+*.pem
+*.key
+*.p12
+*.pfx
+# ─────────────────────────────────────────────────────────────────────────────
 
 # IDE / OS
 .vscode/
@@ -28,6 +44,7 @@ Thumbs.db
 # Logs
 *.log
 npm-debug.log*
+logs/
 
 # Test
 coverage/
