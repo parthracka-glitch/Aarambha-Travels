@@ -16,6 +16,7 @@ export interface AuthContextType {
   login: (email: string, password: string) => Promise<void>;
   logout: () => void;
   updateUser: (updatedUser: AdminUser, newToken?: string) => void;
+  retryConnection: () => Promise<boolean>;
 }
 
 export const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -54,6 +55,20 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     } catch (_e) {}
   }, []);
 
+  const checkConnection = useCallback(async (): Promise<boolean> => {
+    try {
+      const online = await checkHealthStatus(20000);
+      setApiStatus(online ? 'online' : 'offline');
+      if (online) {
+        syncCurrentUser();
+      }
+      return online;
+    } catch {
+      setApiStatus('offline');
+      return false;
+    }
+  }, [syncCurrentUser]);
+
   // Try to restore session from localStorage on mount and sync with server
   useEffect(() => {
     const token = localStorage.getItem('crm_token');
@@ -72,29 +87,46 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   // Sync profile when window gains focus or visibility changes
   useEffect(() => {
-    const onFocus = () => syncCurrentUser();
+    const onFocus = () => {
+      checkConnection();
+      syncCurrentUser();
+    };
     const onVisibility = () => {
-      if (document.visibilityState === 'visible') syncCurrentUser();
+      if (document.visibilityState === 'visible') {
+        checkConnection();
+        syncCurrentUser();
+      }
+    };
+    const onOnline = () => {
+      setApiStatus('checking');
+      checkConnection();
     };
 
     window.addEventListener('focus', onFocus);
+    window.addEventListener('online', onOnline);
     document.addEventListener('visibilitychange', onVisibility);
-
-    // Heartbeat profile check every 15s
-    const timer = setInterval(syncCurrentUser, 15000);
 
     return () => {
       window.removeEventListener('focus', onFocus);
+      window.removeEventListener('online', onOnline);
       document.removeEventListener('visibilitychange', onVisibility);
-      clearInterval(timer);
     };
-  }, [syncCurrentUser]);
+  }, [checkConnection, syncCurrentUser]);
 
+  // Progressive auto-reconnecting background health monitor
   useEffect(() => {
-    checkHealthStatus().then(online => {
-      setApiStatus(online ? 'online' : 'offline');
-    });
-  }, []);
+    // Initial check
+    checkConnection();
+
+    // If offline or checking, retry aggressively every 4 seconds to catch Render waking up.
+    // If online, check every 45 seconds for a light heartbeat.
+    const pollInterval = apiStatus === 'online' ? 45000 : 4000;
+    const timer = setInterval(() => {
+      checkConnection();
+    }, pollInterval);
+
+    return () => clearInterval(timer);
+  }, [apiStatus, checkConnection]);
 
   const login = useCallback(async (email: string, password: string): Promise<void> => {
     const res = await fetch(`${API}/api/auth/login`, {
@@ -127,6 +159,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
     localStorage.setItem('crm_user', JSON.stringify(adminUser));
     setUser(adminUser);
+    setApiStatus('online');
   }, []);
 
   const updateUser = useCallback((updatedUser: AdminUser, newToken?: string) => {
@@ -155,6 +188,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       login,
       logout,
       updateUser,
+      retryConnection: checkConnection,
     }}>
       {children}
     </AuthContext.Provider>

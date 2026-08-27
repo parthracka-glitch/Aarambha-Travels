@@ -43,6 +43,17 @@ export function Topbar({ onToggleMobileSidebar }: TopbarProps) {
       {/* Right Action Icons & Badges */}
       <div className="flex items-center gap-2 sm:gap-3 shrink-0">
         
+        {/* Live Status Pill */}
+        <div 
+          className="flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-bold bg-white border border-gray-200/80 shadow-2xs"
+          title={apiStatus === 'online' ? 'Connected to live database' : 'Syncing / Reconnecting to backend'}
+        >
+          <span className={`w-2 h-2 rounded-full ${apiStatus === 'online' ? 'bg-emerald-500' : 'bg-amber-500 animate-ping'}`} />
+          <span className="text-gray-600 font-semibold text-[10px]">
+            {apiStatus === 'online' ? 'Live' : 'Connecting...'}
+          </span>
+        </div>
+
         {/* Active Scope Pill on Mobile */}
         <span className="text-[10px] font-extrabold uppercase tracking-wider text-[#5266EB] bg-blue-50 border border-blue-200 px-2 py-0.5 rounded-full hidden xs:inline-block sm:inline-block">
           {activeVertical === 'all' ? 'All' : activeVertical === 'tours' ? 'Tours' : 'Rental'}

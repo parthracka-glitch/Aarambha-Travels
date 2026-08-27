@@ -9,7 +9,7 @@ function getAuthHeaders(): Record<string, string> {
   return token ? { Authorization: `Bearer ${token}` } : {};
 }
 
-export async function apiFetch(path: string, opts?: RequestInit) {
+export async function apiFetch(path: string, opts?: RequestInit, retries: number = 2): Promise<any> {
   const method = (opts?.method || 'GET').toUpperCase();
   const cacheKey = `${method}:${path}`;
 
@@ -41,32 +41,48 @@ export async function apiFetch(path: string, opts?: RequestInit) {
     }
   }
 
-  const controllerSignal = opts?.signal || AbortSignal.timeout(30000);
+  let lastError: any = null;
+  for (let attempt = 0; attempt <= retries; attempt++) {
+    try {
+      const controllerSignal = opts?.signal || AbortSignal.timeout(30000);
 
-  const res = await fetch(`${API}${path}`, {
-    headers,
-    signal: controllerSignal,
-    ...opts,
-  });
+      const res = await fetch(`${API}${path}`, {
+        headers,
+        signal: controllerSignal,
+        ...opts,
+      });
 
-  if (!res.ok) {
-    const err = await res.json().catch(() => ({ detail: res.statusText }));
-    throw new Error(err.detail || err.message || err.error || res.statusText);
+      if (!res.ok) {
+        const err = await res.json().catch(() => ({ detail: res.statusText }));
+        throw new Error(err.detail || err.message || err.error || res.statusText);
+      }
+
+      const data = await res.json();
+      if (method === 'GET') {
+        cache.set(cacheKey, { data, timestamp: Date.now() });
+      }
+
+      return data;
+    } catch (err: any) {
+      lastError = err;
+      // Only retry if it's a GET or idempotent, or network failure, and attempts remain
+      if (attempt < retries && (method === 'GET' || err.name === 'AbortError' || err.message?.includes('fetch'))) {
+        await new Promise((r) => setTimeout(r, 1200 * (attempt + 1)));
+        continue;
+      }
+      break;
+    }
   }
 
-  const data = await res.json();
-  if (method === 'GET') {
-    cache.set(cacheKey, { data, timestamp: Date.now() });
-  }
-
-  return data;
+  throw lastError;
 }
 
-export async function checkHealthStatus(): Promise<boolean> {
+export async function checkHealthStatus(timeoutMs: number = 25000): Promise<boolean> {
   try {
-    const res = await fetch(`${API}/api/health`, { signal: AbortSignal.timeout(15000) });
+    const res = await fetch(`${API}/api/health`, { signal: AbortSignal.timeout(timeoutMs) });
     return res.ok;
   } catch {
     return false;
   }
 }
+

@@ -74,20 +74,9 @@ app.use(cors({
 app.use(express.json({ limit: '15mb' }));
 app.use(express.urlencoded({ limit: '15mb', extended: true }));
 
-// ─── Structured Request Logger (every request) ───────────────────────────────
-app.use(requestLogger);
-
-// ─── Suspicious Traffic & Bot Detection ──────────────────────────────────────
-app.use(suspiciousTrafficDetector);
-
-// ─── General Rate Limiter for all incoming traffic ────────────────────────────
-app.use(generalApiLimiter);
-
-// ─── Application Routes ───────────────────────────────────────────────────────
-registerRoutes(app);
-
-// ─── Health Check Endpoint ────────────────────────────────────────────────────
+// ─── Health Check & Root Endpoints (Exempt from rate limits & suspicious detector) ───
 app.get('/api/health', async (_req: Request, res: Response): Promise<void> => {
+  res.setHeader('Access-Control-Allow-Origin', '*');
   res.json({
     status: 'online',
     timestamp: Date.now() / 1000,
@@ -99,11 +88,24 @@ app.get('/api/health', async (_req: Request, res: Response): Promise<void> => {
 });
 
 app.get('/', (_req: Request, res: Response): void => {
+  res.setHeader('Access-Control-Allow-Origin', '*');
   res.json({
     message: 'Welcome to Aarambha MERN Stack API',
     health: '/api/health',
   });
 });
+
+// ─── Structured Request Logger (every request) ───────────────────────────────
+app.use(requestLogger);
+
+// ─── Suspicious Traffic & Bot Detection ──────────────────────────────────────
+app.use(suspiciousTrafficDetector);
+
+// ─── General Rate Limiter for all incoming traffic ────────────────────────────
+app.use(generalApiLimiter);
+
+// ─── Application Routes ───────────────────────────────────────────────────────
+registerRoutes(app);
 
 // ─── Centralized Error Handling ───────────────────────────────────────────────
 app.use(errorHandler);
@@ -121,7 +123,18 @@ const start = async () => {
       environment: process.env.NODE_ENV || 'development',
       port: PORT,
     }));
+
+    // Auto keep-alive self-ping for free-tier cloud hosting (Render)
+    const keepAliveUrl = process.env.RENDER_EXTERNAL_URL || process.env.BACKEND_URL;
+    if (keepAliveUrl) {
+      const pingIntervalMs = 12 * 60 * 1000; // Every 12 minutes (Render sleeps at 15 min)
+      setInterval(() => {
+        const pingUrl = `${keepAliveUrl.replace(/\/$/, '')}/api/health`;
+        fetch(pingUrl).catch(() => {});
+      }, pingIntervalMs);
+    }
   });
 };
 
 start();
+
