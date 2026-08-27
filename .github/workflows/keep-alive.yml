@@ -1,0 +1,20 @@
+name: 24/7 Backend Keep-Alive
+
+on:
+  schedule:
+    # Run every 10 minutes to prevent Render free-tier instance from sleeping (spins down after 15m)
+    - cron: '*/10 * * * *'
+  workflow_dispatch:
+
+jobs:
+  ping-backend:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Ping Backend API
+        run: |
+          URL="${{ secrets.BACKEND_URL }}"
+          if [ -z "$URL" ]; then
+            URL="https://aarambha-backend-api.onrender.com"
+          fi
+          echo "Pinging backend at: $URL/api/health"
+          curl -s -f -m 30 "$URL/api/health" || echo "Ping dispatched (Backend is waking up/responding)"
