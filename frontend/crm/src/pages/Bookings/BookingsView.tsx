@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import { RefreshCw, Plus, Trash2, FileDown, Filter, FileSpreadsheet, Calendar as CalendarIcon, CheckCircle, XCircle, AlertTriangle, Copy, Check, Clock, QrCode, Phone, MessageSquare, Image as ImageIcon, Eye, Download, X } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
@@ -23,6 +23,7 @@ export default function BookingsView() {
   const [packages, setPackages] = useState<any[]>([]);
   const [vehicles, setVehicles] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const hasLoadedRef = useRef(false);
   const [selectedBooking, setSelectedBooking] = useState<any>(null);
   const [isInvoiceOpen, setIsInvoiceOpen] = useState(false);
   const [isOfflineModalOpen, setIsOfflineModalOpen] = useState(false);
@@ -53,60 +54,67 @@ export default function BookingsView() {
   });
 
   const load = useCallback(() => {
-    setLoading(true);
+    if (!hasLoadedRef.current) setLoading(true);
     const promises: Promise<any>[] = [
-      getToursPackages().then(d => setPackages(d)),
-      getFleetVehicles().then(d => setVehicles(d)),
-      getToursBookings(),
-      getFleetBookings(),
+      getToursPackages().then(d => { if (Array.isArray(d)) setPackages(d); return d; }).catch(() => []),
+      getFleetVehicles().then(d => { if (Array.isArray(d)) setVehicles(d); return d; }).catch(() => []),
+      getToursBookings().catch(() => []),
+      getFleetBookings().catch(() => []),
     ];
-    Promise.all(promises).then(([tp, fv, tb, fb]) => {
-      let mergedTb = Array.isArray(tb) ? [...tb] : [];
-      let mergedFb = Array.isArray(fb) ? [...fb] : [];
+    Promise.all(promises)
+      .then(([tp, fv, tb, fb]) => {
+        let mergedTb = Array.isArray(tb) ? [...tb] : [];
+        let mergedFb = Array.isArray(fb) ? [...fb] : [];
 
-      // Check localStorage for any client bookings
-      try {
-        const rawLocal = localStorage.getItem('aarambha_user_bookings');
-        if (rawLocal) {
-          const localBookings: any[] = JSON.parse(rawLocal);
-          localBookings.forEach((local: any) => {
-            const isCar = local.type === 'car' || local.type === 'Fleet' || local.type === 'Rental';
-            const localCode = local.id || local.bookingCode || local.booking_code;
-            const targetList = isCar ? mergedFb : mergedTb;
-            const exists = targetList.some((x: any) => 
-              (x.bookingCode && x.bookingCode === localCode) ||
-              (x.booking_code && x.booking_code === localCode) ||
-              (x._id && x._id === localCode) ||
-              (x.id && x.id === localCode)
-            );
-            if (!exists) {
-              targetList.unshift({
-                ...local,
-                _id: localCode,
-                id: localCode,
-                bookingCode: localCode,
-                booking_code: localCode,
-                customerName: local.customerName || local.fullName,
-                customerPhone: local.customerPhone || local.phone,
-                customerEmail: local.customerEmail || local.email,
-                vehicleName: local.vehicleName || local.title,
-                packageName: local.packageName || local.title,
-                totalAmount: local.totalPrice || local.totalAmount,
-                depositPaid: local.depositPaid || 1,
-                type: isCar ? 'Fleet' : 'Tours',
-                utrNumber: local.utrNumber || local.utr_number || '',
-                paymentScreenshot: local.paymentScreenshot || local.payment_screenshot || '',
-                paymentMethod: local.paymentMethod || 'Direct UPI',
-              });
-            }
-          });
-        }
-      } catch (_e) {}
+        // Check localStorage for any client bookings
+        try {
+          const rawLocal = localStorage.getItem('aarambha_user_bookings');
+          if (rawLocal) {
+            const localBookings: any[] = JSON.parse(rawLocal);
+            localBookings.forEach((local: any) => {
+              const isCar = local.type === 'car' || local.type === 'Fleet' || local.type === 'Rental';
+              const localCode = local.id || local.bookingCode || local.booking_code;
+              const targetList = isCar ? mergedFb : mergedTb;
+              const exists = targetList.some((x: any) => 
+                (x.bookingCode && x.bookingCode === localCode) ||
+                (x.booking_code && x.booking_code === localCode) ||
+                (x._id && x._id === localCode) ||
+                (x.id && x.id === localCode)
+              );
+              if (!exists) {
+                targetList.unshift({
+                  ...local,
+                  _id: localCode,
+                  id: localCode,
+                  bookingCode: localCode,
+                  booking_code: localCode,
+                  customerName: local.customerName || local.fullName,
+                  customerPhone: local.customerPhone || local.phone,
+                  customerEmail: local.customerEmail || local.email,
+                  vehicleName: local.vehicleName || local.title,
+                  packageName: local.packageName || local.title,
+                  totalAmount: local.totalPrice || local.totalAmount,
+                  depositPaid: local.depositPaid || 1,
+                  type: isCar ? 'Fleet' : 'Tours',
+                  utrNumber: local.utrNumber || local.utr_number || '',
+                  paymentScreenshot: local.paymentScreenshot || local.payment_screenshot || '',
+                  paymentMethod: local.paymentMethod || 'Direct UPI',
+                });
+              }
+            });
+          }
+        } catch (_e) {}
 
-      setToursBookings(mergedTb);
-      setFleetBookings(mergedFb);
-      setLoading(false);
-    });
+        setToursBookings(mergedTb);
+        setFleetBookings(mergedFb);
+      })
+      .catch((err) => {
+        console.warn('[BookingsView] Error loading bookings:', err);
+      })
+      .finally(() => {
+        hasLoadedRef.current = true;
+        setLoading(false);
+      });
   }, [vertical]);
 
   useAutoRefresh(load, ['BOOKINGS_UPDATED'], 3500);

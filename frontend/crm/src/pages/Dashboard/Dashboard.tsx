@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Clock, ArrowUpRight, CalendarCheck, Compass, Car, Bus, ArrowRight, CheckCircle, AlertTriangle, ShieldAlert, Pencil, RefreshCw } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
@@ -22,6 +22,7 @@ export default function DashboardView() {
   const [fleet, setFleet] = useState<any>({ bookings: [], inquiries: [], vehicles: [] });
   const [busRates, setBusRates] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const hasLoadedRef = useRef(false);
 
   // Quick Rate Edit Modal State on Dashboard
   const [editingBus, setEditingBus] = useState<any | null>(null);
@@ -37,60 +38,75 @@ export default function DashboardView() {
   });
 
   const loadData = useCallback(() => {
-    setLoading(true);
+    if (!hasLoadedRef.current) setLoading(true);
     Promise.all([
-      getToursBookings(),
-      getToursInquiries(),
-      getToursPackages(),
-      getFleetBookings(),
-      getFleetInquiries(),
-      getFleetVehicles(),
+      getToursBookings().catch(() => []),
+      getToursInquiries().catch(() => []),
+      getToursPackages().catch(() => []),
+      getFleetBookings().catch(() => []),
+      getFleetInquiries().catch(() => []),
+      getFleetVehicles().catch(() => []),
       getBusRates().catch(() => []),
-    ]).then(([tb, ti, tp, fb, fi, fv, br]) => {
-      let localBookings: any[] = [];
-      try {
-        const rawLocal = localStorage.getItem('aarambha_user_bookings');
-        if (rawLocal) localBookings = JSON.parse(rawLocal);
-      } catch (_e) {}
+    ])
+      .then(([tb, ti, tp, fb, fi, fv, br]) => {
+        let localBookings: any[] = [];
+        try {
+          const rawLocal = localStorage.getItem('aarambha_user_bookings');
+          if (rawLocal) localBookings = JSON.parse(rawLocal);
+        } catch (_e) {}
 
-      const mergedFleet = [...(fb || [])];
-      const mergedTours = [...(tb || [])];
+        const mergedFleet = [...(Array.isArray(fb) ? fb : [])];
+        const mergedTours = [...(Array.isArray(tb) ? tb : [])];
 
-      localBookings.forEach((local: any) => {
-        const isCar = local.type === 'car' || local.type === 'Fleet' || local.type === 'Rental';
-        const targetList = isCar ? mergedFleet : mergedTours;
-        const localCode = local.id || local.bookingCode || local.booking_code;
-        const exists = targetList.some((x: any) => 
-          (x.bookingCode && x.bookingCode === localCode) ||
-          (x.booking_code && x.booking_code === localCode) ||
-          (x._id && x._id === localCode) ||
-          (x.id && x.id === localCode)
-        );
-        if (!exists) {
-          targetList.unshift({
-            ...local,
-            _id: localCode,
-            id: localCode,
-            bookingCode: localCode,
-            booking_code: localCode,
-            customerName: local.customerName || local.fullName,
-            customerPhone: local.customerPhone || local.phone,
-            customerEmail: local.customerEmail || local.email,
-            vehicleName: local.vehicleName || local.title,
-            packageName: local.packageName || local.title,
-            totalAmount: local.totalPrice || local.totalAmount,
-            depositPaid: local.depositPaid || 1,
-            type: isCar ? 'Rental' : 'Tours',
-          });
-        }
+        localBookings.forEach((local: any) => {
+          const isCar = local.type === 'car' || local.type === 'Fleet' || local.type === 'Rental';
+          const targetList = isCar ? mergedFleet : mergedTours;
+          const localCode = local.id || local.bookingCode || local.booking_code;
+          const exists = targetList.some((x: any) => 
+            (x.bookingCode && x.bookingCode === localCode) ||
+            (x.booking_code && x.booking_code === localCode) ||
+            (x._id && x._id === localCode) ||
+            (x.id && x.id === localCode)
+          );
+          if (!exists) {
+            targetList.unshift({
+              ...local,
+              _id: localCode,
+              id: localCode,
+              bookingCode: localCode,
+              booking_code: localCode,
+              customerName: local.customerName || local.fullName,
+              customerPhone: local.customerPhone || local.phone,
+              customerEmail: local.customerEmail || local.email,
+              vehicleName: local.vehicleName || local.title,
+              packageName: local.packageName || local.title,
+              totalAmount: local.totalPrice || local.totalAmount,
+              depositPaid: local.depositPaid || 1,
+              type: isCar ? 'Rental' : 'Tours',
+            });
+          }
+        });
+
+        const busList = Array.isArray(br) ? br : (Array.isArray(br?.data) ? br.data : []);
+        setTours({ 
+          bookings: mergedTours, 
+          inquiries: Array.isArray(ti) ? ti : [], 
+          packages: Array.isArray(tp) ? tp : [] 
+        });
+        setFleet({ 
+          bookings: mergedFleet, 
+          inquiries: Array.isArray(fi) ? fi : [], 
+          vehicles: Array.isArray(fv) ? fv : [] 
+        });
+        setBusRates(busList);
+      })
+      .catch((err) => {
+        console.warn('[Dashboard] Error loading dashboard data:', err);
+      })
+      .finally(() => {
+        hasLoadedRef.current = true;
+        setLoading(false);
       });
-
-      const busList = Array.isArray(br) ? br : (Array.isArray(br?.data) ? br.data : []);
-      setTours({ bookings: mergedTours, inquiries: ti || [], packages: tp || [] });
-      setFleet({ bookings: mergedFleet, inquiries: fi || [], vehicles: fv || [] });
-      setBusRates(busList);
-      setLoading(false);
-    });
   }, []);
 
   useAutoRefresh(loadData, [], 4000);

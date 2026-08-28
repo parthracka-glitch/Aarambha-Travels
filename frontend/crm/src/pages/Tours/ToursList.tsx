@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Plus, RefreshCw, Pencil, Trash2, Calendar, CheckCircle2, AlertCircle, Clock, Tag, X, Users } from 'lucide-react';
 import { getToursPackages, getToursDestinations, createPackage, updatePackage, deletePackage } from '@/api/tours.api';
@@ -14,6 +14,7 @@ export default function ToursView() {
   const [packages, setPackages] = useState<any[]>([]);
   const [destinations, setDestinations] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const hasLoadedRef = useRef(false);
   const [isCreateOpen, setIsCreateOpen] = useState(false);
   const [editingPkg, setEditingPkg] = useState<any | null>(null);
 
@@ -35,10 +36,14 @@ export default function ToursView() {
   });
 
   const load = useCallback(() => {
+    if (!hasLoadedRef.current) setLoading(true);
     Promise.all([
-      getToursPackages().then(d => setPackages(d)),
-      getToursDestinations().then(d => setDestinations(d)),
-    ]).then(() => setLoading(false));
+      getToursPackages().then(d => { if (Array.isArray(d)) setPackages(d); }).catch(() => {}),
+      getToursDestinations().then(d => { if (Array.isArray(d)) setDestinations(d); }).catch(() => {}),
+    ]).finally(() => {
+      hasLoadedRef.current = true;
+      setLoading(false);
+    });
   }, []);
 
   useAutoRefresh(load, ['TOURS_UPDATED'], 6000);

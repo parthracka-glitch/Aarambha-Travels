@@ -1,4 +1,27 @@
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://127.0.0.1:8000';
+const RENDER_API = 'https://aarambha-backend-api.onrender.com';
+
+function getApiBaseUrl(): string {
+  const envUrl = process.env.NEXT_PUBLIC_API_URL;
+  if (envUrl && typeof envUrl === 'string' && envUrl.trim()) {
+    const cleaned = envUrl.trim().replace(/\/+$/, '');
+    if (typeof window !== 'undefined') {
+      const isLocal = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+      if (!isLocal && (cleaned.includes('127.0.0.1') || cleaned.includes('localhost'))) {
+        return RENDER_API;
+      }
+    }
+    return cleaned;
+  }
+  if (typeof window !== 'undefined') {
+    const isLocal = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+    if (!isLocal) {
+      return RENDER_API;
+    }
+  }
+  return 'http://127.0.0.1:8000';
+}
+
+const API_BASE_URL = getApiBaseUrl();
 
 const cache = new Map<string, { data: any; timestamp: number }>();
 const CACHE_TTL_MS = 15000; // 15 seconds TTL

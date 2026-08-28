@@ -30,35 +30,42 @@ app.use((_req, res, next) => {
   next();
 });
 
-// ─── CORS — Strict Whitelist from CORS_ORIGIN env var ────────────────────────
-// Falls back to a permissive dev list only in non-production
+// ─── CORS — Comprehensive Production Whitelist with Vercel & Custom Domain Support ───
 const isProd = process.env.NODE_ENV === 'production';
 const corsOriginEnv = process.env.CORS_ORIGIN;
 let allowedOrigins: string[] = [];
 
 if (corsOriginEnv) {
   allowedOrigins = corsOriginEnv.split(',').map(o => o.trim()).filter(Boolean);
-} else if (!isProd) {
-  // Development fallback — permissive list for local dev only
-  allowedOrigins = [
-    'http://localhost:3000',
-    'http://localhost:5173',
-    'http://localhost:4173',
-    'http://127.0.0.1:3000',
-    'http://127.0.0.1:5173',
-  ];
-} else {
-  console.warn('[SECURITY WARNING] CORS_ORIGIN env variable is not set in production. All cross-origin requests will be blocked.');
 }
+
+// Built-in standard allowed origins
+const defaultAllowedOrigins = [
+  'http://localhost:3000',
+  'http://localhost:5173',
+  'http://localhost:4173',
+  'http://127.0.0.1:3000',
+  'http://127.0.0.1:5173',
+  'https://aarambhatravels.in',
+  'https://www.aarambhatravels.in',
+  'https://admin.aarambhatravels.in',
+];
 
 app.use(cors({
   origin: (origin, callback) => {
-    // Allow requests with no origin (mobile apps, curl, Postman in dev)
+    // Allow requests with no origin (mobile apps, curl, server pings, Postman)
     if (!origin) {
-      callback(null, !isProd);
+      callback(null, true);
       return;
     }
-    if (allowedOrigins.includes(origin)) {
+
+    const isWildcard = allowedOrigins.includes('*');
+    const isExplicit = allowedOrigins.includes(origin) || defaultAllowedOrigins.includes(origin);
+    const isVercelDomain = origin.endsWith('.vercel.app') || origin.includes('vercel.app');
+    const isAarambhaDomain = origin.includes('aarambhatravels.in');
+    const isLocal = origin.includes('localhost') || origin.includes('127.0.0.1');
+
+    if (isWildcard || isExplicit || isVercelDomain || isAarambhaDomain || isLocal) {
       callback(null, true);
     } else {
       console.warn(`[CORS] Blocked request from unlisted origin: ${origin}`);

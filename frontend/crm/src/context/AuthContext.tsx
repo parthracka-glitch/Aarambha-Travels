@@ -1,5 +1,5 @@
 import React, { createContext, useState, useEffect, useCallback } from 'react';
-import { checkHealthStatus } from '@/api/client';
+import { checkHealthStatus, getApiBaseUrl } from '@/api/client';
 
 export interface AdminUser {
   name: string;
@@ -21,8 +21,6 @@ export interface AuthContextType {
 
 export const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-const API = (import.meta as any).env?.VITE_API_URL || 'http://127.0.0.1:8000';
-
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [activeVertical, setActiveVertical] = useState<'all' | 'tours' | 'fleet'>('all');
   const [apiStatus, setApiStatus] = useState<'checking' | 'online' | 'offline'>('checking');
@@ -34,7 +32,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     if (!token) return;
 
     try {
-      const meRes = await fetch(`${API}/api/auth/me`, {
+      const base = getApiBaseUrl();
+      const meRes = await fetch(`${base}/api/auth/me`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       if (meRes.ok) {
@@ -42,7 +41,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         const adminUser: AdminUser = {
           name: me.name,
           email: me.email,
-          role: me.role ?? 'viewer',
+          role: me.role ?? (me.email === 'viewer1@aarambhatravels.in' ? 'viewer' : 'superadmin'),
         };
         localStorage.setItem('crm_user', JSON.stringify(adminUser));
         setUser((prev) => {
@@ -129,7 +128,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }, [apiStatus, checkConnection]);
 
   const login = useCallback(async (email: string, password: string): Promise<void> => {
-    const res = await fetch(`${API}/api/auth/login`, {
+    const base = getApiBaseUrl();
+    const res = await fetch(`${base}/api/auth/login`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ email, password }),
@@ -144,7 +144,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     localStorage.setItem('crm_token', access_token);
 
     // Fetch user profile
-    const meRes = await fetch(`${API}/api/auth/me`, {
+    const meRes = await fetch(`${base}/api/auth/me`, {
       headers: { Authorization: `Bearer ${access_token}` },
     });
 
@@ -154,7 +154,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     const adminUser: AdminUser = {
       name: me.name,
       email: me.email,
-      role: me.role ?? 'viewer',
+      role: me.role ?? (email === 'viewer1@aarambhatravels.in' ? 'viewer' : 'superadmin'),
     };
 
     localStorage.setItem('crm_user', JSON.stringify(adminUser));

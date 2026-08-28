@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { RefreshCw, Trash2, Plus, Phone, MessageSquare, Mail, Calendar } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
 import { getToursInquiries, deleteToursInquiry, createToursInquiry } from '@/api/tours.api';
@@ -15,6 +15,7 @@ export default function InquiriesView() {
   const [toursInq, setToursInq] = useState<any[]>([]);
   const [fleetInq, setFleetInq] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const hasLoadedRef = useRef(false);
 
   // New Inquiry Modal State
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -31,10 +32,14 @@ export default function InquiriesView() {
   });
 
   const load = useCallback(() => {
+    if (!hasLoadedRef.current) setLoading(true);
     const p: Promise<any>[] = [];
-    if (vertical !== 'fleet') p.push(getToursInquiries().then(d => setToursInq(d)));
-    if (vertical !== 'tours') p.push(getFleetInquiries().then(d => setFleetInq(d)));
-    Promise.all(p).then(() => setLoading(false));
+    if (vertical !== 'fleet') p.push(getToursInquiries().then(d => { if (Array.isArray(d)) setToursInq(d); }).catch(() => {}));
+    if (vertical !== 'tours') p.push(getFleetInquiries().then(d => { if (Array.isArray(d)) setFleetInq(d); }).catch(() => {}));
+    Promise.all(p).finally(() => {
+      hasLoadedRef.current = true;
+      setLoading(false);
+    });
   }, [vertical]);
 
   useAutoRefresh(load, ['INQUIRIES_UPDATED'], 5000);

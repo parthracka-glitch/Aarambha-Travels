@@ -1,6 +1,5 @@
 import { useEffect, useRef, useCallback } from 'react';
-
-const API_BASE = (import.meta as any).env?.VITE_API_URL || 'http://127.0.0.1:8000';
+import { getApiBaseUrl } from '@/api/client';
 
 type RealtimeListener = (event: { type: string; data?: any; timestamp: number }) => void;
 
@@ -21,7 +20,7 @@ class RealtimeClient {
     this.isConnecting = true;
 
     try {
-      const url = `${API_BASE}/api/realtime/events`;
+      const url = `${getApiBaseUrl()}/api/realtime/events`;
       this.eventSource = new EventSource(url);
 
       this.eventSource.onopen = () => {
