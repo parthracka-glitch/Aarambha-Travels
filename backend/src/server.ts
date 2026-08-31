@@ -61,9 +61,23 @@ app.use(cors({
 
     const isWildcard = allowedOrigins.includes('*');
     const isExplicit = allowedOrigins.includes(origin) || defaultAllowedOrigins.includes(origin);
-    const isVercelDomain = origin.endsWith('.vercel.app') || origin.includes('vercel.app');
-    const isAarambhaDomain = origin.includes('aarambhatravels.in');
-    const isLocal = origin.includes('localhost') || origin.includes('127.0.0.1');
+    
+    // Strict domain matching preventing subdomain spoofing (e.g. evil-aarambhatravels.in)
+    let isAarambhaDomain = false;
+    let isVercelDomain = false;
+    let isLocal = false;
+
+    try {
+      const parsed = new URL(origin);
+      const host = parsed.hostname.toLowerCase();
+      isAarambhaDomain = host === 'aarambhatravels.in' || host.endsWith('.aarambhatravels.in');
+      isVercelDomain = host.endsWith('.vercel.app');
+      isLocal = host === 'localhost' || host === '127.0.0.1';
+    } catch {
+      isAarambhaDomain = false;
+      isVercelDomain = false;
+      isLocal = false;
+    }
 
     if (isWildcard || isExplicit || isVercelDomain || isAarambhaDomain || isLocal) {
       callback(null, true);
@@ -84,10 +98,13 @@ app.use(express.urlencoded({ limit: '15mb', extended: true }));
 // ─── Health Check & Root Endpoints (Exempt from rate limits & suspicious detector) ───
 app.get('/api/health', async (_req: Request, res: Response): Promise<void> => {
   res.setHeader('Access-Control-Allow-Origin', '*');
+  const { getDbStorageType } = await import('./config/db');
   res.json({
     status: 'online',
     timestamp: Date.now() / 1000,
     database: 'healthy',
+    storage: getDbStorageType(),
+    storageLabel: getDbStorageType() === 'Atlas' ? 'MongoDB Atlas (Persistent Cloud)' : getDbStorageType() === 'Local' ? 'Local MongoDB' : 'In-Memory RAM (Demo Mode - Temporary)',
     version: '1.0.0',
     environment: process.env.NODE_ENV || 'development',
     framework: 'Node.js Express + TypeScript + Mongoose',

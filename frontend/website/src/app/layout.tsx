@@ -8,6 +8,15 @@ const CookieConsentBanner = dynamic(
   { ssr: false }
 );
 
+const SocialProofToast = dynamic(
+  () => import('@/components/shared/SocialProofToast'),
+  { ssr: false }
+);
+
+const MobileActionDock = dynamic(
+  () => import('@/components/layout/MobileActionDock'),
+  { ssr: false }
+);
 
 export const viewport: Viewport = {
   width: 'device-width',
@@ -24,14 +33,14 @@ export const metadata: Metadata = {
   keywords: ['Aarambha car rental', 'आरंभ टूर अँड ट्रॅव्हल्स', 'self-drive car rentals', 'tour packages India', 'convertible rental', 'SUV rental'],
   icons: {
     icon: [
-      { url: '/images/aarambha_logo.png' },
-      { url: '/favicon.png' },
+      { url: '/favicon.svg', type: 'image/svg+xml' },
+      { url: '/icon.svg', type: 'image/svg+xml' },
       { url: '/favicon.ico' },
-      { url: '/logo.png' }
     ],
-    apple: '/images/aarambha_logo.png',
-    shortcut: '/favicon.ico',
+    apple: '/icon.svg',
+    shortcut: '/favicon.svg',
   },
+  manifest: '/site.webmanifest',
   openGraph: {
     title: 'आरंभ (AARAMBHA) — Tours, Travels & Car Rentals',
     description: 'Your Journey, Your Car, Your Way with आरंभ Tours & Travels.',
@@ -56,8 +65,10 @@ export default function RootLayout({
         <link rel="icon" type="image/png" href="/images/aarambha_logo.png" />
         <link rel="shortcut icon" href="/favicon.ico" />
       </head>
-      <body className="antialiased selection:bg-[#5266EB] selection:text-white">
+      <body className="antialiased selection:bg-[#5266EB] selection:text-white pb-14 sm:pb-0">
         {children}
+        <SocialProofToast />
+        <MobileActionDock />
         <CookieConsentBanner />
         <Script
           src="https://checkout.razorpay.com/v1/checkout.js"

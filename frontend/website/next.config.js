@@ -17,6 +17,30 @@ const nextConfig = {
   experimental: {
     optimizePackageImports: ['lucide-react'],
   },
+  async redirects() {
+    return [
+      {
+        source: '/cars',
+        destination: '/rentals',
+        permanent: false,
+      },
+      {
+        source: '/bus-rentals',
+        destination: '/rentals',
+        permanent: false,
+      },
+      {
+        source: '/car-rentals',
+        destination: '/rentals',
+        permanent: false,
+      },
+      {
+        source: '/tours-travels',
+        destination: '/tours',
+        permanent: false,
+      },
+    ];
+  },
 };
 
 module.exports = nextConfig;

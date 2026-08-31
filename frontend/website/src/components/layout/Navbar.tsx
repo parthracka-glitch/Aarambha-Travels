@@ -48,8 +48,8 @@ export default function Navbar({ vertical = 'home' }: { vertical?: 'tours' | 'fl
     } catch {}
   };
 
-  const isToursActive = pathname.startsWith('/tours-travels') || vertical === 'tours';
-  const isCarsActive = pathname.startsWith('/bus-rentals') || pathname.startsWith('/car-rentals') || pathname.startsWith('/cars') || vertical === 'fleet';
+  const isToursActive = pathname.startsWith('/tours') || vertical === 'tours';
+  const isCarsActive = pathname.startsWith('/rentals') || pathname.startsWith('/bus-rentals') || pathname.startsWith('/car-rentals') || pathname.startsWith('/cars') || vertical === 'fleet';
 
   return (
     <>
@@ -104,7 +104,7 @@ export default function Navbar({ vertical = 'home' }: { vertical?: 'tours' | 'fl
             </Link>
 
             <Link
-              href="/tours-travels"
+              href="/tours"
               className={`relative py-1 flex items-center gap-1.5 transition-colors hover:text-[#9CB4E8] ${
                 isToursActive ? 'text-[#9CB4E8] font-extrabold' : 'text-gray-400'
               }`}
@@ -117,7 +117,7 @@ export default function Navbar({ vertical = 'home' }: { vertical?: 'tours' | 'fl
             </Link>
 
             <Link
-              href="/bus-rentals"
+              href="/rentals"
               className={`relative py-1 flex items-center gap-1.5 transition-colors hover:text-[#5266EB] ${
                 isCarsActive ? 'text-[#5266EB] font-extrabold' : 'text-gray-400'
               }`}
@@ -179,7 +179,7 @@ export default function Navbar({ vertical = 'home' }: { vertical?: 'tours' | 'fl
             </Link>
 
             <Link
-              href={isToursActive ? "/tours-travels" : "/bus-rentals"}
+              href={isToursActive ? "/tours" : "/rentals"}
               className="text-xs font-black uppercase tracking-widest px-6 py-2.5 rounded-full bg-[#5266EB] text-[#EDEDF3] hover:bg-[#3E51D4] transition-all shadow-xl hover:scale-105 active:scale-95 flex items-center gap-1.5 whitespace-nowrap"
             >
               <span>Book Now</span>
@@ -205,7 +205,7 @@ export default function Navbar({ vertical = 'home' }: { vertical?: 'tours' | 'fl
             {/* Minimal Segmented Capsule Switcher */}
             <div className="p-1 rounded-full bg-white/[0.04] border border-white/10 flex items-center gap-1">
               <Link
-                href="/tours-travels"
+                href="/tours"
                 onClick={() => setMobileOpen(false)}
                 className={`flex-1 py-2.5 rounded-full flex items-center justify-center gap-2 text-xs font-bold transition-all ${
                   isToursActive
@@ -218,7 +218,7 @@ export default function Navbar({ vertical = 'home' }: { vertical?: 'tours' | 'fl
               </Link>
 
               <Link
-                href="/bus-rentals"
+                href="/rentals"
                 onClick={() => setMobileOpen(false)}
                 className={`flex-1 py-2.5 rounded-full flex items-center justify-center gap-2 text-xs font-bold transition-all ${
                   isCarsActive
@@ -248,7 +248,7 @@ export default function Navbar({ vertical = 'home' }: { vertical?: 'tours' | 'fl
               </Link>
 
               <Link
-                href="/tours-travels"
+                href="/tours"
                 onClick={() => setMobileOpen(false)}
                 className={`group flex items-center justify-between py-3 px-3 rounded-xl transition-colors ${
                   isToursActive ? 'bg-white/5 text-[#9CB4E8] font-extrabold' : 'text-gray-400 hover:text-white hover:bg-white/[0.02]'

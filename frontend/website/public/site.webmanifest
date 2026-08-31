@@ -1,0 +1,23 @@
+{
+  "name": "आरंभ (AARAMBHA) Tours, Travels & Rentals",
+  "short_name": "Aarambha",
+  "description": "Premium Tours, Travels, Force Urbania & Self-Drive Fleet in Pune",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0A0B10",
+  "theme_color": "#D3592B",
+  "icons": [
+    {
+      "src": "/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/icon.svg",
+      "sizes": "512x512",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}

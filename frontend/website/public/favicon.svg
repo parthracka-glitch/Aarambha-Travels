@@ -1,0 +1,78 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="100%" height="100%">
+  <defs>
+    <!-- Dark Background Gradient -->
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#141624" />
+      <stop offset="50%" stop-color="#0E1018" />
+      <stop offset="100%" stop-color="#07080C" />
+    </linearGradient>
+
+    <!-- Golden Sacred Sun/Aura Gradient -->
+    <linearGradient id="goldAura" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#FFD700" />
+      <stop offset="40%" stop-color="#FFA500" />
+      <stop offset="80%" stop-color="#FF4500" />
+      <stop offset="100%" stop-color="#D3592B" />
+    </linearGradient>
+
+    <!-- Ring Metallic Border -->
+    <linearGradient id="ringGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#FFD700" stop-opacity="0.8" />
+      <stop offset="50%" stop-color="#FF6B35" stop-opacity="0.5" />
+      <stop offset="100%" stop-color="#FFD700" stop-opacity="0.2" />
+    </linearGradient>
+
+    <!-- Outer Glow Filter -->
+    <filter id="glow" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="8" result="blur" />
+      <feComposite in="SourceGraphic" in2="blur" operator="over" />
+    </filter>
+  </defs>
+
+  <!-- Rounded Squircle Badge Base -->
+  <rect width="512" height="512" rx="128" fill="url(#bgGrad)" />
+  <rect width="496" height="496" x="8" y="8" rx="120" fill="none" stroke="url(#ringGrad)" stroke-width="8" />
+
+  <!-- Sacred Compass / Sun Dial Rings -->
+  <circle cx="256" cy="256" r="190" fill="none" stroke="#FFA500" stroke-opacity="0.15" stroke-width="3" stroke-dasharray="8 8" />
+  <circle cx="256" cy="256" r="160" fill="none" stroke="#FF4500" stroke-opacity="0.2" stroke-width="2" />
+
+  <!-- 4 Directional Pointers (North/East/South/West) -->
+  <polygon points="256,70 264,95 256,90 248,95" fill="#FFD700" opacity="0.8" />
+  <polygon points="256,442 264,417 256,422 248,417" fill="#FFD700" opacity="0.8" />
+  <polygon points="70,256 95,248 90,256 95,264" fill="#FFD700" opacity="0.8" />
+  <polygon points="442,256 417,248 422,256 417,264" fill="#FFD700" opacity="0.8" />
+
+  <!-- Central "आरंभ" (AARAMBHA) Calligraphy Emblem -->
+  <g filter="url(#glow)">
+    <text
+      x="256"
+      y="300"
+      font-family="'Yatra One', 'Rozha One', 'Tiro Devanagari Marathi', 'Mukta', 'Amita', serif, sans-serif"
+      font-size="168"
+      font-weight="900"
+      text-anchor="middle"
+      fill="url(#goldAura)"
+      letter-spacing="2"
+    >
+      आरंभ
+    </text>
+  </g>
+
+  <!-- Subtitle Pill: TOURS & TRAVELS -->
+  <g transform="translate(0, 360)">
+    <rect x="126" y="0" width="260" height="34" rx="17" fill="#181A28" stroke="#FFD700" stroke-opacity="0.3" stroke-width="1.5" />
+    <text
+      x="256"
+      y="22"
+      font-family="'Plus Jakarta Sans', 'Outfit', sans-serif"
+      font-size="13"
+      font-weight="800"
+      text-anchor="middle"
+      fill="#E6C875"
+      letter-spacing="4"
+    >
+      TOURS &amp; FLEET
+    </text>
+  </g>
+</svg>
