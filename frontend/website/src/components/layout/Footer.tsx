@@ -2,183 +2,131 @@
 
 import React from 'react';
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
-import { ArrowRight, ArrowUp, Sparkles, Heart } from 'lucide-react';
+import { Compass, Bus, Car, HelpCircle, MapPin, Phone, Mail } from 'lucide-react';
 
 export default function Footer() {
-  const pathname = usePathname();
-  const isCarsActive = pathname.startsWith('/car-rentals') || pathname.startsWith('/cars');
-  const isToursActive = pathname.startsWith('/tours-travels');
-
   const scrollToTop = () => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   return (
-    <>
-      <footer className="bg-white border-t border-gray-200 pt-12 pb-8 font-sans">
-        <div className="max-w-7xl mx-auto px-6 lg:px-12 space-y-10">
+    <footer className="bg-[#FCFAF6] border-t border-[#EDE2D0] pt-14 pb-10 text-[#493B34] select-none font-sans">
+      <div className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8 space-y-10">
+        
+        {/* Top Grid */}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
           
-          {/* Top Newsletter & Links */}
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 items-start">
-            
-            {/* Left Column (Brand & Newsletter) */}
-            <div className="lg:col-span-4 space-y-4">
-              <Link href="/" className="inline-flex items-center gap-3 group">
-                <div className="w-12 h-12 rounded-2xl overflow-hidden bg-white p-0.5 ring-2 ring-[#D3592B]/20 shadow-md shrink-0">
-                  <img
-                    src="/images/aarambha_logo.png"
-                    alt="आरंभ Logo"
-                    className="w-full h-full object-contain rounded-xl"
-                    onError={(e) => { (e.target as HTMLElement).setAttribute('src', '/logo.png'); }}
-                  />
-                </div>
-                <div>
-                  <div className="flex items-baseline gap-1">
-                    <span className="aarambha-logo-3d-light text-2xl sm:text-3xl font-bold leading-none select-none">
-                      आरंभ
-                    </span>
-                  </div>
-                  <p className="font-['Syne',sans-serif] text-[9px] font-extrabold text-[#3A231A] tracking-[0.25em] leading-none mt-1">
-                    ✦ TOURS AND TRAVELS ✦
-                  </p>
-                </div>
-              </Link>
-
-              <h2 className="font-syne text-xl sm:text-2xl font-bold text-[#000000] tracking-tight pt-1">
-                Don't Miss a Journey
-              </h2>
-              <p className="text-xs text-gray-500 max-w-md">
-                Subscribe to आरंभ for exclusive holiday package deals and luxury self-drive offers.
-              </p>
-
-              <form onSubmit={(e) => e.preventDefault()} className="pt-1 max-w-md">
-                <div className="relative flex items-center">
-                  <input
-                    type="email"
-                    placeholder="Enter email address for newsletter ..."
-                    className="w-full bg-[#FAFAFC] border border-gray-300 rounded-full px-5 py-2.5 text-xs text-[#000000] placeholder:text-gray-400 focus:outline-none focus:border-[#5266EB] pr-10 transition-colors"
-                  />
-                  <button
-                    type="submit"
-                    aria-label="Subscribe"
-                    className="absolute right-1 w-7 h-7 rounded-full bg-[#171721] text-[#EDEDF3] flex items-center justify-center hover:bg-[#5266EB] transition-colors"
-                  >
-                    <ArrowRight className="w-3.5 h-3.5" />
-                  </button>
-                </div>
-              </form>
-            </div>
-
-            {/* Right Columns (4 Columns: Services, Legal, Company, Social) */}
-            <div className="lg:col-span-8 grid grid-cols-2 sm:grid-cols-4 gap-6 text-xs">
-              
-              {/* Services */}
-              <div className="space-y-3">
-                <h3 className="font-bold text-[#000000] text-xs font-syne uppercase tracking-wider">Services</h3>
-                <ul className="space-y-2 text-gray-600">
-                  {isCarsActive ? (
-                    <>
-                      <li><Link href="/bus-rentals" className="hover:text-[#5266EB] transition-colors font-medium">Bus & Car Rentals</Link></li>
-                      <li><Link href="/bus-rentals/bus-rental" className="hover:text-[#5266EB] transition-colors">Outstation Bus Hire</Link></li>
-                      <li><Link href="/bus-rentals/local-trips" className="hover:text-[#5266EB] transition-colors">Pune Local Trips</Link></li>
-                      <li><Link href="/bus-rentals/car-rental" className="hover:text-[#5266EB] transition-colors">Self-Drive Fleet</Link></li>
-                    </>
-                  ) : isToursActive ? (
-                    <>
-                      <li><Link href="/tours-travels" className="hover:text-[#5266EB] transition-colors">Tour Packages</Link></li>
-                      <li><Link href="/tours-travels" className="hover:text-[#5266EB] transition-colors">Curated Departures</Link></li>
-                      <li><Link href="/bus-rentals" className="hover:text-[#5266EB] transition-colors font-medium">Bus & Car Rentals</Link></li>
-                    </>
-                  ) : (
-                    <>
-                      <li><Link href="/tours-travels" className="hover:text-[#5266EB] transition-colors">Tour Packages</Link></li>
-                      <li><Link href="/bus-rentals" className="hover:text-[#5266EB] transition-colors font-medium">Bus & Car Rentals</Link></li>
-                      <li><Link href="/bus-rentals/car-rental" className="hover:text-[#5266EB] transition-colors">Self-Drive Fleet</Link></li>
-                      <li><Link href="/car-rentals/about" className="hover:text-[#5266EB] transition-colors">About Us</Link></li>
-                    </>
-                  )}
-                </ul>
+          {/* Brand & Overview Column */}
+          <div className="lg:col-span-4 space-y-4">
+            <Link href="/" className="inline-flex items-center gap-2.5">
+              <div className="w-9 h-9 rounded-xl overflow-hidden bg-white border border-[#EDE2D0] p-1 shrink-0 flex items-center justify-center shadow-2xs">
+                <img
+                  src="/images/aarambha_logo.png"
+                  alt="आरंभ Logo"
+                  className="w-full h-full object-contain"
+                  onError={(e) => { (e.target as HTMLElement).setAttribute('src', '/logo.png'); }}
+                />
               </div>
-
-              {/* Legal & Policies */}
-              <div className="space-y-3">
-                <h3 className="font-bold text-[#000000] text-xs font-syne uppercase tracking-wider">Legal</h3>
-                <ul className="space-y-2 text-gray-600">
-                  <li><Link href="/legal" className="hover:text-[#5266EB] transition-colors font-semibold text-[#5266EB]">All Legal Documents ↗</Link></li>
-                  <li><Link href="/legal/privacy-policy" className="hover:text-[#5266EB] transition-colors">Privacy Policy</Link></li>
-                  <li><Link href="/legal/refund-policy" className="hover:text-[#5266EB] transition-colors">Refund & Cancellation</Link></li>
-                  <li><Link href="/legal/cookie-policy" className="hover:text-[#5266EB] transition-colors">Cookie Policy</Link></li>
-                  <li><Link href="/terms" className="hover:text-[#5266EB] transition-colors">Rental & Tour Policies</Link></li>
-                  <li><Link href="/terms-and-conditions" className="hover:text-[#5266EB] transition-colors">Standard Terms</Link></li>
-                </ul>
+              <div className="flex flex-col justify-center">
+                <span className="text-[17px] font-bold tracking-tight text-[#493B34] leading-tight flex items-center gap-1">
+                  <span>आरंभ</span>
+                  <span className="font-semibold text-[#C65A2E]">Travels</span>
+                </span>
+                <span className="text-[10px] text-[#756B63] tracking-normal leading-none mt-0.5 font-medium">
+                  Pilgrimages &amp; Fleet Rentals
+                </span>
               </div>
+            </Link>
 
-              {/* More Legal */}
-              <div className="space-y-3">
-                <h3 className="font-bold text-[#000000] text-xs font-syne uppercase tracking-wider">Compliance</h3>
-                <ul className="space-y-2 text-gray-600">
-                  <li><Link href="/legal/disclaimer" className="hover:text-[#5266EB] transition-colors">Disclaimer</Link></li>
-                  <li><Link href="/legal/acceptable-use" className="hover:text-[#5266EB] transition-colors">Acceptable Use</Link></li>
-                  <li><Link href="/legal/community-guidelines" className="hover:text-[#5266EB] transition-colors">Community Guidelines</Link></li>
-                  <li><Link href="/legal/accessibility" className="hover:text-[#5266EB] transition-colors">Accessibility</Link></li>
-                  <li><Link href="/legal/security-policy" className="hover:text-[#5266EB] transition-colors">Security Policy</Link></li>
-                  <li><Link href="/nda" className="hover:text-[#5266EB] transition-colors">NDA</Link></li>
-                </ul>
+            <p className="text-xs sm:text-sm text-[#756B63] leading-relaxed max-w-sm">
+              Premium spiritual pilgrimage yatras, luxury Force Urbania &amp; bus rentals, and reliable self-drive fleet management across India.
+            </p>
+
+            <div className="pt-1 text-xs text-[#756B63] space-y-2">
+              <div className="flex items-start gap-2">
+                <MapPin className="w-3.5 h-3.5 text-[#C65A2E] shrink-0 mt-0.5" />
+                <span>Katraj - Kondhwa Road, Pune, Maharashtra 411046</span>
               </div>
-
-              {/* Social */}
-              <div className="space-y-3">
-                <h3 className="font-bold text-[#000000] text-xs font-syne uppercase tracking-wider">Social Media</h3>
-                <ul className="space-y-2 text-gray-600">
-                  <li><a href="https://facebook.com" target="_blank" rel="noreferrer" className="hover:text-[#5266EB] transition-colors">Facebook</a></li>
-                  <li><a href="https://instagram.com" target="_blank" rel="noreferrer" className="hover:text-[#5266EB] transition-colors">Instagram</a></li>
-                  <li><a href="https://twitter.com" target="_blank" rel="noreferrer" className="hover:text-[#5266EB] transition-colors">Twitter / X</a></li>
-                  <li><Link href="/faq" className="hover:text-[#5266EB] transition-colors">FAQ</Link></li>
-                </ul>
+              <div className="flex items-center gap-2">
+                <Phone className="w-3.5 h-3.5 text-[#C65A2E] shrink-0" />
+                <span>+91 90676 17451 (24x7 Customer Support)</span>
               </div>
-
+              <div className="flex items-center gap-2">
+                <Mail className="w-3.5 h-3.5 text-[#C65A2E] shrink-0" />
+                <span>contact@aarambhatravels.in</span>
+              </div>
             </div>
           </div>
 
-          {/* Bottom Copyright Bar */}
-          <div className="pt-6 border-t border-gray-200 flex flex-col sm:flex-row items-center justify-between gap-4 text-[11px] text-gray-500">
-            <div className="flex flex-wrap items-center justify-center sm:justify-start gap-x-3 gap-y-1">
-              <p>© Copyright 2026 आरंभ Tours & Car Rentals. All rights reserved.</p>
-              <span className="hidden sm:inline text-gray-300">•</span>
-              <Link href="/legal/privacy-policy" className="hover:text-[#5266EB] underline transition-colors">Privacy</Link>
-              <span className="text-gray-300">•</span>
-              <Link href="/legal/refund-policy" className="hover:text-[#5266EB] underline transition-colors">Refunds</Link>
-              <span className="text-gray-300">•</span>
-              <Link href="/terms-and-conditions" className="hover:text-[#5266EB] underline transition-colors">Terms</Link>
-              <span className="text-gray-300">•</span>
-              <Link href="/legal/cookie-policy" className="hover:text-[#5266EB] underline transition-colors">Cookies</Link>
-              <span className="text-gray-300">•</span>
-              <Link href="/nda" className="hover:text-[#5266EB] underline transition-colors">NDA</Link>
+          {/* Navigation Links Columns */}
+          <div className="lg:col-span-8 grid grid-cols-2 sm:grid-cols-3 gap-6 text-xs sm:text-sm">
+            
+            {/* Column 1: Spiritual Tours */}
+            <div className="space-y-3">
+              <h3 className="font-serif text-sm sm:text-base font-bold text-[#493B34] flex items-center gap-1.5">
+                <Compass className="w-4 h-4 text-[#C65A2E]" />
+                <span>Spiritual Tours</span>
+              </h3>
+              <ul className="space-y-2 text-[#756B63]">
+                <li><Link href="/tours-travels" className="hover:text-[#C65A2E] transition-colors">All Tour Packages</Link></li>
+                <li><Link href="/tours-travels/3-jyotirlinga-special" className="hover:text-[#C65A2E] transition-colors">3 Jyotirlinga Yatra</Link></li>
+                <li><Link href="/tours-travels/ashtavinayak-special" className="hover:text-[#C65A2E] transition-colors">Ashtavinayak Darshan</Link></li>
+                <li><Link href="/tours-travels/mathura-vrindavan-agra" className="hover:text-[#C65A2E] transition-colors">Vrindavan &amp; Agra</Link></li>
+                <li><Link href="/my-bookings" className="hover:text-[#C65A2E] transition-colors font-semibold text-[#C65A2E]">Track Booking Status</Link></li>
+              </ul>
             </div>
 
-            <button
-              onClick={scrollToTop}
-              aria-label="Scroll to top"
-              className="w-8 h-8 rounded-full bg-[#5266EB] text-[#EDEDF3] flex items-center justify-center hover:bg-[#3E51D4] transition-colors shadow-md shadow-[#5266EB]/20"
-            >
-              <ArrowUp className="w-3.5 h-3.5" />
-            </button>
+            {/* Column 2: Bus & Car Rentals */}
+            <div className="space-y-3">
+              <h3 className="font-serif text-sm sm:text-base font-bold text-[#493B34] flex items-center gap-1.5">
+                <Bus className="w-4 h-4 text-[#C65A2E]" />
+                <span>Bus &amp; Fleet</span>
+              </h3>
+              <ul className="space-y-2 text-[#756B63]">
+                <li><Link href="/bus-rentals" className="hover:text-[#C65A2E] transition-colors">Bus Rate Calculator</Link></li>
+                <li><Link href="/bus-rentals" className="hover:text-[#C65A2E] transition-colors">Force Urbania (17S)</Link></li>
+                <li><Link href="/bus-rentals" className="hover:text-[#C65A2E] transition-colors">Luxury Coaches (32-45S)</Link></li>
+                <li><Link href="/car-rentals" className="hover:text-[#C65A2E] transition-colors">Self-Drive Car Rentals</Link></li>
+                <li><Link href="/car-rentals" className="hover:text-[#C65A2E] transition-colors">SUVs &amp; Sedans</Link></li>
+              </ul>
+            </div>
+
+            {/* Column 3: Help & Policies */}
+            <div className="space-y-3">
+              <h3 className="font-serif text-sm sm:text-base font-bold text-[#493B34] flex items-center gap-1.5">
+                <HelpCircle className="w-4 h-4 text-[#C65A2E]" />
+                <span>Support &amp; Legal</span>
+              </h3>
+              <ul className="space-y-2 text-[#756B63]">
+                <li><Link href="/faq" className="hover:text-[#C65A2E] transition-colors">Help Center &amp; FAQ</Link></li>
+                <li><Link href="/legal/terms-and-conditions" className="hover:text-[#C65A2E] transition-colors">Terms of Service</Link></li>
+                <li><Link href="/legal/privacy-policy" className="hover:text-[#C65A2E] transition-colors">Privacy Policy</Link></li>
+                <li><Link href="/legal/refund-policy" className="hover:text-[#C65A2E] transition-colors">Refund Policy</Link></li>
+                <li><Link href="/legal/security-policy" className="hover:text-[#C65A2E] transition-colors">Security &amp; Trust</Link></li>
+              </ul>
+            </div>
+
           </div>
 
         </div>
-      </footer>
 
-      {/* ─── NIRVANAA STUDIOS WATERMARK FOOTER STRIP ─── */}
-      <aside aria-label="Website credits" className="w-full bg-[#171721] py-3.5 px-6 border-t border-[#272735] text-center flex flex-wrap items-center justify-center gap-2 text-xs text-[#AFB2CE] select-none">
-        <span className="text-[11px] text-[#AFB2CE] font-medium">Crafted with</span>
-        <Heart className="w-3.5 h-3.5 text-[#5266EB] fill-[#5266EB] inline-block animate-pulse" />
-        <span className="text-[11px] text-[#AFB2CE] font-medium">by</span>
-        <span className="font-syne font-black tracking-widest text-[12px] bg-gradient-to-r from-[#5266EB] via-[#9CB4E8] to-[#AFB2CE] bg-clip-text text-transparent uppercase drop-shadow-sm px-1.5 py-0.5 rounded bg-white/5 border border-white/10">
-          NIRVANAA STUDIOS
-        </span>
-        <Sparkles className="w-3.5 h-3.5 text-[#9CB4E8] fill-[#9CB4E8]/30" />
-      </aside>
-    </>
+        {/* Bottom Copyright */}
+        <div className="pt-6 border-t border-[#EDE2D0] flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-[#756B63]">
+          <p>© {new Date().getFullYear()} आरंभ (Aarambha) Tours &amp; Travels. All rights reserved.</p>
+          <div className="flex items-center gap-4 text-xs">
+            <Link href="/legal/terms-and-conditions" className="hover:text-[#C65A2E] transition-colors">Terms</Link>
+            <span>•</span>
+            <Link href="/legal/privacy-policy" className="hover:text-[#C65A2E] transition-colors">Privacy</Link>
+            <span>•</span>
+            <Link href="/legal/refund-policy" className="hover:text-[#C65A2E] transition-colors">Refunds</Link>
+            <span>•</span>
+            <button onClick={scrollToTop} className="hover:text-[#C65A2E] font-medium cursor-pointer">
+              Back to Top ↑
+            </button>
+          </div>
+        </div>
+
+      </div>
+    </footer>
   );
 }

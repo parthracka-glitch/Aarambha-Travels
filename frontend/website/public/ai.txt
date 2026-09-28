@@ -1,0 +1,13 @@
+# AI Crawler and Agent Permissions
+# Format: ai.txt / https://site.standards.org
+
+User-Agent: *
+Allow: /
+Allow: /llms.txt
+Allow: /sitemap.xml
+
+# Attribution Guidelines
+Attribution-Name: आरंभ Tours & Travels
+Attribution-URL: https://aarambhatravels.in
+License: Proprietary / Public Informational Content
+Contact: contact@aarambhatravels.in

@@ -50,6 +50,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           }
           return prev;
         });
+      } else if (meRes.status === 401) {
+        localStorage.removeItem('crm_token');
+        localStorage.removeItem('crm_user');
+        setUser(null);
       }
     } catch (_e) {}
   }, []);

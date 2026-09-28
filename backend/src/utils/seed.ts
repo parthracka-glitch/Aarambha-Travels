@@ -11,7 +11,7 @@ export const seedDatabase = async (): Promise<void> => {
     const existingSuperAdmin1 = await AdminUser.findOne({ email: 'admin@aarambhatravels.in' }).select('+hashedPassword');
     if (!existingSuperAdmin1) {
       await AdminUser.create({
-        name: 'Kushal Parakh',
+        name: 'Aarambha Super Admin',
         email: 'admin@aarambhatravels.in',
         hashedPassword: hashedSuperAdmin,
         role: 'superadmin',
@@ -21,6 +21,7 @@ export const seedDatabase = async (): Promise<void> => {
       });
       console.log('[Seed] Superadmin 1 created: admin@aarambhatravels.in / Admin@123');
     } else {
+      existingSuperAdmin1.name = 'Aarambha Super Admin';
       existingSuperAdmin1.role = 'superadmin';
       existingSuperAdmin1.hashedPassword = hashedSuperAdmin;
       existingSuperAdmin1.failedLoginAttempts = 0;

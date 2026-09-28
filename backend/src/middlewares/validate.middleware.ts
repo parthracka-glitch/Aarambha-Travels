@@ -27,7 +27,7 @@ const DANGEROUS_PATTERNS: [RegExp, string][] = [
   [/\x00/g, ''],
 ];
 
-function sanitizeString(value: string): string {
+export function sanitizeString(value: string): string {
   let sanitized = value;
   for (const [pattern, replacement] of DANGEROUS_PATTERNS) {
     sanitized = sanitized.replace(pattern, replacement);
@@ -35,7 +35,7 @@ function sanitizeString(value: string): string {
   return sanitized;
 }
 
-function sanitizeObject(obj: any): any {
+export function sanitizeObject(obj: any): any {
   if (typeof obj === 'string') {
     return sanitizeString(obj);
   }

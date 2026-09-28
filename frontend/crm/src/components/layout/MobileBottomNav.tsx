@@ -12,7 +12,7 @@ export function MobileBottomNav({ onOpenMenu }: MobileBottomNavProps) {
   const isViewer = user?.role === 'viewer';
 
   return (
-    <nav className="md:hidden fixed bottom-0 left-0 right-0 z-40 bg-[#171721]/95 backdrop-blur-md border-t border-[#272735] pb-safe px-2 py-1.5 flex items-center justify-around shadow-lg select-none">
+    <nav className="md:hidden fixed bottom-0 left-0 right-0 z-40 bg-[#2D1F18]/95 backdrop-blur-md border-t border-[#493B34] pb-safe px-2 py-1.5 flex items-center justify-around shadow-lg select-none">
       
       {/* Dashboard */}
       {!isViewer && (
@@ -20,7 +20,7 @@ export function MobileBottomNav({ onOpenMenu }: MobileBottomNavProps) {
           to="/"
           className={({ isActive }) =>
             `flex flex-col items-center justify-center py-1 px-2.5 rounded-xl transition-all duration-150 min-w-[56px] ${
-              isActive ? 'text-[#5266EB] font-bold scale-105' : 'text-[#AFB2CE] hover:text-white'
+              isActive ? 'text-[#C65A2E] font-bold scale-105' : 'text-[#EDE2D0]/70 hover:text-white'
             }`
           }
         >
@@ -34,7 +34,7 @@ export function MobileBottomNav({ onOpenMenu }: MobileBottomNavProps) {
         to="/bookings"
         className={({ isActive }) =>
           `flex flex-col items-center justify-center py-1 px-2.5 rounded-xl transition-all duration-150 min-w-[56px] ${
-            isActive ? 'text-[#5266EB] font-bold scale-105' : 'text-[#AFB2CE] hover:text-white'
+            isActive ? 'text-[#C65A2E] font-bold scale-105' : 'text-[#EDE2D0]/70 hover:text-white'
           }`
         }
       >
@@ -48,7 +48,7 @@ export function MobileBottomNav({ onOpenMenu }: MobileBottomNavProps) {
           to={activeVertical === 'fleet' ? '/fleet' : '/tours'}
           className={({ isActive }) =>
             `flex flex-col items-center justify-center py-1 px-2.5 rounded-xl transition-all duration-150 min-w-[56px] ${
-              isActive ? 'text-[#5266EB] font-bold scale-105' : 'text-[#AFB2CE] hover:text-white'
+              isActive ? 'text-[#C65A2E] font-bold scale-105' : 'text-[#EDE2D0]/70 hover:text-white'
             }`
           }
         >
@@ -72,7 +72,7 @@ export function MobileBottomNav({ onOpenMenu }: MobileBottomNavProps) {
           to="/customers"
           className={({ isActive }) =>
             `flex flex-col items-center justify-center py-1 px-2.5 rounded-xl transition-all duration-150 min-w-[56px] ${
-              isActive ? 'text-[#5266EB] font-bold scale-105' : 'text-[#AFB2CE] hover:text-white'
+              isActive ? 'text-[#C65A2E] font-bold scale-105' : 'text-[#EDE2D0]/70 hover:text-white'
             }`
           }
         >
@@ -84,7 +84,7 @@ export function MobileBottomNav({ onOpenMenu }: MobileBottomNavProps) {
       {/* More / Menu Drawer Trigger */}
       <button
         onClick={onOpenMenu}
-        className="flex flex-col items-center justify-center py-1 px-2.5 rounded-xl text-[#AFB2CE] hover:text-white transition-all duration-150 min-w-[56px]"
+        className="flex flex-col items-center justify-center py-1 px-2.5 rounded-xl text-[#EDE2D0]/70 hover:text-white transition-all duration-150 min-w-[56px]"
         aria-label="Open Full Admin Menu"
       >
         <Menu className="w-5 h-5 mb-0.5" />

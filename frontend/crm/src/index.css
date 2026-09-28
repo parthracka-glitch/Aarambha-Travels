@@ -1,36 +1,36 @@
+/* Ramp Design System – CRM Admin Portal Theme */
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-@font-face {
-  font-family: 'Arcadia Display';
-  font-style: normal;
-  font-weight: 480;
-  font-display: swap;
-  src: local('Arcadia Display'), local('Syne'), local('Outfit');
-}
-
-@font-face {
-  font-family: 'Arcadia';
-  font-style: normal;
-  font-weight: 400 480;
-  font-display: swap;
-  src: local('Arcadia'), local('Outfit'), local('Plus Jakarta Sans');
-}
-
 @layer base {
-  body {
-    margin: 0;
-    background-color: #EDEDF3;
-    font-family: 'Arcadia', 'arcadia', 'Outfit', 'Plus Jakarta Sans', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
-    color: #000000;
+  :root {
+    --ramp-primary: #C65A2E;
+    --ramp-navy: #493B34;
+    --ramp-charcoal: #2D1F18;
+    --ramp-cta: #C65A2E;
+    --ramp-surface: #FCFAF6;
+    --ramp-surface-subtle: #F8EFEA;
+    --ramp-border: #EDE2D0;
+    --ramp-slate: #756B63;
   }
 
-  h1, h2 {
-    font-family: 'Arcadia Display', 'arcadiaDisplay', 'Syne', sans-serif;
-    font-weight: 480;
+  body {
+    margin: 0;
+    background-color: #FCFAF6;
+    font-family: 'Lausanne', -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", Roboto, "Helvetica Neue", sans-serif;
+    line-height: 1.5;
+    font-weight: 400;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    color: #2D1F18;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    font-family: 'Lausanne', -apple-system, BlinkMacSystemFont, "SF Pro Display", sans-serif;
+    font-weight: 400;
+    color: #2D1F18;
   }
 }
 
@@ -39,29 +39,101 @@
   width: 6px;
   height: 6px;
 }
-
 ::-webkit-scrollbar-track {
   background: transparent;
 }
-
 ::-webkit-scrollbar-thumb {
-  background: #AFB2CE;
+  background: #EDE2D0;
   border-radius: 9999px;
 }
-
 ::-webkit-scrollbar-thumb:hover {
-  background: #9CB4E8;
+  background: #C65A2E;
 }
 
-/* Fix browser autofill on dark inputs */
-input:-webkit-autofill,
-input:-webkit-autofill:hover, 
-input:-webkit-autofill:focus,
-input:-webkit-autofill:active {
-  -webkit-text-fill-color: #EDEDF3 !important;
-  -webkit-box-shadow: 0 0 0px 1000px #171721 inset !important;
-  box-shadow: 0 0 0px 1000px #171721 inset !important;
-  transition: background-color 5000s ease-in-out 0s;
+/* Ramp Form Inputs */
+.ramp-input {
+  width: 100%;
+  height: 42px;
+  padding: 0 14px;
+  border-radius: 8px;
+  border: 1px solid #EDE2D0;
+  background-color: #FFFFFF;
+  color: #2D1F18;
+  font-size: 14px;
+  font-weight: 400;
+  outline: none;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.ramp-input:focus {
+  border-color: #C65A2E;
+  box-shadow: 0 0 0 3px rgba(198, 90, 46, 0.15);
+}
+
+.ramp-input::placeholder {
+  color: #756B63;
+}
+
+/* Ramp Buttons */
+.ramp-btn-primary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 40px;
+  padding: 0 16px;
+  border-radius: 6px;
+  background-color: #C65A2E;
+  color: #FFFFFF;
+  font-size: 14px;
+  font-weight: 600;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.15s ease, transform 0.1s ease;
+}
+
+.ramp-btn-primary:hover {
+  background-color: #B24E25;
+}
+
+.ramp-btn-secondary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 40px;
+  padding: 0 16px;
+  border-radius: 6px;
+  background-color: #F8EFEA;
+  color: #493B34;
+  font-size: 14px;
+  font-weight: 600;
+  border: 1px solid #EDE2D0;
+  cursor: pointer;
+  transition: background-color 0.15s ease;
+}
+
+.ramp-btn-secondary:hover {
+  background-color: #EDE2D0;
+}
+
+.ramp-btn-outline {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 40px;
+  padding: 0 16px;
+  border-radius: 6px;
+  background-color: #FFFFFF;
+  color: #493B34;
+  border: 1px solid #EDE2D0;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.15s ease, border-color 0.15s ease;
+}
+
+.ramp-btn-outline:hover {
+  background-color: #F8EFEA;
+  border-color: #E8B9A5;
 }
 
 .no-scrollbar::-webkit-scrollbar {
@@ -85,5 +157,3 @@ input:-webkit-autofill:active {
 .pt-safe {
   padding-top: env(safe-area-inset-top, 0px);
 }
-
-

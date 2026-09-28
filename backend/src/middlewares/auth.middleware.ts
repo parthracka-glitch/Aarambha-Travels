@@ -219,14 +219,29 @@ export const requireSuperAdmin = (req: AuthRequest, res: Response, next: NextFun
 };
 
 /**
- * Security HTTP Headers Middleware (Helmet-Grade Protection)
+ * Security HTTP Headers Middleware (Helmet-Grade Protection + CSP)
  */
 export const securityHeadersMiddleware = (_req: Request, res: Response, next: NextFunction): void => {
   res.setHeader('X-Content-Type-Options', 'nosniff');
   res.setHeader('X-Frame-Options', 'SAMEORIGIN');
   res.setHeader('X-XSS-Protection', '1; mode=block');
   res.setHeader('Referrer-Policy', 'strict-origin-when-cross-origin');
-  res.setHeader('Strict-Transport-Security', 'max-age=31536000; includeSubDomains');
+  res.setHeader('Strict-Transport-Security', 'max-age=31536000; includeSubDomains; preload');
+  res.setHeader('Cross-Origin-Opener-Policy', 'same-origin-allow-popups');
+  res.setHeader('Cross-Origin-Resource-Policy', 'cross-origin');
+  res.setHeader('Permissions-Policy', 'camera=(), microphone=(), geolocation=(self), payment=(self)');
+  res.setHeader(
+    'Content-Security-Policy',
+    "default-src 'self' https:; " +
+    "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://checkout.razorpay.com https://accounts.google.com https://apis.google.com; " +
+    "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; " +
+    "font-src 'self' https://fonts.gstatic.com data:; " +
+    "img-src 'self' data: blob: https:; " +
+    "connect-src 'self' https: http://localhost:* http://127.0.0.1:* wss: ws: https://lumberjack.razorpay.com https://api.razorpay.com; " +
+    "frame-src 'self' https://api.razorpay.com https://checkout.razorpay.com https://accounts.google.com; " +
+    "object-src 'none'; " +
+    "base-uri 'self';"
+  );
   next();
 };
 

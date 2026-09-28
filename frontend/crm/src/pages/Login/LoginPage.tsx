@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
-import { Eye, EyeOff, LogIn, AlertCircle } from 'lucide-react';
+import { Eye, EyeOff, LogIn, AlertCircle, ShieldCheck, Mail, Lock, Loader2 } from 'lucide-react';
 
 export default function LoginPage() {
   const { login } = useAuth();
@@ -20,113 +20,135 @@ export default function LoginPage() {
       await login(email, password);
       navigate('/', { replace: true });
     } catch (err: any) {
-      setError(err.message || 'Login failed. Check your credentials.');
+      setError(err.message || 'Authentication failed. Please check your credentials.');
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div className="min-h-screen bg-[#171721] flex items-center justify-center px-4 font-sans">
-      {/* Background glow */}
-      <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute top-1/4 left-1/2 -translate-x-1/2 w-[600px] h-[600px] bg-[#5266EB]/10 rounded-full blur-[120px]" />
-        <div className="absolute bottom-1/4 left-1/3 w-[400px] h-[400px] bg-[#9CB4E8]/8 rounded-full blur-[100px]" />
-      </div>
-
-      <div className="relative w-full max-w-md">
-        {/* Brand */}
-        <div className="text-center mb-8">
-          <div className="inline-flex items-center justify-center w-18 h-18 rounded-2xl bg-white p-1 ring-2 ring-[#D3592B]/40 mb-3 shadow-2xl overflow-hidden">
-            <img src="/images/aarambha_logo.png" alt="आरंभ Logo" className="w-full h-full object-contain rounded-xl" onError={(e) => { (e.target as HTMLElement).setAttribute('src', '/logo.png'); }} />
+    <div className="min-h-screen bg-[#FCFAF6] flex items-center justify-center p-4 font-sans select-none">
+      <div className="w-full max-w-md">
+        
+        {/* Brand Header */}
+        <div className="text-center mb-6">
+          <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-[#2D1F18] p-2 shadow-md mb-3">
+            <img
+              src="/images/aarambha_logo.png"
+              alt="Aarambha Travels Logo"
+              className="w-full h-full object-contain"
+              onError={(e) => {
+                (e.target as HTMLElement).style.display = 'none';
+              }}
+            />
           </div>
-          <h1 className="text-[#EDEDF3] font-black text-2xl tracking-tight flex items-center justify-center gap-2">
-            <span className="font-['Yatra_One','Rozha_One','Tiro_Devanagari_Marathi',serif] text-3xl font-bold text-[#D3592B] drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)]">आरंभ</span>
-            <span className="text-white font-extrabold">CRM</span>
+          <h1 className="text-[#2D1F18] font-extrabold text-2xl tracking-tight flex items-center justify-center gap-1.5">
+            <span>आरंभ Travels</span>
+            <span className="text-[#C65A2E] text-xs font-bold uppercase tracking-wider bg-[#C65A2E]/10 border border-[#C65A2E]/30 px-2 py-0.5 rounded-md">
+              CRM Portal
+            </span>
           </h1>
-          <p className="font-['Syne',sans-serif] text-[9.5px] font-bold text-[#D4C4BC] uppercase tracking-[0.25em] mt-1">✦ TOURS AND TRAVELS ADMIN ✦</p>
+          <p className="text-xs font-semibold text-[#756B63] mt-1 uppercase tracking-widest">
+            Enterprise Operations Management
+          </p>
         </div>
 
-        {/* Card */}
-        <div className="bg-[#272735]/70 backdrop-blur-xl border border-white/10 rounded-3xl p-8 shadow-2xl">
-          <form onSubmit={handleSubmit} className="space-y-5">
-            
-            {/* Error */}
+        {/* Login Card */}
+        <div className="bg-white border border-[#EDE2D0] rounded-xl p-6 sm:p-8 shadow-xs">
+          <div className="mb-5 pb-4 border-b border-[#EDE2D0]">
+            <h2 className="text-base font-bold text-[#2D1F18]">Sign In to Portal</h2>
+            <p className="text-xs text-[#756B63] mt-0.5">
+              Enter your official administrative credentials to access operations
+            </p>
+          </div>
+
+          <form onSubmit={handleSubmit} className="space-y-4">
+            {/* Error Message */}
             {error && (
-              <div className="flex items-center gap-2.5 bg-red-500/10 border border-red-500/20 rounded-2xl px-4 py-3 text-red-300 text-xs font-medium">
-                <AlertCircle className="w-4 h-4 flex-shrink-0" />
+              <div className="flex items-center gap-2 bg-red-50 border border-red-200 rounded-lg p-3 text-red-700 text-xs font-medium">
+                <AlertCircle className="w-4 h-4 shrink-0 text-red-600" />
                 <span>{error}</span>
               </div>
             )}
 
-            {/* Email */}
-            <div className="space-y-1.5">
-              <label className="block text-xs font-bold text-[#EDEDF3] uppercase tracking-wider">
-                Email Address
+            {/* Email Field */}
+            <div>
+              <label className="block text-xs font-bold text-[#2D1F18] mb-1">
+                Official Email Address
               </label>
-              <input
-                id="login-email"
-                type="email"
-                required
-                autoComplete="email"
-                value={email}
-                onChange={e => setEmail(e.target.value)}
-                placeholder="Enter your email address"
-                className="w-full px-4 py-3 bg-[#171721] border border-gray-700/80 rounded-xl text-[#EDEDF3] font-medium text-sm placeholder-gray-400 focus:outline-none focus:border-[#5266EB] focus:ring-1 focus:ring-[#5266EB] transition-all caret-white shadow-inner"
-                style={{ color: '#ffffff' }}
-              />
+              <div className="relative">
+                <Mail className="w-4 h-4 text-gray-400 absolute left-3 top-1/2 -translate-y-1/2" />
+                <input
+                  id="login-email"
+                  type="email"
+                  required
+                  autoComplete="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  placeholder="Enter your email address"
+                  className="w-full pl-9 pr-3 py-2.5 bg-[#F8EFEA] border border-[#EDE2D0] rounded-lg text-xs text-[#2D1F18] placeholder-[#756B63] focus:bg-white focus:border-[#C65A2E] focus:outline-none transition-all"
+                />
+              </div>
             </div>
 
-            {/* Password */}
-            <div className="space-y-1.5">
-              <label className="block text-xs font-bold text-[#EDEDF3] uppercase tracking-wider">
+            {/* Password Field */}
+            <div>
+              <label className="block text-xs font-bold text-[#2D1F18] mb-1">
                 Password
               </label>
               <div className="relative">
+                <Lock className="w-4 h-4 text-gray-400 absolute left-3 top-1/2 -translate-y-1/2" />
                 <input
                   id="login-password"
                   type={showPassword ? 'text' : 'password'}
                   required
                   autoComplete="current-password"
                   value={password}
-                  onChange={e => setPassword(e.target.value)}
-                  placeholder="••••••••"
-                  className="w-full px-4 py-3 pr-11 bg-[#171721] border border-gray-700/80 rounded-xl text-[#EDEDF3] font-medium text-sm placeholder-gray-400 focus:outline-none focus:border-[#5266EB] focus:ring-1 focus:ring-[#5266EB] transition-all caret-white shadow-inner"
-                  style={{ color: '#ffffff' }}
+                  onChange={(e) => setPassword(e.target.value)}
+                  placeholder="Enter your password"
+                  className="w-full pl-9 pr-10 py-2.5 bg-[#F8EFEA] border border-[#EDE2D0] rounded-lg text-xs text-[#2D1F18] placeholder-[#756B63] focus:bg-white focus:border-[#C65A2E] focus:outline-none transition-all"
                 />
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-3.5 top-1/2 -translate-y-1/2 text-gray-400 hover:text-white transition-colors"
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-700 transition-colors"
                 >
                   {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                 </button>
               </div>
             </div>
 
-            {/* Submit */}
+            {/* Submit Button */}
             <button
               id="login-submit"
               type="submit"
               disabled={loading}
-              className="w-full flex items-center justify-center gap-2.5 py-3.5 bg-[#5266EB] hover:bg-[#3E51D4] disabled:bg-[#5266EB]/40 disabled:cursor-not-allowed text-[#EDEDF3] font-bold text-sm rounded-xl transition-all duration-200 shadow-lg shadow-[#5266EB]/20 mt-2"
+              className="w-full flex items-center justify-center gap-2 py-3 bg-[#C65A2E] hover:bg-[#B24E25] disabled:opacity-50 text-white font-bold text-xs rounded-lg transition-all shadow-xs border border-black/10 mt-3 cursor-pointer"
             >
               {loading ? (
-                <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                <Loader2 className="w-4 h-4 animate-spin text-white" />
               ) : (
-                <LogIn className="w-4 h-4" />
+                <LogIn className="w-4 h-4 text-white" />
               )}
-              {loading ? 'Signing in…' : 'Sign In'}
+              <span>{loading ? 'Authenticating...' : 'Sign In to CRM'}</span>
             </button>
           </form>
+
+          {/* Security badge */}
+          <div className="mt-5 pt-4 border-t border-[#EDE2D0] flex items-center justify-center gap-1.5 text-gray-400 text-[11px]">
+            <ShieldCheck className="w-3.5 h-3.5 text-emerald-600" />
+            <span>End-to-End Encrypted Session</span>
+          </div>
         </div>
 
-        <div className="text-center text-[11px] text-gray-500 mt-6 space-y-1">
-          <p>© 2026 आरंभ Tours & Self-Drive Rentals</p>
-          <p className="text-[10px] text-gray-400">
-            Engineered by <strong className="text-gray-300 tracking-wider uppercase font-semibold">Nirvanaa Studios</strong>
+        {/* Footer info */}
+        <div className="text-center text-[11px] text-[#756B63] mt-6 space-y-0.5">
+          <p>© 2026 Aarambha Tours & Self-Drive Rentals</p>
+          <p className="text-[10px] text-[#756B63]/70">
+            Secure Admin Portal for Authorized Personnel Only
           </p>
         </div>
+
       </div>
     </div>
   );

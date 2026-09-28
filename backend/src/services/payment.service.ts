@@ -1,4 +1,5 @@
 import crypto from 'crypto';
+import Razorpay from 'razorpay';
 import { Vehicle, FleetCustomer, FleetBooking, FleetPayment, TourPackage, TourCustomer, TourBooking } from '../models';
 import { recordAudit } from '../middlewares/auth.middleware';
 
@@ -13,11 +14,7 @@ export class PaymentService {
   }
 
   static async createOrder(serviceType: string, referenceId?: string) {
-    let Razorpay: any;
-    try {
-      // @ts-ignore
-      Razorpay = require('razorpay');
-    } catch {
+    if (!process.env.RAZORPAY_KEY_SECRET || RAZORPAY_KEY_SECRET === 'placeholder_secret') {
       const mockOrderId = `order_mock_${crypto.randomBytes(8).toString('hex')}`;
       return {
         id: mockOrderId,

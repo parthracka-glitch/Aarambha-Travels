@@ -1,232 +1,307 @@
-import type { Metadata } from 'next';
+'use client';
+
+import React, { useState } from 'react';
 import Link from 'next/link';
+import {
+  Scale,
+  Shield,
+  RotateCcw,
+  Lock,
+  Cookie,
+  AlertTriangle,
+  FileText,
+  CheckCircle2,
+  ChevronRight,
+  Printer,
+  Compass,
+  Car,
+  Bus,
+} from 'lucide-react';
 import Navbar from '@/components/layout/Navbar';
 import Footer from '@/components/layout/Footer';
-import {
-  Shield, Cookie, RotateCcw, AlertTriangle, Eye, Lock, Bug,
-  FileWarning, Users, Database, FileText, ChevronRight, Scale,
-} from 'lucide-react';
 
-export const metadata: Metadata = {
-  title: 'Legal Documents & Policies | आरंभ Tours & Travels',
-  description: 'Find all legal documents for आरंभ Tours & Travels — privacy policy, refund policy, cookie policy, security policy, terms, and more.',
-};
+export default function ConsolidatedLegalCenterPage() {
+  const [activeTab, setActiveTab] = useState<'terms' | 'privacy' | 'refund' | 'compliance'>('terms');
 
-const LEGAL_DOCS = [
-  {
-    href: '/terms',
-    icon: FileText,
-    color: 'indigo',
-    title: 'Rental & Tour Policies',
-    desc: 'Comprehensive terms for all self-drive rentals, tour packages, deposits, and booking rules.',
-    updated: 'Aug 2026',
-    badge: 'Core',
-  },
-  {
-    href: '/terms-and-conditions',
-    icon: Scale,
-    color: 'indigo',
-    title: 'Standard Terms & Conditions',
-    desc: 'General website terms of use, service agreements, and customer obligations.',
-    updated: 'Aug 2026',
-    badge: 'Core',
-  },
-  {
-    href: '/legal/privacy-policy',
-    icon: Shield,
-    color: 'blue',
-    title: 'Privacy Policy',
-    desc: 'How we collect, use, store, and protect your personal data under the IT Act 2000.',
-    updated: 'Aug 2026',
-    badge: 'Privacy',
-  },
-  {
-    href: '/legal/cookie-policy',
-    icon: Cookie,
-    color: 'amber',
-    title: 'Cookie Policy',
-    desc: 'What cookies we set, why we use them, and how to manage your preferences.',
-    updated: 'Aug 2026',
-    badge: 'Privacy',
-  },
-  {
-    href: '/legal/refund-policy',
-    icon: RotateCcw,
-    color: 'emerald',
-    title: 'Refund & Cancellation Policy',
-    desc: 'Cancellation windows, refund percentages, deposit rules, and force majeure clauses.',
-    updated: 'Aug 2026',
-    badge: 'Financial',
-  },
-  {
-    href: '/legal/disclaimer',
-    icon: AlertTriangle,
-    color: 'amber',
-    title: 'Disclaimer',
-    desc: 'Liability limitations for itinerary changes, road conditions, and third-party services.',
-    updated: 'Aug 2026',
-    badge: 'Legal',
-  },
-  {
-    href: '/legal/accessibility',
-    icon: Eye,
-    color: 'purple',
-    title: 'Accessibility Statement',
-    desc: 'Our commitment to WCAG 2.1 AA compliance and alternative contact methods.',
-    updated: 'Aug 2026',
-    badge: 'Compliance',
-  },
-  {
-    href: '/legal/security-policy',
-    icon: Lock,
-    color: 'slate',
-    title: 'Security Policy',
-    desc: 'How customer data is encrypted, secured, and protected against breaches.',
-    updated: 'Aug 2026',
-    badge: 'Security',
-  },
-  {
-    href: '/legal/responsible-disclosure',
-    icon: Bug,
-    color: 'red',
-    title: 'Responsible Disclosure',
-    desc: 'How to report security vulnerabilities to us responsibly — with safe harbor protection.',
-    updated: 'Aug 2026',
-    badge: 'Security',
-  },
-  {
-    href: '/legal/acceptable-use',
-    icon: FileWarning,
-    color: 'orange',
-    title: 'Acceptable Use Policy',
-    desc: 'Prohibited uses of our platform, age requirements, and consequences of violations.',
-    updated: 'Aug 2026',
-    badge: 'Legal',
-  },
-  {
-    href: '/legal/community-guidelines',
-    icon: Users,
-    color: 'teal',
-    title: 'Community Guidelines',
-    desc: 'Conduct standards for reviews, interactions with staff and drivers, and social media.',
-    updated: 'Aug 2026',
-    badge: 'Community',
-  },
-  {
-    href: '/legal/data-processing',
-    icon: Database,
-    color: 'violet',
-    title: 'Data Processing Agreement',
-    desc: 'Controller/processor definitions, sub-processor list, and breach notification obligations (B2B).',
-    updated: 'Aug 2026',
-    badge: 'Enterprise',
-  },
-  {
-    href: '/nda',
-    icon: FileText,
-    color: 'slate',
-    title: 'Non-Disclosure Agreement',
-    desc: 'Confidentiality obligations for business partners and corporate clients.',
-    updated: 'Aug 2026',
-    badge: 'Legal',
-  },
-];
-
-const COLOR_MAP: Record<string, { card: string; icon: string; badge: string }> = {
-  indigo: { card: 'border-[#5266EB]/20 hover:border-[#5266EB]/50 hover:shadow-[#5266EB]/10', icon: 'bg-[#5266EB]/10 text-[#5266EB]', badge: 'bg-[#5266EB]/10 text-[#5266EB]' },
-  blue:   { card: 'border-blue-100 hover:border-blue-300 hover:shadow-blue-50',   icon: 'bg-blue-50 text-blue-600',   badge: 'bg-blue-50 text-blue-600' },
-  amber:  { card: 'border-amber-100 hover:border-amber-300 hover:shadow-amber-50', icon: 'bg-amber-50 text-amber-600', badge: 'bg-amber-50 text-amber-600' },
-  emerald:{ card: 'border-emerald-100 hover:border-emerald-300 hover:shadow-emerald-50', icon: 'bg-emerald-50 text-emerald-600', badge: 'bg-emerald-50 text-emerald-600' },
-  purple: { card: 'border-purple-100 hover:border-purple-300 hover:shadow-purple-50', icon: 'bg-purple-50 text-purple-600', badge: 'bg-purple-50 text-purple-600' },
-  slate:  { card: 'border-slate-200 hover:border-slate-400 hover:shadow-slate-50',  icon: 'bg-slate-100 text-slate-600',  badge: 'bg-slate-100 text-slate-600' },
-  red:    { card: 'border-red-100 hover:border-red-300 hover:shadow-red-50',     icon: 'bg-red-50 text-red-600',     badge: 'bg-red-50 text-red-600' },
-  orange: { card: 'border-orange-100 hover:border-orange-300 hover:shadow-orange-50', icon: 'bg-orange-50 text-orange-600', badge: 'bg-orange-50 text-orange-600' },
-  teal:   { card: 'border-teal-100 hover:border-teal-300 hover:shadow-teal-50',   icon: 'bg-teal-50 text-teal-600',   badge: 'bg-teal-50 text-teal-600' },
-  violet: { card: 'border-violet-100 hover:border-violet-300 hover:shadow-violet-50', icon: 'bg-violet-50 text-violet-600', badge: 'bg-violet-50 text-violet-600' },
-};
-
-export default function LegalHubPage() {
   return (
-    <div className="min-h-screen bg-[#FAFAFC] text-[#18181B] flex flex-col font-sans">
+    <div className="min-h-screen bg-[#FCFAF6] text-[#493B34] flex flex-col font-sans select-none">
+      {/* Navbar */}
       <Navbar vertical="home" />
 
-      {/* Hero */}
-      <section className="relative bg-[#171721] overflow-hidden">
-        <div className="absolute inset-0 opacity-[0.05]"
-          style={{ backgroundImage: 'radial-gradient(circle at 15% 60%, #5266EB 0%, transparent 55%), radial-gradient(circle at 85% 20%, #D3592B 0%, transparent 45%)' }} />
-        <div className="relative max-w-7xl mx-auto px-6 lg:px-12 py-16 sm:py-20 text-center">
-          <p className="font-['Syne',sans-serif] text-[10px] font-black tracking-[0.3em] text-[#5266EB] uppercase mb-4">
-            आरंभ Legal & Compliance
-          </p>
-          <h1 className="font-['Syne',sans-serif] text-4xl sm:text-6xl font-extrabold text-white tracking-tight">
-            Legal Documents
-          </h1>
-          <p className="mt-4 text-sm text-[#AFB2CE] max-w-xl mx-auto leading-relaxed">
-            Transparency is core to आरंभ. Find all our policies, agreements, and compliance documents here — written in plain language.
-          </p>
-          <div className="mt-6 flex flex-wrap items-center justify-center gap-3 text-xs text-[#AFB2CE]">
-            <span className="flex items-center gap-1.5 bg-white/5 border border-white/10 rounded-full px-3 py-1.5">
-              <Shield className="w-3 h-3 text-[#5266EB]" /> Governed by Indian IT Act 2000
-            </span>
-            <span className="flex items-center gap-1.5 bg-white/5 border border-white/10 rounded-full px-3 py-1.5">
-              <Lock className="w-3 h-3 text-[#5266EB]" /> GDPR-Aligned Data Practices
-            </span>
+      {/* ─────────────────────────────────────────────────────────────
+          1. HERO: CONSOLIDATED LEGAL & POLICY FRAMEWORK
+          ───────────────────────────────────────────────────────────── */}
+      <section className="relative pt-24 pb-14 lg:pt-32 lg:pb-16 bg-[#2D1F18] text-white overflow-hidden border-b border-[#EDE2D0]/20">
+        <div className="max-w-7xl mx-auto px-6 lg:px-12 space-y-4">
+          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[#C65A2E]/20 border border-[#C65A2E]/40 text-[#E8B9A5] text-xs font-bold uppercase tracking-wider">
+            <Scale className="w-3.5 h-3.5 text-[#C65A2E]" />
+            <span>Legal, Policies &amp; Compliance Framework</span>
           </div>
+
+          <h1 className="font-serif text-3xl sm:text-5xl lg:text-6xl font-bold tracking-tight leading-tight max-w-3xl">
+            Terms, Policies &amp; <br />
+            <span className="text-[#E8B9A5]">Legal Compliance</span>
+          </h1>
+
+          <p className="text-xs sm:text-sm text-[#EDE2D0]/90 max-w-2xl leading-relaxed">
+            Consolidated terms, conditions, privacy protections, refund timelines, and compliance disclosures governing all tours, self-drive rentals, and bus bookings with आरंभ.
+          </p>
         </div>
       </section>
 
-      {/* Document Grid */}
-      <main className="flex-1 max-w-7xl mx-auto w-full px-6 lg:px-12 py-14">
-        <p className="text-[10px] font-black font-['Syne',sans-serif] tracking-[0.2em] text-gray-400 uppercase mb-8">
-          All Documents — {LEGAL_DOCS.length} total
-        </p>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
-          {LEGAL_DOCS.map((doc) => {
-            const colors = COLOR_MAP[doc.color] || COLOR_MAP.slate;
-            const Icon = doc.icon;
-            return (
-              <Link
-                key={doc.href}
-                href={doc.href}
-                className={`group bg-white rounded-2xl border shadow-sm hover:shadow-lg transition-all duration-200 p-5 flex flex-col gap-4 ${colors.card}`}
-              >
-                <div className="flex items-start justify-between gap-3">
-                  <div className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 ${colors.icon}`}>
-                    <Icon className="w-5 h-5" />
-                  </div>
-                  <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${colors.badge}`}>
-                    {doc.badge}
-                  </span>
-                </div>
-                <div className="flex-1">
-                  <h2 className="font-['Syne',sans-serif] text-sm font-bold text-[#111111] group-hover:text-[#5266EB] transition-colors leading-snug">
-                    {doc.title}
-                  </h2>
-                  <p className="text-xs text-gray-500 mt-1.5 leading-relaxed">{doc.desc}</p>
-                </div>
-                <div className="flex items-center justify-between text-[10px] text-gray-400 border-t border-gray-100 pt-3">
-                  <span>Updated {doc.updated}</span>
-                  <ChevronRight className="w-3.5 h-3.5 text-gray-300 group-hover:text-[#5266EB] group-hover:translate-x-0.5 transition-all" />
-                </div>
-              </Link>
-            );
-          })}
-        </div>
+      {/* ─────────────────────────────────────────────────────────────
+          2. CONSOLIDATED TABBED LEGAL CENTER
+          ───────────────────────────────────────────────────────────── */}
+      <section className="py-14 bg-white border-b border-[#EDE2D0]">
+        <div className="max-w-7xl mx-auto px-6 lg:px-12 space-y-10">
+          
+          {/* Tabs Navigation */}
+          <div className="flex flex-wrap items-center gap-2 border-b border-[#EDE2D0] pb-4">
+            <button
+              onClick={() => setActiveTab('terms')}
+              className={`px-5 py-3 rounded-xl text-xs font-bold transition-all flex items-center gap-2 cursor-pointer ${
+                activeTab === 'terms'
+                  ? 'bg-[#493B34] text-white shadow-2xs'
+                  : 'bg-[#FCFAF6] text-[#756B63] border border-[#EDE2D0] hover:border-[#C65A2E]'
+              }`}
+            >
+              <FileText className="w-4 h-4 text-[#C65A2E]" />
+              <span>1. Terms &amp; Conditions &amp; Rental Policies</span>
+            </button>
 
-        {/* Contact strip */}
-        <div className="mt-14 bg-[#171721] rounded-2xl p-6 sm:p-8 text-center">
-          <p className="font-['Syne',sans-serif] text-sm font-bold text-white mb-1">Have a legal question?</p>
-          <p className="text-xs text-[#AFB2CE] mb-4">Contact our compliance team — we respond within 2 business days.</p>
-          <a
-            href="mailto:support@aarambhatravels.in"
-            className="inline-flex items-center gap-2 bg-[#5266EB] text-white text-xs font-bold px-5 py-2.5 rounded-xl hover:bg-[#3E51D4] transition-colors"
-          >
-            support@aarambhatravels.in
-            <ChevronRight className="w-3.5 h-3.5" />
-          </a>
-        </div>
-      </main>
+            <button
+              onClick={() => setActiveTab('privacy')}
+              className={`px-5 py-3 rounded-xl text-xs font-bold transition-all flex items-center gap-2 cursor-pointer ${
+                activeTab === 'privacy'
+                  ? 'bg-[#493B34] text-white shadow-2xs'
+                  : 'bg-[#FCFAF6] text-[#756B63] border border-[#EDE2D0] hover:border-[#C65A2E]'
+              }`}
+            >
+              <Shield className="w-4 h-4 text-[#C65A2E]" />
+              <span>2. Privacy Policy &amp; Cookies</span>
+            </button>
 
+            <button
+              onClick={() => setActiveTab('refund')}
+              className={`px-5 py-3 rounded-xl text-xs font-bold transition-all flex items-center gap-2 cursor-pointer ${
+                activeTab === 'refund'
+                  ? 'bg-[#493B34] text-white shadow-2xs'
+                  : 'bg-[#FCFAF6] text-[#756B63] border border-[#EDE2D0] hover:border-[#C65A2E]'
+              }`}
+            >
+              <RotateCcw className="w-4 h-4 text-emerald-600" />
+              <span>3. Refund &amp; Cancellation Policy</span>
+            </button>
+
+            <button
+              onClick={() => setActiveTab('compliance')}
+              className={`px-5 py-3 rounded-xl text-xs font-bold transition-all flex items-center gap-2 cursor-pointer ${
+                activeTab === 'compliance'
+                  ? 'bg-[#493B34] text-white shadow-2xs'
+                  : 'bg-[#FCFAF6] text-[#756B63] border border-[#EDE2D0] hover:border-[#C65A2E]'
+              }`}
+            >
+              <Lock className="w-4 h-4 text-[#D8B77A]" />
+              <span>4. Security, Compliance &amp; NDA</span>
+            </button>
+          </div>
+
+          {/* ─────────────────────────────────────────────────────────────
+              TAB 1: TERMS & CONDITIONS & RENTAL POLICIES
+              ───────────────────────────────────────────────────────────── */}
+          {activeTab === 'terms' && (
+            <div className="space-y-8 max-w-4xl text-xs sm:text-sm text-[#756B63] leading-relaxed">
+              
+              <div className="space-y-3 pb-6 border-b border-[#EDE2D0]/50">
+                <h2 className="font-serif text-2xl font-bold text-[#493B34]">1. Standard Terms of Use &amp; Agreement</h2>
+                <p>
+                  By accessing the website (<strong>aarambhatravels.in</strong>) or booking any tour package, self-drive vehicle, or bus rental from <strong>आरंभ (Aarambha) Tours &amp; Travels</strong>, you agree to be bound by these unified terms and conditions.
+                </p>
+              </div>
+
+              <div className="space-y-3 pb-6 border-b border-[#EDE2D0]/50">
+                <h3 className="font-serif text-lg font-bold text-[#493B34] flex items-center gap-2">
+                  <Compass className="w-4 h-4 text-[#C65A2E]" /> Tour Packages &amp; Pilgrimage Booking Rules
+                </h3>
+                <ul className="space-y-2 list-disc list-inside text-[#756B63]">
+                  <li><strong>Advance Booking Deposit:</strong> All tour package seats are reserved upon receipt of a minimum advance deposit of ₹500 per passenger. Remaining balance must be cleared prior to boarding.</li>
+                  <li><strong>Itinerary Adherence:</strong> Temple darshan timings are subject to temple trust rules, local administrative orders, and crowd controls. The tour leader reserves the right to re-sequence stops for safety.</li>
+                  <li><strong>Hotel Check-in &amp; Meals:</strong> Standard check-in time is 12:00 PM. Twin or triple sharing rooms in verified 3-star AC hotels are provided as per booked package. Satvik pure vegetarian meals are provided on tour days.</li>
+                  <li><strong>Luggage:</strong> Devotees are permitted one medium suitcase/trolley (up to 15 kg) and one handbag per person.</li>
+                </ul>
+              </div>
+
+              <div className="space-y-3 pb-6 border-b border-[#EDE2D0]/50">
+                <h3 className="font-serif text-lg font-bold text-[#493B34] flex items-center gap-2">
+                  <Car className="w-4 h-4 text-[#C65A2E]" /> Self-Drive Car Rental Policies
+                </h3>
+                <ul className="space-y-2 list-disc list-inside text-[#756B63]">
+                  <li><strong>Eligibility &amp; KYC:</strong> The driver must be at least 21 years old and hold a valid Indian or International driving license (at least 1 year old) along with original Aadhaar Card.</li>
+                  <li><strong>Speed Limits &amp; Safety:</strong> Commercial speed governor limits (80 km/h on highways / 100 km/h on expressways) apply. Reckless driving, off-roading (unless in 4x4 Thar on designated trails), or racing is strictly prohibited.</li>
+                  <li><strong>Zero Deposit Option:</strong> Available to verified local Pune residents and pre-approved travelers. Any minor accidental damages below ₹5,000 are subject to insurance deductibles.</li>
+                  <li><strong>Fuel &amp; FASTag:</strong> Vehicles are delivered with sufficient fuel to reach the next pump and must be returned at the same level. FASTag toll charges incurred during rental are settled on return.</li>
+                </ul>
+              </div>
+
+              <div className="space-y-3">
+                <h3 className="font-serif text-lg font-bold text-[#493B34] flex items-center gap-2">
+                  <Bus className="w-4 h-4 text-[#C65A2E]" /> Bus &amp; Force Urbania Rental Terms
+                </h3>
+                <ul className="space-y-2 list-disc list-inside text-[#756B63]">
+                  <li><strong>Local Packages (8h/80km):</strong> Service commences from the garage dispatch time and concludes upon garage return. Extra hours and extra kilometers are calculated per agreed rate sheet.</li>
+                  <li><strong>Outstation Trips:</strong> Billed at a minimum of 300 KM per calendar day. Driver DA (₹400/day), toll taxes, interstate border taxes, and parking fees are borne by the customer as per actual receipts.</li>
+                  <li><strong>Prohibited Activities:</strong> Smoking, alcohol consumption, or carrying hazardous/illegal substances in commercial passenger vehicles is strictly prohibited under Maharashtra Transport Laws.</li>
+                </ul>
+              </div>
+
+            </div>
+          )}
+
+          {/* ─────────────────────────────────────────────────────────────
+              TAB 2: PRIVACY POLICY & COOKIES
+              ───────────────────────────────────────────────────────────── */}
+          {activeTab === 'privacy' && (
+            <div className="space-y-8 max-w-4xl text-xs sm:text-sm text-[#756B63] leading-relaxed">
+              
+              <div className="space-y-3 pb-6 border-b border-[#EDE2D0]/50">
+                <h2 className="font-serif text-2xl font-bold text-[#493B34]">2. Privacy Policy &amp; Cookie Preferences</h2>
+                <p>
+                  We are committed to safeguarding your personal data under the <strong>Information Technology Act, 2000</strong> and the <strong>Digital Personal Data Protection (DPDP) Act</strong> of India.
+                </p>
+              </div>
+
+              <div className="space-y-3 pb-6 border-b border-[#EDE2D0]/50">
+                <h3 className="font-serif text-lg font-bold text-[#493B34]">Information We Collect</h3>
+                <ul className="space-y-2 list-disc list-inside text-[#756B63]">
+                  <li><strong>Contact Details:</strong> Name, phone number, email address for booking confirmations and invoices.</li>
+                  <li><strong>KYC Documents:</strong> Driving license and Aadhaar numbers for self-drive car dispatch (stored encrypted and deleted post-retention cycle).</li>
+                  <li><strong>Payment Identifiers:</strong> Razorpay Order IDs, UPI Transaction UTR numbers, and payment verification receipts. We do NOT store card CVVs or net banking passwords.</li>
+                </ul>
+              </div>
+
+              <div className="space-y-3 pb-6 border-b border-[#EDE2D0]/50">
+                <h3 className="font-serif text-lg font-bold text-[#493B34]">How We Use Your Data</h3>
+                <ul className="space-y-2 list-disc list-inside text-[#756B63]">
+                  <li>To process reservations, issue verified GST tax invoices, and assign tour captains or delivery drivers.</li>
+                  <li>To provide 24/7 roadside assistance and instant customer support over WhatsApp and phone.</li>
+                  <li>We never sell, rent, or trade your personal information to third-party marketing companies.</li>
+                </ul>
+              </div>
+
+              <div className="space-y-3">
+                <h3 className="font-serif text-lg font-bold text-[#493B34]">Cookie Preferences &amp; Storage</h3>
+                <p className="text-[#756B63]">
+                  We use essential session cookies to remember your active bookings, authentication tokens, and filter preferences. You can adjust your browser preferences anytime to restrict non-essential performance cookies.
+                </p>
+              </div>
+
+            </div>
+          )}
+
+          {/* ─────────────────────────────────────────────────────────────
+              TAB 3: REFUND & CANCELLATION POLICY
+              ───────────────────────────────────────────────────────────── */}
+          {activeTab === 'refund' && (
+            <div className="space-y-8 max-w-4xl text-xs sm:text-sm text-[#756B63] leading-relaxed">
+              
+              <div className="space-y-3 pb-6 border-b border-[#EDE2D0]/50">
+                <h2 className="font-serif text-2xl font-bold text-[#493B34]">3. 100% Transparent Refund &amp; Cancellation Policy</h2>
+                <p>
+                  We understand that travel plans can change unexpectedly. We provide one of the most flexible and fair refund policies in Maharashtra.
+                </p>
+              </div>
+
+              <div className="space-y-3 pb-6 border-b border-[#EDE2D0]/50">
+                <h3 className="font-serif text-lg font-bold text-[#493B34]">Tour Package Cancellation Timelines</h3>
+                <div className="overflow-x-auto">
+                  <table className="w-full text-left text-xs border border-[#EDE2D0] rounded-xl overflow-hidden">
+                    <thead className="bg-[#FCFAF6] text-[#493B34] font-serif font-bold uppercase">
+                      <tr className="border-b border-[#EDE2D0]">
+                        <th className="p-3.5">Cancellation Notice</th>
+                        <th className="p-3.5">Refund Percentage</th>
+                        <th className="p-3.5">Alternative Option</th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-[#EDE2D0]/50 font-medium text-[#756B63]">
+                      <tr>
+                        <td className="p-3.5 font-bold text-[#493B34]">7+ Days before Departure</td>
+                        <td className="p-3.5 text-emerald-600 font-bold">100% Full Refund</td>
+                        <td className="p-3.5">Free Date Rescheduling</td>
+                      </tr>
+                      <tr>
+                        <td className="p-3.5 font-bold text-[#493B34]">3 to 6 Days before Departure</td>
+                        <td className="p-3.5 text-amber-600 font-bold">50% Refund</td>
+                        <td className="p-3.5">Credit Voucher for Next Tour</td>
+                      </tr>
+                      <tr>
+                        <td className="p-3.5 font-bold text-[#493B34]">Less than 48 Hours</td>
+                        <td className="p-3.5 text-[#C65A2E] font-bold">Deposit Forfeited</td>
+                        <td className="p-3.5">Passenger Substitution Allowed</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+
+              <div className="space-y-3 pb-6 border-b border-[#EDE2D0]/50">
+                <h3 className="font-serif text-lg font-bold text-[#493B34]">Self-Drive Car &amp; Bus Rental Refunds</h3>
+                <ul className="space-y-2 list-disc list-inside text-[#756B63]">
+                  <li><strong>Security Deposit Refund:</strong> If collected, security deposits are refunded within 24 to 48 hours post-vehicle inspection and FASTag toll clearance.</li>
+                  <li><strong>Early Return:</strong> No partial refund is issued for vehicle returns made earlier than the booked drop-off schedule.</li>
+                </ul>
+              </div>
+
+              <div className="space-y-3">
+                <h3 className="font-serif text-lg font-bold text-[#493B34]">Force Majeure (Natural Disasters, Road Closures)</h3>
+                <p className="text-[#756B63]">
+                  In case of unexpected severe weather, temple shutdowns by government authority, or road blockages, bookings are eligible for 100% full rescheduling to future dates without any penalty fees.
+                </p>
+              </div>
+
+            </div>
+          )}
+
+          {/* ─────────────────────────────────────────────────────────────
+              TAB 4: SECURITY, COMPLIANCE & NDA
+              ───────────────────────────────────────────────────────────── */}
+          {activeTab === 'compliance' && (
+            <div className="space-y-8 max-w-4xl text-xs sm:text-sm text-[#756B63] leading-relaxed">
+              
+              <div className="space-y-3 pb-6 border-b border-[#EDE2D0]/50">
+                <h2 className="font-serif text-2xl font-bold text-[#493B34]">4. Security, Compliance, Disclaimer &amp; NDA</h2>
+                <p>
+                  Our legal framework complies with commercial motor vehicle regulations, digital commerce security standards, and intellectual property protections.
+                </p>
+              </div>
+
+              <div className="space-y-3 pb-6 border-b border-[#EDE2D0]/50">
+                <h3 className="font-serif text-lg font-bold text-[#493B34]">Security &amp; Responsible Disclosure</h3>
+                <p className="text-[#756B63]">
+                  We employ HTTPS 256-bit SSL encryption, CSRF protection, rate limiting, and automated XSS sanitization across all payment and booking endpoints. If you discover a vulnerability, report it to <code>security@aarambhatravels.in</code> for coordinated disclosure.
+                </p>
+              </div>
+
+              <div className="space-y-3 pb-6 border-b border-[#EDE2D0]/50">
+                <h3 className="font-serif text-lg font-bold text-[#493B34]">Non-Disclosure &amp; Confidentiality (NDA)</h3>
+                <p className="text-[#756B63]">
+                  All corporate transport contracts, passenger rosters, VIP itineraries, and internal CRM pricing agreements are strictly confidential and protected against unauthorized disclosure under our master non-disclosure terms.
+                </p>
+              </div>
+
+              <div className="space-y-3">
+                <h3 className="font-serif text-lg font-bold text-[#493B34]">Legal Disclaimer &amp; Jurisdiction</h3>
+                <p className="text-[#756B63]">
+                  All services rendered by आरंभ (Aarambha) Tours &amp; Travels are subject to the exclusive jurisdiction of the competent courts in <strong>Pune, Maharashtra, India</strong>.
+                </p>
+              </div>
+
+            </div>
+          )}
+
+        </div>
+      </section>
+
+      {/* Footer */}
       <Footer />
     </div>
   );

@@ -2,39 +2,49 @@ import { PromoCode } from '../models';
 
 export class FinanceService {
   static async createPromoCode(body: any) {
-    const { code, discount_percentage, discountPercentage, max_discount_amount, maxDiscountAmount, valid_vertical, validVertical } = body;
-    const vertical = valid_vertical || validVertical;
-
-    if (!['tours', 'fleet', 'all'].includes(vertical)) {
-      const error: any = new Error("valid_vertical must be 'tours', 'fleet', or 'all'");
+    const rawCode = body.code || body.promo_code || body.promoCode;
+    const cleanCode = String(rawCode || '').toUpperCase().trim();
+    if (!cleanCode) {
+      const error: any = new Error('Promo code is required and cannot be blank');
       error.statusCode = 400;
       throw error;
     }
 
+    const { discount_percentage, discountPercentage, max_discount_amount, maxDiscountAmount, valid_vertical, validVertical } = body;
+    const rawVertical = (valid_vertical || validVertical || 'all').toString().toLowerCase().trim();
+    const vertical = ['tours', 'fleet', 'all'].includes(rawVertical) ? (rawVertical as 'tours' | 'fleet' | 'all') : 'all';
+
+    // Remove any old broken empty entry or existing duplicate
+    await PromoCode.deleteMany({ $or: [{ code: cleanCode }, { code: '' }] });
+
     return PromoCode.create({
-      code,
-      discountPercentage: discount_percentage || discountPercentage,
-      maxDiscountAmount: max_discount_amount || maxDiscountAmount || 0,
+      code: cleanCode,
+      discountPercentage: Number(discount_percentage || discountPercentage || 10),
+      maxDiscountAmount: Number(max_discount_amount || maxDiscountAmount || 0),
       validVertical: vertical,
       isActive: true,
+      createdAt: new Date(),
     });
   }
 
   static async listPromoCodes() {
-    return PromoCode.find();
+    return PromoCode.find().sort({ createdAt: -1 });
   }
 
   static async validatePromoCode(code: string, vertical: string) {
-    const promo = await PromoCode.findOne({ code, isActive: true });
+    const cleanCode = String(code || '').toUpperCase().trim();
+    const cleanVertical = String(vertical || 'all').toLowerCase().trim();
+
+    const promo = await PromoCode.findOne({ code: cleanCode, isActive: true });
     if (!promo) {
       const error: any = new Error('Invalid or expired promo code');
       error.statusCode = 404;
       throw error;
     }
 
-    if (promo.validVertical !== 'all' && promo.validVertical !== vertical) {
+    if (promo.validVertical !== 'all' && promo.validVertical !== cleanVertical) {
       const error: any = new Error(
-        `Promo code '${code}' is valid for ${promo.validVertical.toUpperCase()} only and cannot be applied to ${String(vertical).toUpperCase()}!`
+        `Promo code '${cleanCode}' is valid for ${promo.validVertical.toUpperCase()} only and cannot be applied to ${cleanVertical.toUpperCase()}!`
       );
       error.statusCode = 400;
       throw error;
@@ -49,3 +59,4 @@ export class FinanceService {
     };
   }
 }
+

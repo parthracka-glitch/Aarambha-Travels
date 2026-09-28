@@ -41,8 +41,6 @@ export default function UPIPaymentVerificationSection({
   const phonepeUrl = `phonepe://pay?pa=${upiId}&pn=${encodeURIComponent(payeeName)}&am=${depositAmount}&cu=INR&tn=${encodeURIComponent(bookingCode)}`;
   const paytmUrl = `paytmmp://pay?pa=${upiId}&pn=${encodeURIComponent(payeeName)}&am=${depositAmount}&cu=INR&tn=${encodeURIComponent(bookingCode)}`;
 
-  const qrImageUrl = `https://api.qrserver.com/v1/create-qr-code/?size=260x260&data=${encodeURIComponent(upiUrl)}&margin=10`;
-
   const [copied, setCopied] = useState(false);
   const [utr, setUtr] = useState('');
   const [utrError, setUtrError] = useState('');
@@ -102,114 +100,111 @@ export default function UPIPaymentVerificationSection({
   };
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-4 font-sans text-xs">
       {/* ─── 1. PAYMENT SUMMARY HEADER CARD ─── */}
-      <div className="p-4 rounded-2xl bg-gradient-to-br from-[#171721] to-[#252538] text-white border border-white/10 shadow-lg space-y-3">
+      <div className="p-4 rounded-xl bg-[#493B34] text-white border border-[#EDE2D0]/20 shadow-sm space-y-2.5">
         <div className="flex items-center justify-between">
-          <span className="text-[10px] font-extrabold uppercase px-2.5 py-0.5 rounded-full bg-[#5266EB]/30 text-[#9CB4E8] border border-[#5266EB]/40">
+          <span className="text-[10px] font-bold uppercase tracking-wider text-[#E8B9A5]">
             Step 2: Advance Deposit Payment
           </span>
-          <span className="text-[11px] font-mono text-gray-300 font-bold">
+          <span className="text-[11px] font-mono text-[#EDE2D0] font-bold">
             Ref: {bookingCode}
           </span>
         </div>
 
-        <div className="flex items-baseline justify-between border-t border-white/10 pt-3">
+        <div className="flex items-baseline justify-between border-t border-white/10 pt-2.5">
           <div>
-            <span className="text-[11px] text-[#AFB2CE] block">Advance Deposit Payable Now:</span>
-            <span className="font-syne text-2xl sm:text-3xl font-black text-emerald-400">
+            <span className="text-[10px] text-[#EDE2D0] block">Advance Deposit Payable Now:</span>
+            <span className="font-serif text-2xl font-bold text-[#E8B9A5]">
               ₹{depositAmount.toLocaleString('en-IN')}
             </span>
           </div>
           <div className="text-right">
-            <span className="text-[10px] text-gray-400 block">Total Fare: ₹{totalPrice.toLocaleString('en-IN')}</span>
-            <span className="text-[10px] text-amber-300 font-bold block">
-              Balance on Pickup: ₹{balanceRemaining.toLocaleString('en-IN')}
+            <span className="text-[10px] text-[#EDE2D0] block">Total: ₹{totalPrice.toLocaleString('en-IN')}</span>
+            <span className="text-[10px] text-[#E8B9A5] font-semibold block">
+              Balance on Departure: ₹{balanceRemaining.toLocaleString('en-IN')}
             </span>
           </div>
         </div>
       </div>
 
-      {/* ─── 2. OFFICIAL PHONEPE UPI QR CODE & 1-CLICK MOBILE LAUNCH ─── */}
-      <div className="p-4 rounded-2xl bg-white border border-gray-200 shadow-sm space-y-3.5">
+      {/* ─── 2. OFFICIAL UPI QR CODE & 1-CLICK MOBILE LAUNCH ─── */}
+      <div className="p-4 rounded-xl bg-white border border-[#EDE2D0] shadow-sm space-y-3">
         <div className="flex items-center justify-between">
-          <h4 className="font-syne font-bold text-xs sm:text-sm text-gray-900 flex items-center gap-1.5">
-            <QrCode className="w-4 h-4 text-[#5266EB]" /> Scan Official UPI QR Scanner
+          <h4 className="font-bold text-xs text-[#493B34] flex items-center gap-1.5">
+            <QrCode className="w-4 h-4 text-[#C65A2E]" /> Scan UPI QR Code
           </h4>
-          <span className="text-[9px] font-bold uppercase text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-md border border-emerald-200">
-            0% Gateway Fee • Instant Bank Transfer
+          <span className="text-[10px] font-semibold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded border border-emerald-200">
+            0% Gateway Fee • Instant Verification
           </span>
         </div>
 
         <div className="flex flex-col sm:flex-row items-center gap-4 pt-1">
-          {/* Official Uploaded PhonePe QR Scanner Graphic */}
-          <div className="relative p-2 bg-[#FAFAFC] border-2 border-dashed border-[#5f259f]/40 rounded-2xl shadow-inner shrink-0 flex flex-col items-center max-w-[200px]">
+          {/* Official PhonePe QR Scanner Graphic */}
+          <div className="relative p-2 bg-[#FCFAF6] border border-[#EDE2D0] rounded-xl shrink-0 flex flex-col items-center max-w-[180px]">
             <img
               src="/images/aarambha_upi_qr.jpeg"
-              alt="Official PhonePe QR Scanner - Sham Umakant Suryawanshi"
-              className="w-44 h-auto rounded-xl object-contain bg-white shadow-xs"
+              alt="Official PhonePe QR Scanner - Aarambha Travels"
+              className="w-36 h-auto rounded-lg object-contain bg-white shadow-xs"
             />
-            <div className="text-center mt-2 px-1">
-              <span className="text-[10px] font-black text-gray-900 block font-syne uppercase tracking-wider">
+            <div className="text-center mt-1.5 px-1">
+              <span className="text-[10px] font-bold text-[#493B34] block uppercase">
                 SHAM UMAKANT SURYAWANSHI
               </span>
-              <span className="text-[9px] font-bold text-[#5f259f] block">
+              <span className="text-[9px] font-medium text-[#756B63] block">
                 PhonePe • GPay • Paytm • BHIM
               </span>
             </div>
           </div>
 
           {/* Quick 1-Click Mobile Launch Apps */}
-          <div className="flex-1 w-full space-y-2.5 text-xs">
-            <div className="p-2.5 rounded-xl bg-purple-50/70 border border-purple-200/80 text-purple-950 space-y-1">
+          <div className="flex-1 w-full space-y-2 text-xs">
+            <div className="p-2 rounded-lg bg-[#F8EFEA] border border-[#E8B9A5]/50 text-[#493B34] space-y-0.5">
               <div className="flex items-center justify-between">
-                <span className="text-[10px] font-extrabold uppercase tracking-wider text-purple-800 font-syne">
-                  Payee Account Name
+                <span className="text-[10px] font-bold uppercase tracking-wider text-[#C65A2E]">
+                  Verified Merchant Account
                 </span>
-                <span className="text-[10px] font-bold text-emerald-700 bg-emerald-100 px-2 py-0.5 rounded-full">
-                  Verified Merchant
+                <span className="text-[9px] font-bold text-emerald-700 bg-emerald-100 px-1.5 py-0.2 rounded">
+                  Aarambha Verified
                 </span>
               </div>
-              <p className="font-syne font-bold text-xs text-gray-900">
+              <p className="font-semibold text-xs text-[#493B34]">
                 SHAM UMAKANT SURYAWANSHI
-              </p>
-              <p className="text-[11px] text-gray-600 leading-snug">
-                Scan using any UPI App on your phone to transfer advance deposit of <strong className="text-emerald-700 font-bold">₹{depositAmount.toLocaleString('en-IN')}</strong>.
               </p>
             </div>
 
-            <p className="text-[11px] text-gray-600 leading-snug">
-              Paying from your mobile phone? Tap below to open directly in your UPI app:
+            <p className="text-[11px] text-[#756B63]">
+              Tap below to pay directly using installed UPI application:
             </p>
 
-            <div className="grid grid-cols-2 gap-2">
+            <div className="grid grid-cols-2 gap-1.5">
               <a
                 href={phonepeUrl}
-                className="py-2.5 px-3 rounded-xl bg-[#5f259f]/10 hover:bg-[#5f259f]/20 border border-[#5f259f]/30 text-[#5f259f] font-bold text-[11px] font-syne flex items-center justify-center gap-1.5 transition-all active:scale-95 shadow-sm"
+                className="py-2 px-2.5 rounded-lg bg-[#FCFAF6] hover:bg-[#F8EFEA] border border-[#EDE2D0] text-[#493B34] font-bold text-[11px] flex items-center justify-center gap-1 transition-all"
               >
                 <span>PhonePe</span>
-                <ExternalLink className="w-3 h-3 text-[#5f259f]/60" />
+                <ExternalLink className="w-3 h-3 text-[#756B63]" />
               </a>
 
               <a
                 href={gpayUrl}
-                className="py-2.5 px-3 rounded-xl bg-gray-50 hover:bg-gray-100 border border-gray-200 text-gray-900 font-bold text-[11px] font-syne flex items-center justify-center gap-1.5 transition-all active:scale-95 shadow-sm"
+                className="py-2 px-2.5 rounded-lg bg-[#FCFAF6] hover:bg-[#F8EFEA] border border-[#EDE2D0] text-[#493B34] font-bold text-[11px] flex items-center justify-center gap-1 transition-all"
               >
                 <span>Google Pay</span>
-                <ExternalLink className="w-3 h-3 text-gray-400" />
+                <ExternalLink className="w-3 h-3 text-[#756B63]" />
               </a>
 
               <a
                 href={paytmUrl}
-                className="py-2.5 px-3 rounded-xl bg-[#00baf2]/10 hover:bg-[#00baf2]/20 border border-[#00baf2]/30 text-[#002e6e] font-bold text-[11px] font-syne flex items-center justify-center gap-1.5 transition-all active:scale-95 shadow-sm"
+                className="py-2 px-2.5 rounded-lg bg-[#FCFAF6] hover:bg-[#F8EFEA] border border-[#EDE2D0] text-[#493B34] font-bold text-[11px] flex items-center justify-center gap-1 transition-all"
               >
-                <span>Paytm UPI</span>
-                <ExternalLink className="w-3 h-3 text-[#00baf2]" />
+                <span>Paytm</span>
+                <ExternalLink className="w-3 h-3 text-[#756B63]" />
               </a>
 
               <a
                 href={upiUrl}
-                className="py-2.5 px-3 rounded-xl bg-[#5266EB] hover:bg-[#3E51D4] text-white font-bold text-[11px] font-syne flex items-center justify-center gap-1.5 transition-all active:scale-95 shadow-sm"
+                className="py-2 px-2.5 rounded-lg bg-[#C65A2E] hover:bg-[#B24E25] text-white font-bold text-[11px] flex items-center justify-center gap-1 transition-all shadow-xs"
               >
                 <Smartphone className="w-3 h-3" />
                 <span>Any UPI App</span>
@@ -217,18 +212,18 @@ export default function UPIPaymentVerificationSection({
             </div>
 
             {/* Copyable UPI ID Box */}
-            <div className="flex items-center justify-between p-2 rounded-xl bg-gray-50 border border-gray-200 text-[11px]">
+            <div className="flex items-center justify-between p-2 rounded-lg bg-[#FCFAF6] border border-[#EDE2D0] text-[11px]">
               <div className="truncate mr-2">
-                <span className="text-[10px] text-gray-400 block uppercase font-bold">UPI ID</span>
-                <span className="font-mono font-bold text-gray-900">{upiId}</span>
+                <span className="text-[9px] text-[#756B63] block uppercase font-bold">UPI ID</span>
+                <span className="font-mono font-bold text-[#493B34]">{upiId}</span>
               </div>
               <button
                 type="button"
                 onClick={handleCopyUpi}
-                className="px-2.5 py-1 rounded-lg bg-white border border-gray-200 text-gray-700 font-bold hover:bg-gray-100 transition-all flex items-center gap-1 shrink-0 cursor-pointer shadow-sm text-[10px]"
+                className="px-2 py-1 rounded bg-white border border-[#EDE2D0] text-[#493B34] font-semibold hover:bg-[#F8EFEA] transition-all flex items-center gap-1 shrink-0 cursor-pointer shadow-xs text-[10px]"
               >
-                {copied ? <Check className="w-3 h-3 text-emerald-600" /> : <Copy className="w-3 h-3 text-gray-500" />}
-                <span>{copied ? 'Copied!' : 'Copy'}</span>
+                {copied ? <Check className="w-3 h-3 text-emerald-600" /> : <Copy className="w-3 h-3 text-[#756B63]" />}
+                <span>{copied ? 'Copied' : 'Copy'}</span>
               </button>
             </div>
           </div>
@@ -236,74 +231,67 @@ export default function UPIPaymentVerificationSection({
       </div>
 
       {/* ─── 3. UTR ENTRY & PROOF SUBMISSION FORM ─── */}
-      <form onSubmit={handleSubmit} className="p-4 rounded-2xl bg-white border border-gray-200 shadow-sm space-y-3">
+      <form onSubmit={handleSubmit} className="p-4 rounded-xl bg-white border border-[#EDE2D0] shadow-sm space-y-3">
         <div className="flex items-center justify-between">
-          <label className="font-syne font-bold text-xs sm:text-sm text-gray-900 flex items-center gap-1.5">
-            <ShieldCheck className="w-4 h-4 text-emerald-600" /> Enter 12-Digit UPI Ref / UTR Number *
+          <label className="font-bold text-xs text-[#493B34] flex items-center gap-1.5">
+            <ShieldCheck className="w-4 h-4 text-emerald-600" /> Enter 12-Digit UPI UTR / Transaction Reference *
           </label>
-          <span className="text-[10px] text-gray-400 font-medium">Found in payment receipt</span>
+          <span className="text-[10px] text-[#756B63]">Found in payment receipt</span>
         </div>
 
-        <div className="space-y-1.5">
+        <div className="space-y-1">
           <input
             type="text"
             required
-            maxLength={16}
-            placeholder="e.g. 423819283719 (12-Digit UTR)"
+            maxLength={18}
+            placeholder="Enter 12-digit UTR reference number (e.g. 423987123456)"
             value={utr}
             onChange={(e) => {
-              setUtr(e.target.value.replace(/[^0-9a-zA-Z]/g, ''));
-              setUtrError('');
+              setUtr(e.target.value);
+              if (utrError) setUtrError('');
             }}
-            className="w-full px-3.5 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm font-mono font-bold tracking-wider text-gray-900 focus:bg-white focus:outline-none focus:border-[#5266EB]"
+            className="w-full font-mono font-bold text-xs tracking-wider px-3.5 py-2.5 bg-[#FCFAF6] border border-[#EDE2D0] rounded-xl text-[#493B34] placeholder:text-[#756B63]/60 focus:outline-none focus:border-[#C65A2E] focus:bg-white transition-all"
           />
           {utrError && (
-            <p className="text-[11px] text-red-600 font-bold flex items-center gap-1">
+            <p className="text-[11px] font-semibold text-red-600 flex items-center gap-1">
               <AlertCircle className="w-3.5 h-3.5 shrink-0" />
               <span>{utrError}</span>
             </p>
           )}
         </div>
 
-        {/* Optional Screenshot Upload or WhatsApp Proof */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 pt-1">
-          <label className="p-2 rounded-xl border border-dashed border-gray-300 hover:border-[#5266EB] bg-gray-50 text-gray-600 flex items-center justify-center gap-1.5 cursor-pointer text-[11px] font-bold transition-all">
-            <Upload className="w-3.5 h-3.5 text-gray-500" />
-            <span className="truncate">{screenshotName ? screenshotName : 'Attach Payment Screenshot'}</span>
+        {/* Optional Screenshot Upload & WhatsApp Backup */}
+        <div className="pt-1 flex flex-col sm:flex-row items-center justify-between gap-2 border-t border-[#EDE2D0]">
+          <label className="flex items-center gap-1.5 text-[#756B63] hover:text-[#493B34] cursor-pointer font-medium text-[11px]">
+            <Upload className="w-3.5 h-3.5 text-[#C65A2E]" />
+            <span className="truncate max-w-[180px]">
+              {screenshotName ? screenshotName : 'Attach Payment Screenshot (Optional)'}
+            </span>
             <input
               type="file"
               accept="image/*"
-              className="hidden"
               onChange={handleScreenshotUpload}
+              className="hidden"
             />
           </label>
 
           <button
             type="button"
             onClick={handleSendWhatsAppProof}
-            className="p-2 rounded-xl bg-emerald-50 hover:bg-emerald-100 border border-emerald-200 text-emerald-800 font-bold text-[11px] flex items-center justify-center gap-1.5 transition-all cursor-pointer shadow-sm"
+            className="text-[11px] font-bold text-[#25D366] hover:underline flex items-center gap-1"
           >
-            <Phone className="w-3.5 h-3.5 text-emerald-600" />
-            <span>Send Receipt via WhatsApp</span>
+            <Phone className="w-3.5 h-3.5" />
+            <span>Send Proof on WhatsApp</span>
           </button>
         </div>
 
-        {/* Security Note */}
-        <div className="p-2.5 rounded-xl bg-amber-50/80 border border-amber-200/80 text-[11px] text-amber-900 flex items-start gap-2">
-          <span className="text-amber-600 font-bold">ℹ️</span>
-          <p className="leading-tight">
-            <strong>Two-Stage Protected Verification:</strong> Your booking will initially register as <em>"Provisional (Verification Pending)"</em> and will officially confirm once our accounts team matches your UTR with the incoming bank credit.
-          </p>
-        </div>
-
-        {/* Form Action Buttons */}
-        <div className="pt-2 flex items-center gap-2">
+        {/* Action Buttons */}
+        <div className="pt-2 flex items-center justify-between gap-2">
           {onBack && (
             <button
               type="button"
               onClick={onBack}
-              disabled={isSubmitting}
-              className="py-3 px-4 rounded-xl bg-gray-100 hover:bg-gray-200 text-gray-700 font-bold text-xs font-syne transition-all cursor-pointer"
+              className="py-2.5 px-4 bg-[#FCFAF6] hover:bg-[#F8EFEA] text-[#493B34] border border-[#EDE2D0] font-bold text-xs rounded-xl transition-colors cursor-pointer"
             >
               Back
             </button>
@@ -311,11 +299,11 @@ export default function UPIPaymentVerificationSection({
 
           <button
             type="submit"
-            disabled={isSubmitting}
-            className="flex-1 py-3.5 px-4 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold text-xs font-syne uppercase tracking-wider transition-all shadow-md shadow-emerald-600/20 flex items-center justify-center gap-2 cursor-pointer active:scale-98"
+            disabled={isSubmitting || !utr.trim()}
+            className="flex-1 py-3 bg-[#C65A2E] hover:bg-[#B24E25] disabled:bg-gray-200 disabled:text-gray-400 text-white font-bold text-xs rounded-xl transition-all shadow-sm flex items-center justify-center gap-2 cursor-pointer"
           >
-            <span>{isSubmitting ? 'Verifying & Submitting...' : 'Submit Payment UTR & Complete Booking'}</span>
-            <ArrowRight className="w-4 h-4" />
+            <Check className="w-4 h-4 text-white" />
+            <span>{isSubmitting ? 'Confirming Verification...' : 'Submit Payment & Confirm Booking'}</span>
           </button>
         </div>
       </form>

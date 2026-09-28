@@ -10,10 +10,10 @@ export const metadata = {
 
 export default function LoginPage() {
   return (
-    <div className="min-h-screen bg-[#0a0a0c] text-white flex flex-col justify-between relative overflow-hidden">
+    <div className="min-h-screen bg-[#FCFAF6] text-[#493B34] flex flex-col justify-between relative overflow-hidden font-sans">
       <Navbar />
       
-      <main className="flex-1 flex items-center justify-center p-4 sm:p-8">
+      <main className="flex-1 flex items-center justify-center p-4 sm:p-8 pt-24 sm:pt-28">
         <AuthCard initialMode="login" />
       </main>
 

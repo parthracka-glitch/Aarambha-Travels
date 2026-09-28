@@ -4,6 +4,7 @@ import { FleetCategory, Vehicle, FleetInquiry, FleetBooking, FleetCustomer, Flee
 import { recordAudit } from '../middlewares/auth.middleware';
 import { localStore } from './localStore';
 import { realtimeService } from './realtime.service';
+import { NotificationsController } from '../controllers/notifications.controller';
 
 export class FleetService {
   // Categories
@@ -193,6 +194,13 @@ export class FleetService {
             targetId: String(booking._id),
             details: { bookingCode, deposit: dep, utrNumber: body.utrNumber, termsAccepted: true, termsVersion: body.termsVersion || '2026.1-STANDARD' },
             ipAddress,
+          });
+
+          await NotificationsController.pushNotification({
+            title: `New Rental Booking (${bookingCode})`,
+            message: `${name} booked ${veh.name || 'Vehicle'} for ₹${dep.toLocaleString('en-IN')} deposit.`,
+            type: 'booking',
+            link: '/bookings',
           });
 
           return booking;

@@ -33,9 +33,12 @@ frontend/crm/.env.production
 *.pfx
 # ─────────────────────────────────────────────────────────────────────────────
 
-# IDE / OS
+# IDE / OS / Agents
 .vscode/
 .idea/
+.agents/
+.cursor/
+.gemini/
 *.swp
 *.swo
 Thumbs.db

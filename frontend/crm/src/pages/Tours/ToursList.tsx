@@ -236,7 +236,7 @@ export default function ToursView() {
                     <button
                       onClick={() => handleOpenEdit(pkg)}
                       title="Edit Package"
-                      className="p-1.5 text-gray-400 hover:text-indigo-600 hover:bg-indigo-50 rounded-full transition-colors"
+                      className="p-1.5 text-gray-400 hover:text-[#C65A2E] hover:bg-[#F8EFEA] rounded-full transition-colors"
                     >
                       <Pencil className="w-3.5 h-3.5" />
                     </button>
@@ -249,7 +249,7 @@ export default function ToursView() {
                     </button>
                   </div>
                 </div>
-                <p className="text-xs text-indigo-600 font-semibold mt-1 mb-2">{pkg.durationDays || pkg.duration_days}D / {pkg.durationNights || pkg.duration_nights}N • <span className="font-mono text-gray-400">{pkg.slug}</span></p>
+                <p className="text-xs text-[#C65A2E] font-semibold mt-1 mb-2">{pkg.durationDays || pkg.duration_days}D / {pkg.durationNights || pkg.duration_nights}N • <span className="font-mono text-gray-400">{pkg.slug}</span></p>
                 <p className="text-xs text-gray-500 line-clamp-2 mb-3 leading-relaxed">{pkg.description}</p>
               </div>
 
@@ -269,9 +269,9 @@ export default function ToursView() {
                 <div className="grid grid-cols-2 gap-2">
                   <button
                     onClick={() => handleOpenManageBatches(pkg)}
-                    className="py-2 px-2.5 bg-indigo-50 hover:bg-indigo-100 text-indigo-700 font-bold rounded-xl text-xs flex items-center justify-center gap-1.5 transition-all shadow-sm border border-indigo-100"
+                    className="py-2 px-2.5 bg-[#F8EFEA] hover:bg-[#EDE2D0] text-[#C65A2E] font-bold rounded-xl text-xs flex items-center justify-center gap-1.5 transition-all shadow-sm border border-[#E8B9A5]"
                   >
-                    <Calendar className="w-3.5 h-3.5 text-indigo-600" />
+                    <Calendar className="w-3.5 h-3.5 text-[#C65A2E]" />
                     <span>Batches ({dateCount})</span>
                   </button>
 
@@ -431,8 +431,8 @@ export default function ToursView() {
                 </div>
 
                 {/* Quick Date Presets */}
-                <div className="bg-indigo-50/60 border border-indigo-100 rounded-2xl p-4 space-y-2.5">
-                  <span className="text-[10px] font-extrabold uppercase tracking-widest text-indigo-900 block font-syne">
+                <div className="bg-[#F8EFEA] border border-[#E8B9A5] rounded-2xl p-4 space-y-2.5">
+                  <span className="text-[10px] font-extrabold uppercase tracking-widest text-[#2D1F18] block font-syne">
                     ⚡ Quick Date Presets
                   </span>
                   <div className="grid grid-cols-3 gap-2">
@@ -443,7 +443,7 @@ export default function ToursView() {
                         setNewBatchStart('2026-08-04');
                         setNewBatchEnd('2026-08-10');
                       }}
-                      className="p-2 rounded-xl bg-white border border-indigo-200 text-indigo-800 hover:bg-indigo-600 hover:text-white font-bold text-[10px] transition-all shadow-xs text-center"
+                      className="p-2 rounded-xl bg-white border border-[#E8B9A5] text-[#C65A2E] hover:bg-[#C65A2E] hover:text-white font-bold text-[10px] transition-all shadow-xs text-center"
                     >
                       Early Month<br /><span className="text-[9px] opacity-75">(04 - 10)</span>
                     </button>
@@ -454,7 +454,7 @@ export default function ToursView() {
                         setNewBatchStart('2026-08-14');
                         setNewBatchEnd('2026-08-20');
                       }}
-                      className="p-2 rounded-xl bg-white border border-indigo-200 text-indigo-800 hover:bg-indigo-600 hover:text-white font-bold text-[10px] transition-all shadow-xs text-center"
+                      className="p-2 rounded-xl bg-white border border-[#E8B9A5] text-[#C65A2E] hover:bg-[#C65A2E] hover:text-white font-bold text-[10px] transition-all shadow-xs text-center"
                     >
                       Mid Month<br /><span className="text-[9px] opacity-75">(14 - 20)</span>
                     </button>
@@ -465,7 +465,7 @@ export default function ToursView() {
                         setNewBatchStart('2026-08-24');
                         setNewBatchEnd('2026-08-30');
                       }}
-                      className="p-2 rounded-xl bg-white border border-indigo-200 text-indigo-800 hover:bg-indigo-600 hover:text-white font-bold text-[10px] transition-all shadow-xs text-center"
+                      className="p-2 rounded-xl bg-white border border-[#E8B9A5] text-[#C65A2E] hover:bg-[#C65A2E] hover:text-white font-bold text-[10px] transition-all shadow-xs text-center"
                     >
                       Late Month<br /><span className="text-[9px] opacity-75">(24 - 30)</span>
                     </button>
@@ -483,7 +483,7 @@ export default function ToursView() {
                     <select
                       value={newBatchMonth}
                       onChange={e => setNewBatchMonth(e.target.value)}
-                      className="w-full px-3 py-2 bg-gray-50 border border-gray-200 rounded-xl font-bold text-gray-800 focus:outline-none focus:border-indigo-600"
+                      className="w-full px-3 py-2 bg-gray-50 border border-gray-200 rounded-xl font-bold text-gray-800 focus:outline-none focus:border-[#C65A2E]"
                     >
                       {['August', 'September', 'October', 'November', 'December', 'January', 'February', 'March'].map(m => (
                         <option key={m} value={m}>{m}</option>
@@ -498,7 +498,7 @@ export default function ToursView() {
                       required
                       value={newBatchTag}
                       onChange={e => setNewBatchTag(e.target.value)}
-                      className="w-full px-3 py-2 bg-gray-50 border border-gray-200 rounded-xl font-bold text-gray-800 focus:outline-none focus:border-indigo-600"
+                      className="w-full px-3 py-2 bg-gray-50 border border-gray-200 rounded-xl font-bold text-gray-800 focus:outline-none focus:border-[#C65A2E]"
                       placeholder="e.g. Monsoon Weekend Special"
                     />
                   </div>
@@ -541,7 +541,7 @@ export default function ToursView() {
 
                   <button
                     type="submit"
-                    className="w-full py-3 bg-[#111827] hover:bg-indigo-600 text-white font-extrabold rounded-xl shadow-md transition-all flex items-center justify-center gap-2 uppercase tracking-wider text-xs"
+                    className="w-full py-3 bg-[#2D1F18] hover:bg-[#C65A2E] text-white font-extrabold rounded-xl shadow-md transition-all flex items-center justify-center gap-2 uppercase tracking-wider text-xs"
                   >
                     <Plus className="w-4 h-4" /> Add Departure Batch
                   </button>
@@ -564,7 +564,7 @@ export default function ToursView() {
                       <button
                         onClick={() => setActiveMonthFilter('All')}
                         className={`px-3 py-1 rounded-full font-extrabold text-[11px] transition-all whitespace-nowrap ${
-                          activeMonthFilter === 'All' ? 'bg-[#111827] text-white shadow-sm' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                          activeMonthFilter === 'All' ? 'bg-[#2D1F18] text-white shadow-sm' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
                         }`}
                       >
                         All ({pkgBatches.length})
@@ -575,7 +575,7 @@ export default function ToursView() {
                           key={m}
                           onClick={() => setActiveMonthFilter(m)}
                           className={`px-3 py-1 rounded-full font-extrabold text-[11px] transition-all whitespace-nowrap ${
-                            activeMonthFilter === m ? 'bg-indigo-600 text-white shadow-sm' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                            activeMonthFilter === m ? 'bg-[#C65A2E] text-white shadow-sm' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
                           }`}
                         >
                           {m} ({pkgBatches.filter(b => b.month === m).length})
@@ -591,7 +591,7 @@ export default function ToursView() {
                       return (
                         <div
                           key={batch.id || index}
-                          className="p-4 rounded-2xl border border-gray-200 bg-white hover:border-indigo-300 hover:shadow-md transition-all flex flex-col sm:flex-row sm:items-center justify-between gap-3 group"
+                          className="p-4 rounded-2xl border border-gray-200 bg-white hover:border-[#C65A2E]/50 hover:shadow-md transition-all flex flex-col sm:flex-row sm:items-center justify-between gap-3 group"
                         >
                           <div className="space-y-1 flex-1">
                             <div className="flex items-center gap-2 flex-wrap">

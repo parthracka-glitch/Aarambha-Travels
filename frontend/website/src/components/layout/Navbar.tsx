@@ -1,10 +1,21 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import dynamic from 'next/dynamic';
-import { usePathname } from 'next/navigation';
-import { Menu, X, Compass, Car, BookmarkCheck, ChevronRight, User, LogOut } from 'lucide-react';
+import { usePathname, useRouter } from 'next/navigation';
+import {
+  Menu,
+  X,
+  Phone,
+  BookmarkCheck,
+  LogOut,
+  ChevronDown,
+  Compass,
+  Car,
+  Bus,
+  HelpCircle,
+} from 'lucide-react';
 
 const MyBookingsDrawer = dynamic(() => import('../booking/MyBookingsDrawer'), {
   ssr: false,
@@ -13,16 +24,13 @@ const MyBookingsDrawer = dynamic(() => import('../booking/MyBookingsDrawer'), {
 export default function Navbar({ vertical = 'home' }: { vertical?: 'tours' | 'fleet' | 'home' }) {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [bookingsOpen, setBookingsOpen] = useState(false);
-  const [scrolled, setScrolled] = useState(false);
+  const [profileDropdownOpen, setProfileDropdownOpen] = useState(false);
   const [user, setUser] = useState<{ name: string; email: string } | null>(null);
+  const dropdownRef = useRef<HTMLDivElement>(null);
   const pathname = usePathname();
+  const router = useRouter();
 
   useEffect(() => {
-    const handleScroll = () => {
-      setScrolled(window.scrollY > 15);
-    };
-    window.addEventListener('scroll', handleScroll);
-
     const checkUser = () => {
       try {
         const stored = localStorage.getItem('aarambha_user');
@@ -36,161 +44,253 @@ export default function Navbar({ vertical = 'home' }: { vertical?: 'tours' | 'fl
     window.addEventListener('aarambha_auth_changed', checkUser);
 
     return () => {
-      window.removeEventListener('scroll', handleScroll);
       window.removeEventListener('aarambha_auth_changed', checkUser);
     };
   }, []);
 
+  // Close profile dropdown when clicking outside
+  useEffect(() => {
+    function handleClickOutside(e: MouseEvent) {
+      if (dropdownRef.current && !dropdownRef.current.contains(e.target as Node)) {
+        setProfileDropdownOpen(false);
+      }
+    }
+    if (profileDropdownOpen) {
+      document.addEventListener('mousedown', handleClickOutside);
+    }
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, [profileDropdownOpen]);
+
   const handleLogout = () => {
     try {
       localStorage.removeItem('aarambha_user');
+      localStorage.removeItem('aarambha_token');
       window.dispatchEvent(new Event('aarambha_auth_changed'));
+      setUser(null);
+      setProfileDropdownOpen(false);
+      router.push('/');
     } catch {}
   };
 
-  const isToursActive = pathname.startsWith('/tours') || vertical === 'tours';
-  const isCarsActive = pathname.startsWith('/rentals') || pathname.startsWith('/bus-rentals') || pathname.startsWith('/car-rentals') || pathname.startsWith('/cars') || vertical === 'fleet';
+  const isToursActive = pathname.startsWith('/tours-travels');
+  const isBusActive = pathname.startsWith('/bus-rentals');
+  const isCarActive = pathname.startsWith('/car-rentals') || pathname.startsWith('/cars');
+  const isFaqActive = pathname.startsWith('/faq');
+
+  const initials = user?.name
+    ? user.name
+        .split(' ')
+        .map((n) => n[0])
+        .join('')
+        .toUpperCase()
+        .slice(0, 2)
+    : 'U';
 
   return (
     <>
-      <header
-        className={`w-full sticky top-0 z-50 transition-all duration-300 ${
-          scrolled
-            ? 'bg-[#171721]/95 backdrop-blur-2xl border-b border-white/10 shadow-2xl py-3'
-            : 'bg-[#171721] border-b border-white/10 py-4'
-        }`}
-      >
-        <div className="max-w-7xl mx-auto px-6 lg:px-12 flex items-center justify-between">
+      <header className="w-full fixed top-0 left-0 right-0 z-50 bg-[#FCFAF6]/95 backdrop-blur-md border-b border-[#EDE2D0] h-[66px] transition-colors select-none font-sans">
+        <div className="max-w-[1440px] mx-auto h-full px-4 sm:px-6 lg:px-8 flex items-center justify-between gap-4">
           
-          {/* ─── 1. BRAND LOGO ────────────────────────────────────────── */}
+          {/* ─── BRAND LOGO ────────────────────────── */}
           <div className="flex items-center shrink-0">
-            <Link
-              href="/"
-              className="flex items-center gap-3 group hover:opacity-95 transition-all"
-            >
-              <div className="relative w-11 h-11 sm:w-12 sm:h-12 rounded-2xl overflow-hidden bg-white p-0.5 ring-2 ring-[#D3592B]/30 shadow-lg shadow-black/40 group-hover:scale-105 transition-transform shrink-0">
+            <Link href="/" className="flex items-center gap-2.5 group">
+              <div className="w-9 h-9 rounded-xl overflow-hidden bg-white border border-[#EDE2D0] p-1 shrink-0 flex items-center justify-center group-hover:border-[#C65A2E]/40 transition-colors shadow-2xs">
                 <img
                   src="/images/aarambha_logo.png"
-                  alt="आरंभ Tours & Travels Logo"
-                  className="w-full h-full object-contain rounded-xl"
-                  onError={(e) => { (e.target as HTMLElement).setAttribute('src', '/logo.png'); }}
+                  alt="Aarambha Travels Logo"
+                  className="w-full h-full object-contain"
+                  onError={(e) => {
+                    (e.target as HTMLElement).setAttribute('src', '/logo.png');
+                  }}
                 />
               </div>
               <div className="flex flex-col justify-center">
-                <div className="flex items-baseline gap-1">
-                  <span className="aarambha-logo-3d text-2xl sm:text-3xl font-bold tracking-wide leading-none select-none">
-                    आरंभ
-                  </span>
-                </div>
-                <span className="aarambha-sub-3d text-[8px] sm:text-[9px] font-extrabold text-[#D4C4BC] tracking-[0.25em] leading-none mt-1 group-hover:text-white transition-colors">
-                  TOURS AND TRAVELS
+                <span className="text-[17px] font-bold tracking-tight text-[#493B34] leading-tight flex items-center gap-1">
+                  <span>आरंभ</span>
+                  <span className="font-semibold text-[#C65A2E]">Travels</span>
+                </span>
+                <span className="text-[10px] text-[#756B63] tracking-normal leading-none mt-0.5 font-medium">
+                  Pilgrimages &amp; Fleet Rentals
                 </span>
               </div>
             </Link>
           </div>
 
-          {/* ─── 2. DESKTOP NAVIGATION LINKS ─────────────────────────────── */}
-          <nav className="hidden md:flex items-center justify-center gap-8 lg:gap-10 text-xs font-bold uppercase tracking-widest whitespace-nowrap">
+          {/* ─── MINIMAL DESKTOP NAVIGATION LINKS ─────────────────── */}
+          <nav className="hidden lg:flex items-center gap-6 xl:gap-8 text-[14px]">
             <Link
-              href="/"
-              className={`relative py-1 transition-colors hover:text-white ${
-                pathname === '/' ? 'text-white font-extrabold' : 'text-gray-400'
+              href="/tours-travels"
+              className={`transition-colors py-1 ${
+                isToursActive
+                  ? 'text-[#C65A2E] font-semibold'
+                  : 'text-[#493B34] hover:text-[#C65A2E]'
               }`}
             >
-              <span>Home</span>
-              {pathname === '/' && (
-                <span className="absolute -bottom-1 left-0 w-full h-[2px] bg-gradient-to-r from-[#5266EB] to-[#9CB4E8] rounded-full" />
-              )}
+              Spiritual Tours
             </Link>
 
             <Link
-              href="/tours"
-              className={`relative py-1 flex items-center gap-1.5 transition-colors hover:text-[#9CB4E8] ${
-                isToursActive ? 'text-[#9CB4E8] font-extrabold' : 'text-gray-400'
+              href="/bus-rentals"
+              className={`transition-colors py-1 ${
+                isBusActive
+                  ? 'text-[#C65A2E] font-semibold'
+                  : 'text-[#493B34] hover:text-[#C65A2E]'
               }`}
             >
-              <Compass className="w-3.5 h-3.5" />
-              <span>Tour Packages</span>
-              {isToursActive && (
-                <span className="absolute -bottom-1 left-0 w-full h-[2px] bg-[#9CB4E8] rounded-full" />
-              )}
+              Bus Rentals
             </Link>
 
             <Link
-              href="/rentals"
-              className={`relative py-1 flex items-center gap-1.5 transition-colors hover:text-[#5266EB] ${
-                isCarsActive ? 'text-[#5266EB] font-extrabold' : 'text-gray-400'
+              href="/car-rentals"
+              className={`transition-colors py-1 ${
+                isCarActive
+                  ? 'text-[#C65A2E] font-semibold'
+                  : 'text-[#493B34] hover:text-[#C65A2E]'
               }`}
             >
-              <Car className="w-3.5 h-3.5" />
-              <span>Bus & Car Rentals</span>
-              {isCarsActive && (
-                <span className="absolute -bottom-1 left-0 w-full h-[2px] bg-[#5266EB] rounded-full" />
-              )}
+              Self-Drive Cars
             </Link>
 
             <Link
-              href="/car-rentals/faq"
-              className={`relative py-1 transition-colors hover:text-white ${
-                pathname.includes('/faq') ? 'text-white font-extrabold' : 'text-gray-400'
+              href="/faq"
+              className={`transition-colors py-1 ${
+                isFaqActive
+                  ? 'text-[#C65A2E] font-semibold'
+                  : 'text-[#493B34] hover:text-[#C65A2E]'
               }`}
             >
-              <span>FAQs</span>
-              {pathname.includes('/faq') && (
-                <span className="absolute -bottom-1 left-0 w-full h-[2px] bg-white rounded-full" />
-              )}
+              Help &amp; FAQ
             </Link>
           </nav>
 
-          {/* ─── 3. RIGHT ACTION BUTTONS ────────────────────────────────── */}
+          {/* ─── RIGHT ACTION AREA ──────────────── */}
           <div className="hidden md:flex items-center gap-3 shrink-0">
-            {user ? (
-              <div className="flex items-center gap-2 bg-white/5 border border-white/15 px-3 py-1.5 rounded-full backdrop-blur-md">
-                <div className="w-6 h-6 rounded-full bg-[#5266EB]/20 text-[#9CB4E8] font-syne font-bold text-xs flex items-center justify-center border border-[#5266EB]/30">
-                  {user.name ? user.name.charAt(0).toUpperCase() : 'U'}
-                </div>
-                <span className="text-xs font-bold text-gray-200 truncate max-w-[110px]">
-                  {user.name ? user.name.split(' ')[0] : 'Member'}
-                </span>
-                <button
-                  onClick={handleLogout}
-                  title="Log Out"
-                  className="text-gray-400 hover:text-[#5266EB] p-1 rounded-full hover:bg-white/10 transition-colors ml-1"
-                >
-                  <LogOut className="w-3.5 h-3.5" />
-                </button>
-              </div>
-            ) : (
+            
+            {/* Phone Helpline */}
+            <a
+              href="https://wa.me/919067617451?text=Hello%20Aarambha%20Travels,%20I%20would%20like%20to%20inquire%20about%20a%20booking."
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center gap-1.5 px-2.5 py-1.5 text-[13px] text-[#493B34] hover:text-[#C65A2E] transition-colors font-medium"
+              title="Direct WhatsApp & Phone Helpline"
+            >
+              <Phone className="w-3.5 h-3.5 text-[#C65A2E]" />
+              <span>+91 90676 17451</span>
+            </a>
+
+            {/* If Logged Out: Show "Sign In" link */}
+            {!user && (
               <Link
                 href="/login"
-                className="flex items-center gap-1.5 px-4 py-2 rounded-full text-xs font-extrabold text-gray-300 hover:text-white hover:bg-white/10 border border-white/10 transition-all uppercase tracking-wider"
+                className="px-3 py-1.5 text-[13px] font-medium text-[#493B34] hover:text-[#C65A2E] hover:bg-[#EDE2D0]/30 rounded-md transition-colors"
               >
-                <User className="w-3.5 h-3.5 text-[#5266EB]" />
-                <span>Log In</span>
+                Sign In
               </Link>
             )}
 
+            {/* Primary Action Button */}
             <Link
-              href="/my-bookings"
-              className="group flex items-center gap-1.5 px-4 py-2 rounded-full bg-white/10 hover:bg-white/20 border border-white/15 text-white text-xs font-extrabold uppercase tracking-wider backdrop-blur-md transition-all hover:scale-105 active:scale-95 shadow-sm whitespace-nowrap"
+              href="/tours-travels"
+              className="px-4.5 py-2 rounded-xl text-[13px] font-semibold text-white bg-[#C65A2E] hover:bg-[#B24E25] transition-all shadow-xs flex items-center gap-1.5"
             >
-              <BookmarkCheck className="w-4 h-4 text-[#9CB4E8] group-hover:scale-110 transition-transform" />
-              <span>My Bookings</span>
+              <span>Explore Tours</span>
+              <span>&rarr;</span>
             </Link>
 
-            <Link
-              href={isToursActive ? "/tours" : "/rentals"}
-              className="text-xs font-black uppercase tracking-widest px-6 py-2.5 rounded-full bg-[#5266EB] text-[#EDEDF3] hover:bg-[#3E51D4] transition-all shadow-xl hover:scale-105 active:scale-95 flex items-center gap-1.5 whitespace-nowrap"
-            >
-              <span>Book Now</span>
-              <ChevronRight className="w-4 h-4 stroke-[3]" />
-            </Link>
+            {/* If Logged In: Sleek User Profile Pill & Dropdown */}
+            {user && (
+              <div className="relative" ref={dropdownRef}>
+                <button
+                  onClick={() => setProfileDropdownOpen(!profileDropdownOpen)}
+                  className="flex items-center gap-2 px-2.5 py-1 rounded-full bg-white hover:bg-[#EDE2D0]/40 border border-[#EDE2D0] transition-all cursor-pointer group"
+                >
+                  <div className="w-7 h-7 rounded-full bg-[#C65A2E] text-white flex items-center justify-center font-bold text-xs shadow-2xs">
+                    {initials}
+                  </div>
+                  <span className="text-[13px] font-medium text-[#493B34] max-w-[90px] truncate">
+                    {user.name.split(' ')[0]}
+                  </span>
+                  <ChevronDown className="w-3.5 h-3.5 text-[#756B63] group-hover:text-[#493B34] transition-transform duration-150" />
+                </button>
+
+                {/* Profile Dropdown Menu */}
+                {profileDropdownOpen && (
+                  <div className="absolute right-0 mt-2 w-64 bg-white rounded-xl shadow-xl border border-[#EDE2D0] z-50 overflow-hidden animate-in fade-in slide-in-from-top-2 duration-150">
+                    
+                    {/* User Info Header */}
+                    <div className="px-4 py-3 bg-[#FCFAF6] border-b border-[#EDE2D0]">
+                      <p className="text-xs font-bold text-[#493B34] truncate">{user.name}</p>
+                      <p className="text-[11px] text-[#756B63] truncate mt-0.5">{user.email}</p>
+                    </div>
+
+                    {/* Menu Items */}
+                    <div className="p-1.5 space-y-0.5 text-xs text-[#493B34]">
+                      
+                      {/* My Bookings & Invoices */}
+                      <button
+                        onClick={() => {
+                          setProfileDropdownOpen(false);
+                          setBookingsOpen(true);
+                        }}
+                        className="w-full flex items-center gap-2.5 px-3 py-2 rounded-lg hover:bg-[#F8EFEA] hover:text-[#C65A2E] text-left transition-colors cursor-pointer"
+                      >
+                        <BookmarkCheck className="w-4 h-4 text-[#C65A2E]" />
+                        <div className="flex-1">
+                          <span className="font-semibold block">My Bookings &amp; Invoices</span>
+                          <span className="text-[10px] text-[#756B63]">Track trips &amp; download PDFs</span>
+                        </div>
+                      </button>
+
+                      <Link
+                        href="/my-bookings"
+                        onClick={() => setProfileDropdownOpen(false)}
+                        className="w-full flex items-center gap-2.5 px-3 py-2 rounded-lg hover:bg-[#F8EFEA] hover:text-[#C65A2E] transition-colors"
+                      >
+                        <Compass className="w-4 h-4 text-[#C65A2E]" />
+                        <span>Bookings Dashboard</span>
+                      </Link>
+
+                      <Link
+                        href="/car-rentals"
+                        onClick={() => setProfileDropdownOpen(false)}
+                        className="w-full flex items-center gap-2.5 px-3 py-2 rounded-lg hover:bg-[#F8EFEA] hover:text-[#C65A2E] transition-colors"
+                      >
+                        <Car className="w-4 h-4 text-[#C65A2E]" />
+                        <span>Self-Drive Fleet</span>
+                      </Link>
+
+                      <Link
+                        href="/faq"
+                        onClick={() => setProfileDropdownOpen(false)}
+                        className="w-full flex items-center gap-2.5 px-3 py-2 rounded-lg hover:bg-[#F8EFEA] hover:text-[#C65A2E] transition-colors"
+                      >
+                        <HelpCircle className="w-4 h-4 text-[#756B63]" />
+                        <span>Support &amp; Policies</span>
+                      </Link>
+                    </div>
+
+                    {/* Sign Out Action */}
+                    <div className="p-1.5 border-t border-[#EDE2D0] bg-[#FCFAF6]">
+                      <button
+                        onClick={handleLogout}
+                        className="w-full flex items-center gap-2 px-3 py-2 rounded-lg text-xs font-semibold text-red-600 hover:bg-red-50 transition-colors cursor-pointer"
+                      >
+                        <LogOut className="w-3.5 h-3.5" />
+                        <span>Sign Out</span>
+                      </button>
+                    </div>
+
+                  </div>
+                )}
+              </div>
+            )}
+
           </div>
 
-          {/* ─── 4. MOBILE HAMBURGER BUTTON ──────────────────────────────── */}
+          {/* ─── MOBILE HAMBURGER BUTTON ──────────────────────────────── */}
           <button
             onClick={() => setMobileOpen(!mobileOpen)}
-            className="md:hidden p-2 rounded-full bg-white/5 hover:bg-white/15 text-gray-200 hover:text-white border border-white/10 backdrop-blur-md transition-all cursor-pointer"
+            className="lg:hidden p-2 rounded-lg bg-[#FCFAF6] text-[#493B34] border border-[#EDE2D0] transition-colors cursor-pointer hover:bg-[#F8EFEA]"
             aria-label="Toggle Navigation Menu"
           >
             {mobileOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
@@ -198,157 +298,124 @@ export default function Navbar({ vertical = 'home' }: { vertical?: 'tours' | 'fl
 
         </div>
 
-        {/* ─── 5. MINIMALIST ULTRA-PREMIUM MOBILE DRAWER ────────────────── */}
+        {/* ─── MOBILE MENU DROPDOWN ─────────────────────────────────── */}
         {mobileOpen && (
-          <div className="md:hidden bg-[#171721]/98 backdrop-blur-3xl border-b border-white/10 px-6 py-6 space-y-6 text-xs font-medium text-white uppercase tracking-wider animate-in fade-in slide-in-from-top-3 duration-300">
+          <div className="lg:hidden bg-[#FCFAF6] border-b border-[#EDE2D0] px-5 py-4 space-y-4 shadow-xl">
             
-            {/* Minimal Segmented Capsule Switcher */}
-            <div className="p-1 rounded-full bg-white/[0.04] border border-white/10 flex items-center gap-1">
-              <Link
-                href="/tours"
-                onClick={() => setMobileOpen(false)}
-                className={`flex-1 py-2.5 rounded-full flex items-center justify-center gap-2 text-xs font-bold transition-all ${
-                  isToursActive
-                    ? 'bg-[#9CB4E8]/20 text-[#9CB4E8] border border-[#9CB4E8]/40 shadow-sm'
-                    : 'text-gray-400 hover:text-white'
-                }`}
-              >
-                <Compass className="w-4 h-4" />
-                <span>Tour Packages</span>
-              </Link>
-
-              <Link
-                href="/rentals"
-                onClick={() => setMobileOpen(false)}
-                className={`flex-1 py-2.5 rounded-full flex items-center justify-center gap-2 text-xs font-bold transition-all ${
-                  isCarsActive
-                    ? 'bg-[#5266EB]/20 text-[#9CB4E8] border border-[#5266EB]/40 shadow-sm'
-                    : 'text-gray-400 hover:text-white'
-                }`}
-              >
-                <Car className="w-4 h-4" />
-                <span>Bus & Car Rentals</span>
-              </Link>
-            </div>
-
-            {/* Clean Minimalist Nav List */}
-            <nav className="flex flex-col gap-1 py-2">
-              <Link
-                href="/"
-                onClick={() => setMobileOpen(false)}
-                className={`group flex items-center justify-between py-3 px-3 rounded-xl transition-colors ${
-                  pathname === '/' ? 'bg-white/5 text-white font-extrabold' : 'text-gray-400 hover:text-white hover:bg-white/[0.02]'
-                }`}
-              >
-                <div className="flex items-center gap-2">
-                  {pathname === '/' && <span className="w-1.5 h-1.5 rounded-full bg-[#5266EB]" />}
-                  <span>Home</span>
-                </div>
-                <ChevronRight className="w-4 h-4 text-white/20 group-hover:text-white/60 transition-colors" />
-              </Link>
-
-              <Link
-                href="/tours"
-                onClick={() => setMobileOpen(false)}
-                className={`group flex items-center justify-between py-3 px-3 rounded-xl transition-colors ${
-                  isToursActive ? 'bg-white/5 text-[#9CB4E8] font-extrabold' : 'text-gray-400 hover:text-white hover:bg-white/[0.02]'
-                }`}
-              >
-                <div className="flex items-center gap-2">
-                  {isToursActive && <span className="w-1.5 h-1.5 rounded-full bg-[#9CB4E8]" />}
-                  <span>Tour Packages</span>
-                </div>
-                <ChevronRight className="w-4 h-4 text-white/20 group-hover:text-white/60 transition-colors" />
-              </Link>
-
-              <Link
-                href="/bus-rentals"
-                onClick={() => setMobileOpen(false)}
-                className={`group flex items-center justify-between py-3 px-3 rounded-xl transition-colors ${
-                  isCarsActive ? 'bg-white/5 text-[#5266EB] font-extrabold' : 'text-gray-400 hover:text-white hover:bg-white/[0.02]'
-                }`}
-              >
-                <div className="flex items-center gap-2">
-                  {isCarsActive && <span className="w-1.5 h-1.5 rounded-full bg-[#5266EB]" />}
-                  <span>Bus & Car Rentals</span>
-                </div>
-                <ChevronRight className="w-4 h-4 text-white/20 group-hover:text-white/60 transition-colors" />
-              </Link>
-
-              <Link
-                href="/car-rentals/faq"
-                onClick={() => setMobileOpen(false)}
-                className={`group flex items-center justify-between py-3 px-3 rounded-xl transition-colors ${
-                  pathname.includes('/faq') ? 'bg-white/5 text-white font-extrabold' : 'text-gray-400 hover:text-white hover:bg-white/[0.02]'
-                }`}
-              >
-                <div className="flex items-center gap-2">
-                  {pathname.includes('/faq') && <span className="w-1.5 h-1.5 rounded-full bg-white" />}
-                  <span>FAQs</span>
-                </div>
-                <ChevronRight className="w-4 h-4 text-white/20 group-hover:text-white/60 transition-colors" />
-              </Link>
-            </nav>
-
-            {/* Refined Action Buttons */}
-            <div className="pt-2 flex flex-col gap-3">
-              {user ? (
-                <div className="w-full py-3 px-4 rounded-2xl bg-white/[0.06] border border-white/10 flex items-center justify-between">
-                  <div className="flex items-center gap-2.5">
-                    <div className="w-7 h-7 rounded-full bg-[#5266EB]/20 text-[#9CB4E8] font-syne font-bold text-xs flex items-center justify-center border border-[#5266EB]/30">
-                      {user.name ? user.name.charAt(0).toUpperCase() : 'U'}
-                    </div>
-                    <div>
-                      <div className="text-xs font-bold text-white leading-tight">{user.name}</div>
-                      <div className="text-[10px] text-gray-400 font-normal lowercase">{user.email}</div>
-                    </div>
+            {/* User status in mobile */}
+            {user ? (
+              <div className="p-3 bg-white rounded-xl border border-[#EDE2D0] flex items-center justify-between">
+                <div className="flex items-center gap-2.5">
+                  <div className="w-8 h-8 rounded-full bg-[#C65A2E] text-white flex items-center justify-center font-bold text-xs">
+                    {initials}
                   </div>
-                  <button
-                    onClick={() => {
-                      handleLogout();
-                      setMobileOpen(false);
-                    }}
-                    className="text-xs font-bold text-[#5266EB] hover:underline flex items-center gap-1"
-                  >
-                    <LogOut className="w-3.5 h-3.5" /> Log Out
-                  </button>
+                  <div>
+                    <p className="text-xs font-bold text-[#493B34]">{user.name}</p>
+                    <p className="text-[11px] text-[#756B63] truncate">{user.email}</p>
+                  </div>
                 </div>
-              ) : (
+                <button
+                  onClick={handleLogout}
+                  className="text-xs font-semibold text-red-600 hover:underline"
+                >
+                  Sign Out
+                </button>
+              </div>
+            ) : (
+              <div className="flex items-center gap-2">
                 <Link
                   href="/login"
                   onClick={() => setMobileOpen(false)}
-                  className="w-full py-3.5 rounded-full bg-white/[0.06] hover:bg-white/[0.12] border border-white/10 text-white font-bold text-xs uppercase tracking-wider backdrop-blur-md transition-all flex items-center justify-center gap-2"
+                  className="flex-1 py-2 text-center text-xs font-bold text-[#493B34] bg-white border border-[#EDE2D0] rounded-lg hover:border-[#C65A2E]"
                 >
-                  <User className="w-4 h-4 text-[#5266EB]" />
-                  <span>Log In / Create Account</span>
+                  Sign In
                 </Link>
-              )}
+                <Link
+                  href="/signup"
+                  onClick={() => setMobileOpen(false)}
+                  className="flex-1 py-2 text-center text-xs font-bold text-white bg-[#C65A2E] hover:bg-[#B24E25] rounded-lg"
+                >
+                  Register
+                </Link>
+              </div>
+            )}
 
-              <button
-                onClick={() => {
-                  setMobileOpen(false);
-                  setBookingsOpen(true);
-                }}
-                className="w-full py-3.5 rounded-full bg-white/[0.06] hover:bg-white/[0.12] border border-white/10 text-white font-bold text-xs uppercase tracking-wider backdrop-blur-md transition-all flex items-center justify-center gap-2 cursor-pointer"
+            {/* Navigation links */}
+            <div className="flex flex-col space-y-2 text-[14px] font-normal text-[#493B34] pt-1">
+              <Link
+                href="/tours-travels"
+                onClick={() => setMobileOpen(false)}
+                className={`py-2 px-3 rounded-lg flex items-center gap-2.5 ${
+                  isToursActive ? 'bg-[#F8EFEA] text-[#C65A2E] font-bold border border-[#E8B9A5]/50' : 'hover:bg-[#F8EFEA]'
+                }`}
               >
-                <BookmarkCheck className="w-4 h-4 text-[#9CB4E8]" />
-                <span>My Bookings</span>
-              </button>
+                <Compass className="w-4 h-4 text-[#C65A2E]" />
+                <span>Spiritual Tours &amp; Yatras</span>
+              </Link>
 
               <Link
                 href="/bus-rentals"
                 onClick={() => setMobileOpen(false)}
-                className="w-full py-3.5 rounded-full bg-[#5266EB] hover:bg-[#3E51D4] text-[#EDEDF3] font-black text-xs uppercase tracking-widest transition-all shadow-xl flex items-center justify-center gap-2"
+                className={`py-2 px-3 rounded-lg flex items-center gap-2.5 ${
+                  isBusActive ? 'bg-[#F8EFEA] text-[#C65A2E] font-bold border border-[#E8B9A5]/50' : 'hover:bg-[#F8EFEA]'
+                }`}
               >
-                <span>Book Now</span>
-                <ChevronRight className="w-4 h-4 stroke-[3]" />
+                <Bus className="w-4 h-4 text-[#C65A2E]" />
+                <span>Bus Rentals (17–45 Seater)</span>
+              </Link>
+
+              <Link
+                href="/car-rentals"
+                onClick={() => setMobileOpen(false)}
+                className={`py-2 px-3 rounded-lg flex items-center gap-2.5 ${
+                  isCarActive ? 'bg-[#F8EFEA] text-[#C65A2E] font-bold border border-[#E8B9A5]/50' : 'hover:bg-[#F8EFEA]'
+                }`}
+              >
+                <Car className="w-4 h-4 text-[#C65A2E]" />
+                <span>Self-Drive Cars</span>
+              </Link>
+
+              <Link
+                href="/faq"
+                onClick={() => setMobileOpen(false)}
+                className={`py-2 px-3 rounded-lg flex items-center gap-2.5 ${
+                  isFaqActive ? 'bg-[#F8EFEA] text-[#C65A2E] font-bold border border-[#E8B9A5]/50' : 'hover:bg-[#F8EFEA]'
+                }`}
+              >
+                <HelpCircle className="w-4 h-4 text-[#C65A2E]" />
+                <span>Help &amp; FAQ</span>
+              </Link>
+            </div>
+
+            {/* Action buttons */}
+            <div className="pt-2 border-t border-[#EDE2D0] flex flex-col gap-2">
+              {user && (
+                <button
+                  onClick={() => {
+                    setMobileOpen(false);
+                    setBookingsOpen(true);
+                  }}
+                  className="w-full py-2.5 rounded-lg bg-[#F8EFEA] text-[#C65A2E] border border-[#E8B9A5]/50 text-xs font-bold flex items-center justify-center gap-2"
+                >
+                  <BookmarkCheck className="w-4 h-4 text-[#C65A2E]" />
+                  <span>My Bookings &amp; Invoices</span>
+                </button>
+              )}
+
+              <Link
+                href="/tours-travels"
+                onClick={() => setMobileOpen(false)}
+                className="w-full py-2.5 rounded-lg bg-[#C65A2E] hover:bg-[#B24E25] text-white text-xs font-bold flex items-center justify-center shadow-xs"
+              >
+                Explore Tours
               </Link>
             </div>
           </div>
         )}
       </header>
 
-      {bookingsOpen && <MyBookingsDrawer isOpen={bookingsOpen} onClose={() => setBookingsOpen(false)} />}
+      {/* Slide-out Bookings Drawer */}
+      <MyBookingsDrawer isOpen={bookingsOpen} onClose={() => setBookingsOpen(false)} />
     </>
   );
 }

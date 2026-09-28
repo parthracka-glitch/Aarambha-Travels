@@ -184,17 +184,17 @@ export default function DashboardView() {
     <div className="space-y-8">
 
       {/* DASHBOARD HEADER */}
-      <div className="bg-[#171721] p-6 rounded-2xl border border-[#272735] shadow-lg flex flex-col md:flex-row md:items-center justify-between gap-4">
+      <div className="bg-[#2D1F18] p-6 rounded-2xl border border-[#493B34] shadow-lg flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
           <div className="flex items-center gap-2">
-            <span className="text-[10px] font-bold uppercase tracking-wider text-[#9CB4E8] bg-[#5266EB]/20 px-2.5 py-0.5 rounded-full border border-[#5266EB]/30">
+            <span className="text-[10px] font-bold uppercase tracking-wider text-[#EDE2D0] bg-[#C65A2E]/20 px-2.5 py-0.5 rounded-full border border-[#C65A2E]/30">
               OPERATIONS CONTROL CENTER
             </span>
           </div>
           <h1 className="font-syne text-2xl font-extrabold text-white mt-1">
             Admin Dashboard
           </h1>
-          <p className="text-xs text-[#AFB2CE] mt-0.5">
+          <p className="text-xs text-[#EDE2D0]/70 mt-0.5">
             Monitor real-time bookings, verify deposit payments, and manage live bus & package rate cards.
           </p>
         </div>
@@ -202,14 +202,14 @@ export default function DashboardView() {
         <div className="flex items-center gap-2">
           <button
             onClick={loadData}
-            className="p-2.5 bg-[#272735] hover:bg-[#323245] text-white rounded-xl transition-all"
+            className="p-2.5 bg-[#493B34] hover:bg-[#5C4B42] text-white rounded-xl transition-all"
             title="Refresh Operations Data"
           >
             <RefreshCw className="w-4 h-4" />
           </button>
           <Link
             to="/fleet"
-            className="px-4 py-2.5 bg-[#5266EB] hover:bg-[#3E51D4] text-white text-xs font-bold rounded-xl transition-all shadow-md flex items-center gap-1.5"
+            className="px-4 py-2.5 bg-[#C65A2E] hover:bg-[#B24E25] text-white text-xs font-bold rounded-xl transition-all shadow-md flex items-center gap-1.5"
           >
             <Bus className="w-4 h-4" />
             <span>Manage All Bus Rates ({busRates.length})</span>
@@ -251,7 +251,7 @@ export default function DashboardView() {
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-gray-100 pb-4">
             <div>
               <div className="flex items-center gap-2">
-                <span className="text-[10px] font-extrabold uppercase tracking-wider text-[#5266EB] bg-blue-50 px-2 py-0.5 rounded-full border border-blue-200">
+                <span className="text-[10px] font-extrabold uppercase tracking-wider text-[#C65A2E] bg-[#F8EFEA] px-2 py-0.5 rounded-full border border-[#E8B9A5]">
                   REAL-TIME EDITABLE PACKAGES
                 </span>
               </div>
@@ -267,7 +267,7 @@ export default function DashboardView() {
 
             <Link
               to={vertical === 'tours' ? '/tours' : '/fleet'}
-              className="text-xs font-bold text-[#5266EB] hover:text-[#3E51D4] flex items-center gap-1 self-start sm:self-auto hover:underline"
+              className="text-xs font-bold text-[#C65A2E] hover:text-[#B24E25] flex items-center gap-1 self-start sm:self-auto hover:underline"
             >
               <span>{vertical === 'tours' ? `View All Tour Packages (${tours.packages?.length || 0})` : `View Full Bus Inventory (${busRates.length})`}</span>
               <ArrowRight className="w-3.5 h-3.5" />
@@ -279,13 +279,13 @@ export default function DashboardView() {
             <div className="space-y-3">
               {vertical === 'all' && (
                 <div className="flex items-center gap-2 font-bold text-xs text-gray-900 border-b border-gray-100 pb-2">
-                  <Compass className="w-4 h-4 text-[#5266EB]" />
+                  <Compass className="w-4 h-4 text-[#C65A2E]" />
                   <span>Tour Packages ({tours.packages.length})</span>
                 </div>
               )}
               <div className="overflow-x-auto no-scrollbar">
                 <table className="w-full text-left text-xs">
-                  <thead className="bg-[#171721] text-white font-syne font-bold uppercase text-[10px] tracking-wider">
+                  <thead className="bg-[#2D1F18] text-white font-syne font-bold uppercase text-[10px] tracking-wider">
                     <tr>
                       <th className="py-3 px-4">Tour Package Title</th>
                       <th className="py-3 px-4">Duration</th>
@@ -297,9 +297,9 @@ export default function DashboardView() {
                   </thead>
                   <tbody className="divide-y divide-gray-100 text-gray-700">
                     {tours.packages.map((pkg: any) => (
-                      <tr key={pkg._id || pkg.id} className="hover:bg-gray-50/80 transition-colors">
+                      <tr key={pkg._id || pkg.id} className="hover:bg-[#F8EFEA]/60 transition-colors">
                         <td className="py-3.5 px-4 font-bold text-gray-900 flex items-center gap-2">
-                          <Compass className="w-4 h-4 text-[#5266EB]" />
+                          <Compass className="w-4 h-4 text-[#C65A2E]" />
                           <span>{pkg.title}</span>
                         </td>
                         <td className="py-3.5 px-4 font-semibold text-gray-800">
@@ -308,7 +308,7 @@ export default function DashboardView() {
                         <td className="py-3.5 px-4 font-bold text-emerald-700">
                           {formatCurrency(pkg.basePrice || pkg.base_price || 0)}
                         </td>
-                        <td className="py-3.5 px-4 font-bold text-[#5266EB]">
+                        <td className="py-3.5 px-4 font-bold text-[#C65A2E]">
                           {formatCurrency(pkg.depositPrice || pkg.deposit_price || 500)}
                         </td>
                         <td className="py-3.5 px-4 text-gray-600 font-semibold">
@@ -317,7 +317,7 @@ export default function DashboardView() {
                         <td className="py-3.5 px-4 text-right">
                           <button
                             onClick={() => navigate('/tours')}
-                            className="px-3 py-1.5 bg-[#5266EB] hover:bg-[#3E51D4] text-white font-bold rounded-lg shadow-sm text-xs inline-flex items-center gap-1 transition-all cursor-pointer"
+                            className="px-3 py-1.5 bg-[#C65A2E] hover:bg-[#B24E25] text-white font-bold rounded-lg shadow-xs text-xs inline-flex items-center gap-1 transition-all cursor-pointer"
                           >
                             <Pencil className="w-3 h-3" />
                             <span>Edit Tour Package</span>
@@ -336,13 +336,13 @@ export default function DashboardView() {
             <div className="space-y-3 pt-2">
               {vertical === 'all' && (
                 <div className="flex items-center gap-2 font-bold text-xs text-gray-900 border-b border-gray-100 pb-2">
-                  <Bus className="w-4 h-4 text-[#5266EB]" />
+                  <Bus className="w-4 h-4 text-[#C65A2E]" />
                   <span>Bus & Chauffeur Rental Rates ({busRates.length})</span>
                 </div>
               )}
               <div className="overflow-x-auto no-scrollbar">
                 <table className="w-full text-left text-xs">
-                  <thead className="bg-[#171721] text-white font-syne font-bold uppercase text-[10px] tracking-wider">
+                  <thead className="bg-[#2D1F18] text-white font-syne font-bold uppercase text-[10px] tracking-wider">
                     <tr>
                       <th className="py-3 px-4">Bus / Vehicle Package</th>
                       <th className="py-3 px-4">Seats</th>
@@ -355,9 +355,9 @@ export default function DashboardView() {
                   </thead>
                   <tbody className="divide-y divide-gray-100 text-gray-700">
                     {busRates.slice(0, 10).map((b) => (
-                      <tr key={b._id} className="hover:bg-gray-50/80 transition-colors">
+                      <tr key={b._id} className="hover:bg-[#F8EFEA]/60 transition-colors">
                         <td className="py-3.5 px-4 font-bold text-gray-900 flex items-center gap-2">
-                          <Bus className="w-4 h-4 text-[#5266EB]" />
+                          <Bus className="w-4 h-4 text-[#C65A2E]" />
                           <span>{b.busType}</span>
                         </td>
                         <td className="py-3.5 px-4 font-semibold text-gray-800">{b.seats} Seater</td>
@@ -367,7 +367,7 @@ export default function DashboardView() {
                         <td className="py-3.5 px-4 font-bold text-emerald-700">
                           {b.packageRate ? formatCurrency(b.packageRate) : (b.mumbaiRate ? formatCurrency(b.mumbaiRate) : '—')}
                         </td>
-                        <td className="py-3.5 px-4 font-bold text-[#5266EB]">
+                        <td className="py-3.5 px-4 font-bold text-[#C65A2E]">
                           {b.mahabaleshwarRate ? formatCurrency(b.mahabaleshwarRate) : '—'}
                         </td>
                         <td className="py-3.5 px-4 text-gray-600">
@@ -376,7 +376,7 @@ export default function DashboardView() {
                         <td className="py-3.5 px-4 text-right">
                           <button
                             onClick={() => handleOpenQuickEdit(b)}
-                            className="px-3 py-1.5 bg-[#5266EB] hover:bg-[#3E51D4] text-white font-bold rounded-lg shadow-sm text-xs inline-flex items-center gap-1 transition-all cursor-pointer"
+                            className="px-3 py-1.5 bg-[#C65A2E] hover:bg-[#B24E25] text-white font-bold rounded-lg shadow-xs text-xs inline-flex items-center gap-1 transition-all cursor-pointer"
                           >
                             <Pencil className="w-3 h-3" />
                             <span>Edit Price</span>
@@ -401,7 +401,7 @@ export default function DashboardView() {
           </div>
           <Link
             to="/bookings"
-            className="text-xs font-bold text-[#5266EB] hover:text-[#3E51D4] flex items-center gap-1 hover:underline"
+            className="text-xs font-bold text-[#C65A2E] hover:text-[#B24E25] flex items-center gap-1 hover:underline"
           >
             <span>View All Bookings</span>
             <ArrowRight className="w-3.5 h-3.5" />
@@ -530,28 +530,28 @@ export default function DashboardView() {
                 required
                 value={busForm.busType}
                 onChange={e => setBusForm({ ...busForm, busType: e.target.value })}
-                className="w-full p-2 rounded-lg border border-gray-200 focus:ring-2 focus:ring-[#5266EB]"
+                className="w-full p-2 rounded-lg border border-[#EDE2D0] focus:ring-2 focus:ring-[#C65A2E]"
               />
             </div>
 
             <div className="grid grid-cols-2 gap-3">
               <div>
-                <label className="font-bold text-[#5266EB] block mb-1">Pune–Mumbai Rate (₹)</label>
+                <label className="font-bold text-[#C65A2E] block mb-1">Pune–Mumbai Rate (₹)</label>
                 <input
                   type="number"
                   value={busForm.packageRate || busForm.mumbaiRate}
                   onChange={e => setBusForm({ ...busForm, packageRate: Number(e.target.value), mumbaiRate: Number(e.target.value) })}
-                  className="w-full p-2 rounded-lg border border-gray-200 font-bold text-gray-900"
+                  className="w-full p-2 rounded-lg border border-[#EDE2D0] font-bold text-gray-900"
                 />
               </div>
 
               <div>
-                <label className="font-bold text-[#5266EB] block mb-1">Mahabaleshwar Rate (₹)</label>
+                <label className="font-bold text-[#C65A2E] block mb-1">Mahabaleshwar Rate (₹)</label>
                 <input
                   type="number"
                   value={busForm.mahabaleshwarRate}
                   onChange={e => setBusForm({ ...busForm, mahabaleshwarRate: Number(e.target.value) })}
-                  className="w-full p-2 rounded-lg border border-gray-200 font-bold text-gray-900"
+                  className="w-full p-2 rounded-lg border border-[#EDE2D0] font-bold text-gray-900"
                 />
               </div>
             </div>
@@ -563,7 +563,7 @@ export default function DashboardView() {
                   type="number"
                   value={busForm.baseRate}
                   onChange={e => setBusForm({ ...busForm, baseRate: Number(e.target.value) })}
-                  className="w-full p-2 rounded-lg border border-gray-200"
+                  className="w-full p-2 rounded-lg border border-[#EDE2D0]"
                 />
               </div>
               <div>
@@ -572,7 +572,7 @@ export default function DashboardView() {
                   type="number"
                   value={busForm.extraKmRate}
                   onChange={e => setBusForm({ ...busForm, extraKmRate: Number(e.target.value) })}
-                  className="w-full p-2 rounded-lg border border-gray-200"
+                  className="w-full p-2 rounded-lg border border-[#EDE2D0]"
                 />
               </div>
               <div>
@@ -581,7 +581,7 @@ export default function DashboardView() {
                   type="number"
                   value={busForm.extraHourRate}
                   onChange={e => setBusForm({ ...busForm, extraHourRate: Number(e.target.value) })}
-                  className="w-full p-2 rounded-lg border border-gray-200"
+                  className="w-full p-2 rounded-lg border border-[#EDE2D0]"
                 />
               </div>
             </div>
@@ -590,13 +590,13 @@ export default function DashboardView() {
               <button
                 type="button"
                 onClick={() => setEditingBus(null)}
-                className="px-4 py-2 rounded-lg border border-gray-200 text-gray-600 font-bold hover:bg-gray-100"
+                className="px-4 py-2 rounded-lg border border-[#EDE2D0] text-[#493B34] font-bold hover:bg-[#F8EFEA]"
               >
                 Cancel
               </button>
               <button
                 type="submit"
-                className="px-5 py-2 rounded-lg bg-[#5266EB] hover:bg-[#3E51D4] text-white font-bold shadow-md"
+                className="px-5 py-2 rounded-lg bg-[#C65A2E] hover:bg-[#B24E25] text-white font-bold shadow-xs cursor-pointer"
               >
                 Update Price & Save Live
               </button>

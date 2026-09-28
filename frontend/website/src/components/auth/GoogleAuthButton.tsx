@@ -19,10 +19,10 @@ const PRESET_GOOGLE_ACCOUNTS = [
     phone: '+91 82082 11478',
   },
   {
-    name: 'Kushal Parakh',
-    email: 'kushal@aarambhatours.com',
+    name: 'Aarambha Admin',
+    email: 'admin@aarambhatours.com',
     picture: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=200&auto=format&fit=crop',
-    phone: '+91 98220 12345',
+    phone: '+91 82082 11478',
   },
   {
     name: 'Aarambha Support',

@@ -63,14 +63,31 @@ export class AuthService {
     const isPasswordValid = await comparePassword(password, account.hashedPassword);
 
     if (!isPasswordValid) {
-      account.failedLoginAttempts = (account.failedLoginAttempts || 0) + 1;
+      const nextFailed = (account.failedLoginAttempts || 0) + 1;
+      const isLocked = nextFailed >= 5;
+      const lockUntil = isLocked ? new Date(Date.now() + 15 * 60 * 1000) : undefined;
 
-      // Lock account for 15 minutes after 5 consecutive failures
-      if (account.failedLoginAttempts >= 5) {
-        account.lockUntil = new Date(Date.now() + 15 * 60 * 1000);
+      if (userType === 'admin') {
+        await AdminUser.updateOne(
+          { _id: account._id },
+          {
+            $set: {
+              failedLoginAttempts: nextFailed,
+              ...(lockUntil ? { lockUntil } : {}),
+            },
+          }
+        );
+      } else {
+        await User.updateOne(
+          { _id: account._id },
+          {
+            $set: {
+              failedLoginAttempts: nextFailed,
+              ...(lockUntil ? { lockUntil } : {}),
+            },
+          }
+        );
       }
-
-      await account.save();
 
       await recordAudit({
         actorName: account.name || cleanEmail,
@@ -78,10 +95,10 @@ export class AuthService {
         targetType: userType === 'admin' ? 'admin_user' : 'user',
         targetId: String(account._id),
         ipAddress,
-        details: { failedAttempts: account.failedLoginAttempts, locked: account.failedLoginAttempts >= 5 },
+        details: { failedAttempts: nextFailed, locked: isLocked },
       });
 
-      const attemptsLeft = Math.max(0, 5 - account.failedLoginAttempts);
+      const attemptsLeft = Math.max(0, 5 - nextFailed);
       const errorMsg = attemptsLeft > 0
         ? `Incorrect email or password. (${attemptsLeft} attempt(s) remaining before temporary lockout)`
         : 'Account locked for 15 minutes due to too many failed attempts.';
@@ -92,10 +109,29 @@ export class AuthService {
     }
 
     // 6. Reset failed attempts on successful login
-    account.failedLoginAttempts = 0;
-    account.lockUntil = undefined;
-    account.lastLoginAt = new Date();
-    await account.save();
+    if (userType === 'admin') {
+      await AdminUser.updateOne(
+        { _id: account._id },
+        {
+          $set: {
+            failedLoginAttempts: 0,
+            lastLoginAt: new Date(),
+          },
+          $unset: { lockUntil: 1 },
+        }
+      );
+    } else {
+      await User.updateOne(
+        { _id: account._id },
+        {
+          $set: {
+            failedLoginAttempts: 0,
+            lastLoginAt: new Date(),
+          },
+          $unset: { lockUntil: 1 },
+        }
+      );
+    }
 
     // 7. Sign fresh JWT with tokenVersion
     const token = createToken({

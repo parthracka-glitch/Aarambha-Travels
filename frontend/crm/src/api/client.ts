@@ -91,6 +91,10 @@ export async function apiFetch(path: string, opts?: RequestInit, retries: number
       });
 
       if (!res.ok) {
+        if (res.status === 401 && typeof window !== 'undefined') {
+          localStorage.removeItem('crm_token');
+          localStorage.removeItem('crm_user');
+        }
         const err = await res.json().catch(() => ({ detail: res.statusText }));
         throw new Error(err.detail || err.message || err.error || res.statusText);
       }

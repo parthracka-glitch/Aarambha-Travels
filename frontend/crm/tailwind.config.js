@@ -7,105 +7,107 @@ export default {
   theme: {
     extend: {
       fontFamily: {
-        sans: ["'Arcadia'", "'arcadia'", "'Outfit'", "'Plus Jakarta Sans'", 'system-ui', '-apple-system', 'sans-serif'],
-        arcadia: ["'Arcadia'", "'arcadia'", 'system-ui', '-apple-system', 'sans-serif'],
-        arcadiaDisplay: ["'Arcadia Display'", "'arcadiaDisplay'", "'arcadia-display'", 'system-ui', '-apple-system', 'sans-serif'],
-        'arcadia-display': ["'Arcadia Display'", "'arcadia-display'", "'arcadiaDisplay'", 'system-ui', '-apple-system', 'sans-serif'],
-        syne: ["'Arcadia Display'", "'arcadiaDisplay'", "'Syne'", 'sans-serif'],
-        outfit: ["'Arcadia'", "'Outfit'", 'sans-serif'],
-        jakarta: ["'Arcadia'", "'Plus Jakarta Sans'", 'sans-serif'],
-      },
-      fontWeight: {
-        '420': '420',
-        '480': '480',
+        sans: [
+          '"Inter"',
+          '"Plus Jakarta Sans"',
+          '-apple-system',
+          'BlinkMacSystemFont',
+          '"SF Pro Text"',
+          '"Segoe UI"',
+          'Roboto',
+          'sans-serif',
+        ],
+        heading: [
+          '"Plus Jakarta Sans"',
+          '"Inter"',
+          '-apple-system',
+          'BlinkMacSystemFont',
+          'sans-serif',
+        ],
+        serif: ['"Playfair Display"', 'Georgia', 'serif'],
       },
       colors: {
-        mercury: {
-          primary: '#AFB2CE',
-          'primary-interactive': '#5266EB',
-          secondary: '#9CB4E8',
-          surface: '#000000',
-          'on-surface': '#FFFFFF',
-          'accent-soft': '#AFB2CE',
-          'accent-light': '#EDEDF3',
-          'surface-dark': '#171721',
-          'surface-darker': '#272735',
-          'interactive-ghost': '#171721',
-          'interactive-tertiary': '#272735',
-          'text-primary': '#000000',
-          'text-inverse': '#EDEDF3',
-          'text-tertiary': '#C3C3CC',
-          'border-subtle': '#EBEBEB',
-          'border-muted': '#F5F5F5',
+        ivory: '#FCFAF6',
+        sand: '#EDE2D0',
+        peach: '#E8B9A5',
+        taupe: '#756B63',
+        cocoa: {
+          DEFAULT: '#493B34',
+          dark: '#2D1F18',
+          light: '#756B63',
         },
-        aether: {
-          bg: '#EDEDF3',
-          canvas: '#FAFAFC',
-          card: '#FFFFFF',
-          sidebar: '#171721',
-          black: '#000000',
-          dark: '#171721',
-          muted: '#C3C3CC',
-          border: '#EBEBEB',
-        },
-        kpi: {
-          peach: '#F5F5F9',
-          blue: 'rgba(156, 180, 232, 0.2)',
-          purple: 'rgba(82, 102, 235, 0.1)',
-          green: 'rgba(175, 178, 206, 0.2)',
-        },
-        insight: {
-          purple: 'rgba(82, 102, 235, 0.08)',
-          orange: 'rgba(156, 180, 232, 0.15)',
-          green: 'rgba(175, 178, 206, 0.15)',
-        },
-        ink: {
-          DEFAULT: '#000000',
-          slate: '#171721',
-        },
-        gold: '#9CB4E8',
-        heading: '#000000',
-        'text-secondary': '#6B7280',
-        'text-placeholder': '#C3C3CC',
-        'surface-card': '#FFFFFF',
-        'surface-light': '#EDEDF3',
         terracotta: {
-          DEFAULT: "#5266EB",
-          dark: "#3E51D4",
-          light: "#9CB4E8",
+          DEFAULT: '#C65A2E',
+          hover: '#B24E25',
+          light: '#F8EFEA',
+          border: '#E8B9A5',
         },
-        cream: {
-          DEFAULT: "#FAFAFC",
-          dark: "#EDEDF3",
+        ramp: {
+          primary: '#C65A2E',          // Brand Terracotta
+          navy: '#493B34',             // Deep Cocoa
+          charcoal: '#2D1F18',         // Dark text
+          cta: '#C65A2E',              // Terracotta CTA
+          'cta-hover': '#B24E25',      // Hover Terracotta
+          'cta-active': '#9E431E',
+          'blue-light': '#E8B9A5',     // Peach Light
+          'blue-pale': '#F8EFEA',      // Warm Pale
+          surface: '#FCFAF6',          // Cloud Ivory surface
+          'surface-subtle': '#F8EFEA', // Light Warm subtle
+          border: '#EDE2D0',           // Sand border
+          stone: '#756B63',
+          slate: '#756B63',            // Muted text
+          nearBlack: '#2D1F18',
+          black: '#1A120E',
         },
-        espresso: {
-          DEFAULT: "#171721",
-          light: "#272735",
-          dark: "#000000",
+        primary: {
+          DEFAULT: '#C65A2E',
+          hover: '#B24E25',
+          light: '#E8B9A5',
+          pale: '#F8EFEA',
+          dark: '#493B34',
         },
-        sand: {
-          DEFAULT: "#AFB2CE",
-          light: "#EDEDF3",
-        }
+        secondary: {
+          DEFAULT: '#493B34',
+          hover: '#2D1F18',
+          light: '#756B63',
+        },
+        cta: {
+          DEFAULT: '#C65A2E',
+          hover: '#B24E25',
+          active: '#9E431E',
+          text: '#FFFFFF',
+        },
+        charcoal: '#2D1F18',
+        surface: {
+          DEFAULT: '#FCFAF6',
+          subtle: '#F8EFEA',
+          border: '#EDE2D0',
+          white: '#FFFFFF',
+        },
       },
       borderRadius: {
-        'md': '33554400px',
-        'pill': '40px',
-      },
-      backgroundImage: {
-        'brand-gradient': 'linear-gradient(90deg, #5266EB 0%, #9CB4E8 100%)',
-        'aether-dark': 'linear-gradient(135deg, #272735 0%, #171721 50%, #000000 100%)',
+        'btn': '8px',
+        'input': '10px',
+        'card': '14px',
+        'badge': '6px',
+        'md': '10px',
+        'lg': '14px',
+        'xl': '18px',
+        '2xl': '22px',
       },
       boxShadow: {
-        'aether': '0 20px 50px -12px rgba(0, 0, 0, 0.06)',
-        'aether-card': 'rgba(28, 28, 35, 0.02) 0px 10px 16px 0px, rgba(28, 28, 35, 0.04) 0px 6px 10px 0px, rgba(28, 28, 35, 0.09) 0px 0px 3px 0px',
-        'pill': '0 2px 10px rgba(82, 102, 235, 0.1)',
-        'navigation': 'rgba(86, 86, 118, 0.1) 0px 0px 6px 0px',
-        'hover': 'rgba(28, 28, 35, 0.02) 0px 10px 16px 0px, rgba(28, 28, 35, 0.04) 0px 6px 10px 0px, rgba(28, 28, 35, 0.09) 0px 0px 3px 0px',
-        'elevated': 'rgba(0, 0, 0, 0.05) 0px 0px 3px 0px, rgba(0, 0, 0, 0.05) 0px 8px 12px 0px, rgba(0, 0, 0, 0.05) 0px 12px 20px 0px',
-      }
+        'subtle': 'rgba(73, 59, 52, 0.04) 0px 1px 3px',
+        'card-hover': 'rgba(73, 59, 52, 0.08) 0px 4px 12px',
+        'btn-hover': 'rgba(198, 90, 46, 0.2) 0px 2px 6px',
+        'cta-glow': 'rgba(198, 90, 46, 0.2) 0px 8px 24px',
+        'dropdown': 'rgba(73, 59, 52, 0.1) 0px 10px 30px 0px, rgba(73, 59, 52, 0.05) 0px 1px 3px 0px',
+        'focus-ring': '0px 0px 0px 3px rgba(198, 90, 46, 0.2)',
+      },
+      spacing: {
+        '4.5': '18px',
+        '15': '60px',
+      },
     },
   },
   plugins: [],
-}
-
+};

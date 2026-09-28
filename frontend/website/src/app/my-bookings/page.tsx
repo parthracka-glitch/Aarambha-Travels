@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { Download, Calendar, User, Car, Compass, ArrowLeft, BookOpen, Clock, CheckCircle } from 'lucide-react';
+import { Download, Calendar, User, Car, Compass, ArrowLeft, BookOpen, Clock, CheckCircle, ShieldCheck } from 'lucide-react';
 import Navbar from '@/components/layout/Navbar';
 import Footer from '@/components/layout/Footer';
 import { generateInvoicePDF, getNextInvoiceNumber, type InvoiceData } from '@/utils/generateInvoicePDF';
@@ -98,16 +98,15 @@ export default function MyBookingsPage() {
       } catch (_apiErr) {}
 
       // Filter by user if logged in, or show recent guest bookings
-      const userSpecific = userEmail
-        ? localList.filter((b) => {
-            const bEmail = (b.customerEmail || b.email || b.accountEmail || b.userEmail || '').toLowerCase().trim();
-            return bEmail === userEmail;
-          })
-        : localList;
-
-      setBookings(userSpecific);
-    } catch (_) {
-      setUser(null);
+      if (userEmail) {
+        const userSpecific = localList.filter(
+          (b) => (b.email || '').toLowerCase().trim() === userEmail
+        );
+        setBookings(userSpecific.reverse());
+      } else {
+        setBookings(localList.reverse());
+      }
+    } catch (_err) {
       setBookings([]);
     }
   };
@@ -116,15 +115,13 @@ export default function MyBookingsPage() {
     setMounted(true);
     loadBookingsForUser();
 
-    // Poll every 4 seconds so customer sees admin verification live
-    const interval = setInterval(loadBookingsForUser, 4000);
+    const handleAuthChange = () => {
+      loadBookingsForUser();
+    };
 
-    window.addEventListener('aarambha_auth_changed', loadBookingsForUser);
-    window.addEventListener('aarambha_booking_updated', loadBookingsForUser);
+    window.addEventListener('aarambha_auth_changed', handleAuthChange);
     return () => {
-      clearInterval(interval);
-      window.removeEventListener('aarambha_auth_changed', loadBookingsForUser);
-      window.removeEventListener('aarambha_booking_updated', loadBookingsForUser);
+      window.removeEventListener('aarambha_auth_changed', handleAuthChange);
     };
   }, []);
 
@@ -170,66 +167,67 @@ export default function MyBookingsPage() {
   if (!mounted) return null;
 
   return (
-    <div className="min-h-screen bg-[#FAFAFC] text-[#18181B] flex flex-col font-sans">
+    <div className="min-h-screen bg-[#FCFAF6] text-[#493B34] flex flex-col font-sans select-none">
       <Navbar vertical="home" />
 
-      {/* Hero */}
-      <section className="relative bg-[#171721] text-[#EDEDF3] pt-28 pb-14 overflow-hidden border-b border-[#272735]">
-        <div className="absolute inset-0 bg-gradient-to-br from-[#171721] via-[#272735] to-[#171721] opacity-90" />
-        <div className="relative z-10 max-w-6xl mx-auto px-6 lg:px-12">
-          <Link href="/" className="inline-flex items-center gap-2 text-xs font-bold text-[#9CB4E8] hover:text-white mb-6 transition-colors">
+      {/* Hero Header */}
+      <section className="relative bg-[#FCFAF6] border-b border-[#EDE2D0] pt-24 pb-12 overflow-hidden">
+        <div className="relative z-10 max-w-6xl mx-auto px-6 lg:px-12 space-y-4">
+          <Link href="/" className="inline-flex items-center gap-1.5 text-xs font-semibold text-[#756B63] hover:text-[#C65A2E] transition-colors">
             <ArrowLeft className="w-3.5 h-3.5" /> Back to Home
           </Link>
-          <div className="flex items-center gap-4">
-            <div className="w-12 h-12 rounded-2xl bg-[#5266EB] flex items-center justify-center shadow-lg shadow-[#5266EB]/20">
-              <BookOpen className="w-6 h-6 text-white" />
+          <div className="flex items-center gap-3.5">
+            <div className="w-10 h-10 rounded-xl bg-[#F8EFEA] flex items-center justify-center border border-[#E8B9A5]/50">
+              <BookOpen className="w-5 h-5 text-[#C65A2E]" />
             </div>
             <div>
-              <h1 className="font-syne text-3xl sm:text-4xl font-extrabold text-white">My Bookings</h1>
-              <p className="text-xs text-[#AFB2CE] mt-1">All your Aarambha reservations, with downloadable invoices.</p>
+              <h1 className="font-serif text-2xl sm:text-3xl font-bold text-[#493B34]">My Bookings &amp; Invoices</h1>
+              <p className="text-xs text-[#756B63] mt-0.5">Track your verified reservations and download official tax invoices.</p>
             </div>
           </div>
         </div>
       </section>
 
       {/* Content */}
-      <main className="flex-1 max-w-6xl mx-auto w-full px-6 lg:px-12 py-12">
+      <main className="flex-1 max-w-6xl mx-auto w-full px-6 lg:px-12 py-10">
         {!user ? (
-          <div className="text-center py-20 bg-white rounded-3xl border border-gray-200/80 shadow-sm p-8 max-w-md mx-auto space-y-4">
-            <div className="w-16 h-16 rounded-full bg-[#5266EB]/10 text-[#5266EB] flex items-center justify-center mx-auto">
-              <User className="w-8 h-8" />
+          <div className="text-center py-16 bg-white rounded-2xl border border-[#EDE2D0] shadow-sm p-8 max-w-md mx-auto space-y-3.5">
+            <div className="w-14 h-14 rounded-full bg-[#F8EFEA] text-[#C65A2E] flex items-center justify-center mx-auto border border-[#E8B9A5]/50">
+              <User className="w-6 h-6" />
             </div>
-            <h2 className="font-syne text-xl font-bold text-[#000000]">Account Not Logged In</h2>
-            <p className="text-sm text-gray-500">
-              Please log in to your account to view your active bookings and download your verified tax invoices.
+            <h2 className="font-serif text-lg font-bold text-[#493B34]">Log In to View Bookings</h2>
+            <p className="text-xs text-[#756B63]">
+              Please sign in with your registered account to manage your reservations and download tax invoices.
             </p>
             <div className="pt-2">
               <Link
                 href="/login"
-                className="inline-flex items-center gap-2 px-6 py-3 bg-[#5266EB] hover:bg-[#3E51D4] text-[#EDEDF3] text-xs font-bold font-syne uppercase tracking-wider rounded-full transition-all shadow-md hover:scale-105"
+                className="inline-flex items-center gap-2 px-6 py-2.5 bg-[#C65A2E] hover:bg-[#B24E25] text-white text-xs font-semibold rounded-xl transition-all shadow-xs"
               >
-                <User className="w-4 h-4" /> Log In to Your Account
+                <User className="w-4 h-4 text-white" /> Log In Now
               </Link>
             </div>
           </div>
         ) : bookings.length === 0 ? (
-          <div className="text-center py-24 space-y-4">
-            <div className="w-16 h-16 rounded-full bg-gray-100 flex items-center justify-center mx-auto">
-              <BookOpen className="w-8 h-8 text-gray-400" />
+          <div className="text-center py-20 bg-white rounded-2xl border border-[#EDE2D0] p-8 max-w-md mx-auto space-y-3.5">
+            <div className="w-14 h-14 rounded-full bg-[#FCFAF6] border border-[#EDE2D0] flex items-center justify-center mx-auto">
+              <BookOpen className="w-6 h-6 text-[#756B63]" />
             </div>
-            <h2 className="font-syne text-xl font-bold text-[#000000]">No bookings yet</h2>
-            <p className="text-sm text-gray-500 max-w-xs mx-auto">
-              No reservations found for <strong className="text-gray-700">{user.email}</strong>. Book a tour package or car rental to see your reservations here.
+            <h2 className="font-serif text-lg font-bold text-[#493B34]">No Reservations Found</h2>
+            <p className="text-xs text-[#756B63] max-w-xs mx-auto">
+              No bookings are currently linked to <strong className="text-[#493B34]">{user.email}</strong>. Reserve a tour package or self-drive vehicle to track it here.
             </p>
-            <Link href="/" className="inline-flex items-center gap-2 px-6 py-3 bg-[#5266EB] hover:bg-[#3E51D4] text-[#EDEDF3] text-xs font-bold rounded-full transition-all mt-4">
-              <Compass className="w-4 h-4" /> Explore Now
-            </Link>
+            <div className="pt-2">
+              <Link href="/" className="inline-flex items-center gap-2 px-5 py-2.5 bg-[#C65A2E] hover:bg-[#B24E25] text-white text-xs font-semibold rounded-xl transition-all shadow-xs">
+                <Compass className="w-4 h-4" /> Explore Packages &amp; Fleet
+              </Link>
+            </div>
           </div>
         ) : (
           <div className="space-y-4">
-            <div className="flex items-center justify-between mb-6">
-              <p className="text-sm text-gray-500 font-medium">
-                {bookings.length} booking{bookings.length > 1 ? 's' : ''} found for <strong className="text-gray-800">{user.email}</strong>
+            <div className="flex items-center justify-between pb-2">
+              <p className="text-xs text-[#756B63] font-medium">
+                {bookings.length} reservation{bookings.length > 1 ? 's' : ''} for <strong className="text-[#493B34]">{user.email}</strong>
               </p>
             </div>
 
@@ -242,94 +240,86 @@ export default function MyBookingsPage() {
               return (
                 <div
                   key={i}
-                  className="bg-white rounded-2xl border border-gray-200 overflow-hidden shadow-sm hover:shadow-md transition-all flex flex-col sm:flex-row"
+                  className="bg-white rounded-2xl border border-[#EDE2D0] overflow-hidden shadow-2xs hover:shadow-sm hover:border-[#E8B9A5] transition-all flex flex-col sm:flex-row"
                 >
                   {/* Image */}
-                  <div className="relative w-full sm:w-48 h-36 sm:h-auto flex-shrink-0 bg-gray-900 overflow-hidden">
+                  <div className="relative w-full sm:w-44 h-32 sm:h-auto flex-shrink-0 bg-[#FDFBF7] overflow-hidden">
                     <img
                       src={b.image}
                       alt={b.title}
                       className="w-full h-full object-cover"
                     />
-                    <div className={`absolute top-2 left-2 px-2.5 py-1 rounded-full text-[10px] font-extrabold ${
-                      isCar ? 'bg-[#171721] text-[#9CB4E8] border border-[#9CB4E8]/30' : 'bg-[#5266EB] text-white'
-                    }`}>
-                      {isCar ? 'Car Rental' : 'Tour Package'}
+                    <div className="absolute top-2 left-2 px-2 py-0.5 rounded-md bg-[#C65A2E] text-white text-[9px] font-semibold uppercase tracking-wider">
+                      {isCar ? 'Self-Drive' : 'Tour Package'}
                     </div>
                   </div>
 
-                  {/* Content */}
-                  <div className="flex-1 p-5 flex flex-col sm:flex-row items-start justify-between gap-4">
-                    <div className="space-y-2 flex-1">
-                      <div className="flex items-center gap-2">
-                        {isCar
-                          ? <Car className="w-4 h-4 text-[#5266EB]" />
-                          : <Compass className="w-4 h-4 text-[#5266EB]" />}
-                        <h3 className="font-syne text-base font-bold text-[#000000]">{b.title}</h3>
+                  {/* Body Details */}
+                  <div className="p-4 sm:p-5 flex-1 flex flex-col justify-between space-y-3">
+                    <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-2">
+                      <div>
+                        <div className="flex items-center gap-2">
+                          <span className="text-[10px] font-bold text-[#756B63] uppercase tracking-wider">
+                            ID: {b.id}
+                          </span>
+                          <span
+                            className={`px-2 py-0.5 rounded-full text-[10px] font-semibold ${
+                              b.status === 'Confirmed'
+                                ? 'bg-emerald-50 text-emerald-700 border border-emerald-200'
+                                : 'bg-amber-50 text-amber-700 border border-amber-200'
+                            }`}
+                          >
+                            {b.status || 'Verification Pending'}
+                          </span>
+                        </div>
+                        <h3 className="font-serif text-base sm:text-lg font-bold text-[#493B34] mt-1">
+                          {b.title}
+                        </h3>
                       </div>
 
-                      <div className="flex flex-wrap gap-x-4 gap-y-1 text-xs text-gray-500">
-                        <span className="flex items-center gap-1">
-                          <User className="w-3.5 h-3.5" /> {b.customerName}
+                      <div className="text-left sm:text-right">
+                        <span className="text-xs text-[#756B63] block">Total Amount</span>
+                        <span className="text-base sm:text-lg font-bold text-[#493B34]">
+                          ₹{b.totalPrice?.toLocaleString('en-IN')}
                         </span>
-                        <span className="flex items-center gap-1">
-                          <Calendar className="w-3.5 h-3.5" />
-                          {formatDate(b.startDate)} → {formatDate(b.endDate)}
+                        <span className="text-[11px] text-[#C65A2E] block font-semibold">
+                          Advance: ₹{b.depositPaid?.toLocaleString('en-IN')}
                         </span>
-                        {isCar ? (
-                          <span className="flex items-center gap-1">
-                            <Clock className="w-3.5 h-3.5" /> {days} Day{days > 1 ? 's' : ''}
-                          </span>
-                        ) : (
-                          <span className="flex items-center gap-1">
-                            <User className="w-3.5 h-3.5" /> {b.guestsCount || 1} Traveler{(b.guestsCount || 1) > 1 ? 's' : ''}
-                          </span>
-                        )}
-                      </div>
-
-                      <div className="flex items-center gap-3 text-xs">
-                        <span className="font-bold text-[#111111]">
-                          Total: ₹{b.totalPrice.toLocaleString('en-IN')}
-                        </span>
-                        <span className="text-[#5266EB] font-semibold">
-                          Deposit: ₹{b.depositPaid} logged
-                        </span>
-                        {b.status === 'pending_verification' ? (
-                          <span className="inline-flex items-center gap-1 font-bold text-amber-700 bg-amber-100 px-2.5 py-0.5 rounded-full border border-amber-300">
-                            <Clock className="w-3 h-3 text-amber-700" /> Under Verification {b.utrNumber ? `(UTR: ${b.utrNumber})` : ''}
-                          </span>
-                        ) : b.status === 'Rejected' ? (
-                          <span className="inline-flex items-center gap-1 font-bold text-red-700 bg-red-100 px-2.5 py-0.5 rounded-full border border-red-300">
-                            Payment Rejected
-                          </span>
-                        ) : (
-                          <span className="inline-flex items-center gap-1.5 font-bold text-emerald-700 bg-emerald-100 px-3 py-0.5 rounded-full border border-emerald-300">
-                            <CheckCircle className="w-3.5 h-3.5 text-emerald-700" /> Booking Confirmed
-                          </span>
-                        )}
-                      </div>
-
-                      <div className="text-[10px] text-gray-400 font-mono">
-                        Ref: {b.id} · Booked {formatDate(b.createdAt)}
                       </div>
                     </div>
 
-                    {/* Download Button */}
-                    <div className="flex-shrink-0">
-                      {b.status === 'pending_verification' ? (
-                        <span className="text-[11px] text-gray-400 italic block py-2">
-                          Invoice available once verified
+                    <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 pt-2 border-t border-[#EDE2D0] text-xs text-[#756B63]">
+                      <div className="flex items-center gap-1.5">
+                        <Calendar className="w-3.5 h-3.5 text-[#C65A2E]" />
+                        <span>
+                          {formatDate(b.startDate)}
+                          {b.endDate && b.endDate !== b.startDate ? ` → ${formatDate(b.endDate)}` : ''}
                         </span>
-                      ) : (
-                        <button
-                          onClick={() => handleDownloadInvoice(b)}
-                          className="flex items-center gap-2 px-5 py-2.5 bg-[#171721] hover:bg-[#272735] text-[#EDEDF3] text-xs font-bold rounded-full transition-all shadow-md hover:shadow-lg hover:scale-105"
-                        >
-                          <Download className="w-3.5 h-3.5" />
-                          Invoice PDF
-                        </button>
-                      )}
+                      </div>
+                      <div className="flex items-center gap-1.5">
+                        <User className="w-3.5 h-3.5 text-[#C65A2E]" />
+                        <span>{isCar ? `${days} Day Rental` : `${b.guestsCount || 1} Travelers`}</span>
+                      </div>
+                      <div className="flex items-center gap-1.5 col-span-2 sm:col-span-1">
+                        <ShieldCheck className="w-3.5 h-3.5 text-[#C65A2E]" />
+                        <span>{b.paymentMethod || 'Direct UPI'}</span>
+                      </div>
                     </div>
+
+                    <div className="flex items-center justify-between pt-2">
+                      <span className="text-[10.5px] text-[#756B63]">
+                        Booked on {formatDate(b.createdAt)}
+                      </span>
+
+                      <button
+                        onClick={() => handleDownloadInvoice(b)}
+                        className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-[#F8EFEA] hover:bg-[#E8B9A5]/40 text-[#C65A2E] text-xs font-semibold rounded-lg border border-[#E8B9A5]/50 transition-all cursor-pointer shadow-2xs"
+                      >
+                        <Download className="w-3.5 h-3.5" />
+                        <span>Download Tax Invoice (PDF)</span>
+                      </button>
+                    </div>
+
                   </div>
                 </div>
               );

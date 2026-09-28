@@ -1,0 +1,114 @@
+name: Continuous Integration & Verification (CI)
+
+on:
+  push:
+    branches: [ master, main ]
+  pull_request:
+    branches: [ master, main ]
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  backend-ci:
+    name: 🛡️ Backend API (Test & Build)
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [ 20.x ]
+
+    steps:
+      - name: Checkout Source Code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+
+      - name: Install Backend Dependencies
+        working-directory: backend
+        run: npm ci || npm install
+
+      - name: Run Backend Automated Test Suite
+        working-directory: backend
+        run: npm test
+        env:
+          NODE_ENV: test
+          JWT_SECRET: test-ci-jwt-secret-key-super-secure-32chars-min
+          PORT: 8000
+
+      - name: Compile Backend TypeScript
+        working-directory: backend
+        run: npm run build
+
+  website-ci:
+    name: 🌐 Customer Website (Next.js 14 Build)
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [ 20.x ]
+
+    steps:
+      - name: Checkout Source Code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+
+      - name: Install Website Dependencies
+        working-directory: frontend/website
+        run: npm ci || npm install
+
+      - name: Build Next.js Production Bundle
+        working-directory: frontend/website
+        run: npm run build
+        env:
+          NEXT_PUBLIC_API_URL: https://api.aarambhatravels.in
+          NEXT_PUBLIC_APP_URL: https://aarambhatravels.in
+          NEXT_TELEMETRY_DISABLED: 1
+
+  crm-ci:
+    name: 📊 Admin CRM (Vite + React 18 Build)
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [ 20.x ]
+
+    steps:
+      - name: Checkout Source Code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+
+      - name: Install CRM Dependencies
+        working-directory: frontend/crm
+        run: npm ci || npm install
+
+      - name: TypeCheck & Build CRM Production Bundle
+        working-directory: frontend/crm
+        run: npm run build
+        env:
+          VITE_API_URL: https://api.aarambhatravels.in
+
+  monorepo-root-ci:
+    name: 📦 Monorepo Root Integrity Check
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Source Code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js 20.x
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20.x
+
+      - name: Validate Root Package Installation
+        run: npm ci || npm install

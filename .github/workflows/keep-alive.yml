@@ -1,20 +1,33 @@
-name: 24/7 Backend Keep-Alive
+name: 24/7 Cloud API Keep-Alive
 
 on:
   schedule:
-    # Run every 10 minutes to prevent Render free-tier instance from sleeping (spins down after 15m)
+    # Trigger ping every 10 minutes to prevent free-tier cloud containers from entering sleep mode
     - cron: '*/10 * * * *'
   workflow_dispatch:
 
+concurrency:
+  group: keep-alive-pings
+  cancel-in-progress: true
+
 jobs:
-  ping-backend:
+  ping-healthcheck:
+    name: 💓 Ping Healthcheck Endpoint
     runs-on: ubuntu-latest
     steps:
-      - name: Ping Backend API
+      - name: Dispatch Healthcheck Request
         run: |
-          URL="${{ secrets.BACKEND_URL }}"
-          if [ -z "$URL" ]; then
-            URL="https://aarambha-backend-api.onrender.com"
+          BACKEND_URL="${{ secrets.BACKEND_URL }}"
+          if [ -z "$BACKEND_URL" ]; then
+            BACKEND_URL="https://aarambha-backend-api.onrender.com"
           fi
-          echo "Pinging backend at: $URL/api/health"
-          curl -s -f -m 30 "$URL/api/health" || echo "Ping dispatched (Backend is waking up/responding)"
+          
+          echo "Dispatching healthcheck request to: $BACKEND_URL/api/health"
+          RESPONSE_CODE=$(curl -s -o /dev/null -w "%{http_code}" -m 30 "$BACKEND_URL/api/health" || echo "000")
+          
+          echo "Healthcheck Response Status: $RESPONSE_CODE"
+          if [ "$RESPONSE_CODE" -ge 200 ] && [ "$RESPONSE_CODE" -le 399 ]; then
+            echo "✅ Backend service is active and responsive."
+          else
+            echo "⚠️ Backend service is warming up or unresponsive (HTTP $RESPONSE_CODE). Ping successfully dispatched to trigger instance wakeup."
+          fi

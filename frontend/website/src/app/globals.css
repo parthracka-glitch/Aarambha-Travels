@@ -1,280 +1,328 @@
-@import url('https://fonts.googleapis.com/css2?family=Amita:wght@400;700&family=Gotu&family=Mukta:wght@400;500;600;700;800&family=Outfit:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Rozha+One&family=Syne:wght@400;500;600;700;800&family=Tiro+Devanagari+Marathi:ital@0;1&family=Yatra+One&display=swap');
+/* Aarambha Brand Design System & Palette Guide */
+@import url('https://fonts.googleapis.com/css2?family=Caveat:wght@400..700&family=Playfair+Display:ital,wght@0,400..900;1,400..900&family=Poppins:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&display=swap');
 
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-@font-face {
-  font-family: 'Arcadia Display';
-  font-style: normal;
-  font-weight: 480;
-  font-display: swap;
-  src: local('Arcadia Display'), local('Syne'), local('Outfit');
-}
-
-@font-face {
-  font-family: 'Arcadia';
-  font-style: normal;
-  font-weight: 400 480;
-  font-display: swap;
-  src: local('Arcadia'), local('Outfit'), local('Plus Jakarta Sans');
-}
-
 :root {
-  --font-arcadia-display: 'Arcadia Display', 'arcadiaDisplay', 'Syne', sans-serif;
-  --font-arcadia: 'Arcadia', 'Outfit', 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
-  --font-syne: 'Arcadia Display', 'arcadiaDisplay', 'Syne', sans-serif;
-  --font-outfit: 'Arcadia', 'Outfit', sans-serif;
-  --font-jakarta: 'Arcadia', 'Plus Jakarta Sans', sans-serif;
-  --font-marathi-logo: 'Amita', 'Yatra One', 'Rozha One', 'Gotu', 'Mukta', serif;
-  
-  /* Luxury Dark Palette */
-  --color-bg-dark: #0A0B10;
-  --color-surface-card: #12141F;
-  --color-border-glass: rgba(255, 255, 255, 0.08);
-}
+  /* Brand Color Tokens (Official Palette) */
+  --color-cloud-ivory: #FCFAF6;
+  --color-sand-cream: #EDE2D0;
+  --color-peach-blush: #E8B9A5;
+  --color-soft-apricot: #F2C6A0;
+  --color-sage-mist: #C8D8C0;
+  --color-warm-taupe: #756B63;
+  --color-cocoa: #493B34;
+  --color-muted-gold: #D8B77A;
+  --color-terracotta: #C65A2E;
+  --color-terracotta-hover: #B24E25;
 
-@keyframes pulseGlow {
-  0%, 100% { opacity: 0.4; transform: scale(1); }
-  50% { opacity: 0.8; transform: scale(1.05); }
-}
+  /* Global utility mappings */
+  --ramp-primary: #C65A2E;
+  --ramp-navy: #493B34;
+  --ramp-charcoal: #2D1F18;
+  --ramp-cta: #C65A2E;
+  --ramp-cta-hover: #B24E25;
+  --ramp-surface: #FCFAF6;
+  --ramp-surface-subtle: #F8EFEA;
+  --ramp-border: #EDE2D0;
 
-@keyframes shimmerEffect {
-  0% { transform: translateX(-100%); }
-  100% { transform: translateX(200%); }
-}
-
-.animate-shimmer {
-  position: relative;
-  overflow: hidden;
-}
-
-.animate-shimmer::after {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 50%;
-  height: 100%;
-  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.15), transparent);
-  transform: translateX(-100%);
-  animation: shimmerEffect 2.5s infinite;
-}
-
-.glass-card {
-  background: rgba(18, 20, 31, 0.75);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-}
-
-.glass-card-hover:hover {
-  border-color: rgba(255, 255, 255, 0.2);
-  box-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.6);
-  transform: translateY(-2px);
+  --radius-btn: 8px;
+  --radius-input: 10px;
+  --radius-card: 14px;
+  --radius-badge: 6px;
 }
 
 * {
   scrollbar-width: thin;
-  scrollbar-color: #373A4D transparent;
+  scrollbar-color: #EDE2D0 transparent;
+  box-sizing: border-box;
 }
-::-webkit-scrollbar { width: 5px; height: 5px; }
-::-webkit-scrollbar-track { background: transparent; }
-::-webkit-scrollbar-thumb { background: #373A4D; border-radius: 999px; }
-::-webkit-scrollbar-thumb:hover { background: #52566F; }
+
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: #EDE2D0;
+  border-radius: 999px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #E8B9A5;
+}
 
 html {
   scroll-behavior: smooth;
   text-rendering: optimizeLegibility;
+  background-color: #FCFAF6;
+  color: #493B34;
 }
 
 body {
-  color: #FFFFFF;
-  background: #0A0B10;
-  font-family: 'Arcadia', 'Outfit', 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+  font-family: 'Poppins', 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  font-size: 15px;
+  line-height: 1.5;
+  font-weight: 400;
+  color: #493B34;
+  background-color: #FCFAF6;
+  margin: 0;
+  padding: 0;
   overflow-x: hidden;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
-h1, h2 {
-  font-family: 'Arcadia Display', 'arcadiaDisplay', 'Syne', sans-serif;
-  font-weight: 480;
+/* Typography Hierarchy */
+h1, h2, h3, h4, h5, h6 {
+  font-family: 'Playfair Display', Georgia, serif;
+  color: #493B34;
+  margin: 0;
 }
 
-.brand-marathi-logo {
-  font-family: 'Yatra One', 'Rozha One', 'Tiro Devanagari Marathi', 'Amita', serif;
-  font-weight: 700;
-  letter-spacing: 0.03em;
-}
-
-/* Official 3D Embossed Aarambha Logo Typography */
-.aarambha-logo-3d {
-  font-family: 'Yatra One', 'Rozha One', 'Tiro Devanagari Marathi', 'Amita', serif;
-  font-weight: 700;
-  color: #D3592B;
-  background: linear-gradient(180deg, #E66F3A 0%, #D3592B 45%, #B44218 85%, #8C300E 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  filter: drop-shadow(0 1px 0 #7A2E12)
-          drop-shadow(0 2px 0 #5E200B)
-          drop-shadow(0 3px 0 #421506)
-          drop-shadow(0 5px 6px rgba(0, 0, 0, 0.45));
-  display: inline-block;
-  transform: translateZ(0);
-}
-
-.aarambha-logo-3d-light {
-  font-family: 'Yatra One', 'Rozha One', 'Tiro Devanagari Marathi', 'Amita', serif;
-  font-weight: 700;
-  color: #C85227;
-  background: linear-gradient(180deg, #E06834 0%, #C85227 50%, #9E3710 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  filter: drop-shadow(0 1px 0 #853114)
-          drop-shadow(0 2px 0 #61210B)
-          drop-shadow(0 3px 4px rgba(60, 20, 8, 0.3));
-  display: inline-block;
-}
-
-.aarambha-sub-3d {
-  font-family: 'Syne', 'Outfit', sans-serif;
-  font-weight: 800;
-  letter-spacing: 0.25em;
-  text-transform: uppercase;
-  color: #AFB2CE;
-}
-
-.font-syne {
-  font-family: 'Arcadia Display', 'arcadiaDisplay', 'Syne', sans-serif;
-  font-weight: 480;
-}
-
-.font-outfit {
-  font-family: 'Arcadia', 'Outfit', sans-serif;
-}
-
-/* Low-End CPU / GPU Performance Optimization for Offscreen Content */
-.content-defer {
-  content-visibility: auto;
-  contain-intrinsic-size: 1px 400px;
-}
-
-/* Active Highlight Card */
-.car-card-active {
-  border: 2px solid #5266EB !important;
-  background-color: #FFFFFF !important;
-}
-
-/* Primary Button (Mercury Full-Width / Pill CTA) */
-.btn-red-pill {
-  background-color: #5266EB;
-  color: #EDEDF3;
-  font-family: 'Arcadia', 'Outfit', sans-serif;
-  font-weight: 420;
-  font-size: 16px;
-  line-height: 16px;
-  padding: 0.6rem 1.5rem;
-  border-radius: 40px;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.5rem;
-  border: none;
-  transition: all 0.15s ease;
-}
-
-.btn-red-pill:hover {
-  opacity: 0.9;
-  background-color: #3E51D4;
-  transform: translateY(-1px);
-}
-
-.btn-red-pill:active {
-  opacity: 0.8;
-  transform: translateY(0);
-}
-
-/* Clean Outline Button */
-.btn-red-outline {
-  background-color: transparent;
-  color: #5266EB;
-  border: 1px solid #5266EB;
-  font-family: 'Arcadia', 'Outfit', sans-serif;
-  font-weight: 420;
-  padding: 0.55rem 1.4rem;
-  border-radius: 40px;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  transition: all 0.15s ease;
-}
-
-.btn-red-outline:hover {
-  background-color: #5266EB;
-  color: #EDEDF3;
-}
-
-/* Secondary Button (Mercury Ghost / Tertiary CTA) */
-.btn-mercury-secondary {
-  background-color: rgba(156, 180, 232, 0.2);
-  color: #EDEDF3;
+/* Input Styling */
+.ramp-input {
+  width: 100%;
+  height: 44px;
+  padding: 0 16px;
+  border-radius: 10px;
+  border: 1px solid #EDE2D0;
+  background-color: #FFFFFF;
+  color: #493B34;
   font-size: 14px;
-  font-weight: 420;
-  font-family: 'Arcadia', 'Outfit', sans-serif;
-  padding: 0px 16px;
-  height: 32px;
-  border-radius: 40px;
+  font-weight: 400;
+  line-height: 22px;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+  outline: none;
+}
+
+.ramp-input::placeholder {
+  color: #756B63;
+  opacity: 0.7;
+}
+
+.ramp-input:focus {
+  border-color: #C65A2E;
+  box-shadow: 0 0 0 3px rgba(198, 90, 46, 0.15);
+  background-color: #FFFFFF;
+}
+
+.ramp-input:disabled {
+  background-color: #F8EFEA;
+  color: #756B63;
+  cursor: not-allowed;
+}
+
+/* Primary CTA Button */
+.ramp-btn-primary {
   display: inline-flex;
   align-items: center;
   justify-content: center;
+  height: 44px;
+  padding: 0 20px;
+  border-radius: 10px;
+  background-color: #C65A2E;
+  color: #FFFFFF;
+  font-size: 13px;
+  font-weight: 600;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.15s ease, transform 0.1s ease, box-shadow 0.15s ease;
+  text-decoration: none;
+  white-space: nowrap;
+  box-shadow: 0 1px 3px rgba(198, 90, 46, 0.2);
+}
+
+.ramp-btn-primary:hover {
+  background-color: #B24E25;
+  box-shadow: 0 4px 12px rgba(198, 90, 46, 0.3);
+}
+
+.ramp-btn-primary:active {
+  background-color: #9E431E;
+  transform: translateY(1px);
+}
+
+/* Secondary Button */
+.ramp-btn-secondary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 44px;
+  padding: 0 20px;
+  border-radius: 10px;
+  background-color: #F8EFEA;
+  color: #C65A2E;
+  font-size: 13px;
+  font-weight: 600;
+  border: 1px solid #E8B9A5;
+  cursor: pointer;
+  transition: background-color 0.15s ease, color 0.15s ease;
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.ramp-btn-secondary:hover {
+  background-color: #EDE2D0;
+  color: #B24E25;
+}
+
+/* Outline / Ghost Button */
+.ramp-btn-outline {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 44px;
+  padding: 0 20px;
+  border-radius: 10px;
+  background-color: #FFFFFF;
+  color: #493B34;
+  font-size: 13px;
+  font-weight: 600;
+  border: 1px solid #EDE2D0;
+  cursor: pointer;
+  transition: background-color 0.15s ease, border-color 0.15s ease;
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.ramp-btn-outline:hover {
+  background-color: #F8EFEA;
+  border-color: #C65A2E;
+  color: #C65A2E;
+}
+
+/* Enterprise Dark Button */
+.ramp-btn-dark {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 44px;
+  padding: 0 20px;
+  border-radius: 10px;
+  background-color: #493B34;
+  color: #FFFFFF;
+  font-size: 13px;
+  font-weight: 600;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.15s ease;
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.ramp-btn-dark:hover {
+  background-color: #2D1F18;
+}
+
+/* Card */
+.ramp-card {
+  background-color: #FFFFFF;
+  border: 1px solid #EDE2D0;
+  border-radius: 14px;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.ramp-card:hover {
+  border-color: #E8B9A5;
+  box-shadow: 0 4px 12px rgba(73, 59, 52, 0.06);
+}
+
+/* Featured Card */
+.ramp-card-featured {
+  background-color: #FFFFFF;
+  border: 2px solid #C65A2E;
+  border-radius: 14px;
+  box-shadow: 0 8px 24px rgba(198, 90, 46, 0.12);
+}
+
+/* Badges */
+.ramp-badge-yellow {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 10px;
+  border-radius: 9999px;
+  background-color: #F8EFEA;
+  color: #C65A2E;
+  border: 1px solid #E8B9A5;
+  font-size: 11px;
+  font-weight: 600;
+}
+
+.ramp-badge-blue {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 10px;
+  border-radius: 9999px;
+  background-color: #FCFAF6;
+  color: #493B34;
+  font-size: 11px;
+  font-weight: 600;
+  border: 1px solid #EDE2D0;
+}
+
+.ramp-badge-gray {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 10px;
+  border-radius: 9999px;
+  background-color: #FCFAF6;
+  color: #756B63;
+  font-size: 11px;
+  font-weight: 500;
+  border: 1px solid #EDE2D0;
+}
+
+/* Legacy mappings */
+.apple-card {
+  background-color: #FFFFFF;
+  border: 1px solid #EDE2D0;
+  border-radius: 14px;
+  box-shadow: none;
+}
+.apple-card:hover {
+  box-shadow: 0 4px 12px rgba(73, 59, 52, 0.06);
+  border-color: #E8B9A5;
+}
+.apple-btn-primary, .btn-red-pill {
+  height: 42px;
+  padding: 0 18px;
+  border-radius: 10px;
+  background-color: #C65A2E;
+  color: #FFFFFF;
+  font-size: 13px;
+  font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  text-decoration: none;
+  cursor: pointer;
   transition: all 0.15s ease;
 }
-
-.btn-mercury-secondary:hover {
-  background-color: rgba(156, 180, 232, 0.3);
+.apple-btn-primary:hover, .btn-red-pill:hover {
+  background-color: #B24E25;
 }
-
-/* Dark Banner / Container */
-.bg-dark-banner {
-  background: #171721;
-  color: #EDEDF3;
+.btn-red-outline {
+  height: 42px;
+  padding: 0 18px;
+  border-radius: 10px;
+  background-color: #FFFFFF;
+  color: #C65A2E;
+  border: 1px solid #EDE2D0;
+  font-size: 13px;
+  font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
+  cursor: pointer;
+  transition: all 0.15s ease;
 }
-
-.no-scrollbar::-webkit-scrollbar {
-  display: none;
+.btn-red-outline:hover {
+  background-color: #F8EFEA;
+  border-color: #C65A2E;
 }
-.no-scrollbar {
-  -ms-overflow-style: none;
-  scrollbar-width: none;
-}
-
-/* Mobile Touch & Ergonomics Utilities */
-.touch-callout-none {
-  -webkit-touch-callout: none;
-}
-.tap-highlight-transparent {
-  -webkit-tap-highlight-color: transparent;
-}
-.touch-manipulation {
-  touch-action: manipulation;
-}
-
-/* iOS Safe Area Padding Utilities */
-.pt-safe {
-  padding-top: env(safe-area-inset-top, 0px);
-}
-.pb-safe {
-  padding-bottom: env(safe-area-inset-bottom, 0px);
-}
-.pl-safe {
-  padding-left: env(safe-area-inset-left, 0px);
-}
-.pr-safe {
-  padding-right: env(safe-area-inset-right, 0px);
-}
-.mb-safe {
-  margin-bottom: env(safe-area-inset-bottom, 0px);
-}
-
-

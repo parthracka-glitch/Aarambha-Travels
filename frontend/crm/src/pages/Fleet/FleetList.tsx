@@ -266,7 +266,7 @@ export default function FleetView() {
       {/* MINIMAL HEADER BAR */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-white p-3.5 rounded-xl border border-gray-200 shadow-sm">
         <div className="flex items-center gap-3">
-          <div className="p-2 bg-[#5266EB]/10 text-[#5266EB] rounded-lg">
+          <div className="p-2 bg-[#F8EFEA] text-[#C65A2E] rounded-lg">
             <Bus className="w-4 h-4" />
           </div>
           <div>
@@ -284,7 +284,7 @@ export default function FleetView() {
             onClick={() => setMainSection('buses')}
             className={`px-3 py-1.5 rounded-md text-xs font-semibold transition-all flex items-center gap-1.5 cursor-pointer ${
               mainSection === 'buses'
-                ? 'bg-[#5266EB] text-white shadow-sm'
+                ? 'bg-[#C65A2E] text-white shadow-xs'
                 : 'text-gray-600 hover:text-gray-900'
             }`}
           >
@@ -295,7 +295,7 @@ export default function FleetView() {
             onClick={() => setMainSection('cars')}
             className={`px-3 py-1.5 rounded-md text-xs font-semibold transition-all flex items-center gap-1.5 cursor-pointer ${
               mainSection === 'cars'
-                ? 'bg-[#5266EB] text-white shadow-sm'
+                ? 'bg-[#C65A2E] text-white shadow-xs'
                 : 'text-gray-600 hover:text-gray-900'
             }`}
           >
@@ -324,7 +324,7 @@ export default function FleetView() {
                     onClick={() => setActiveBusTab(tab.id)}
                     className={`px-3.5 py-2 rounded-lg text-xs font-semibold whitespace-nowrap transition-all flex items-center gap-2 cursor-pointer ${
                       isActive
-                        ? 'bg-[#5266EB] text-white shadow-sm'
+                        ? 'bg-[#C65A2E] text-white shadow-xs'
                         : 'bg-transparent text-gray-600 hover:text-gray-900 hover:bg-gray-100'
                     }`}
                   >
@@ -349,7 +349,7 @@ export default function FleetView() {
                 placeholder="Search seating capacity or bus type..."
                 value={searchQuery}
                 onChange={e => setSearchQuery(e.target.value)}
-                className="w-full pl-9 pr-3 py-1.5 rounded-lg border border-gray-200 text-xs focus:outline-none focus:ring-2 focus:ring-[#5266EB]"
+                className="w-full pl-9 pr-3 py-1.5 rounded-lg border border-gray-200 text-xs focus:outline-none focus:ring-2 focus:ring-[#C65A2E]"
               />
             </div>
 
@@ -386,7 +386,7 @@ export default function FleetView() {
                   });
                   setIsBusModalOpen(true);
                 }}
-                className="px-3.5 py-1.5 bg-[#5266EB] hover:bg-[#3E51D4] text-white text-xs font-semibold rounded-lg transition-all shadow-sm flex items-center gap-1.5 cursor-pointer"
+                className="px-3.5 py-1.5 bg-[#C65A2E] hover:bg-[#B24E25] text-white text-xs font-semibold rounded-lg transition-all shadow-xs flex items-center gap-1.5 cursor-pointer"
               >
                 <Plus className="w-3.5 h-3.5" />
                 <span>Add Rate Card</span>
@@ -417,13 +417,13 @@ export default function FleetView() {
                     <div key={rate._id} className="bg-white rounded-xl border border-gray-200 p-3.5 shadow-sm space-y-3">
                       <div className="flex items-center justify-between border-b border-gray-100 pb-2">
                         <div className="flex items-center gap-2">
-                          <Bus className="w-4 h-4 text-[#5266EB]" />
+                          <Bus className="w-4 h-4 text-[#C65A2E]" />
                           <div>
                             <p className="font-bold text-xs text-gray-900">{rate.busType}</p>
                             <p className="text-[10px] text-gray-400">{rate.seats} Seater Capacity</p>
                           </div>
                         </div>
-                        <span className="text-[10px] font-bold bg-blue-50 text-[#5266EB] px-2 py-0.5 rounded-full border border-blue-200">
+                        <span className="text-[10px] font-bold bg-[#F8EFEA] text-[#C65A2E] px-2 py-0.5 rounded-full border border-[#E8B9A5]">
                           {rate.seats} Seats
                         </span>
                       </div>
@@ -445,17 +445,17 @@ export default function FleetView() {
                             )}
                           </div>
 
-                          <div className="bg-blue-50/70 p-2 rounded-lg border border-blue-100">
+                          <div className="bg-[#F8EFEA]/70 p-2 rounded-lg border border-[#E8B9A5]">
                             <span className="text-[10px] text-gray-500 block font-semibold">Mahabaleshwar Rate</span>
                             {isEditingThis ? (
                               <input
                                 type="number"
                                 value={inlineForm.mahabaleshwarRate}
                                 onChange={e => setInlineForm({ ...inlineForm, mahabaleshwarRate: e.target.value })}
-                                className="w-full px-2 py-1 border border-blue-400 rounded text-xs font-bold text-[#5266EB] bg-white"
+                                className="w-full px-2 py-1 border border-[#C65A2E] rounded text-xs font-bold text-[#C65A2E] bg-white"
                               />
                             ) : (
-                              <span className="font-bold text-[#5266EB] text-sm">₹{rate.mahabaleshwarRate ? rate.mahabaleshwarRate.toLocaleString('en-IN') : 0}</span>
+                              <span className="font-bold text-[#C65A2E] text-sm">₹{rate.mahabaleshwarRate ? rate.mahabaleshwarRate.toLocaleString('en-IN') : 0}</span>
                             )}
                           </div>
                         </div>
@@ -464,17 +464,17 @@ export default function FleetView() {
                       {/* URBANIA PER KM MOBILE INPUTS */}
                       {activeBusTab === 'urbania-perkm' && (
                         <div className="grid grid-cols-2 gap-2 text-xs">
-                          <div className="bg-blue-50/70 p-2 rounded-lg border border-blue-100">
+                          <div className="bg-[#F8EFEA]/70 p-2 rounded-lg border border-[#E8B9A5]">
                             <span className="text-[10px] text-gray-500 block font-semibold">Per KM Rate</span>
                             {isEditingThis ? (
                               <input
                                 type="number"
                                 value={inlineForm.acPerKmRate}
                                 onChange={e => setInlineForm({ ...inlineForm, acPerKmRate: e.target.value })}
-                                className="w-full px-2 py-1 border border-blue-400 rounded text-xs font-bold text-[#5266EB] bg-white"
+                                className="w-full px-2 py-1 border border-[#C65A2E] rounded text-xs font-bold text-[#C65A2E] bg-white"
                               />
                             ) : (
-                              <span className="font-bold text-[#5266EB] text-sm">₹{rate.acPerKmRate || 35}/km</span>
+                              <span className="font-bold text-[#C65A2E] text-sm">₹{rate.acPerKmRate || 35}/km</span>
                             )}
                           </div>
 
@@ -497,17 +497,17 @@ export default function FleetView() {
                       {/* PUNE-MUMBAI CABS & BUSES MOBILE INPUTS */}
                       {activeBusTab === 'pune-mumbai' && (
                         <div className="grid grid-cols-2 gap-2 text-xs">
-                          <div className="bg-blue-50/70 p-2 rounded-lg border border-blue-100">
+                          <div className="bg-[#F8EFEA]/70 p-2 rounded-lg border border-[#E8B9A5]">
                             <span className="text-[10px] text-gray-500 block font-semibold">Package Rate</span>
                             {isEditingThis ? (
                               <input
                                 type="number"
                                 value={inlineForm.packageRate}
                                 onChange={e => setInlineForm({ ...inlineForm, packageRate: e.target.value })}
-                                className="w-full px-2 py-1 border border-blue-400 rounded text-xs font-bold text-[#5266EB] bg-white"
+                                className="w-full px-2 py-1 border border-[#C65A2E] rounded text-xs font-bold text-[#C65A2E] bg-white"
                               />
                             ) : (
-                              <span className="font-bold text-[#5266EB] text-sm">₹{rate.packageRate ? rate.packageRate.toLocaleString('en-IN') : 0}</span>
+                              <span className="font-bold text-[#C65A2E] text-sm">₹{rate.packageRate ? rate.packageRate.toLocaleString('en-IN') : 0}</span>
                             )}
                           </div>
 
@@ -573,14 +573,14 @@ export default function FleetView() {
                           <div className="flex items-center gap-2 w-full">
                             <button
                               onClick={() => startInlineEdit(rate)}
-                              className="flex-1 py-2 rounded-lg bg-[#5266EB] hover:bg-[#3E51D4] text-white font-semibold text-xs inline-flex items-center justify-center gap-1 cursor-pointer shadow-sm"
+                              className="flex-1 py-2 rounded-lg bg-[#C65A2E] hover:bg-[#B24E25] text-white font-semibold text-xs inline-flex items-center justify-center gap-1 cursor-pointer shadow-xs"
                             >
                               <Pencil className="w-3.5 h-3.5" />
                               <span>Edit Prices</span>
                             </button>
                             <button
                               onClick={() => handleOpenBusEdit(rate)}
-                              className="p-2 text-gray-500 hover:text-[#5266EB] rounded-lg border border-gray-200 cursor-pointer"
+                              className="p-2 text-gray-500 hover:text-[#C65A2E] rounded-lg border border-gray-200 cursor-pointer"
                               title="Full Details Edit"
                             >
                               <Pencil className="w-3.5 h-3.5" />
@@ -600,7 +600,7 @@ export default function FleetView() {
                   {/* OUTSTATION & ALL RATES MASTER TABLE */}
                   {(activeBusTab === 'all' || activeBusTab === 'outstation-ac' || activeBusTab === 'outstation-nonac') && (
                     <table className="w-full text-left text-xs">
-                      <thead className="bg-[#181824] text-white uppercase text-[10px] tracking-wider font-bold">
+                      <thead className="bg-[#2D1F18] text-white uppercase text-[10px] tracking-wider font-bold">
                         <tr>
                           <th className="py-3 px-4">BUS TYPE & CAPACITY</th>
                           <th className="py-3 px-4">SEATS</th>
@@ -616,12 +616,12 @@ export default function FleetView() {
                           const isEditingThis = inlineEditingId === rate._id;
 
                           return (
-                            <tr key={rate._id} className="hover:bg-gray-50/80 transition-colors">
+                            <tr key={rate._id} className="hover:bg-[#F8EFEA]/60 transition-colors">
                               <td className="py-3 px-4 font-semibold text-gray-900 flex items-center gap-2">
-                                <Bus className="w-4 h-4 text-[#5266EB]" />
+                                <Bus className="w-4 h-4 text-[#C65A2E]" />
                                 <div>
-                                  <p className="font-bold text-xs text-gray-900">{rate.busType}</p>
-                                  <p className="text-[10px] text-gray-400">{rate.seats} Seater Capacity</p>
+                                   <p className="font-bold text-xs text-gray-900">{rate.busType}</p>
+                                   <p className="text-[10px] text-gray-400">{rate.seats} Seater Capacity</p>
                                 </div>
                               </td>
 
@@ -640,13 +640,13 @@ export default function FleetView() {
                                 )}
                               </td>
 
-                              <td className="py-3 px-4 font-bold text-[#5266EB]">
+                              <td className="py-3 px-4 font-bold text-[#C65A2E]">
                                 {isEditingThis ? (
                                   <input
                                     type="number"
                                     value={inlineForm.mahabaleshwarRate}
                                     onChange={e => setInlineForm({ ...inlineForm, mahabaleshwarRate: e.target.value })}
-                                    className="w-24 px-2 py-1 border border-blue-400 rounded text-xs font-bold text-[#5266EB] focus:outline-none"
+                                    className="w-24 px-2 py-1 border border-[#C65A2E] rounded text-xs font-bold text-[#C65A2E] focus:outline-none"
                                   />
                                 ) : (
                                   <span>₹{rate.mahabaleshwarRate ? rate.mahabaleshwarRate.toLocaleString('en-IN') : 0}</span>
@@ -690,7 +690,7 @@ export default function FleetView() {
                                 ) : (
                                   <button
                                     onClick={() => startInlineEdit(rate)}
-                                    className="px-3 py-1 rounded-md bg-[#5266EB] hover:bg-[#3E51D4] text-white font-semibold text-xs inline-flex items-center gap-1 cursor-pointer shadow-sm"
+                                    className="px-3 py-1 rounded-md bg-[#C65A2E] hover:bg-[#B24E25] text-white font-semibold text-xs inline-flex items-center gap-1 cursor-pointer shadow-xs"
                                   >
                                     <Pencil className="w-3 h-3" />
                                     <span>Edit Price</span>
@@ -698,7 +698,7 @@ export default function FleetView() {
                                 )}
                                 <button
                                   onClick={() => handleOpenBusEdit(rate)}
-                                  className="p-1 text-gray-400 hover:text-[#5266EB] rounded hover:bg-gray-100 cursor-pointer"
+                                  className="p-1 text-gray-400 hover:text-[#C65A2E] rounded hover:bg-gray-100 cursor-pointer"
                                 >
                                   <Pencil className="w-3.5 h-3.5" />
                                 </button>
@@ -713,7 +713,7 @@ export default function FleetView() {
                   {/* URBANIA PER KM TABLE */}
                   {activeBusTab === 'urbania-perkm' && (
                     <table className="w-full text-left text-xs">
-                      <thead className="bg-[#181824] text-white uppercase text-[10px] tracking-wider font-bold">
+                      <thead className="bg-[#2D1F18] text-white uppercase text-[10px] tracking-wider font-bold">
                         <tr>
                           <th className="py-3 px-4">VEHICLE TYPE</th>
                           <th className="py-3 px-4">SEATS</th>
@@ -728,9 +728,9 @@ export default function FleetView() {
                           const isEditingThis = inlineEditingId === rate._id;
 
                           return (
-                            <tr key={rate._id} className="hover:bg-gray-50/80 transition-colors">
+                            <tr key={rate._id} className="hover:bg-[#F8EFEA]/60 transition-colors">
                               <td className="py-3 px-4 font-semibold text-gray-900 flex items-center gap-2">
-                                <Bus className="w-4 h-4 text-[#5266EB]" />
+                                <Bus className="w-4 h-4 text-[#C65A2E]" />
                                 <div>
                                   <p className="font-bold text-xs text-gray-900">{rate.busType}</p>
                                   <p className="text-[10px] text-gray-400">{rate.seats} Seats • Pushback AC Urbania</p>
@@ -739,13 +739,13 @@ export default function FleetView() {
 
                               <td className="py-3 px-4 font-semibold text-gray-800">{rate.seats} Seater</td>
 
-                              <td className="py-3 px-4 font-bold text-[#5266EB]">
+                              <td className="py-3 px-4 font-bold text-[#C65A2E]">
                                 {isEditingThis ? (
                                   <input
                                     type="number"
                                     value={inlineForm.acPerKmRate}
                                     onChange={e => setInlineForm({ ...inlineForm, acPerKmRate: e.target.value })}
-                                    className="w-20 px-2 py-1 border border-blue-400 rounded text-xs font-bold text-[#5266EB] focus:outline-none"
+                                    className="w-20 px-2 py-1 border border-[#C65A2E] rounded text-xs font-bold text-[#C65A2E] focus:outline-none"
                                   />
                                 ) : (
                                   <span>₹{rate.acPerKmRate || 35}/km</span>
@@ -789,7 +789,7 @@ export default function FleetView() {
                                 ) : (
                                   <button
                                     onClick={() => startInlineEdit(rate)}
-                                    className="px-3 py-1 rounded-md bg-[#5266EB] hover:bg-[#3E51D4] text-white font-semibold text-xs inline-flex items-center gap-1 cursor-pointer shadow-sm"
+                                    className="px-3 py-1 rounded-md bg-[#C65A2E] hover:bg-[#B24E25] text-white font-semibold text-xs inline-flex items-center gap-1 cursor-pointer shadow-xs"
                                   >
                                     <Pencil className="w-3 h-3" />
                                     <span>Edit Price</span>
@@ -806,7 +806,7 @@ export default function FleetView() {
                   {/* PUNE - MUMBAI CABS & BUSES TABLE */}
                   {activeBusTab === 'pune-mumbai' && (
                     <table className="w-full text-left text-xs">
-                      <thead className="bg-[#181824] text-white uppercase text-[10px] tracking-wider font-bold">
+                      <thead className="bg-[#2D1F18] text-white uppercase text-[10px] tracking-wider font-bold">
                         <tr>
                           <th className="py-3 px-4">PACKAGE / VEHICLE TITLE</th>
                           <th className="py-3 px-4">SEATS</th>
@@ -821,9 +821,9 @@ export default function FleetView() {
                           const isEditingThis = inlineEditingId === rate._id;
 
                           return (
-                            <tr key={rate._id} className="hover:bg-gray-50/80 transition-colors">
+                            <tr key={rate._id} className="hover:bg-[#F8EFEA]/60 transition-colors">
                               <td className="py-3 px-4 font-semibold text-gray-900 flex items-center gap-2">
-                                <Car className="w-4 h-4 text-[#5266EB]" />
+                                <Car className="w-4 h-4 text-[#C65A2E]" />
                                 <div>
                                   <p className="font-bold text-xs text-gray-900">{rate.busType}</p>
                                   <p className="text-[10px] text-gray-400">{rate.seats} Seater Capacity</p>
@@ -832,13 +832,13 @@ export default function FleetView() {
 
                               <td className="py-3 px-4 font-semibold text-gray-800">{rate.seats} Seater</td>
 
-                              <td className="py-3 px-4 font-bold text-[#5266EB]">
+                              <td className="py-3 px-4 font-bold text-[#C65A2E]">
                                 {isEditingThis ? (
                                   <input
                                     type="number"
                                     value={inlineForm.packageRate}
                                     onChange={e => setInlineForm({ ...inlineForm, packageRate: e.target.value })}
-                                    className="w-24 px-2 py-1 border border-blue-400 rounded text-xs font-bold text-[#5266EB] focus:outline-none"
+                                    className="w-24 px-2 py-1 border border-[#C65A2E] rounded text-xs font-bold text-[#C65A2E] focus:outline-none"
                                   />
                                 ) : (
                                   <span>₹{rate.packageRate ? rate.packageRate.toLocaleString('en-IN') : 0}</span>
@@ -871,7 +871,7 @@ export default function FleetView() {
                                 ) : (
                                   <button
                                     onClick={() => startInlineEdit(rate)}
-                                    className="px-3 py-1 rounded-md bg-[#5266EB] text-white font-semibold text-xs inline-flex items-center gap-1"
+                                    className="px-3 py-1 rounded-md bg-[#C65A2E] text-white font-semibold text-xs inline-flex items-center gap-1"
                                   >
                                     <Pencil className="w-3 h-3" />
                                     <span>Edit Price</span>
@@ -888,7 +888,7 @@ export default function FleetView() {
                   {/* LOCAL BUSES TABLE */}
                   {(activeBusTab === 'local-ac' || activeBusTab === 'local-nonac' || activeBusTab === 'urbania-local') && (
                     <table className="w-full text-left text-xs">
-                      <thead className="bg-[#181824] text-white uppercase text-[10px] tracking-wider font-bold">
+                      <thead className="bg-[#2D1F18] text-white uppercase text-[10px] tracking-wider font-bold">
                         <tr>
                           <th className="py-3 px-4">BUS TYPE</th>
                           <th className="py-3 px-4">SEATS</th>
@@ -903,9 +903,9 @@ export default function FleetView() {
                           const isEditingThis = inlineEditingId === rate._id;
 
                           return (
-                            <tr key={rate._id} className="hover:bg-gray-50/80 transition-colors">
+                            <tr key={rate._id} className="hover:bg-[#F8EFEA]/60 transition-colors">
                               <td className="py-3 px-4 font-semibold text-gray-900 flex items-center gap-2">
-                                <Bus className="w-4 h-4 text-[#5266EB]" />
+                                <Bus className="w-4 h-4 text-[#C65A2E]" />
                                 <div>
                                   <p className="font-bold text-xs text-gray-900">{rate.busType}</p>
                                   <p className="text-[10px] text-gray-400">{rate.seats} Seater Capacity</p>
@@ -968,7 +968,7 @@ export default function FleetView() {
                                 ) : (
                                   <button
                                     onClick={() => startInlineEdit(rate)}
-                                    className="px-3 py-1 rounded-md bg-[#5266EB] text-white font-semibold text-xs inline-flex items-center gap-1"
+                                    className="px-3 py-1 rounded-md bg-[#C65A2E] text-white font-semibold text-xs inline-flex items-center gap-1"
                                   >
                                     <Pencil className="w-3 h-3" />
                                     <span>Edit Price</span>
@@ -1058,7 +1058,7 @@ export default function FleetView() {
                         });
                         setIsCarModalOpen(true);
                       }}
-                      className="p-1.5 text-gray-500 hover:text-[#5266EB] hover:bg-blue-50 rounded-lg transition-colors cursor-pointer"
+                      className="p-1.5 text-gray-500 hover:text-[#C65A2E] hover:bg-[#F8EFEA] rounded-lg transition-colors cursor-pointer"
                     >
                       <Pencil className="w-3.5 h-3.5" />
                     </button>
@@ -1085,7 +1085,7 @@ export default function FleetView() {
                 required
                 value={busForm.busType}
                 onChange={e => setBusForm({ ...busForm, busType: e.target.value })}
-                className="w-full p-2 rounded-lg border border-gray-200 focus:ring-2 focus:ring-[#5266EB] focus:outline-none"
+                className="w-full p-2 rounded-lg border border-gray-200 focus:ring-2 focus:ring-[#C65A2E] focus:outline-none"
               />
             </div>
             <div>
@@ -1093,7 +1093,7 @@ export default function FleetView() {
               <select
                 value={busForm.category}
                 onChange={e => setBusForm({ ...busForm, category: e.target.value as any })}
-                className="w-full p-2 rounded-lg border border-gray-200 focus:ring-2 focus:ring-[#5266EB] focus:outline-none bg-white"
+                className="w-full p-2 rounded-lg border border-gray-200 focus:ring-2 focus:ring-[#C65A2E] focus:outline-none bg-white"
               >
                 <option value="outstation_ac">Outstation AC Bus</option>
                 <option value="outstation_nonac">Outstation Non-AC Bus</option>
@@ -1108,7 +1108,7 @@ export default function FleetView() {
 
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
             <div>
-              <label className="font-bold text-[#5266EB] block mb-1">Urbania Per KM Rate (₹)</label>
+              <label className="font-bold text-[#C65A2E] block mb-1">Urbania Per KM Rate (₹)</label>
               <input
                 type="number"
                 value={busForm.acPerKmRate}
@@ -1138,7 +1138,7 @@ export default function FleetView() {
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div>
-              <label className="font-bold text-[#5266EB] block mb-1">Mumbai Rate (₹)</label>
+              <label className="font-bold text-[#C65A2E] block mb-1">Mumbai Rate (₹)</label>
               <input
                 type="number"
                 value={busForm.mumbaiRate}
@@ -1147,7 +1147,7 @@ export default function FleetView() {
               />
             </div>
             <div>
-              <label className="font-bold text-[#5266EB] block mb-1">Mahabaleshwar Rate (₹)</label>
+              <label className="font-bold text-[#C65A2E] block mb-1">Mahabaleshwar Rate (₹)</label>
               <input
                 type="number"
                 value={busForm.mahabaleshwarRate}
@@ -1197,7 +1197,7 @@ export default function FleetView() {
             </button>
             <button
               type="submit"
-              className="px-5 py-2 rounded-lg bg-[#5266EB] hover:bg-[#3E51D4] text-white font-bold shadow-md"
+              className="px-5 py-2 rounded-lg bg-[#C65A2E] hover:bg-[#B24E25] text-white font-bold shadow-xs cursor-pointer"
             >
               Save Rate Card
             </button>

@@ -6,13 +6,13 @@ import { useAuth } from '@/hooks/useAuth';
 export default function StaffView() {
   const { user } = useAuth();
 
-  const currentAdminName = user?.name || 'Kushal Parakh';
+  const currentAdminName = user?.name || 'Aarambha Super Admin';
   const currentAdminEmail = user?.email || 'admin@aarambhatravels.in';
 
   const staffMembers = [
     {
       name: currentAdminName,
-      initials: currentAdminName.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2) || 'KP',
+      initials: currentAdminName.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2) || 'SA',
       email: currentAdminEmail,
       role: 'Super Admin',
       badgeColor: 'green' as const,
@@ -43,8 +43,8 @@ export default function StaffView() {
     <div className="space-y-6 font-sans select-none">
       <div className="flex items-center justify-between">
         <div>
-          <h3 className="text-xl font-extrabold text-[#111827] tracking-tight flex items-center gap-2">
-            <UserCheck className="w-5 h-5 text-indigo-600" /> Staff &amp; Roles
+          <h3 className="text-xl font-extrabold text-[#2D1F18] tracking-tight flex items-center gap-2">
+            <UserCheck className="w-5 h-5 text-[#C65A2E]" /> Staff &amp; Roles
           </h3>
           <p className="text-xs text-gray-500 font-medium mt-0.5">
             Manage system administrators and viewing permissions (2 Super Admins &middot; 1 Viewer).
@@ -67,8 +67,8 @@ export default function StaffView() {
                   <div
                     className={`w-11 h-11 rounded-2xl flex items-center justify-center font-extrabold text-sm shadow-sm ${
                       isSuper
-                        ? 'bg-slate-900 text-white'
-                        : 'bg-amber-100 text-amber-800'
+                        ? 'bg-[#2D1F18] text-[#EDE2D0]'
+                        : 'bg-[#F8EFEA] text-[#C65A2E]'
                     }`}
                   >
                     {staff.initials}

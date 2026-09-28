@@ -112,6 +112,8 @@ export const createTourBookingSchema = z.object({
   notes: notesSchema,
   agreementAccepted: z.boolean().optional(),
   agreement_accepted: z.boolean().optional(),
+  termsAccepted: z.boolean().optional(),
+  terms_accepted: z.boolean().optional(),
 });
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -184,6 +186,8 @@ export const createFleetBookingSchema = z.object({
   notes: notesSchema,
   agreementAccepted: z.boolean().optional(),
   agreement_accepted: z.boolean().optional(),
+  termsAccepted: z.boolean().optional(),
+  terms_accepted: z.boolean().optional(),
 });
 
 // ─────────────────────────────────────────────────────────────────────────────

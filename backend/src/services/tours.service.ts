@@ -4,6 +4,7 @@ import { TourDestination, TourPackage, TourInquiry, TourBooking, TourCustomer } 
 import { recordAudit } from '../middlewares/auth.middleware';
 import { localStore } from './localStore';
 import { realtimeService } from './realtime.service';
+import { NotificationsController } from '../controllers/notifications.controller';
 
 export class ToursService {
   // Destinations
@@ -236,6 +237,13 @@ export class ToursService {
             targetId: String(booking._id),
             details: { bookingCode, deposit, utrNumber: body.utrNumber, termsAccepted: true, termsVersion: body.termsVersion || '2026.1-STANDARD' },
             ipAddress,
+          });
+
+          await NotificationsController.pushNotification({
+            title: `New Tour Booking (${bookingCode})`,
+            message: `${name} booked ${pkg.title || 'Tour'} for ₹${deposit.toLocaleString('en-IN')} advance.`,
+            type: 'booking',
+            link: '/bookings',
           });
 
           return booking;

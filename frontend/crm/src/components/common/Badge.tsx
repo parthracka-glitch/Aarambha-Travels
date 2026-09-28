@@ -7,13 +7,13 @@ interface BadgeProps {
 
 export function Badge({ children, color = 'gray' }: BadgeProps) {
   const colors: Record<string, string> = {
-    green: 'bg-[#EDEDF3] text-[#171721] border-[#AFB2CE]/40',
-    amber: 'bg-[#9CB4E8]/20 text-[#171721] border-[#9CB4E8]/40',
-    red: 'bg-[#5266EB]/15 text-[#5266EB] border-[#5266EB]/30',
-    blue: 'bg-[#5266EB]/10 text-[#5266EB] border-[#5266EB]/30',
-    gray: 'bg-gray-100 text-gray-700 border-gray-200',
-    terracotta: 'bg-[#5266EB]/10 text-[#5266EB] border-[#9CB4E8]/40',
-    sand: 'bg-[#AFB2CE]/20 text-[#171721] border-[#AFB2CE]/40',
+    green: 'bg-emerald-50 text-emerald-800 border-emerald-200',
+    amber: 'bg-amber-50 text-amber-800 border-amber-200',
+    red: 'bg-rose-50 text-rose-800 border-rose-200',
+    blue: 'bg-[#F8EFEA] text-[#C65A2E] border-[#E8B9A5]/60',
+    gray: 'bg-gray-100 text-[#493B34] border-[#EDE2D0]',
+    terracotta: 'bg-[#F8EFEA] text-[#C65A2E] border-[#E8B9A5]',
+    sand: 'bg-[#EDE2D0]/50 text-[#2D1F18] border-[#EDE2D0]',
   };
 
   return (

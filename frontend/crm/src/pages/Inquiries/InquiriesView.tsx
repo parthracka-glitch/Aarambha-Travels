@@ -116,7 +116,7 @@ export default function InquiriesView() {
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <div>
-          <h3 className="text-xl font-extrabold text-[#111827] tracking-tight flex items-center gap-2">
+          <h3 className="text-xl font-extrabold text-[#2D1F18] tracking-tight flex items-center gap-2">
             Inquiries & Lead Funnel
             <span className="text-gray-400 font-normal text-base">({all.length})</span>
           </h3>
@@ -126,14 +126,14 @@ export default function InquiriesView() {
         <div className="flex items-center gap-2">
           <button
             onClick={() => setIsModalOpen(true)}
-            className="flex-1 sm:flex-none px-4 py-2 rounded-full bg-[#111827] hover:bg-black text-white text-xs font-bold flex items-center justify-center gap-1.5 shadow-sm transition-all active:scale-95"
+            className="flex-1 sm:flex-none px-4 py-2 rounded-full bg-[#2D1F18] hover:bg-[#C65A2E] text-white text-xs font-bold flex items-center justify-center gap-1.5 shadow-sm transition-all active:scale-95 cursor-pointer"
           >
             <Plus className="w-4 h-4" /> Add Inquiry
           </button>
 
           <button
             onClick={load}
-            className="p-2 rounded-full border border-gray-200 bg-white text-gray-600 hover:text-black hover:bg-gray-50 text-xs font-semibold flex items-center justify-center shadow-sm transition-all"
+            className="p-2 rounded-full border border-gray-200 bg-white text-gray-600 hover:text-black hover:bg-gray-50 text-xs font-semibold flex items-center justify-center shadow-sm transition-all cursor-pointer"
             title="Refresh Inquiries"
           >
             <RefreshCw className="w-3.5 h-3.5" />
@@ -158,12 +158,12 @@ export default function InquiriesView() {
               <div className="flex items-start justify-between gap-2">
                 <div>
                   <div className="flex items-center gap-2">
-                    <span className={`px-2 py-0.5 rounded-full font-bold text-[10px] ${isFleet ? 'bg-indigo-50 text-indigo-700 border border-indigo-100' : 'bg-emerald-50 text-emerald-700 border border-emerald-100'}`}>
+                    <span className={`px-2 py-0.5 rounded-full font-bold text-[10px] ${isFleet ? 'bg-[#F8EFEA] text-[#C65A2E] border border-[#E8B9A5]' : 'bg-emerald-50 text-emerald-700 border border-emerald-100'}`}>
                       {inq.type}
                     </span>
                     <Badge color={statusColor(inq.status)}>{inq.status}</Badge>
                   </div>
-                  <h4 className="font-bold text-sm text-[#111827] mt-1.5">{name}</h4>
+                  <h4 className="font-bold text-sm text-[#2D1F18] mt-1.5">{name}</h4>
                 </div>
 
                 <button
@@ -200,7 +200,7 @@ export default function InquiriesView() {
                   <>
                     <a
                       href={`tel:${phone}`}
-                      className="flex-1 py-2 rounded-xl bg-blue-50 hover:bg-blue-100 text-blue-700 text-xs font-bold flex items-center justify-center gap-1.5 transition-all active:scale-95 border border-blue-200/60"
+                      className="flex-1 py-2 rounded-xl bg-[#F8EFEA] hover:bg-[#EDE2D0] text-[#C65A2E] text-xs font-bold flex items-center justify-center gap-1.5 transition-all active:scale-95 border border-[#E8B9A5]"
                     >
                       <Phone className="w-3.5 h-3.5" /> Call
                     </a>
@@ -229,7 +229,7 @@ export default function InquiriesView() {
       {/* 💻 DESKTOP TABLE VIEW (>= 768px) */}
       <div className="hidden md:block bg-white rounded-[24px] border border-gray-100 overflow-hidden shadow-aether-card">
         <table className="w-full text-xs">
-          <thead className="bg-gray-50 text-left text-gray-500 font-bold uppercase tracking-wider border-b border-gray-100">
+          <thead className="bg-[#2D1F18] text-left text-[#EDE2D0] font-bold uppercase tracking-wider">
             <tr>
               <th className="px-5 py-3.5">Name</th>
               <th className="px-5 py-3.5">Email</th>
@@ -248,7 +248,7 @@ export default function InquiriesView() {
 
               return (
                 <tr key={i} className="hover:bg-gray-50/80 transition-colors">
-                  <td className="px-5 py-4 font-bold text-[#111827]">{inq.customerName || inq.customer_name}</td>
+                  <td className="px-5 py-4 font-bold text-[#2D1F18]">{inq.customerName || inq.customer_name}</td>
                   <td className="px-5 py-4 text-gray-600">{inq.customerEmail || inq.customer_email}</td>
                   <td className="px-5 py-4 text-gray-600 font-medium">
                     <div className="flex items-center gap-2">
@@ -267,7 +267,7 @@ export default function InquiriesView() {
                     </div>
                   </td>
                   <td className="px-5 py-4">
-                    <span className={`px-2.5 py-0.5 rounded-full font-bold text-[10px] ${isFleet ? 'bg-indigo-50 text-indigo-700' : 'bg-emerald-50 text-emerald-700'}`}>
+                    <span className={`px-2.5 py-0.5 rounded-full font-bold text-[10px] ${isFleet ? 'bg-[#F8EFEA] text-[#C65A2E]' : 'bg-emerald-50 text-emerald-700'}`}>
                       {inq.type}
                     </span>
                   </td>
@@ -306,7 +306,7 @@ export default function InquiriesView() {
               placeholder="e.g. Ananya Roy"
               value={formData.customerName}
               onChange={(e) => setFormData({ ...formData, customerName: e.target.value })}
-              className="w-full px-3.5 py-2.5 rounded-lg border border-gray-200 focus:outline-none focus:ring-2 focus:ring-black text-xs"
+              className="w-full px-3.5 py-2.5 rounded-lg border border-gray-200 focus:outline-none focus:ring-2 focus:ring-[#C65A2E] text-xs"
             />
           </div>
 
@@ -319,7 +319,7 @@ export default function InquiriesView() {
                 placeholder="ananya@example.com"
                 value={formData.customerEmail}
                 onChange={(e) => setFormData({ ...formData, customerEmail: e.target.value })}
-                className="w-full px-3.5 py-2.5 rounded-lg border border-gray-200 focus:outline-none focus:ring-2 focus:ring-black text-xs"
+                className="w-full px-3.5 py-2.5 rounded-lg border border-gray-200 focus:outline-none focus:ring-2 focus:ring-[#C65A2E] text-xs"
               />
             </div>
 
@@ -331,7 +331,7 @@ export default function InquiriesView() {
                 placeholder="+91 98765 43210"
                 value={formData.customerPhone}
                 onChange={(e) => setFormData({ ...formData, customerPhone: e.target.value })}
-                className="w-full px-3.5 py-2.5 rounded-lg border border-gray-200 focus:outline-none focus:ring-2 focus:ring-black text-xs"
+                className="w-full px-3.5 py-2.5 rounded-lg border border-gray-200 focus:outline-none focus:ring-2 focus:ring-[#C65A2E] text-xs"
               />
             </div>
           </div>
@@ -342,7 +342,7 @@ export default function InquiriesView() {
               <select
                 value={formData.type}
                 onChange={(e) => setFormData({ ...formData, type: e.target.value })}
-                className="w-full px-3.5 py-2.5 rounded-lg border border-gray-200 focus:outline-none focus:ring-2 focus:ring-black text-xs font-semibold"
+                className="w-full px-3.5 py-2.5 rounded-lg border border-gray-200 focus:outline-none focus:ring-2 focus:ring-[#C65A2E] text-xs font-semibold"
               >
                 <option value="Tours">Tours & Packages</option>
                 <option value="Fleet">Self-Drive Rentals (Fleet)</option>
@@ -354,7 +354,7 @@ export default function InquiriesView() {
               <select
                 value={formData.status}
                 onChange={(e) => setFormData({ ...formData, status: e.target.value })}
-                className="w-full px-3.5 py-2.5 rounded-lg border border-gray-200 focus:outline-none focus:ring-2 focus:ring-black text-xs font-semibold"
+                className="w-full px-3.5 py-2.5 rounded-lg border border-gray-200 focus:outline-none focus:ring-2 focus:ring-[#C65A2E] text-xs font-semibold"
               >
                 <option value="New">New</option>
                 <option value="Contacted">Contacted</option>
@@ -372,7 +372,7 @@ export default function InquiriesView() {
                 type="date"
                 value={formData.travelDate}
                 onChange={(e) => setFormData({ ...formData, travelDate: e.target.value })}
-                className="w-full px-3.5 py-2.5 rounded-lg border border-gray-200 focus:outline-none focus:ring-2 focus:ring-black text-xs"
+                className="w-full px-3.5 py-2.5 rounded-lg border border-gray-200 focus:outline-none focus:ring-2 focus:ring-[#C65A2E] text-xs"
               />
             </div>
 
@@ -383,7 +383,7 @@ export default function InquiriesView() {
                 min="1"
                 value={formData.paxCount}
                 onChange={(e) => setFormData({ ...formData, paxCount: Number(e.target.value) })}
-                className="w-full px-3.5 py-2.5 rounded-lg border border-gray-200 focus:outline-none focus:ring-2 focus:ring-black text-xs"
+                className="w-full px-3.5 py-2.5 rounded-lg border border-gray-200 focus:outline-none focus:ring-2 focus:ring-[#C65A2E] text-xs"
               />
             </div>
           </div>
@@ -395,7 +395,7 @@ export default function InquiriesView() {
               placeholder="e.g. Interested in 5-day Himachal tour package or SUV rental..."
               value={formData.notes}
               onChange={(e) => setFormData({ ...formData, notes: e.target.value })}
-              className="w-full px-3.5 py-2.5 rounded-lg border border-gray-200 focus:outline-none focus:ring-2 focus:ring-black text-xs"
+              className="w-full px-3.5 py-2.5 rounded-lg border border-gray-200 focus:outline-none focus:ring-2 focus:ring-[#C65A2E] text-xs"
             />
           </div>
 
@@ -403,14 +403,14 @@ export default function InquiriesView() {
             <button
               type="button"
               onClick={() => setIsModalOpen(false)}
-              className="px-4 py-2 rounded-lg border border-gray-200 hover:bg-gray-50 text-gray-700 font-semibold text-xs"
+              className="px-4 py-2 rounded-lg border border-gray-200 hover:bg-gray-50 text-gray-700 font-semibold text-xs cursor-pointer"
             >
               Cancel
             </button>
             <button
               type="submit"
               disabled={submitting}
-              className="px-5 py-2 rounded-lg bg-[#111827] hover:bg-black text-white font-bold text-xs shadow-sm transition-all disabled:opacity-50"
+              className="px-5 py-2 rounded-lg bg-[#2D1F18] hover:bg-[#C65A2E] text-white font-bold text-xs shadow-sm transition-all disabled:opacity-50 cursor-pointer"
             >
               {submitting ? 'Saving...' : 'Save Inquiry'}
             </button>

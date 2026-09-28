@@ -1,23 +1,22 @@
 version: '3.8'
 
 services:
-  postgres:
-    image: postgres:16-alpine
-    container_name: aarambha_postgres
+  mongodb:
+    image: mongo:7.0-jammy
+    container_name: aarambha_mongodb
+    restart: unless-stopped
     environment:
-      POSTGRES_USER: aarambha_user
-      POSTGRES_PASSWORD: aarambha_password
-      POSTGRES_DB: aarambha_db
+      MONGO_INITDB_DATABASE: aarambha_db
     ports:
-      - "5432:5432"
+      - "27017:27017"
     volumes:
-      - postgres_data:/var/lib/postgresql/data
-      - ./scripts/init-schemas.sql:/docker-entrypoint-initdb.d/init-schemas.sql
+      - mongodb_data:/data/db
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U aarambha_user -d aarambha_db"]
-      interval: 5s
+      test: ["CMD", "mongosh", "--eval", "db.adminCommand('ping')"]
+      interval: 10s
       timeout: 5s
       retries: 5
 
 volumes:
-  postgres_data:
+  mongodb_data:
+    driver: local

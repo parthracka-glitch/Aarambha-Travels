@@ -109,7 +109,7 @@ const AuditLogSchema = new Schema<IAuditLog>({
   targetId: { type: String },
   details: { type: Schema.Types.Mixed, default: {} },
   ipAddress: { type: String },
-  createdAt: { type: Date, default: Date.now },
+  createdAt: { type: Date, default: Date.now, expires: 7776000 }, // 90 days auto-retention TTL
 });
 
 export const AuditLog = mongoose.model<IAuditLog>('AuditLog', AuditLogSchema);
@@ -193,3 +193,25 @@ const PromoCodeSchema = new Schema<IPromoCode>({
 });
 
 export const PromoCode = mongoose.model<IPromoCode>('PromoCode', PromoCodeSchema);
+
+// ─── Notification ──────────────────────────────────────
+export interface INotification extends Document {
+  title: string;
+  message: string;
+  type: 'booking' | 'payment' | 'inquiry' | 'system';
+  isRead: boolean;
+  link?: string;
+  createdAt: Date;
+}
+
+const NotificationSchema = new Schema<INotification>({
+  title: { type: String, required: true },
+  message: { type: String, required: true },
+  type: { type: String, enum: ['booking', 'payment', 'inquiry', 'system'], default: 'system' },
+  isRead: { type: Boolean, default: false },
+  link: { type: String },
+  createdAt: { type: Date, default: Date.now, expires: 2592000 }, // 30-day retention TTL
+});
+
+export const Notification = mongoose.model<INotification>('Notification', NotificationSchema);
+
