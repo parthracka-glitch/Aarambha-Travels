@@ -22,6 +22,7 @@ import {
 import Navbar from '@/components/layout/Navbar';
 import Footer from '@/components/layout/Footer';
 import CompanyLocationSection from '@/components/home/CompanyLocationSection';
+import TripFareCalculator from '@/components/calculator/TripFareCalculator';
 import { FLEET_VEHICLES, CarVehicle } from '@/constants/carsData';
 import {
   LOCAL_AC_RATES,
@@ -167,6 +168,15 @@ export default function BusAndCarRentalsLandingPage() {
               <span className="text-[11px] text-[#756B63]">Pune Dispatch</span>
             </div>
           </div>
+        </div>
+      </section>
+
+      {/* ─────────────────────────────────────────────────────────────
+          1.5 INTERACTIVE OUTSTATION FARE & DISTANCE CALCULATOR
+          ───────────────────────────────────────────────────────────── */}
+      <section id="fare-calculator" className="py-12 bg-[#FCFAF6] border-b border-[#EDE2D0]">
+        <div className="max-w-7xl mx-auto px-6 lg:px-12">
+          <TripFareCalculator />
         </div>
       </section>
 

@@ -28,6 +28,7 @@ export default function BookingsView() {
   const [isInvoiceOpen, setIsInvoiceOpen] = useState(false);
   const [isOfflineModalOpen, setIsOfflineModalOpen] = useState(false);
   const [whatsAppModalBooking, setWhatsAppModalBooking] = useState<any | null>(null);
+  const [whatsAppDefaultTemplateId, setWhatsAppDefaultTemplateId] = useState<string | undefined>(undefined);
   const [viewingScreenshot, setViewingScreenshot] = useState<{ url: string; bookingCode: string; customerName: string; utrNumber?: string; deposit?: number; bookingObj?: any } | null>(null);
 
   // ── Filters ──────────────────────────────────────────────────────────────
@@ -689,13 +690,56 @@ export default function BookingsView() {
                       </a>
                       <button
                         type="button"
-                        onClick={() => setWhatsAppModalBooking(b)}
+                        onClick={() => {
+                          setWhatsAppDefaultTemplateId(undefined);
+                          setWhatsAppModalBooking(b);
+                        }}
                         className="px-2 py-1 rounded-lg bg-emerald-50 hover:bg-emerald-100 text-emerald-700 font-bold flex items-center gap-1 text-[10px] border border-emerald-200 transition-colors cursor-pointer"
                         title="Share / Dispatch via WhatsApp"
                       >
                         <MessageSquare className="w-3 h-3" /> WhatsApp
                       </button>
                     </div>
+                  </div>
+                )}
+
+                {/* 1-Click WhatsApp Quick-Dispatch Bar */}
+                {phone && (
+                  <div className="flex items-center gap-1 pt-1.5 border-t border-gray-200/60 overflow-x-auto no-scrollbar">
+                    <span className="text-[9px] uppercase font-bold text-gray-400 whitespace-nowrap mr-0.5">Quick Dispatch:</span>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setWhatsAppDefaultTemplateId(isFleet ? 'self_drive_confirmation' : 'tour_confirmation');
+                        setWhatsAppModalBooking(b);
+                      }}
+                      className="px-2 py-0.5 rounded-md bg-emerald-100/70 hover:bg-emerald-200/80 text-emerald-800 text-[10px] font-bold border border-emerald-300 flex items-center gap-1 whitespace-nowrap transition-all cursor-pointer"
+                      title="1-Click Dispatch Booking Voucher"
+                    >
+                      <span>🎫 Voucher</span>
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setWhatsAppDefaultTemplateId(isFleet ? 'fleet_vehicle_handover' : 'tour_driver_allotment');
+                        setWhatsAppModalBooking(b);
+                      }}
+                      className="px-2 py-0.5 rounded-md bg-blue-100/70 hover:bg-blue-200/80 text-blue-800 text-[10px] font-bold border border-blue-300 flex items-center gap-1 whitespace-nowrap transition-all cursor-pointer"
+                      title="1-Click Dispatch Driver & Vehicle Allocation"
+                    >
+                      <span>🚐 Driver/Cab</span>
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setWhatsAppDefaultTemplateId(isFleet ? 'fleet_balance_due' : 'tour_balance_reminder');
+                        setWhatsAppModalBooking(b);
+                      }}
+                      className="px-2 py-0.5 rounded-md bg-amber-100/70 hover:bg-amber-200/80 text-amber-900 text-[10px] font-bold border border-amber-300 flex items-center gap-1 whitespace-nowrap transition-all cursor-pointer"
+                      title="1-Click Dispatch Balance Payment Reminder"
+                    >
+                      <span>💳 Payment Due</span>
+                    </button>
                   </div>
                 )}
               </div>
@@ -1511,8 +1555,12 @@ export default function BookingsView() {
       {/* WhatsApp Interactive Dispatch & Reminder Modal */}
       <WhatsAppBookingModal
         isOpen={Boolean(whatsAppModalBooking)}
-        onClose={() => setWhatsAppModalBooking(null)}
+        onClose={() => {
+          setWhatsAppModalBooking(null);
+          setWhatsAppDefaultTemplateId(undefined);
+        }}
         booking={whatsAppModalBooking}
+        defaultTemplateId={whatsAppDefaultTemplateId}
       />
 
     </div>

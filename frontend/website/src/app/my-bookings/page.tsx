@@ -2,10 +2,11 @@
 
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { Download, Calendar, User, Car, Compass, ArrowLeft, BookOpen, Clock, CheckCircle, ShieldCheck } from 'lucide-react';
+import { Download, Calendar, User, Car, Compass, ArrowLeft, BookOpen, Clock, CheckCircle, ShieldCheck, QrCode } from 'lucide-react';
 import Navbar from '@/components/layout/Navbar';
 import Footer from '@/components/layout/Footer';
 import { generateInvoicePDF, getNextInvoiceNumber, type InvoiceData } from '@/utils/generateInvoicePDF';
+import { openBoardingPassPDF } from '@/utils/generateBoardingPassPDF';
 import { apiFetch } from '@/services/api-client';
 
 interface LocalBooking {
@@ -164,6 +165,32 @@ export default function MyBookingsPage() {
     generateInvoicePDF(invoiceData);
   };
 
+  const handleDownloadBoardingPass = (b: LocalBooking) => {
+    openBoardingPassPDF({
+      bookingId: b.id,
+      customerName: b.customerName || user?.name || 'Valued Pilgrim',
+      customerPhone: b.phone || '+91 90676 17451',
+      customerEmail: b.email || user?.email || '',
+      serviceType: b.type === 'car' ? 'car' : 'tour',
+      title: b.title,
+      startDate: formatDate(b.startDate),
+      endDate: b.endDate ? formatDate(b.endDate) : undefined,
+      reportingTime: '06:00 AM (15m Prior to Departure)',
+      pickupLocation: 'Pune Swargate / Wakad Hub',
+      passengersCount: b.guestsCount || 1,
+      assignedVehicle: b.type === 'car' ? b.title : 'Force Urbania 17S Luxury Coach',
+      vehicleRegistration: 'MH-12 Commercial Tourist Fleet',
+      driverName: 'Assigned Senior Chauffeur',
+      driverPhone: '+91 90676 17451',
+      totalAmount: b.totalPrice,
+      depositPaid: b.depositPaid,
+      balanceAmount: Math.max(0, b.totalPrice - b.depositPaid),
+      paymentStatus: b.status === 'Confirmed' ? 'CONFIRMED' : 'VERIFICATION PENDING',
+      utrNumber: b.utrNumber,
+      bookingDate: formatDate(b.createdAt)
+    });
+  };
+
   if (!mounted) return null;
 
   return (
@@ -306,18 +333,28 @@ export default function MyBookingsPage() {
                       </div>
                     </div>
 
-                    <div className="flex items-center justify-between pt-2">
+                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pt-2 border-t border-[#EDE2D0]/60">
                       <span className="text-[10.5px] text-[#756B63]">
                         Booked on {formatDate(b.createdAt)}
                       </span>
 
-                      <button
-                        onClick={() => handleDownloadInvoice(b)}
-                        className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-[#F8EFEA] hover:bg-[#E8B9A5]/40 text-[#C65A2E] text-xs font-semibold rounded-lg border border-[#E8B9A5]/50 transition-all cursor-pointer shadow-2xs"
-                      >
-                        <Download className="w-3.5 h-3.5" />
-                        <span>Download Tax Invoice (PDF)</span>
-                      </button>
+                      <div className="flex items-center gap-2">
+                        <button
+                          onClick={() => handleDownloadBoardingPass(b)}
+                          className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-[#C65A2E] hover:bg-[#B24E25] text-white text-xs font-semibold rounded-lg shadow-2xs transition-all cursor-pointer"
+                        >
+                          <QrCode className="w-3.5 h-3.5" />
+                          <span>Boarding Pass &amp; Voucher (PDF)</span>
+                        </button>
+
+                        <button
+                          onClick={() => handleDownloadInvoice(b)}
+                          className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-[#F8EFEA] hover:bg-[#E8B9A5]/40 text-[#C65A2E] text-xs font-semibold rounded-lg border border-[#E8B9A5]/50 transition-all cursor-pointer shadow-2xs"
+                        >
+                          <Download className="w-3.5 h-3.5" />
+                          <span>Tax Invoice (PDF)</span>
+                        </button>
+                      </div>
                     </div>
 
                   </div>
