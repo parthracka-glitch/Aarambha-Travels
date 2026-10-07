@@ -139,7 +139,7 @@ export const seedDatabase = async (): Promise<void> => {
         state: 'Rajasthan',
         country: 'India',
         description: 'Sacred Khatu Shyam Baba, miraculous Sanwaliya Seth Mandir, and holy Salasar Balaji Dham.',
-        imageUrl: 'https://images.unsplash.com/photo-1545126178-862d2ad693b7?q=80&w=800&auto=format&fit=crop',
+        imageUrl: '/images/tours/khatu_shyam_salasar_tour.jpg',
       });
     }
 
@@ -255,7 +255,7 @@ export const seedDatabase = async (): Promise<void> => {
         destinationId: destRajasthan._id,
         destination: 'Rajasthan & Madhya Pradesh',
         state: 'Rajasthan & Maharashtra',
-        images: ['https://images.unsplash.com/photo-1545126178-862d2ad693b7?q=80&w=800&auto=format&fit=crop'],
+        images: ['/images/tours/khatu_shyam_salasar_tour.jpg'],
         sites: [
           'Khatu Shyam Baba (Rajasthan)',
           'Shri Sanwaliya Seth Mandir (Mandphiya)',
@@ -315,7 +315,7 @@ export const seedDatabase = async (): Promise<void> => {
         destinationId: destUjjain._id,
         destination: 'Ujjain & Omkareshwar',
         state: 'Madhya Pradesh & Maharashtra',
-        images: ['https://images.unsplash.com/photo-1609766857041-ed402ea8069a?q=80&w=800&auto=format&fit=crop'],
+        images: ['/images/tours/mumbai_ujjain_omkareshwar_tour.jpg'],
         sites: [
           'Ujjain Mahakaleshwar Jyotirlinga',
           'Shri Kaal Bhairav Mandir (Ujjain)',

@@ -129,7 +129,7 @@ const FALLBACK_PACKAGES = [
     datesLabel: '23 Oct 2026 – 26 Oct 2026 (Pune to Pune)',
     destination: 'Rajasthan & Madhya Pradesh',
     state: 'Rajasthan & Maharashtra',
-    images: ['https://images.unsplash.com/photo-1545126178-862d2ad693b7?q=80&w=800&auto=format&fit=crop'],
+    images: ['/images/tours/khatu_shyam_salasar_tour.jpg'],
     sites: [
       'Khatu Shyam Baba (Rajasthan)',
       'Shri Sanwaliya Seth Mandir (Mandphiya)',
@@ -192,7 +192,7 @@ const FALLBACK_PACKAGES = [
     datesLabel: '16 Oct 2026 – 19 Oct 2026 (Mumbai to Mumbai)',
     destination: 'Ujjain & Omkareshwar',
     state: 'Madhya Pradesh & Maharashtra',
-    images: ['https://images.unsplash.com/photo-1609766857041-ed402ea8069a?q=80&w=800&auto=format&fit=crop'],
+    images: ['/images/tours/mumbai_ujjain_omkareshwar_tour.jpg'],
     sites: [
       'Ujjain Mahakaleshwar Jyotirlinga',
       'Shri Kaal Bhairav Mandir (Ujjain)',

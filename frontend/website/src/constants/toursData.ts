@@ -290,11 +290,11 @@ export const TOUR_PACKAGES: TourPackage[] = [
     rating: 4.9,
     reviewsCount: 184,
     featured: true,
-    image: 'https://images.unsplash.com/photo-1545126178-862d2ad693b7?q=80&w=1000&auto=format&fit=crop',
+    image: '/images/tours/khatu_shyam_salasar_tour.jpg',
     gallery: [
+      '/images/tours/khatu_shyam_salasar_tour.jpg',
       'https://images.unsplash.com/photo-1545126178-862d2ad693b7?q=80&w=1000&auto=format&fit=crop',
       'https://images.unsplash.com/photo-1600100397608-f010f443b74a?q=80&w=1000&auto=format&fit=crop',
-      'https://images.unsplash.com/photo-1621847468516-1ed5d0df56fe?q=80&w=1000&auto=format&fit=crop',
     ],
     sites: [
       'Khatu Shyam Baba (Rajasthan)',
@@ -382,11 +382,11 @@ export const TOUR_PACKAGES: TourPackage[] = [
     rating: 4.9,
     reviewsCount: 162,
     featured: true,
-    image: 'https://images.unsplash.com/photo-1609766857041-ed402ea8069a?q=80&w=1000&auto=format&fit=crop',
+    image: '/images/tours/mumbai_ujjain_omkareshwar_tour.jpg',
     gallery: [
+      '/images/tours/mumbai_ujjain_omkareshwar_tour.jpg',
       'https://images.unsplash.com/photo-1609766857041-ed402ea8069a?q=80&w=1000&auto=format&fit=crop',
       'https://images.unsplash.com/photo-1596707328905-234b3e811c75?q=80&w=1000&auto=format&fit=crop',
-      'https://images.unsplash.com/photo-1548013146-72479768bada?q=80&w=1000&auto=format&fit=crop',
     ],
     sites: [
       'Ujjain Mahakaleshwar Jyotirlinga',
