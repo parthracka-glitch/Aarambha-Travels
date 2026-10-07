@@ -1,9 +1,23 @@
-import { v2 as cloudinary, UploadApiResponse } from 'cloudinary';
 import dotenv from 'dotenv';
+import type { UploadApiResponse } from 'cloudinary';
 
 dotenv.config();
 
-// Configure Cloudinary from discrete variables or CLOUDINARY_URL
+// Sanitize CLOUDINARY_URL before loading cloudinary to prevent crashes
+// if the environment variable is empty, whitespace, or placeholder text.
+if (process.env.CLOUDINARY_URL) {
+  const trimmed = process.env.CLOUDINARY_URL.trim();
+  if (!trimmed || !trimmed.startsWith('cloudinary://')) {
+    console.warn('[Cloudinary] Ignoring invalid or placeholder CLOUDINARY_URL:', process.env.CLOUDINARY_URL);
+    delete process.env.CLOUDINARY_URL;
+  }
+}
+
+// Require cloudinary dynamically after environment sanitization
+// eslint-disable-next-line @typescript-eslint/no-var-requires
+const cloudinary = require('cloudinary').v2;
+
+// Configure Cloudinary
 if (process.env.CLOUDINARY_URL) {
   cloudinary.config({
     cloudinary_url: process.env.CLOUDINARY_URL,
@@ -46,7 +60,7 @@ export const uploadBufferToCloudinary = (
           { fetch_format: 'auto' }
         ],
       },
-      (error, result) => {
+      (error: any, result: UploadApiResponse) => {
         if (error || !result) {
           return reject(error || new Error('Upload failed with empty result'));
         }

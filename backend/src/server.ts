@@ -12,6 +12,14 @@ import { requestLogger, suspiciousTrafficDetector } from './middlewares/logger.m
 
 dotenv.config();
 
+// Sanitize CLOUDINARY_URL so an empty or malformed env variable on cloud platforms never crashes the server
+if (process.env.CLOUDINARY_URL) {
+  const trimmed = process.env.CLOUDINARY_URL.trim();
+  if (!trimmed || !trimmed.startsWith('cloudinary://')) {
+    delete process.env.CLOUDINARY_URL;
+  }
+}
+
 const app = express();
 const PORT = process.env.PORT || 8000;
 
