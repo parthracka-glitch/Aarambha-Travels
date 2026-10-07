@@ -155,11 +155,11 @@ export function NotificationDropdown({ onClose }: NotificationDropdownProps) {
           if (!isOpen) fetchNotifications();
         }}
         aria-label="Open notifications"
-        className="w-8 h-8 rounded-full bg-white border border-[#EDE2D0] flex items-center justify-center text-[#2D1F18] hover:text-[#C65A2E] hover:border-[#C65A2E]/50 shadow-xs transition-all relative shrink-0 cursor-pointer"
+        className="w-8 h-8 rounded-lg bg-white border border-gray-200 flex items-center justify-center text-gray-600 hover:text-gray-900 hover:bg-gray-50 shadow-2xs transition-all relative shrink-0 cursor-pointer"
       >
-        <Bell className="w-4 h-4" />
+        <Bell className="w-3.5 h-3.5" />
         {unreadCount > 0 && (
-          <span className="absolute -top-1 -right-1 min-w-[18px] h-[18px] px-1 bg-[#C65A2E] text-white text-[10px] font-bold rounded-full flex items-center justify-center border-2 border-white shadow-xs">
+          <span className="absolute -top-1 -right-1 min-w-[16px] h-[16px] px-1 bg-gray-900 text-white text-[9px] font-semibold rounded-full flex items-center justify-center border border-white">
             {unreadCount > 99 ? '99+' : unreadCount}
           </span>
         )}
@@ -167,15 +167,15 @@ export function NotificationDropdown({ onClose }: NotificationDropdownProps) {
 
       {/* Dropdown Panel */}
       {isOpen && (
-        <div className="absolute right-0 mt-2 w-80 sm:w-96 bg-white rounded-xl shadow-xl border border-[#EDE2D0] z-50 overflow-hidden animate-in fade-in slide-in-from-top-2 duration-150">
+        <div className="absolute right-0 mt-2 w-80 sm:w-96 bg-white rounded-xl shadow-lg border border-gray-200 z-50 overflow-hidden animate-in fade-in slide-in-from-top-1 duration-150">
           {/* Header */}
-          <div className="px-4 py-3 bg-[#F8EFEA] border-b border-[#EDE2D0] flex items-center justify-between">
+          <div className="px-4 py-2.5 bg-gray-50/80 border-b border-gray-200 flex items-center justify-between">
             <div className="flex items-center gap-2">
-              <span className="font-bold text-xs text-[#2D1F18] uppercase tracking-wider">
+              <span className="font-semibold text-xs text-gray-900">
                 Notifications
               </span>
               {unreadCount > 0 && (
-                <span className="bg-[#C65A2E] text-white text-[10px] font-bold px-2 py-0.5 rounded-full">
+                <span className="bg-gray-200 text-gray-800 text-[10px] font-medium px-2 py-0.5 rounded-full">
                   {unreadCount} unread
                 </span>
               )}

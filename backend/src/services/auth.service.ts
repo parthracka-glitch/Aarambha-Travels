@@ -242,6 +242,122 @@ export class AuthService {
   }
 
   /**
+   * Google OAuth / Google Identity Services Login & Registration
+   */
+  static async googleAuth(credential: string, ipAddress?: string) {
+    let googleUser: { email: string; name: string; picture?: string; sub: string };
+
+    // 1. Verify credential token with Google OAuth API (supports id_token and access_token)
+    try {
+      let googleRes = await fetch(`https://oauth2.googleapis.com/tokeninfo?id_token=${encodeURIComponent(credential)}`);
+      let data: any = null;
+
+      if (googleRes.ok) {
+        data = await googleRes.json();
+      } else {
+        // Fallback: check if token is an OAuth2 access_token via userinfo endpoint
+        const userInfoRes = await fetch('https://www.googleapis.com/oauth2/v3/userinfo', {
+          headers: { Authorization: `Bearer ${credential}` },
+        });
+
+        if (userInfoRes.ok) {
+          data = await userInfoRes.json();
+        } else {
+          // Fallback 2: check if tokeninfo works with access_token
+          const tokenInfoRes = await fetch(`https://oauth2.googleapis.com/tokeninfo?access_token=${encodeURIComponent(credential)}`);
+          if (tokenInfoRes.ok) {
+            data = await tokenInfoRes.json();
+          } else {
+            throw new Error('Invalid or expired Google token');
+          }
+        }
+      }
+
+      if (!data || !data.email) {
+        throw new Error('Google token did not provide a verified email address');
+      }
+
+      googleUser = {
+        email: data.email.toLowerCase(),
+        name: data.name || data.email.split('@')[0],
+        picture: data.picture,
+        sub: data.sub,
+      };
+    } catch (err: any) {
+      const error: any = new Error(err.message || 'Google authentication failed');
+      error.statusCode = 401;
+      throw error;
+    }
+
+    const cleanEmail = googleUser.email.trim().toLowerCase();
+
+    // 2. Check if user already exists
+    let user = await User.findOne({ email: cleanEmail });
+
+    if (!user) {
+      // 3. Create new user with verified status
+      const randomPass = crypto.randomBytes(32).toString('hex');
+      const hashed = await hashPassword(randomPass);
+      user = await User.create({
+        name: googleUser.name,
+        email: cleanEmail,
+        hashedPassword: hashed,
+        isEmailVerified: true,
+        role: 'customer',
+        createdAt: new Date(),
+      });
+
+      await recordAudit({
+        actorName: user.name,
+        action: 'USER_REGISTER_GOOGLE',
+        targetType: 'user',
+        targetId: String(user._id),
+        ipAddress,
+        details: { email: cleanEmail },
+      });
+    } else {
+      // If user exists, mark email verified if not already
+      if (!user.isEmailVerified) {
+        user.isEmailVerified = true;
+      }
+      user.lastLoginAt = new Date();
+      user.failedLoginAttempts = 0;
+      await user.save();
+    }
+
+    // 4. Create session token
+    const token = createToken({
+      sub: String(user._id),
+      email: user.email,
+      name: user.name,
+      role: user.role || 'customer',
+      tokenVersion: user.tokenVersion || 0,
+      userType: 'customer',
+    });
+
+    await recordAudit({
+      actorName: user.name,
+      action: 'LOGIN_SUCCESS_GOOGLE',
+      targetType: 'user',
+      targetId: String(user._id),
+      ipAddress,
+    });
+
+    return {
+      token,
+      user: {
+        id: String(user._id),
+        name: user.name,
+        email: user.email,
+        phone: user.phone || '',
+        picture: googleUser.picture,
+        role: user.role || 'customer',
+        isEmailVerified: true,
+      },
+    };
+  }
+
+  /**
    * Verify customer email with expiring crypto token
    */
   static async verifyEmail(rawToken: string, ipAddress?: string) {

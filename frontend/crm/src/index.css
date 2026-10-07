@@ -6,72 +6,72 @@
 
 @layer base {
   :root {
-    --ramp-primary: #C65A2E;
-    --ramp-navy: #493B34;
-    --ramp-charcoal: #2D1F18;
-    --ramp-cta: #C65A2E;
-    --ramp-surface: #FCFAF6;
-    --ramp-surface-subtle: #F8EFEA;
-    --ramp-border: #EDE2D0;
-    --ramp-slate: #756B63;
+    --ramp-primary: #0F172A;
+    --ramp-navy: #1E293B;
+    --ramp-charcoal: #0F172A;
+    --ramp-cta: #0F172A;
+    --ramp-surface: #FFFFFF;
+    --ramp-surface-subtle: #F8FAFC;
+    --ramp-border: #E2E8F0;
+    --ramp-slate: #64748B;
   }
 
   body {
     margin: 0;
-    background-color: #FCFAF6;
-    font-family: 'Lausanne', -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", Roboto, "Helvetica Neue", sans-serif;
+    background-color: #F8FAFC;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", Roboto, "Helvetica Neue", sans-serif;
     line-height: 1.5;
     font-weight: 400;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
-    color: #2D1F18;
+    color: #0F172A;
   }
 
   h1, h2, h3, h4, h5, h6 {
-    font-family: 'Lausanne', -apple-system, BlinkMacSystemFont, "SF Pro Display", sans-serif;
-    font-weight: 400;
-    color: #2D1F18;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, "SF Pro Display", sans-serif;
+    font-weight: 600;
+    color: #0F172A;
   }
 }
 
 /* Custom Sleek Scrollbar */
 ::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
+  width: 5px;
+  height: 5px;
 }
 ::-webkit-scrollbar-track {
   background: transparent;
 }
 ::-webkit-scrollbar-thumb {
-  background: #EDE2D0;
+  background: #CBD5E1;
   border-radius: 9999px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: #C65A2E;
+  background: #94A3B8;
 }
 
 /* Ramp Form Inputs */
 .ramp-input {
   width: 100%;
-  height: 42px;
-  padding: 0 14px;
+  height: 40px;
+  padding: 0 12px;
   border-radius: 8px;
-  border: 1px solid #EDE2D0;
+  border: 1px solid #E2E8F0;
   background-color: #FFFFFF;
-  color: #2D1F18;
-  font-size: 14px;
+  color: #0F172A;
+  font-size: 13px;
   font-weight: 400;
   outline: none;
   transition: border-color 0.15s ease, box-shadow 0.15s ease;
 }
 
 .ramp-input:focus {
-  border-color: #C65A2E;
-  box-shadow: 0 0 0 3px rgba(198, 90, 46, 0.15);
+  border-color: #0F172A;
+  box-shadow: 0 0 0 2px rgba(15, 23, 42, 0.08);
 }
 
 .ramp-input::placeholder {
-  color: #756B63;
+  color: #94A3B8;
 }
 
 /* Ramp Buttons */
@@ -79,61 +79,62 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  height: 40px;
+  height: 38px;
   padding: 0 16px;
-  border-radius: 6px;
-  background-color: #C65A2E;
+  border-radius: 8px;
+  background-color: #0F172A;
   color: #FFFFFF;
-  font-size: 14px;
-  font-weight: 600;
+  font-size: 13px;
+  font-weight: 500;
   border: none;
   cursor: pointer;
   transition: background-color 0.15s ease, transform 0.1s ease;
 }
 
 .ramp-btn-primary:hover {
-  background-color: #B24E25;
+  background-color: #1E293B;
 }
 
 .ramp-btn-secondary {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  height: 40px;
+  height: 38px;
   padding: 0 16px;
-  border-radius: 6px;
-  background-color: #F8EFEA;
-  color: #493B34;
-  font-size: 14px;
-  font-weight: 600;
-  border: 1px solid #EDE2D0;
+  border-radius: 8px;
+  background-color: #FFFFFF;
+  color: #334155;
+  font-size: 13px;
+  font-weight: 500;
+  border: 1px solid #E2E8F0;
   cursor: pointer;
-  transition: background-color 0.15s ease;
+  transition: background-color 0.15s ease, border-color 0.15s ease;
 }
 
 .ramp-btn-secondary:hover {
-  background-color: #EDE2D0;
+  background-color: #F8FAFC;
+  border-color: #CBD5E1;
 }
 
 .ramp-btn-outline {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  height: 40px;
+  height: 38px;
   padding: 0 16px;
-  border-radius: 6px;
+  border-radius: 8px;
   background-color: #FFFFFF;
-  color: #493B34;
-  border: 1px solid #EDE2D0;
-  font-size: 14px;
+  color: #334155;
+  border: 1px solid #E2E8F0;
+  font-size: 13px;
   font-weight: 500;
   cursor: pointer;
   transition: background-color 0.15s ease, border-color 0.15s ease;
 }
 
 .ramp-btn-outline:hover {
-  background-color: #F8EFEA;
-  border-color: #E8B9A5;
+  background-color: #F8FAFC;
+  border-color: #CBD5E1;
 }
 
 .no-scrollbar::-webkit-scrollbar {

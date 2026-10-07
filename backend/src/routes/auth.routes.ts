@@ -23,6 +23,8 @@ const router = Router();
 router.post('/login', authRateLimiter, validateRequest(loginSchema), AuthController.login);
 // Registration uses BOTH per-IP registration limiter AND general auth limiter
 router.post('/register', registrationRateLimiter, authRateLimiter, validateRequest(registerSchema), AuthController.register);
+// Google OAuth Sign-In Endpoint
+router.post('/google', authRateLimiter, AuthController.googleLogin);
 
 // Email Verification Endpoints
 router.post('/verify-email', emailVerificationRateLimiter, validateRequest(verifyEmailSchema), AuthController.verifyEmail);

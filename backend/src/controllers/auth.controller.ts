@@ -51,6 +51,37 @@ export class AuthController {
   }
 
   /**
+   * Google OAuth / One Tap Login
+   */
+  static async googleLogin(req: Request, res: Response, next: NextFunction): Promise<void> {
+    try {
+      const { credential } = req.body;
+      if (!credential || typeof credential !== 'string') {
+        res.status(400).json({ message: 'Google credential token is required' });
+        return;
+      }
+
+      const result = await AuthService.googleAuth(credential, req.ip);
+
+      res.cookie('access_token', `Bearer ${result.token}`, {
+        httpOnly: true,
+        maxAge: 24 * 60 * 60 * 1000,
+        sameSite: 'lax',
+        secure: process.env.NODE_ENV === 'production',
+      });
+
+      res.json({
+        access_token: result.token,
+        token_type: 'bearer',
+        expires_in: '24h',
+        user: result.user,
+      });
+    } catch (err) {
+      next(err);
+    }
+  }
+
+  /**
    * Email Verification
    */
   static async verifyEmail(req: Request, res: Response, next: NextFunction): Promise<void> {

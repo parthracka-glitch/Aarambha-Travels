@@ -184,41 +184,37 @@ export default function DashboardView() {
     <div className="space-y-8">
 
       {/* DASHBOARD HEADER */}
-      <div className="bg-[#2D1F18] p-6 rounded-2xl border border-[#493B34] shadow-lg flex flex-col md:flex-row md:items-center justify-between gap-4">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-1 border-b border-gray-200/70">
         <div>
-          <div className="flex items-center gap-2">
-            <span className="text-[10px] font-bold uppercase tracking-wider text-[#EDE2D0] bg-[#C65A2E]/20 px-2.5 py-0.5 rounded-full border border-[#C65A2E]/30">
-              OPERATIONS CONTROL CENTER
-            </span>
-          </div>
-          <h1 className="font-syne text-2xl font-extrabold text-white mt-1">
+          <h1 className="text-2xl font-bold tracking-tight text-gray-900">
             Admin Dashboard
           </h1>
-          <p className="text-xs text-[#EDE2D0]/70 mt-0.5">
-            Monitor real-time bookings, verify deposit payments, and manage live bus & package rate cards.
+          <p className="text-xs text-gray-500 mt-1">
+            Overview of real-time bookings, payment verifications, and fleet operations.
           </p>
         </div>
 
         <div className="flex items-center gap-2">
           <button
             onClick={loadData}
-            className="p-2.5 bg-[#493B34] hover:bg-[#5C4B42] text-white rounded-xl transition-all"
+            className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-white border border-gray-200 hover:bg-gray-50 text-gray-700 text-xs font-medium rounded-lg shadow-2xs transition-colors"
             title="Refresh Operations Data"
           >
-            <RefreshCw className="w-4 h-4" />
+            <RefreshCw className="w-3.5 h-3.5 text-gray-500" />
+            <span>Refresh</span>
           </button>
           <Link
             to="/fleet"
-            className="px-4 py-2.5 bg-[#C65A2E] hover:bg-[#B24E25] text-white text-xs font-bold rounded-xl transition-all shadow-md flex items-center gap-1.5"
+            className="inline-flex items-center gap-1.5 px-3.5 py-1.5 bg-gray-900 hover:bg-gray-800 text-white text-xs font-medium rounded-lg shadow-2xs transition-colors"
           >
-            <Bus className="w-4 h-4" />
-            <span>Manage All Bus Rates ({busRates.length})</span>
+            <Bus className="w-3.5 h-3.5" />
+            <span>Manage Bus Rates ({busRates.length})</span>
           </Link>
         </div>
       </div>
 
       {/* KPI METRICS GRID */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         <KPICard
           label="Total Bookings"
           value={String(allBookings.length)}
@@ -247,18 +243,13 @@ export default function DashboardView() {
 
       {/* ⚡ DIRECT DASHBOARD TOUR PACKAGES & BUS RATES EDIT SECTION */}
       {!isViewer && (
-        <div className="bg-white rounded-2xl border border-gray-200 p-6 shadow-sm space-y-4">
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-gray-100 pb-4">
+        <div className="bg-white rounded-xl border border-gray-200/80 p-5 shadow-2xs space-y-4">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-gray-100 pb-3">
             <div>
-              <div className="flex items-center gap-2">
-                <span className="text-[10px] font-extrabold uppercase tracking-wider text-[#C65A2E] bg-[#F8EFEA] px-2 py-0.5 rounded-full border border-[#E8B9A5]">
-                  REAL-TIME EDITABLE PACKAGES
-                </span>
-              </div>
-              <h3 className="font-syne font-bold text-lg text-gray-900 mt-1">
+              <h3 className="font-semibold text-base text-gray-900">
                 {vertical === 'tours' ? 'Tour Packages & Departure Batches' : (vertical === 'fleet' ? 'Pune–Mumbai & Outstation Bus Package Rates' : 'Tour Packages & Bus Rental Rates')}
               </h3>
-              <p className="text-xs text-gray-500">
+              <p className="text-xs text-gray-500 mt-0.5">
                 {vertical === 'tours'
                   ? 'Directly edit prices, duration, and departure batch dates for tour packages listed on the website.'
                   : 'Directly edit prices for Pune–Mumbai cabs, Mahabaleshwar packages, and bus rate cards listed on the website.'}
@@ -267,9 +258,9 @@ export default function DashboardView() {
 
             <Link
               to={vertical === 'tours' ? '/tours' : '/fleet'}
-              className="text-xs font-bold text-[#C65A2E] hover:text-[#B24E25] flex items-center gap-1 self-start sm:self-auto hover:underline"
+              className="text-xs font-semibold text-gray-700 hover:text-gray-900 flex items-center gap-1 self-start sm:self-auto hover:underline"
             >
-              <span>{vertical === 'tours' ? `View All Tour Packages (${tours.packages?.length || 0})` : `View Full Bus Inventory (${busRates.length})`}</span>
+              <span>{vertical === 'tours' ? `View All (${tours.packages?.length || 0})` : `Full Inventory (${busRates.length})`}</span>
               <ArrowRight className="w-3.5 h-3.5" />
             </Link>
           </div>
@@ -278,14 +269,14 @@ export default function DashboardView() {
           {(vertical === 'tours' || vertical === 'all') && tours.packages?.length > 0 && (
             <div className="space-y-3">
               {vertical === 'all' && (
-                <div className="flex items-center gap-2 font-bold text-xs text-gray-900 border-b border-gray-100 pb-2">
-                  <Compass className="w-4 h-4 text-[#C65A2E]" />
+                <div className="flex items-center gap-2 font-semibold text-xs text-gray-800 border-b border-gray-100 pb-2">
+                  <Compass className="w-4 h-4 text-gray-500" />
                   <span>Tour Packages ({tours.packages.length})</span>
                 </div>
               )}
               <div className="overflow-x-auto no-scrollbar">
                 <table className="w-full text-left text-xs">
-                  <thead className="bg-[#2D1F18] text-white font-syne font-bold uppercase text-[10px] tracking-wider">
+                  <thead className="bg-gray-50/80 text-gray-500 font-semibold uppercase text-[11px] tracking-wider border-b border-gray-200/80">
                     <tr>
                       <th className="py-3 px-4">Tour Package Title</th>
                       <th className="py-3 px-4">Duration</th>
@@ -297,30 +288,30 @@ export default function DashboardView() {
                   </thead>
                   <tbody className="divide-y divide-gray-100 text-gray-700">
                     {tours.packages.map((pkg: any) => (
-                      <tr key={pkg._id || pkg.id} className="hover:bg-[#F8EFEA]/60 transition-colors">
-                        <td className="py-3.5 px-4 font-bold text-gray-900 flex items-center gap-2">
-                          <Compass className="w-4 h-4 text-[#C65A2E]" />
+                      <tr key={pkg._id || pkg.id} className="hover:bg-gray-50/60 transition-colors">
+                        <td className="py-3.5 px-4 font-semibold text-gray-900 flex items-center gap-2">
+                          <Compass className="w-4 h-4 text-gray-400" />
                           <span>{pkg.title}</span>
                         </td>
-                        <td className="py-3.5 px-4 font-semibold text-gray-800">
+                        <td className="py-3.5 px-4 font-medium text-gray-700">
                           {pkg.durationDays || pkg.duration_days || 1}D / {pkg.durationNights || pkg.duration_nights || 0}N
                         </td>
-                        <td className="py-3.5 px-4 font-bold text-emerald-700">
+                        <td className="py-3.5 px-4 font-semibold text-gray-900">
                           {formatCurrency(pkg.basePrice || pkg.base_price || 0)}
                         </td>
-                        <td className="py-3.5 px-4 font-bold text-[#C65A2E]">
+                        <td className="py-3.5 px-4 font-medium text-gray-700">
                           {formatCurrency(pkg.depositPrice || pkg.deposit_price || 500)}
                         </td>
-                        <td className="py-3.5 px-4 text-gray-600 font-semibold">
+                        <td className="py-3.5 px-4 text-gray-500">
                           {Array.isArray(pkg.batchDates) ? pkg.batchDates.length : 0} Available Batches
                         </td>
                         <td className="py-3.5 px-4 text-right">
                           <button
                             onClick={() => navigate('/tours')}
-                            className="px-3 py-1.5 bg-[#C65A2E] hover:bg-[#B24E25] text-white font-bold rounded-lg shadow-xs text-xs inline-flex items-center gap-1 transition-all cursor-pointer"
+                            className="px-3 py-1.5 bg-gray-900 hover:bg-gray-800 text-white font-medium rounded-lg shadow-2xs text-xs inline-flex items-center gap-1 transition-colors cursor-pointer"
                           >
                             <Pencil className="w-3 h-3" />
-                            <span>Edit Tour Package</span>
+                            <span>Edit Package</span>
                           </button>
                         </td>
                       </tr>
@@ -335,14 +326,14 @@ export default function DashboardView() {
           {(vertical === 'fleet' || vertical === 'all') && busRates.length > 0 && (
             <div className="space-y-3 pt-2">
               {vertical === 'all' && (
-                <div className="flex items-center gap-2 font-bold text-xs text-gray-900 border-b border-gray-100 pb-2">
-                  <Bus className="w-4 h-4 text-[#C65A2E]" />
+                <div className="flex items-center gap-2 font-semibold text-xs text-gray-800 border-b border-gray-100 pb-2">
+                  <Bus className="w-4 h-4 text-gray-500" />
                   <span>Bus & Chauffeur Rental Rates ({busRates.length})</span>
                 </div>
               )}
               <div className="overflow-x-auto no-scrollbar">
                 <table className="w-full text-left text-xs">
-                  <thead className="bg-[#2D1F18] text-white font-syne font-bold uppercase text-[10px] tracking-wider">
+                  <thead className="bg-gray-50/80 text-gray-500 font-semibold uppercase text-[11px] tracking-wider border-b border-gray-200/80">
                     <tr>
                       <th className="py-3 px-4">Bus / Vehicle Package</th>
                       <th className="py-3 px-4">Seats</th>
@@ -355,28 +346,28 @@ export default function DashboardView() {
                   </thead>
                   <tbody className="divide-y divide-gray-100 text-gray-700">
                     {busRates.slice(0, 10).map((b) => (
-                      <tr key={b._id} className="hover:bg-[#F8EFEA]/60 transition-colors">
-                        <td className="py-3.5 px-4 font-bold text-gray-900 flex items-center gap-2">
-                          <Bus className="w-4 h-4 text-[#C65A2E]" />
+                      <tr key={b._id} className="hover:bg-gray-50/60 transition-colors">
+                        <td className="py-3.5 px-4 font-semibold text-gray-900 flex items-center gap-2">
+                          <Bus className="w-4 h-4 text-gray-400" />
                           <span>{b.busType}</span>
                         </td>
-                        <td className="py-3.5 px-4 font-semibold text-gray-800">{b.seats} Seater</td>
-                        <td className="py-3.5 px-4 font-bold text-gray-900">
+                        <td className="py-3.5 px-4 font-medium text-gray-700">{b.seats} Seater</td>
+                        <td className="py-3.5 px-4 font-semibold text-gray-900">
                           {b.baseRate ? formatCurrency(b.baseRate) : '—'}
                         </td>
-                        <td className="py-3.5 px-4 font-bold text-emerald-700">
+                        <td className="py-3.5 px-4 font-semibold text-gray-900">
                           {b.packageRate ? formatCurrency(b.packageRate) : (b.mumbaiRate ? formatCurrency(b.mumbaiRate) : '—')}
                         </td>
-                        <td className="py-3.5 px-4 font-bold text-[#C65A2E]">
+                        <td className="py-3.5 px-4 font-semibold text-gray-900">
                           {b.mahabaleshwarRate ? formatCurrency(b.mahabaleshwarRate) : '—'}
                         </td>
-                        <td className="py-3.5 px-4 text-gray-600">
+                        <td className="py-3.5 px-4 text-gray-500">
                           ₹{b.extraKmRate || 0}/km
                         </td>
                         <td className="py-3.5 px-4 text-right">
                           <button
                             onClick={() => handleOpenQuickEdit(b)}
-                            className="px-3 py-1.5 bg-[#C65A2E] hover:bg-[#B24E25] text-white font-bold rounded-lg shadow-xs text-xs inline-flex items-center gap-1 transition-all cursor-pointer"
+                            className="px-3 py-1.5 bg-gray-900 hover:bg-gray-800 text-white font-medium rounded-lg shadow-2xs text-xs inline-flex items-center gap-1 transition-colors cursor-pointer"
                           >
                             <Pencil className="w-3 h-3" />
                             <span>Edit Price</span>
@@ -393,17 +384,17 @@ export default function DashboardView() {
       )}
 
       {/* RECENT BOOKINGS TABLE */}
-      <div className="bg-white rounded-2xl border border-gray-200 p-6 shadow-sm space-y-4">
-        <div className="flex items-center justify-between border-b border-gray-100 pb-4">
+      <div className="bg-white rounded-xl border border-gray-200/80 p-5 shadow-2xs space-y-4">
+        <div className="flex items-center justify-between border-b border-gray-100 pb-3">
           <div>
-            <h3 className="font-syne font-bold text-lg text-gray-900">Recent Customer Bookings</h3>
-            <p className="text-xs text-gray-500">Master feed of all tour departures and self-drive car reservations.</p>
+            <h3 className="font-semibold text-base text-gray-900">Recent Customer Bookings</h3>
+            <p className="text-xs text-gray-500 mt-0.5">Live feed of tour departures and vehicle rental reservations.</p>
           </div>
           <Link
             to="/bookings"
-            className="text-xs font-bold text-[#C65A2E] hover:text-[#B24E25] flex items-center gap-1 hover:underline"
+            className="text-xs font-semibold text-gray-700 hover:text-gray-900 flex items-center gap-1 hover:underline"
           >
-            <span>View All Bookings</span>
+            <span>View All</span>
             <ArrowRight className="w-3.5 h-3.5" />
           </Link>
         </div>
