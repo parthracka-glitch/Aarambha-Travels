@@ -19,7 +19,7 @@ export function DashboardLayout() {
   };
 
   return (
-    <div className="min-h-screen h-screen w-full bg-[#F8FAFC] flex overflow-hidden font-sans relative">
+    <div className="min-h-screen h-screen w-full bg-[#F4F6F9] flex overflow-hidden font-sans relative">
       
       {/* Mobile Backdrop Overlay */}
       {mobileSidebarOpen && (
@@ -33,7 +33,7 @@ export function DashboardLayout() {
       <Sidebar isOpen={mobileSidebarOpen} onClose={() => setMobileSidebarOpen(false)} />
 
       {/* Main Full-Screen Content Area */}
-      <div className="flex-1 flex flex-col h-full overflow-hidden bg-[#F8FAFC] w-full relative">
+      <div className="flex-1 flex flex-col h-full overflow-hidden bg-[#F4F6F9] w-full relative">
         
         {/* Integrated Topbar */}
         <Topbar onToggleMobileSidebar={() => setMobileSidebarOpen(!mobileSidebarOpen)} />

@@ -197,59 +197,67 @@ export default function DashboardView() {
         <div className="flex items-center gap-2">
           <button
             onClick={loadData}
-            className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-white border border-gray-200/80 hover:bg-gray-50 text-gray-600 text-xs font-medium rounded-lg shadow-2xs transition-colors cursor-pointer"
+            className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-white border border-gray-200 hover:bg-gray-50 text-gray-700 text-xs font-medium rounded-lg shadow-2xs transition-colors cursor-pointer"
             title="Refresh Operations Data"
           >
-            <RefreshCw className="w-3.5 h-3.5 text-gray-400" />
+            <RefreshCw className="w-3.5 h-3.5 text-gray-500" />
             <span>Refresh</span>
           </button>
           <Link
             to="/fleet"
-            className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-white hover:bg-gray-50 border border-gray-200/80 text-gray-700 text-xs font-medium rounded-lg shadow-2xs transition-colors"
+            className="inline-flex items-center gap-1.5 px-3.5 py-1.5 bg-gray-900 hover:bg-black text-white text-xs font-medium rounded-lg shadow-xs transition-colors"
           >
-            <Bus className="w-3.5 h-3.5 text-gray-400" />
+            <Bus className="w-3.5 h-3.5 text-gray-300" />
             <span>Manage Fleet ({busRates.length})</span>
           </Link>
         </div>
       </div>
 
-      {/* KPI METRICS GRID */}
+      {/* KPI METRICS GRID — SEGREGATED & DISTINCT */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         <KPICard
           label="Total Bookings"
           value={String(allBookings.length)}
           sub={`${fleet.bookings.length} Rental • ${tours.bookings.length} Tours`}
+          icon={<CalendarCheck className="w-3.5 h-3.5" />}
+          variant="blue"
           onClick={() => navigate('/bookings')}
         />
         <KPICard
           label="Customer Inquiries"
           value={String(allInquiries.length)}
           sub="Leads & WhatsApp Inquiries"
+          icon={<Clock className="w-3.5 h-3.5" />}
+          variant="amber"
           onClick={() => navigate('/customers')}
         />
         <KPICard
           label="Website Buses & Cabs"
           value={String(busRates.length)}
           sub="Live Bus Rates & Rate Cards"
+          icon={<Bus className="w-3.5 h-3.5" />}
+          variant="purple"
           onClick={() => navigate('/fleet')}
         />
         <KPICard
           label="Self-Drive Fleet"
           value={String(fleet.vehicles.length)}
           sub="Cars & Luxury SUVs"
+          icon={<Car className="w-3.5 h-3.5" />}
+          variant="emerald"
           onClick={() => navigate('/fleet')}
         />
       </div>
 
       {/* ⚡ DIRECT DASHBOARD TOUR PACKAGES & BUS RATES EDIT SECTION */}
       {!isViewer && (
-        <div className="bg-white rounded-xl border border-gray-100 p-5 shadow-2xs space-y-4">
+        <div className="bg-white rounded-xl border border-gray-200/90 p-5 shadow-xs space-y-4">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-gray-100 pb-3">
             <div>
               <h3 className="font-semibold text-sm sm:text-base text-gray-900">
                 {vertical === 'tours' ? 'Tour Packages & Departure Batches' : (vertical === 'fleet' ? 'Pune–Mumbai & Outstation Bus Package Rates' : 'Tour Packages & Bus Rental Rates')}
               </h3>
-              <p className="text-xs text-gray-400 mt-0.5">
+              <p className="text-xs text-gray-500 mt-0.5">
                 {vertical === 'tours'
                   ? 'Directly edit prices, duration, and departure batch dates for tour packages listed on the website.'
                   : 'Directly edit prices for Pune–Mumbai cabs, Mahabaleshwar packages, and bus rate cards listed on the website.'}
@@ -258,7 +266,7 @@ export default function DashboardView() {
 
             <Link
               to={vertical === 'tours' ? '/tours' : '/fleet'}
-              className="text-xs font-medium text-gray-600 hover:text-gray-900 flex items-center gap-1 self-start sm:self-auto hover:underline"
+              className="text-xs font-semibold text-gray-700 hover:text-gray-900 flex items-center gap-1 self-start sm:self-auto hover:underline"
             >
               <span>{vertical === 'tours' ? `View All (${tours.packages?.length || 0})` : `Full Inventory (${busRates.length})`}</span>
               <ArrowRight className="w-3.5 h-3.5" />
@@ -267,16 +275,16 @@ export default function DashboardView() {
 
           {/* TOUR PACKAGES LIST (WHEN VERTICAL IS TOURS OR ALL) */}
           {(vertical === 'tours' || vertical === 'all') && tours.packages?.length > 0 && (
-            <div className="space-y-3">
+            <div className="space-y-2.5">
               {vertical === 'all' && (
-                <div className="flex items-center gap-2 font-medium text-xs text-gray-700 border-b border-gray-100 pb-2">
-                  <Compass className="w-3.5 h-3.5 text-gray-400" />
+                <div className="flex items-center gap-2 font-semibold text-xs text-gray-800 bg-gray-50/80 px-3 py-1.5 rounded-lg border border-gray-150">
+                  <Compass className="w-3.5 h-3.5 text-amber-600" />
                   <span>Tour Packages ({tours.packages.length})</span>
                 </div>
               )}
-              <div className="overflow-x-auto no-scrollbar">
+              <div className="overflow-x-auto no-scrollbar rounded-lg border border-gray-200/80">
                 <table className="w-full text-left text-xs">
-                  <thead className="bg-gray-50/50 text-gray-400 font-medium uppercase text-[10px] tracking-wider border-b border-gray-100">
+                  <thead className="bg-gray-50/90 text-gray-500 font-semibold uppercase text-[10px] tracking-wider border-b border-gray-200/80">
                     <tr>
                       <th className="py-2.5 px-4">Tour Package Title</th>
                       <th className="py-2.5 px-4">Duration</th>
@@ -289,26 +297,28 @@ export default function DashboardView() {
                   <tbody className="divide-y divide-gray-100 text-gray-700">
                     {tours.packages.map((pkg: any) => (
                       <tr key={pkg._id || pkg.id} className="hover:bg-gray-50/60 transition-colors">
-                        <td className="py-3 px-4 font-medium text-gray-900 flex items-center gap-2">
-                          <Compass className="w-3.5 h-3.5 text-gray-400 shrink-0" />
+                        <td className="py-3 px-4 font-semibold text-gray-900 flex items-center gap-2">
+                          <Compass className="w-3.5 h-3.5 text-amber-600 shrink-0" />
                           <span>{pkg.title}</span>
                         </td>
                         <td className="py-3 px-4 text-gray-600">
                           {pkg.durationDays || pkg.duration_days || 1}D / {pkg.durationNights || pkg.duration_nights || 0}N
                         </td>
-                        <td className="py-3 px-4 font-medium text-gray-900">
+                        <td className="py-3 px-4 font-bold text-gray-900">
                           {formatCurrency(pkg.basePrice || pkg.base_price || 0)}
                         </td>
                         <td className="py-3 px-4 text-gray-500">
                           {formatCurrency(pkg.depositPrice || pkg.deposit_price || 500)}
                         </td>
-                        <td className="py-3 px-4 text-gray-400">
-                          {Array.isArray(pkg.batchDates) ? pkg.batchDates.length : 0} Available
+                        <td className="py-3 px-4 text-gray-500">
+                          <span className="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-medium bg-emerald-50 text-emerald-700 border border-emerald-200/60">
+                            {Array.isArray(pkg.batchDates) ? pkg.batchDates.length : 0} Available
+                          </span>
                         </td>
                         <td className="py-3 px-4 text-right">
                           <button
                             onClick={() => navigate('/tours')}
-                            className="px-2.5 py-1 bg-white hover:bg-gray-50 text-gray-700 border border-gray-200/80 font-medium rounded-md text-xs inline-flex items-center gap-1.5 transition-colors cursor-pointer shadow-2xs"
+                            className="px-2.5 py-1 bg-white hover:bg-gray-50 text-gray-700 border border-gray-200 font-medium rounded-md text-xs inline-flex items-center gap-1.5 transition-colors cursor-pointer shadow-2xs hover:border-gray-300"
                           >
                             <Pencil className="w-3 h-3 text-gray-400" />
                             <span>Edit</span>
@@ -324,16 +334,16 @@ export default function DashboardView() {
 
           {/* BUS & FLEET RATES LIST (WHEN VERTICAL IS FLEET OR ALL) */}
           {(vertical === 'fleet' || vertical === 'all') && busRates.length > 0 && (
-            <div className="space-y-3 pt-2">
+            <div className="space-y-2.5 pt-1">
               {vertical === 'all' && (
-                <div className="flex items-center gap-2 font-medium text-xs text-gray-700 border-b border-gray-100 pb-2">
-                  <Bus className="w-3.5 h-3.5 text-gray-400" />
+                <div className="flex items-center gap-2 font-semibold text-xs text-gray-800 bg-gray-50/80 px-3 py-1.5 rounded-lg border border-gray-150">
+                  <Bus className="w-3.5 h-3.5 text-purple-600" />
                   <span>Bus & Chauffeur Rental Rates ({busRates.length})</span>
                 </div>
               )}
-              <div className="overflow-x-auto no-scrollbar">
+              <div className="overflow-x-auto no-scrollbar rounded-lg border border-gray-200/80">
                 <table className="w-full text-left text-xs">
-                  <thead className="bg-gray-50/50 text-gray-400 font-medium uppercase text-[10px] tracking-wider border-b border-gray-100">
+                  <thead className="bg-gray-50/90 text-gray-500 font-semibold uppercase text-[10px] tracking-wider border-b border-gray-200/80">
                     <tr>
                       <th className="py-2.5 px-4">Bus / Vehicle Package</th>
                       <th className="py-2.5 px-4">Seats</th>
@@ -347,27 +357,27 @@ export default function DashboardView() {
                   <tbody className="divide-y divide-gray-100 text-gray-700">
                     {busRates.slice(0, 10).map((b) => (
                       <tr key={b._id} className="hover:bg-gray-50/60 transition-colors">
-                        <td className="py-3 px-4 font-medium text-gray-900 flex items-center gap-2">
-                          <Bus className="w-3.5 h-3.5 text-gray-400 shrink-0" />
+                        <td className="py-3 px-4 font-semibold text-gray-900 flex items-center gap-2">
+                          <Bus className="w-3.5 h-3.5 text-purple-600 shrink-0" />
                           <span>{b.busType}</span>
                         </td>
                         <td className="py-3 px-4 text-gray-600">{b.seats} Seater</td>
-                        <td className="py-3 px-4 font-medium text-gray-900">
+                        <td className="py-3 px-4 font-bold text-gray-900">
                           {b.baseRate ? formatCurrency(b.baseRate) : '—'}
                         </td>
-                        <td className="py-3 px-4 font-medium text-gray-900">
+                        <td className="py-3 px-4 font-bold text-gray-900">
                           {b.packageRate ? formatCurrency(b.packageRate) : (b.mumbaiRate ? formatCurrency(b.mumbaiRate) : '—')}
                         </td>
-                        <td className="py-3 px-4 font-medium text-gray-900">
+                        <td className="py-3 px-4 font-bold text-gray-900">
                           {b.mahabaleshwarRate ? formatCurrency(b.mahabaleshwarRate) : '—'}
                         </td>
-                        <td className="py-3 px-4 text-gray-500">
+                        <td className="py-3 px-4 text-gray-500 font-medium">
                           ₹{b.extraKmRate || 0}/km
                         </td>
                         <td className="py-3 px-4 text-right">
                           <button
                             onClick={() => handleOpenQuickEdit(b)}
-                            className="px-2.5 py-1 bg-white hover:bg-gray-50 text-gray-700 border border-gray-200/80 font-medium rounded-md text-xs inline-flex items-center gap-1.5 transition-colors cursor-pointer shadow-2xs"
+                            className="px-2.5 py-1 bg-white hover:bg-gray-50 text-gray-700 border border-gray-200 font-medium rounded-md text-xs inline-flex items-center gap-1.5 transition-colors cursor-pointer shadow-2xs hover:border-gray-300"
                           >
                             <Pencil className="w-3 h-3 text-gray-400" />
                             <span>Edit</span>
@@ -384,7 +394,7 @@ export default function DashboardView() {
       )}
 
       {/* RECENT BOOKINGS TABLE */}
-      <div className="bg-white rounded-xl border border-gray-200/80 p-5 shadow-2xs space-y-4">
+      <div className="bg-white rounded-xl border border-gray-200/90 p-5 shadow-xs space-y-4">
         <div className="flex items-center justify-between border-b border-gray-100 pb-3">
           <div>
             <h3 className="font-semibold text-base text-gray-900">Recent Customer Bookings</h3>
@@ -414,7 +424,7 @@ export default function DashboardView() {
             const dateVal = b.startDate || b.travelDate || b.pickup_date || b.createdAt;
 
             return (
-              <div key={i} className="bg-gray-50/60 rounded-lg p-3.5 border border-gray-100 space-y-2">
+              <div key={i} className="bg-gray-50/60 rounded-lg p-3.5 border border-gray-150 space-y-2">
                 <div className="flex items-center justify-between">
                   <span className="font-mono font-medium text-xs text-gray-900">{code}</span>
                   <Badge color={statusColor(b.status || 'Confirmed')}>{b.status || 'Confirmed'}</Badge>
@@ -428,13 +438,13 @@ export default function DashboardView() {
                   </span>
                   <span className="text-xs font-medium text-gray-800 truncate">{itemName}</span>
                 </div>
-                <div className="flex items-center justify-between text-xs pt-2 border-t border-gray-100">
+                <div className="flex items-center justify-between text-xs pt-2 border-t border-gray-150">
                   <div>
                     <p className="font-medium text-gray-900">{name}</p>
                     <p className="text-[10px] text-gray-400">{formatDate(dateVal)}</p>
                   </div>
                   <div className="text-right">
-                    <p className="font-medium text-emerald-700">₹{depositPaid} paid</p>
+                    <p className="font-semibold text-emerald-700">₹{depositPaid} paid</p>
                     <p className="text-[10px] text-gray-400">Total: {formatCurrency(total)}</p>
                   </div>
                 </div>
@@ -447,16 +457,16 @@ export default function DashboardView() {
         </div>
 
         {/* 💻 DESKTOP TABLE VIEW (>= 768px) */}
-        <div className="hidden md:block overflow-x-auto">
+        <div className="hidden md:block overflow-x-auto rounded-lg border border-gray-200/80">
           <table className="w-full text-left text-xs">
-            <thead className="bg-gray-50/50 text-gray-400 font-medium uppercase tracking-wider text-[10px] border-b border-gray-100">
+            <thead className="bg-gray-50/90 text-gray-500 font-semibold uppercase tracking-wider text-[10px] border-b border-gray-200/80">
               <tr>
-                <th className="py-2.5 px-4 font-medium">Booking ID</th>
-                <th className="py-2.5 px-4 font-medium">Service Scope</th>
-                <th className="py-2.5 px-4 font-medium">Customer</th>
-                <th className="py-2.5 px-4 font-medium">Dates</th>
-                <th className="py-2.5 px-4 font-medium">Deposit & Total</th>
-                <th className="py-2.5 px-4 text-right font-medium">Status</th>
+                <th className="py-2.5 px-4">Booking ID</th>
+                <th className="py-2.5 px-4">Service Scope</th>
+                <th className="py-2.5 px-4">Customer</th>
+                <th className="py-2.5 px-4">Dates</th>
+                <th className="py-2.5 px-4">Deposit & Total</th>
+                <th className="py-2.5 px-4 text-right">Status</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-100 text-gray-700">

@@ -59,7 +59,7 @@ export function Sidebar({ isOpen = false, onClose }: SidebarProps) {
   return (
     <>
       <aside
-        className={`fixed md:relative inset-y-0 left-0 z-50 w-64 bg-white text-gray-900 flex flex-col justify-between flex-shrink-0 border-r border-gray-100 py-4 px-3 select-none transition-transform duration-300 ${
+        className={`fixed md:relative inset-y-0 left-0 z-50 w-64 bg-white text-gray-900 flex flex-col justify-between flex-shrink-0 border-r border-gray-200/90 shadow-2xs py-4 px-3 select-none transition-transform duration-300 ${
           isOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'
         }`}
       >
@@ -68,7 +68,7 @@ export function Sidebar({ isOpen = false, onClose }: SidebarProps) {
           {/* Brand Header & Mobile Close */}
           <div className="px-1.5 flex items-center justify-between">
             <div className="flex items-center gap-2.5">
-              <div className="w-8 h-8 rounded-lg bg-gray-50 border border-gray-100 p-1 shrink-0 flex items-center justify-center">
+              <div className="w-8 h-8 rounded-lg bg-gray-50 border border-gray-200/80 p-1 shrink-0 flex items-center justify-center shadow-2xs">
                 <img
                   src="/images/aarambha_logo.png"
                   alt="Aarambha Travels Logo"
@@ -80,8 +80,8 @@ export function Sidebar({ isOpen = false, onClose }: SidebarProps) {
               </div>
               <div className="leading-tight">
                 <div className="flex items-center gap-1.5">
-                  <span className="font-semibold text-sm text-gray-900 tracking-tight">आरंभ</span>
-                  <span className="text-[9px] font-medium text-gray-500 bg-gray-100 px-1.5 py-0.5 rounded">CRM</span>
+                  <span className="font-bold text-sm text-gray-900 tracking-tight">आरंभ</span>
+                  <span className="text-[10px] font-semibold text-amber-800 bg-amber-50 border border-amber-200/70 px-1.5 py-0.5 rounded">CRM</span>
                 </div>
                 <p className="text-[11px] text-gray-400 mt-0.5">
                   Travel & Fleet Portal
@@ -113,7 +113,7 @@ export function Sidebar({ isOpen = false, onClose }: SidebarProps) {
           {/* Scope Segment Picker */}
           {!isViewer && (
             <div className="px-0.5">
-              <div className="bg-gray-100/70 p-0.5 rounded-lg flex text-xs font-medium">
+              <div className="bg-gray-100 p-0.5 rounded-lg border border-gray-200/70 flex text-xs font-medium">
                 {(['all', 'tours', 'fleet'] as const).map((v) => (
                   <button
                     key={v}
@@ -139,7 +139,7 @@ export function Sidebar({ isOpen = false, onClose }: SidebarProps) {
 
           {/* Main Navigation */}
           <div className="space-y-0.5">
-            <p className="px-2.5 text-[10px] font-medium uppercase tracking-wider text-gray-400 mb-1">
+            <p className="px-2.5 text-[10px] font-semibold uppercase tracking-wider text-gray-400 mb-1">
               Operations
             </p>
             {visibleMainNav.map((item) => {
@@ -150,10 +150,10 @@ export function Sidebar({ isOpen = false, onClose }: SidebarProps) {
                   to={item.path}
                   onClick={onClose}
                   className={({ isActive }) =>
-                    `group w-full flex items-center gap-2.5 px-2.5 py-1.5 rounded-lg text-[13px] font-medium transition-colors duration-150 ${
+                    `group w-full flex items-center gap-2.5 px-2.5 py-1.5 rounded-lg text-[13px] font-medium transition-all duration-150 ${
                       isActive
-                        ? 'bg-gray-100 text-gray-900 font-semibold'
-                        : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
+                        ? 'bg-gray-900 text-white font-medium shadow-xs'
+                        : 'text-gray-600 hover:text-gray-900 hover:bg-gray-100/70'
                     }`
                   }
                 >
@@ -162,8 +162,8 @@ export function Sidebar({ isOpen = false, onClose }: SidebarProps) {
                       <Icon
                         className={`w-4 h-4 shrink-0 transition-colors ${
                           isActive
-                            ? 'text-gray-900'
-                            : 'text-gray-400 group-hover:text-gray-600'
+                            ? 'text-white'
+                            : 'text-gray-400 group-hover:text-gray-700'
                         }`}
                       />
                       <span className="truncate">{item.label}</span>
@@ -177,7 +177,7 @@ export function Sidebar({ isOpen = false, onClose }: SidebarProps) {
           {/* Management & Tools Section */}
           {!isViewer && activeVertical === 'all' && (
             <div className="space-y-0.5 pt-3 border-t border-gray-100">
-              <p className="px-2.5 text-[10px] font-medium uppercase tracking-wider text-gray-400 mb-1">
+              <p className="px-2.5 text-[10px] font-semibold uppercase tracking-wider text-gray-400 mb-1">
                 Administration
               </p>
               {toolsNav.map((item) => {
@@ -188,10 +188,10 @@ export function Sidebar({ isOpen = false, onClose }: SidebarProps) {
                     to={item.path}
                     onClick={onClose}
                     className={({ isActive }) =>
-                      `group w-full flex items-center gap-2.5 px-2.5 py-1.5 rounded-lg text-[13px] font-medium transition-colors duration-150 ${
+                      `group w-full flex items-center gap-2.5 px-2.5 py-1.5 rounded-lg text-[13px] font-medium transition-all duration-150 ${
                         isActive
-                          ? 'bg-gray-100 text-gray-900 font-semibold'
-                          : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
+                          ? 'bg-gray-900 text-white font-medium shadow-xs'
+                          : 'text-gray-600 hover:text-gray-900 hover:bg-gray-100/70'
                       }`
                     }
                   >
@@ -200,8 +200,8 @@ export function Sidebar({ isOpen = false, onClose }: SidebarProps) {
                         <Icon
                           className={`w-4 h-4 shrink-0 transition-colors ${
                             isActive
-                              ? 'text-gray-900'
-                              : 'text-gray-400 group-hover:text-gray-600'
+                              ? 'text-white'
+                              : 'text-gray-400 group-hover:text-gray-700'
                           }`}
                         />
                         <span className="truncate">{item.label}</span>

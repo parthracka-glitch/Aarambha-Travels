@@ -11,14 +11,14 @@
     --ramp-charcoal: #0F172A;
     --ramp-cta: #0F172A;
     --ramp-surface: #FFFFFF;
-    --ramp-surface-subtle: #F8FAFC;
+    --ramp-surface-subtle: #F4F6F9;
     --ramp-border: #E2E8F0;
     --ramp-slate: #64748B;
   }
 
   body {
     margin: 0;
-    background-color: #F8FAFC;
+    background-color: #F4F6F9;
     font-family: 'Inter', -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", Roboto, "Helvetica Neue", sans-serif;
     line-height: 1.5;
     font-weight: 400;

@@ -24,14 +24,14 @@ export function Topbar({ onToggleMobileSidebar }: TopbarProps) {
 
   return (
     <>
-      <header className="bg-white px-4 sm:px-6 py-2.5 flex items-center justify-between gap-3 border-b border-gray-100 select-none sticky top-0 z-30">
+      <header className="bg-white px-4 sm:px-6 py-2.5 flex items-center justify-between gap-3 border-b border-gray-200/90 shadow-2xs select-none sticky top-0 z-30">
         
         {/* Mobile Hamburger & Search Bar */}
         <div className="flex items-center gap-2 sm:gap-3 max-w-md w-full">
           {/* Mobile Hamburger Button */}
           <button
             onClick={onToggleMobileSidebar}
-            className="md:hidden w-8 h-8 rounded-lg bg-gray-50 border border-gray-200/80 flex items-center justify-center text-gray-700 hover:text-gray-900 hover:bg-gray-100 active:scale-95 shrink-0 transition-colors"
+            className="md:hidden w-8 h-8 rounded-lg bg-gray-50 border border-gray-200 flex items-center justify-center text-gray-700 hover:text-gray-900 hover:bg-gray-100 active:scale-95 shrink-0 transition-colors"
             aria-label="Toggle Navigation Sidebar"
           >
             <Menu className="w-4 h-4" />
@@ -45,7 +45,7 @@ export function Topbar({ onToggleMobileSidebar }: TopbarProps) {
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               placeholder="Search bookings, tours, cars, leads..."
-              className="w-full bg-gray-50/70 border border-gray-200/70 rounded-lg pl-9 pr-4 py-1.5 text-xs text-gray-900 placeholder-gray-400 focus:outline-none focus:bg-white focus:border-gray-300 focus:ring-1 focus:ring-gray-200 transition-all"
+              className="w-full bg-gray-50 border border-gray-200 rounded-lg pl-9 pr-4 py-1.5 text-xs text-gray-900 placeholder-gray-400 focus:outline-none focus:bg-white focus:border-gray-300 focus:ring-2 focus:ring-gray-100 transition-all"
             />
           </div>
         </div>
@@ -55,7 +55,7 @@ export function Topbar({ onToggleMobileSidebar }: TopbarProps) {
           
           {/* Live API Status Pill */}
           <div 
-            className="flex items-center gap-1.5 px-2 py-0.5 rounded-md text-[11px] font-medium text-emerald-700 bg-emerald-50/80 border border-emerald-200/50"
+            className="flex items-center gap-1.5 px-2.5 py-0.5 rounded-md text-[11px] font-medium text-emerald-700 bg-emerald-50 border border-emerald-200/70"
             title={apiStatus === 'online' ? 'Connected to live database' : 'Connecting to backend...'}
           >
             <span className={`w-1.5 h-1.5 rounded-full ${apiStatus === 'online' ? 'bg-emerald-500' : 'bg-amber-500 animate-ping'}`} />
@@ -65,7 +65,7 @@ export function Topbar({ onToggleMobileSidebar }: TopbarProps) {
           </div>
 
           {/* Active Scope Pill */}
-          <span className="text-[11px] font-medium text-gray-500 bg-gray-100 px-2 py-0.5 rounded-md hidden xs:inline-block sm:inline-block">
+          <span className="text-[11px] font-medium text-gray-600 bg-gray-100 border border-gray-200/70 px-2 py-0.5 rounded-md hidden xs:inline-block sm:inline-block">
             {activeVertical === 'all' ? 'All Scope' : activeVertical === 'tours' ? 'Tours' : 'Rental Fleet'}
           </span>
 
