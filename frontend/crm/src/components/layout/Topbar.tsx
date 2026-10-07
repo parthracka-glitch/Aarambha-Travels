@@ -9,7 +9,7 @@ interface TopbarProps {
 }
 
 export function Topbar({ onToggleMobileSidebar }: TopbarProps) {
-  const { activeVertical, apiStatus, user } = useAuth();
+  const { activeVertical, setActiveVertical, apiStatus, user } = useAuth();
   const [isProfileOpen, setIsProfileOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
 
@@ -64,10 +64,18 @@ export function Topbar({ onToggleMobileSidebar }: TopbarProps) {
             </span>
           </div>
 
-          {/* Active Scope Pill */}
-          <span className="text-[11px] font-medium text-gray-600 bg-gray-100 border border-gray-200/70 px-2 py-0.5 rounded-md hidden xs:inline-block sm:inline-block">
-            {activeVertical === 'all' ? 'All Scope' : activeVertical === 'tours' ? 'Tours' : 'Rental Fleet'}
-          </span>
+          {/* Active Scope Switcher Pill */}
+          <button
+            onClick={() => {
+              const next = activeVertical === 'all' ? 'tours' : activeVertical === 'tours' ? 'fleet' : 'all';
+              setActiveVertical(next);
+            }}
+            title="Click to toggle scope: All / Tours / Rental Fleet"
+            className="text-[11px] font-medium text-gray-700 bg-gray-100 hover:bg-gray-200/70 border border-gray-200/80 px-2 py-0.5 rounded-md hidden xs:inline-flex sm:inline-flex items-center gap-1 transition-colors cursor-pointer"
+          >
+            <span className="text-gray-400">Scope:</span>
+            <span className="font-semibold text-gray-900 capitalize">{activeVertical === 'all' ? 'All' : activeVertical}</span>
+          </button>
 
           {/* Notification Dropdown Component */}
           <NotificationDropdown />
