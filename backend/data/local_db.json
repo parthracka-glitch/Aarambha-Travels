@@ -180,6 +180,176 @@
       ]
     },
     {
+      "_id": "pkg-khatu-salasar",
+      "id": "pune-sanwaliya-seth-salasar-balaji-khatu-shyam",
+      "slug": "pune-sanwaliya-seth-salasar-balaji-khatu-shyam",
+      "title": "Pune to Sanwaliya Seth | Salasar Balaji Dham | Khatu Shyam Baba",
+      "subtitle": "Special Spiritual Yatra 2026 • Pune to Pune • Sacred Darshan of Khatu Shyam Baba, Sanwaliya Seth & Salasar Balaji Dham",
+      "description": "Special 2026 spiritual pilgrimage from Pune to Rajasthan covering holy Khatu Shyam Baba, miraculous Sanwaliya Seth Mandir, and revered Salasar Balaji Dham.",
+      "overview": "Embark on a sacred 3-day spiritual pilgrimage (returning on 4th day) from Pune covering holy Khatu Shyam Baba, miraculous Sanwaliya Seth Mandir, and revered Salasar Balaji Dham with 1 Night AC Hotel stay and 2×2 AC Sleeper Coach comfort.",
+      "durationDays": 3,
+      "durationNights": 1,
+      "basePrice": 7499,
+      "lowerSeatPrice": 8499,
+      "upperSeatPrice": 7499,
+      "depositPrice": 2999,
+      "datesLabel": "23 Oct 2026 – 26 Oct 2026 (Pune to Pune)",
+      "destination": "Rajasthan & Madhya Pradesh",
+      "state": "Rajasthan & Maharashtra",
+      "images": [
+        "https://images.unsplash.com/photo-1545126178-862d2ad693b7?q=80&w=800&auto=format&fit=crop"
+      ],
+      "sites": [
+        "Khatu Shyam Baba (Rajasthan)",
+        "Shri Sanwaliya Seth Mandir (Mandphiya)",
+        "Salasar Balaji Dham (Hanuman Ji)"
+      ],
+      "inclusions": [
+        "Sleeper Coach (2×2 AC Pushback/Sleeper Luxury Travel)",
+        "1 Night Stay in Premium AC Hotel",
+        "4-Person Sharing Rooms (Quad Sharing)",
+        "2 Pure Vegetarian Meals per Day (Lunch & Dinner)",
+        "Daily Morning Tea",
+        "Fresh Breakfast Daily",
+        "Packaged Drinking Water Provided During Meals",
+        "Comprehensive Travel Insurance"
+      ],
+      "exclusions": [
+        "Puja, Archana & Abhishek Charges",
+        "VIP / Fast-track Darshan Passes",
+        "Local Travel / Auto-Rickshaw / E-Rickshaw Charges",
+        "Boating Charges",
+        "Personal Expenses, Shopping & Extra Food"
+      ],
+      "terms": [
+        "Booking is confirmed strictly upon receipt of the ₹2,999/- advance amount.",
+        "Strict No Refund policy in case of cancellation.",
+        "You can send another person in your place (ticket transfer permitted)."
+      ],
+      "batchDates": [
+        {
+          "id": "batch-khatu-salasar-oct-2026",
+          "month": "October",
+          "label": "23 Oct 2026 – 26 Oct 2026 (Pune to Pune)",
+          "tag": "Special Spiritual Yatra 2026 • Lower ₹8,499 / Upper ₹7,499",
+          "startDate": "2026-10-23",
+          "endDate": "2026-10-26",
+          "status": "available"
+        }
+      ],
+      "itineraries": [
+        {
+          "dayNumber": 1,
+          "title": "Pune Departure & Highway Journey to Sanwaliya Seth",
+          "description": "Depart from Pune in luxury 2×2 AC Sleeper Coach towards Rajasthan with group devotion."
+        },
+        {
+          "dayNumber": 2,
+          "title": "Sanwaliya Seth Darshan & Drive to Khatu Dham (AC Hotel Stay)",
+          "description": "Darshan at miraculous Shri Sanwaliya Seth Mandir. Drive to Khatu, hotel check-in, dinner and night stay."
+        },
+        {
+          "dayNumber": 3,
+          "title": "Khatu Shyam Baba Darshan, Salasar Balaji Dham & Return Boarding",
+          "description": "Early morning holy darshan of Khatu Shyam Baba and Salasar Balaji Dham. Evening boarding AC coach for Pune."
+        },
+        {
+          "dayNumber": 4,
+          "title": "Highway Return Journey & Safe Arrival in Pune",
+          "description": "Comfortable transit with morning tea, breakfast & pure veg meals. Safe arrival back in Pune on 26 October 2026."
+        }
+      ]
+    },
+    {
+      "_id": "pkg-mumbai-ujjain",
+      "id": "mumbai-ujjain-mahakal-omkareshwar-maheshwar",
+      "slug": "mumbai-ujjain-mahakal-omkareshwar-maheshwar",
+      "title": "Mumbai to Ujjain Mahakal | Omkareshwar Jyotirlinga | Maheshwar",
+      "subtitle": "Special Spiritual Yatra 2026 • Mumbai to Mumbai • Sacred Darshan of Mahakaleshwar, Kaal Bhairav, Omkareshwar, Mamleshwar & Maheshwar Rajwada",
+      "description": "Special 2026 spiritual pilgrimage from Mumbai covering Ujjain Mahakaleshwar Jyotirlinga, Mahakal Corridor, Kaal Bhairav, Omkareshwar Jyotirlinga, Mamleshwar, and historic Maheshwar Rajwada.",
+      "overview": "Seek the holy blessings of Lord Shiva on this 3-day spiritual pilgrimage (returning on 4th day) from Mumbai covering Ujjain Mahakaleshwar Jyotirlinga, Mahakal Corridor, Kaal Bhairav, Omkareshwar Jyotirlinga, Mamleshwar, and historic Maheshwar Rajwada traveling in 2×2 AC Sleeper Coach with 1 Night AC Hotel stay.",
+      "durationDays": 3,
+      "durationNights": 1,
+      "basePrice": 7499,
+      "lowerSeatPrice": 7999,
+      "upperSeatPrice": 7499,
+      "depositPrice": 2999,
+      "datesLabel": "16 Oct 2026 – 19 Oct 2026 (Mumbai to Mumbai)",
+      "destination": "Ujjain & Omkareshwar",
+      "state": "Madhya Pradesh & Maharashtra",
+      "images": [
+        "https://images.unsplash.com/photo-1609766857041-ed402ea8069a?q=80&w=800&auto=format&fit=crop"
+      ],
+      "sites": [
+        "Ujjain Mahakaleshwar Jyotirlinga",
+        "Shri Kaal Bhairav Mandir (Ujjain)",
+        "Harsiddhi Mata Shaktipeeth",
+        "Mangalnath Mandir",
+        "Runmukteshwar Mahadev Mandir",
+        "Ramghat Shipra River Evening Aarti",
+        "Shri Mahakal Lok Corridor",
+        "Omkareshwar Jyotirlinga",
+        "Mamleshwar Temple",
+        "Ahilyabai Holkar Rajwada (Maheshwar)",
+        "Maheshwari Saree Market & Narmada Ghats"
+      ],
+      "inclusions": [
+        "Sleeper Coach (2×2 AC Pushback/Sleeper Luxury Travel)",
+        "1 Night Stay in Premium AC Hotel",
+        "4-Person Sharing Rooms (Quad Sharing)",
+        "2 Pure Vegetarian Meals per Day (Lunch & Dinner)",
+        "Daily Morning Tea",
+        "Fresh Breakfast Daily",
+        "Packaged Drinking Water Provided During Meals",
+        "Comprehensive Travel Insurance"
+      ],
+      "exclusions": [
+        "Puja, Archana & Abhishek Charges",
+        "VIP / Fast-track Darshan Passes",
+        "Local Travel / Auto-Rickshaw / E-Rickshaw Charges",
+        "Boating Charges",
+        "Personal Expenses, Shopping & Extra Food"
+      ],
+      "terms": [
+        "Booking is confirmed strictly upon receipt of the ₹2,999/- advance amount.",
+        "Strict No Refund policy in case of cancellation.",
+        "You can send another person in your place (ticket transfer permitted)."
+      ],
+      "batchDates": [
+        {
+          "id": "batch-mumbai-ujjain-oct-2026",
+          "month": "October",
+          "label": "16 Oct 2026 – 19 Oct 2026 (Mumbai to Mumbai)",
+          "tag": "Special Spiritual Yatra 2026 • Lower ₹7,999 / Upper ₹7,499",
+          "startDate": "2026-10-16",
+          "endDate": "2026-10-19",
+          "status": "available"
+        }
+      ],
+      "itineraries": [
+        {
+          "dayNumber": 1,
+          "title": "Mumbai Departure & Overnight Highway Journey to Ujjain",
+          "description": "Depart from Mumbai in 2×2 AC Sleeper Coach. Overnight scenic drive towards MP with group fellowship."
+        },
+        {
+          "dayNumber": 2,
+          "title": "Ujjain Mahakal, Kaal Bhairav, Shaktipeeths & Ramghat Aarti (AC Hotel Stay)",
+          "description": "Darshan of Mahakaleshwar Jyotirlinga, Mahakal Lok Corridor, Kaal Bhairav, Shaktipeeths and Ramghat Aarti. AC hotel stay."
+        },
+        {
+          "dayNumber": 3,
+          "title": "Omkareshwar Jyotirlinga, Mamleshwar & Maheshwar Rajwada",
+          "description": "Darshan of Omkareshwar & Mamleshwar Jyotirlinga. Visit Ahilyabai Holkar Rajwada and Maheshwari Saree Market. Evening return coach boarding."
+        },
+        {
+          "dayNumber": 4,
+          "title": "Highway Return Journey & Arrival in Mumbai",
+          "description": "Day-long transit with morning tea, breakfast & pure veg meals. Safe arrival back in Mumbai on 19 October 2026."
+        }
+      ]
+    },
+    {
       "_id": "pkg-tirupati-balaji",
       "id": "tirupati-balaji-srisailam-jyotirlinga-kolhapur-mahalakshmi",
       "slug": "tirupati-balaji-srisailam-jyotirlinga-kolhapur-mahalakshmi",
@@ -364,6 +534,192 @@
           "dayNumber": 7,
           "title": "Kochi City Heritage & Return Journey to Pune",
           "description": "Visit St. Francis Church and local markets. Return journey in AC Urbania, arriving in Pune on Thursday morning, 8 October 2026."
+        }
+      ]
+    },
+    {
+      "_id": "pkg-khatu-salasar",
+      "id": "pune-sanwaliya-seth-salasar-balaji-khatu-shyam",
+      "slug": "pune-sanwaliya-seth-salasar-balaji-khatu-shyam",
+      "title": "Pune to Sanwaliya Seth | Salasar Balaji Dham | Khatu Shyam Baba",
+      "subtitle": "Special Spiritual Yatra 2026 • Pune to Pune • Sacred Darshan of Khatu Shyam Baba, Sanwaliya Seth & Salasar Balaji Dham",
+      "description": "Special 2026 spiritual pilgrimage from Pune to Rajasthan covering holy Khatu Shyam Baba, miraculous Sanwaliya Seth Mandir, and revered Salasar Balaji Dham.",
+      "overview": "Embark on a sacred 3-day spiritual pilgrimage (returning on 4th day) from Pune covering holy Khatu Shyam Baba, miraculous Sanwaliya Seth Mandir, and revered Salasar Balaji Dham with 1 Night AC Hotel stay and 2×2 AC Sleeper Coach comfort.",
+      "durationDays": 3,
+      "durationNights": 1,
+      "basePrice": 7499,
+      "lowerSeatPrice": 8499,
+      "upperSeatPrice": 7499,
+      "depositPrice": 2999,
+      "datesLabel": "23 Oct 2026 – 26 Oct 2026 (Pune to Pune)",
+      "destination": "Rajasthan & Madhya Pradesh",
+      "state": "Rajasthan & Maharashtra",
+      "images": [
+        "https://images.unsplash.com/photo-1545126178-862d2ad693b7?q=80&w=800&auto=format&fit=crop"
+      ],
+      "sites": [
+        "Khatu Shyam Baba (Rajasthan)",
+        "Shri Sanwaliya Seth Mandir (Mandphiya)",
+        "Salasar Balaji Dham (Hanuman Ji)"
+      ],
+      "inclusions": [
+        "Sleeper Coach (2×2 AC Pushback/Sleeper Luxury Travel)",
+        "1 Night Stay in Premium AC Hotel",
+        "4-Person Sharing Rooms (Quad Sharing)",
+        "2 Pure Vegetarian Meals per Day (Lunch & Dinner)",
+        "Daily Morning Tea",
+        "Fresh Breakfast Daily",
+        "Packaged Drinking Water Provided During Meals",
+        "Comprehensive Travel Insurance"
+      ],
+      "exclusions": [
+        "Puja, Archana & Abhishek Charges",
+        "VIP / Fast-track Darshan Passes",
+        "Local Travel / Auto-Rickshaw / E-Rickshaw Charges",
+        "Boating Charges",
+        "Personal Expenses, Shopping & Extra Food"
+      ],
+      "terms": [
+        "Booking is confirmed strictly upon receipt of the ₹2,999/- advance amount.",
+        "Strict No Refund policy in case of cancellation.",
+        "You can send another person in your place (ticket transfer permitted)."
+      ],
+      "batchDates": [
+        {
+          "id": "batch-khatu-salasar-oct-2026",
+          "month": "October",
+          "label": "23 Oct 2026 – 26 Oct 2026 (Pune to Pune)",
+          "tag": "Special Spiritual Yatra 2026 • Lower ₹8,499 / Upper ₹7,499",
+          "startDate": "2026-10-23",
+          "endDate": "2026-10-26",
+          "status": "available"
+        }
+      ],
+      "itineraries": [
+        {
+          "dayNumber": 1,
+          "title": "Pune Departure & Highway Journey to Sanwaliya Seth",
+          "description": "Depart from Pune in luxury 2×2 AC Sleeper Coach towards Rajasthan with group devotion.",
+          "meals": "Pure Veg Meals",
+          "stayDetails": "2×2 AC Sleeper Coach"
+        },
+        {
+          "dayNumber": 2,
+          "title": "Sanwaliya Seth Darshan & Drive to Khatu Dham (AC Hotel Stay)",
+          "description": "Darshan at miraculous Shri Sanwaliya Seth Mandir. Drive to Khatu, hotel check-in, dinner and night stay.",
+          "meals": "Pure Veg Meals",
+          "stayDetails": "Premium AC Hotel (Night 1)"
+        },
+        {
+          "dayNumber": 3,
+          "title": "Khatu Shyam Baba Darshan, Salasar Balaji Dham & Return Boarding",
+          "description": "Early morning holy darshan of Khatu Shyam Baba and Salasar Balaji Dham. Evening boarding AC coach for Pune.",
+          "meals": "Pure Veg Meals",
+          "stayDetails": "2×2 AC Sleeper Coach"
+        },
+        {
+          "dayNumber": 4,
+          "title": "Highway Return Journey & Safe Arrival in Pune",
+          "description": "Comfortable transit with morning tea, breakfast & pure veg meals. Safe arrival back in Pune on 26 October 2026.",
+          "meals": "Tea, Breakfast & Meals",
+          "stayDetails": "Pune Drop"
+        }
+      ]
+    },
+    {
+      "_id": "pkg-mumbai-ujjain",
+      "id": "mumbai-ujjain-mahakal-omkareshwar-maheshwar",
+      "slug": "mumbai-ujjain-mahakal-omkareshwar-maheshwar",
+      "title": "Mumbai to Ujjain Mahakal | Omkareshwar Jyotirlinga | Maheshwar",
+      "subtitle": "Special Spiritual Yatra 2026 • Mumbai to Mumbai • Sacred Darshan of Mahakaleshwar, Kaal Bhairav, Omkareshwar, Mamleshwar & Maheshwar Rajwada",
+      "description": "Special 2026 spiritual pilgrimage from Mumbai covering Ujjain Mahakaleshwar Jyotirlinga, Mahakal Corridor, Kaal Bhairav, Omkareshwar Jyotirlinga, Mamleshwar, and historic Maheshwar Rajwada.",
+      "overview": "Seek the holy blessings of Lord Shiva on this 3-day spiritual pilgrimage (returning on 4th day) from Mumbai covering Ujjain Mahakaleshwar Jyotirlinga, Mahakal Corridor, Kaal Bhairav, Omkareshwar Jyotirlinga, Mamleshwar, and historic Maheshwar Rajwada traveling in 2×2 AC Sleeper Coach with 1 Night AC Hotel stay.",
+      "durationDays": 3,
+      "durationNights": 1,
+      "basePrice": 7499,
+      "lowerSeatPrice": 7999,
+      "upperSeatPrice": 7499,
+      "depositPrice": 2999,
+      "datesLabel": "16 Oct 2026 – 19 Oct 2026 (Mumbai to Mumbai)",
+      "destination": "Ujjain & Omkareshwar",
+      "state": "Madhya Pradesh & Maharashtra",
+      "images": [
+        "https://images.unsplash.com/photo-1609766857041-ed402ea8069a?q=80&w=800&auto=format&fit=crop"
+      ],
+      "sites": [
+        "Ujjain Mahakaleshwar Jyotirlinga",
+        "Shri Kaal Bhairav Mandir (Ujjain)",
+        "Harsiddhi Mata Shaktipeeth",
+        "Mangalnath Mandir",
+        "Runmukteshwar Mahadev Mandir",
+        "Ramghat Shipra River Evening Aarti",
+        "Shri Mahakal Lok Corridor",
+        "Omkareshwar Jyotirlinga",
+        "Mamleshwar Temple",
+        "Ahilyabai Holkar Rajwada (Maheshwar)",
+        "Maheshwari Saree Market & Narmada Ghats"
+      ],
+      "inclusions": [
+        "Sleeper Coach (2×2 AC Pushback/Sleeper Luxury Travel)",
+        "1 Night Stay in Premium AC Hotel",
+        "4-Person Sharing Rooms (Quad Sharing)",
+        "2 Pure Vegetarian Meals per Day (Lunch & Dinner)",
+        "Daily Morning Tea",
+        "Fresh Breakfast Daily",
+        "Packaged Drinking Water Provided During Meals",
+        "Comprehensive Travel Insurance"
+      ],
+      "exclusions": [
+        "Puja, Archana & Abhishek Charges",
+        "VIP / Fast-track Darshan Passes",
+        "Local Travel / Auto-Rickshaw / E-Rickshaw Charges",
+        "Boating Charges",
+        "Personal Expenses, Shopping & Extra Food"
+      ],
+      "terms": [
+        "Booking is confirmed strictly upon receipt of the ₹2,999/- advance amount.",
+        "Strict No Refund policy in case of cancellation.",
+        "You can send another person in your place (ticket transfer permitted)."
+      ],
+      "batchDates": [
+        {
+          "id": "batch-mumbai-ujjain-oct-2026",
+          "month": "October",
+          "label": "16 Oct 2026 – 19 Oct 2026 (Mumbai to Mumbai)",
+          "tag": "Special Spiritual Yatra 2026 • Lower ₹7,999 / Upper ₹7,499",
+          "startDate": "2026-10-16",
+          "endDate": "2026-10-19",
+          "status": "available"
+        }
+      ],
+      "itineraries": [
+        {
+          "dayNumber": 1,
+          "title": "Mumbai Departure & Overnight Highway Journey to Ujjain",
+          "description": "Depart from Mumbai in 2×2 AC Sleeper Coach. Overnight scenic drive towards MP with group fellowship.",
+          "meals": "Pure Veg Meals",
+          "stayDetails": "2×2 AC Sleeper Coach"
+        },
+        {
+          "dayNumber": 2,
+          "title": "Ujjain Mahakal, Kaal Bhairav, Shaktipeeths & Ramghat Aarti (AC Hotel Stay)",
+          "description": "Darshan of Mahakaleshwar Jyotirlinga, Mahakal Lok Corridor, Kaal Bhairav, Shaktipeeths and Ramghat Aarti. AC hotel stay.",
+          "meals": "Pure Veg Meals",
+          "stayDetails": "Premium AC Hotel in Ujjain (Night 1)"
+        },
+        {
+          "dayNumber": 3,
+          "title": "Omkareshwar Jyotirlinga, Mamleshwar & Maheshwar Rajwada",
+          "description": "Darshan of Omkareshwar & Mamleshwar Jyotirlinga. Visit Ahilyabai Holkar Rajwada and Maheshwari Saree Market. Evening return coach boarding.",
+          "meals": "Pure Veg Meals",
+          "stayDetails": "2×2 AC Sleeper Coach"
+        },
+        {
+          "dayNumber": 4,
+          "title": "Highway Return Journey & Arrival in Mumbai",
+          "description": "Day-long transit with morning tea, breakfast & pure veg meals. Safe arrival back in Mumbai on 19 October 2026.",
+          "meals": "Tea, Breakfast & Meals",
+          "stayDetails": "Mumbai Drop"
         }
       ]
     }

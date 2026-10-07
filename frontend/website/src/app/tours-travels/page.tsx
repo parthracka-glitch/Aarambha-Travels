@@ -183,9 +183,10 @@ export default function ToursTravelsLandingPage() {
               </span>
               {[
                 { label: '🕉️ 3 Jyotirlinga (Mahakal)', query: 'Mahakal' },
-                { label: '🔱 Ashtavinayak Darshan', query: 'Ashtavinayak' },
-                { label: '✨ Ayodhya & Kashi', query: 'Ayodhya' },
+                { label: '🌸 Khatu Shyam & Salasar', query: 'Khatu Shyam' },
+                { label: '⚡ Mumbai to Ujjain', query: 'Mumbai' },
                 { label: '🚩 Mathura Vrindavan', query: 'Vrindavan' },
+                { label: '🔱 Ashtavinayak Darshan', query: 'Ashtavinayak' },
               ].map((chip) => (
                 <button
                   key={chip.query}
