@@ -76,11 +76,16 @@ export default function ToursView() {
   const handleSavePackage = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
+      const destId = typeof editingPkg?.destinationId === 'object' && editingPkg?.destinationId !== null
+        ? (editingPkg.destinationId._id || editingPkg.destinationId.id)
+        : (editingPkg?.destinationId || undefined);
+
       const payload = {
         ...(editingPkg || {}),
         ...form,
+        destinationId: destId,
         inclusions: typeof form.inclusions === 'string' ? form.inclusions.split(',').map(s => s.trim()) : form.inclusions,
-        images: editingPkg?.images || ['https://images.unsplash.com/photo-1626621341517-bbf3d9990a23?q=80&w=800&auto=format&fit=crop'],
+        images: editingPkg?.images && editingPkg.images.length > 0 ? editingPkg.images : ['https://images.unsplash.com/photo-1626621341517-bbf3d9990a23?q=80&w=800&auto=format&fit=crop'],
         itineraries: editingPkg?.itineraries || [{ dayNumber: 1, title: 'Day 1 Exploration', description: 'Sightseeing and city tour.' }],
         batchDates: editingPkg?.batchDates !== undefined ? editingPkg.batchDates : [],
       };
@@ -161,7 +166,6 @@ export default function ToursView() {
     try {
       const pkgId = activeBatchPkg._id || activeBatchPkg.id || activeBatchPkg.slug;
       const updatedPayload = {
-        ...activeBatchPkg,
         batchDates: pkgBatches,
       };
 

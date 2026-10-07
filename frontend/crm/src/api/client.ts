@@ -96,7 +96,10 @@ export async function apiFetch(path: string, opts?: RequestInit, retries: number
           localStorage.removeItem('crm_user');
         }
         const err = await res.json().catch(() => ({ detail: res.statusText }));
-        throw new Error(err.detail || err.message || err.error || res.statusText);
+        const errorMessage = err.errors && Array.isArray(err.errors) && err.errors.length > 0
+          ? `${err.detail || 'Validation error'}: ${err.errors.map((e: any) => `${e.field || 'Field'}: ${e.message}`).join(', ')}`
+          : (err.detail || err.message || err.error || res.statusText);
+        throw new Error(errorMessage);
       }
 
       const data = await res.json();

@@ -34,28 +34,37 @@ export const createPackageSchema = z.object({
     .trim()
     .min(1, 'Slug is required')
     .max(150, 'Slug must not exceed 150 characters')
-    .regex(/^[a-z0-9-]+$/, 'Slug must be lowercase letters, numbers, and hyphens only'),
-  title: z.string().trim().min(1, 'Title is required').max(200, 'Title must not exceed 200 characters'),
-  description: z.string().trim().min(1, 'Description is required').max(5000, 'Description must not exceed 5000 characters'),
-  durationDays: z.number().int().min(1, 'Duration must be at least 1 day').max(365),
-  durationNights: z.number().int().min(0).max(365),
-  basePrice: z.number().min(0, 'Base price must be non-negative').max(10_000_000),
-  depositPrice: z.number().min(0, 'Deposit price must be non-negative').max(10_000_000),
-  datesLabel: z.string().trim().max(200).optional(),
-  destinationId: z.string().trim().max(100).optional(),
-  images: z.array(z.string().trim().url('Each image must be a valid URL').max(500)).max(20).optional(),
-  inclusions: z.array(z.string().trim().max(300)).max(50).optional(),
-  batchDates: z.array(z.any()).max(100).optional(),
+    .regex(/^[a-z0-9-]+$/, 'Slug must be lowercase letters, numbers, and hyphens only')
+    .optional(),
+  title: z.string().trim().min(1, 'Title is required').max(300, 'Title must not exceed 300 characters'),
+  subtitle: z.string().trim().max(500).nullable().optional(),
+  description: z.string().trim().min(1, 'Description is required').max(10000, 'Description must not exceed 10000 characters'),
+  overview: z.string().trim().max(10000).nullable().optional(),
+  durationDays: z.coerce.number().int().min(1, 'Duration must be at least 1 day').max(365),
+  durationNights: z.coerce.number().int().min(0).max(365),
+  basePrice: z.coerce.number().min(0, 'Base price must be non-negative').max(10_000_000),
+  depositPrice: z.coerce.number().min(0, 'Deposit price must be non-negative').max(10_000_000),
+  datesLabel: z.string().trim().max(300).nullable().optional(),
+  destinationId: z.union([z.string(), z.record(z.any())]).nullable().optional(),
+  destination: z.string().trim().max(200).nullable().optional(),
+  state: z.string().trim().max(100).nullable().optional(),
+  isActive: z.boolean().optional(),
+  images: z.array(z.string().trim().max(1000)).max(50).optional(),
+  sites: z.array(z.string().trim().max(300)).max(100).optional(),
+  inclusions: z.array(z.string().trim().max(500)).max(100).optional(),
+  exclusions: z.array(z.string().trim().max(500)).max(100).optional(),
+  terms: z.array(z.string().trim().max(1000)).max(100).optional(),
+  batchDates: z.array(z.any()).max(200).optional(),
   itineraries: z.array(z.object({
-    dayNumber: z.number().int().min(1).max(365),
-    title: z.string().trim().min(1).max(200),
-    description: z.string().trim().min(1).max(3000),
-    meals: z.string().trim().max(200).optional(),
-    stayDetails: z.string().trim().max(500).optional(),
-  })).max(365).optional(),
-});
+    dayNumber: z.coerce.number().int().min(1).max(365),
+    title: z.string().trim().min(1).max(300),
+    description: z.string().trim().max(5000),
+    meals: z.string().trim().max(300).nullable().optional(),
+    stayDetails: z.string().trim().max(500).nullable().optional(),
+  }).passthrough()).max(365).optional(),
+}).passthrough();
 
-export const updatePackageSchema = createPackageSchema.partial();
+export const updatePackageSchema = createPackageSchema.partial().passthrough();
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Tour Inquiry

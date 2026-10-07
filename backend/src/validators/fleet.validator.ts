@@ -39,13 +39,13 @@ export const createVehicleSchema = z.object({
   category_id: z.string().trim().max(100).optional(),
   vehicleType: z.enum(['car', 'bike']).optional(),
   vehicle_type: z.enum(['car', 'bike']).optional(),
-  dailyRate: z.number().min(0, 'Daily rate must be non-negative').max(1_000_000).optional(),
-  daily_rate: z.number().min(0).max(1_000_000).optional(),
-  securityDeposit: z.number().min(0).max(1_000_000).optional(),
-  security_deposit: z.number().min(0).max(1_000_000).optional(),
-  images: z.array(z.string().trim().url('Each image must be a valid URL').max(500)).max(20).optional(),
+  dailyRate: z.coerce.number().min(0, 'Daily rate must be non-negative').max(1_000_000).optional(),
+  daily_rate: z.coerce.number().min(0).max(1_000_000).optional(),
+  securityDeposit: z.coerce.number().min(0).max(1_000_000).optional(),
+  security_deposit: z.coerce.number().min(0).max(1_000_000).optional(),
+  images: z.array(z.string().trim().max(1000)).max(50).optional(),
   specs: z.record(z.union([z.string().max(500), z.number(), z.boolean()])).optional(),
-});
+}).passthrough();
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Fleet Inquiry
