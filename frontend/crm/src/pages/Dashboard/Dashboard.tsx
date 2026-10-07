@@ -184,12 +184,12 @@ export default function DashboardView() {
     <div className="space-y-8">
 
       {/* DASHBOARD HEADER */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-1 border-b border-gray-200/70">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-1 border-b border-gray-100">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight text-gray-900">
+          <h1 className="text-xl sm:text-2xl font-bold tracking-tight text-gray-900">
             Admin Dashboard
           </h1>
-          <p className="text-xs text-gray-500 mt-1">
+          <p className="text-xs text-gray-400 mt-0.5">
             Overview of real-time bookings, payment verifications, and fleet operations.
           </p>
         </div>
@@ -197,18 +197,18 @@ export default function DashboardView() {
         <div className="flex items-center gap-2">
           <button
             onClick={loadData}
-            className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-white border border-gray-200 hover:bg-gray-50 text-gray-700 text-xs font-medium rounded-lg shadow-2xs transition-colors"
+            className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-white border border-gray-200/80 hover:bg-gray-50 text-gray-600 text-xs font-medium rounded-lg shadow-2xs transition-colors cursor-pointer"
             title="Refresh Operations Data"
           >
-            <RefreshCw className="w-3.5 h-3.5 text-gray-500" />
+            <RefreshCw className="w-3.5 h-3.5 text-gray-400" />
             <span>Refresh</span>
           </button>
           <Link
             to="/fleet"
-            className="inline-flex items-center gap-1.5 px-3.5 py-1.5 bg-gray-900 hover:bg-gray-800 text-white text-xs font-medium rounded-lg shadow-2xs transition-colors"
+            className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-white hover:bg-gray-50 border border-gray-200/80 text-gray-700 text-xs font-medium rounded-lg shadow-2xs transition-colors"
           >
-            <Bus className="w-3.5 h-3.5" />
-            <span>Manage Bus Rates ({busRates.length})</span>
+            <Bus className="w-3.5 h-3.5 text-gray-400" />
+            <span>Manage Fleet ({busRates.length})</span>
           </Link>
         </div>
       </div>
@@ -219,37 +219,37 @@ export default function DashboardView() {
           label="Total Bookings"
           value={String(allBookings.length)}
           sub={`${fleet.bookings.length} Rental • ${tours.bookings.length} Tours`}
-          variant="peach"
+          onClick={() => navigate('/bookings')}
         />
         <KPICard
           label="Customer Inquiries"
           value={String(allInquiries.length)}
           sub="Leads & WhatsApp Inquiries"
-          variant="blue"
+          onClick={() => navigate('/customers')}
         />
         <KPICard
           label="Website Buses & Cabs"
           value={String(busRates.length)}
           sub="Live Bus Rates & Rate Cards"
-          variant="purple"
+          onClick={() => navigate('/fleet')}
         />
         <KPICard
           label="Self-Drive Fleet"
           value={String(fleet.vehicles.length)}
           sub="Cars & Luxury SUVs"
-          variant="green"
+          onClick={() => navigate('/fleet')}
         />
       </div>
 
       {/* ⚡ DIRECT DASHBOARD TOUR PACKAGES & BUS RATES EDIT SECTION */}
       {!isViewer && (
-        <div className="bg-white rounded-xl border border-gray-200/80 p-5 shadow-2xs space-y-4">
+        <div className="bg-white rounded-xl border border-gray-100 p-5 shadow-2xs space-y-4">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-gray-100 pb-3">
             <div>
-              <h3 className="font-semibold text-base text-gray-900">
+              <h3 className="font-semibold text-sm sm:text-base text-gray-900">
                 {vertical === 'tours' ? 'Tour Packages & Departure Batches' : (vertical === 'fleet' ? 'Pune–Mumbai & Outstation Bus Package Rates' : 'Tour Packages & Bus Rental Rates')}
               </h3>
-              <p className="text-xs text-gray-500 mt-0.5">
+              <p className="text-xs text-gray-400 mt-0.5">
                 {vertical === 'tours'
                   ? 'Directly edit prices, duration, and departure batch dates for tour packages listed on the website.'
                   : 'Directly edit prices for Pune–Mumbai cabs, Mahabaleshwar packages, and bus rate cards listed on the website.'}
@@ -258,7 +258,7 @@ export default function DashboardView() {
 
             <Link
               to={vertical === 'tours' ? '/tours' : '/fleet'}
-              className="text-xs font-semibold text-gray-700 hover:text-gray-900 flex items-center gap-1 self-start sm:self-auto hover:underline"
+              className="text-xs font-medium text-gray-600 hover:text-gray-900 flex items-center gap-1 self-start sm:self-auto hover:underline"
             >
               <span>{vertical === 'tours' ? `View All (${tours.packages?.length || 0})` : `Full Inventory (${busRates.length})`}</span>
               <ArrowRight className="w-3.5 h-3.5" />
@@ -269,49 +269,49 @@ export default function DashboardView() {
           {(vertical === 'tours' || vertical === 'all') && tours.packages?.length > 0 && (
             <div className="space-y-3">
               {vertical === 'all' && (
-                <div className="flex items-center gap-2 font-semibold text-xs text-gray-800 border-b border-gray-100 pb-2">
-                  <Compass className="w-4 h-4 text-gray-500" />
+                <div className="flex items-center gap-2 font-medium text-xs text-gray-700 border-b border-gray-100 pb-2">
+                  <Compass className="w-3.5 h-3.5 text-gray-400" />
                   <span>Tour Packages ({tours.packages.length})</span>
                 </div>
               )}
               <div className="overflow-x-auto no-scrollbar">
                 <table className="w-full text-left text-xs">
-                  <thead className="bg-gray-50/80 text-gray-500 font-semibold uppercase text-[11px] tracking-wider border-b border-gray-200/80">
+                  <thead className="bg-gray-50/50 text-gray-400 font-medium uppercase text-[10px] tracking-wider border-b border-gray-100">
                     <tr>
-                      <th className="py-3 px-4">Tour Package Title</th>
-                      <th className="py-3 px-4">Duration</th>
-                      <th className="py-3 px-4">Base Price</th>
-                      <th className="py-3 px-4">Deposit Price</th>
-                      <th className="py-3 px-4">Departure Batches</th>
-                      <th className="py-3 px-4 text-right">Quick Action</th>
+                      <th className="py-2.5 px-4">Tour Package Title</th>
+                      <th className="py-2.5 px-4">Duration</th>
+                      <th className="py-2.5 px-4">Base Price</th>
+                      <th className="py-2.5 px-4">Deposit Price</th>
+                      <th className="py-2.5 px-4">Departure Batches</th>
+                      <th className="py-2.5 px-4 text-right">Action</th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-gray-100 text-gray-700">
                     {tours.packages.map((pkg: any) => (
                       <tr key={pkg._id || pkg.id} className="hover:bg-gray-50/60 transition-colors">
-                        <td className="py-3.5 px-4 font-semibold text-gray-900 flex items-center gap-2">
-                          <Compass className="w-4 h-4 text-gray-400" />
+                        <td className="py-3 px-4 font-medium text-gray-900 flex items-center gap-2">
+                          <Compass className="w-3.5 h-3.5 text-gray-400 shrink-0" />
                           <span>{pkg.title}</span>
                         </td>
-                        <td className="py-3.5 px-4 font-medium text-gray-700">
+                        <td className="py-3 px-4 text-gray-600">
                           {pkg.durationDays || pkg.duration_days || 1}D / {pkg.durationNights || pkg.duration_nights || 0}N
                         </td>
-                        <td className="py-3.5 px-4 font-semibold text-gray-900">
+                        <td className="py-3 px-4 font-medium text-gray-900">
                           {formatCurrency(pkg.basePrice || pkg.base_price || 0)}
                         </td>
-                        <td className="py-3.5 px-4 font-medium text-gray-700">
+                        <td className="py-3 px-4 text-gray-500">
                           {formatCurrency(pkg.depositPrice || pkg.deposit_price || 500)}
                         </td>
-                        <td className="py-3.5 px-4 text-gray-500">
-                          {Array.isArray(pkg.batchDates) ? pkg.batchDates.length : 0} Available Batches
+                        <td className="py-3 px-4 text-gray-400">
+                          {Array.isArray(pkg.batchDates) ? pkg.batchDates.length : 0} Available
                         </td>
-                        <td className="py-3.5 px-4 text-right">
+                        <td className="py-3 px-4 text-right">
                           <button
                             onClick={() => navigate('/tours')}
-                            className="px-3 py-1.5 bg-gray-900 hover:bg-gray-800 text-white font-medium rounded-lg shadow-2xs text-xs inline-flex items-center gap-1 transition-colors cursor-pointer"
+                            className="px-2.5 py-1 bg-white hover:bg-gray-50 text-gray-700 border border-gray-200/80 font-medium rounded-md text-xs inline-flex items-center gap-1.5 transition-colors cursor-pointer shadow-2xs"
                           >
-                            <Pencil className="w-3 h-3" />
-                            <span>Edit Package</span>
+                            <Pencil className="w-3 h-3 text-gray-400" />
+                            <span>Edit</span>
                           </button>
                         </td>
                       </tr>
@@ -326,51 +326,51 @@ export default function DashboardView() {
           {(vertical === 'fleet' || vertical === 'all') && busRates.length > 0 && (
             <div className="space-y-3 pt-2">
               {vertical === 'all' && (
-                <div className="flex items-center gap-2 font-semibold text-xs text-gray-800 border-b border-gray-100 pb-2">
-                  <Bus className="w-4 h-4 text-gray-500" />
+                <div className="flex items-center gap-2 font-medium text-xs text-gray-700 border-b border-gray-100 pb-2">
+                  <Bus className="w-3.5 h-3.5 text-gray-400" />
                   <span>Bus & Chauffeur Rental Rates ({busRates.length})</span>
                 </div>
               )}
               <div className="overflow-x-auto no-scrollbar">
                 <table className="w-full text-left text-xs">
-                  <thead className="bg-gray-50/80 text-gray-500 font-semibold uppercase text-[11px] tracking-wider border-b border-gray-200/80">
+                  <thead className="bg-gray-50/50 text-gray-400 font-medium uppercase text-[10px] tracking-wider border-b border-gray-100">
                     <tr>
-                      <th className="py-3 px-4">Bus / Vehicle Package</th>
-                      <th className="py-3 px-4">Seats</th>
-                      <th className="py-3 px-4">Local Base Rate</th>
-                      <th className="py-3 px-4">Mumbai Package Rate</th>
-                      <th className="py-3 px-4">Mahabaleshwar Rate</th>
-                      <th className="py-3 px-4">Extra KM</th>
-                      <th className="py-3 px-4 text-right">Quick Action</th>
+                      <th className="py-2.5 px-4">Bus / Vehicle Package</th>
+                      <th className="py-2.5 px-4">Seats</th>
+                      <th className="py-2.5 px-4">Local Base Rate</th>
+                      <th className="py-2.5 px-4">Mumbai Package Rate</th>
+                      <th className="py-2.5 px-4">Mahabaleshwar Rate</th>
+                      <th className="py-2.5 px-4">Extra KM</th>
+                      <th className="py-2.5 px-4 text-right">Action</th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-gray-100 text-gray-700">
                     {busRates.slice(0, 10).map((b) => (
                       <tr key={b._id} className="hover:bg-gray-50/60 transition-colors">
-                        <td className="py-3.5 px-4 font-semibold text-gray-900 flex items-center gap-2">
-                          <Bus className="w-4 h-4 text-gray-400" />
+                        <td className="py-3 px-4 font-medium text-gray-900 flex items-center gap-2">
+                          <Bus className="w-3.5 h-3.5 text-gray-400 shrink-0" />
                           <span>{b.busType}</span>
                         </td>
-                        <td className="py-3.5 px-4 font-medium text-gray-700">{b.seats} Seater</td>
-                        <td className="py-3.5 px-4 font-semibold text-gray-900">
+                        <td className="py-3 px-4 text-gray-600">{b.seats} Seater</td>
+                        <td className="py-3 px-4 font-medium text-gray-900">
                           {b.baseRate ? formatCurrency(b.baseRate) : '—'}
                         </td>
-                        <td className="py-3.5 px-4 font-semibold text-gray-900">
+                        <td className="py-3 px-4 font-medium text-gray-900">
                           {b.packageRate ? formatCurrency(b.packageRate) : (b.mumbaiRate ? formatCurrency(b.mumbaiRate) : '—')}
                         </td>
-                        <td className="py-3.5 px-4 font-semibold text-gray-900">
+                        <td className="py-3 px-4 font-medium text-gray-900">
                           {b.mahabaleshwarRate ? formatCurrency(b.mahabaleshwarRate) : '—'}
                         </td>
-                        <td className="py-3.5 px-4 text-gray-500">
+                        <td className="py-3 px-4 text-gray-500">
                           ₹{b.extraKmRate || 0}/km
                         </td>
-                        <td className="py-3.5 px-4 text-right">
+                        <td className="py-3 px-4 text-right">
                           <button
                             onClick={() => handleOpenQuickEdit(b)}
-                            className="px-3 py-1.5 bg-gray-900 hover:bg-gray-800 text-white font-medium rounded-lg shadow-2xs text-xs inline-flex items-center gap-1 transition-colors cursor-pointer"
+                            className="px-2.5 py-1 bg-white hover:bg-gray-50 text-gray-700 border border-gray-200/80 font-medium rounded-md text-xs inline-flex items-center gap-1.5 transition-colors cursor-pointer shadow-2xs"
                           >
-                            <Pencil className="w-3 h-3" />
-                            <span>Edit Price</span>
+                            <Pencil className="w-3 h-3 text-gray-400" />
+                            <span>Edit</span>
                           </button>
                         </td>
                       </tr>
@@ -414,27 +414,27 @@ export default function DashboardView() {
             const dateVal = b.startDate || b.travelDate || b.pickup_date || b.createdAt;
 
             return (
-              <div key={i} className="bg-gray-50/90 rounded-xl p-3.5 border border-gray-100 space-y-2.5">
+              <div key={i} className="bg-gray-50/60 rounded-lg p-3.5 border border-gray-100 space-y-2">
                 <div className="flex items-center justify-between">
-                  <span className="font-mono font-bold text-xs text-[#111827]">{code}</span>
+                  <span className="font-mono font-medium text-xs text-gray-900">{code}</span>
                   <Badge color={statusColor(b.status || 'Confirmed')}>{b.status || 'Confirmed'}</Badge>
                 </div>
                 <div className="flex items-center gap-1.5">
-                  <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold ${
-                    isRental ? 'bg-blue-50 text-blue-700 border border-blue-200' : 'bg-emerald-50 text-emerald-700 border border-emerald-200'
+                  <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded text-[10px] font-medium ${
+                    isRental ? 'bg-blue-50 text-blue-700 border border-blue-200/60' : 'bg-emerald-50 text-emerald-700 border border-emerald-200/60'
                   }`}>
-                    {isRental ? <Car className="w-3 h-3" /> : <Compass className="w-3 h-3" />}
+                    {isRental ? <Car className="w-3 h-3 shrink-0" /> : <Compass className="w-3 h-3 shrink-0" />}
                     {b.type}
                   </span>
-                  <span className="text-xs font-bold text-gray-800 truncate">{itemName}</span>
+                  <span className="text-xs font-medium text-gray-800 truncate">{itemName}</span>
                 </div>
-                <div className="flex items-center justify-between text-xs pt-1 border-t border-gray-200/60">
+                <div className="flex items-center justify-between text-xs pt-2 border-t border-gray-100">
                   <div>
-                    <p className="font-semibold text-gray-900">{name}</p>
+                    <p className="font-medium text-gray-900">{name}</p>
                     <p className="text-[10px] text-gray-400">{formatDate(dateVal)}</p>
                   </div>
                   <div className="text-right">
-                    <p className="font-bold text-emerald-700">₹{depositPaid} paid</p>
+                    <p className="font-medium text-emerald-700">₹{depositPaid} paid</p>
                     <p className="text-[10px] text-gray-400">Total: {formatCurrency(total)}</p>
                   </div>
                 </div>
@@ -449,17 +449,17 @@ export default function DashboardView() {
         {/* 💻 DESKTOP TABLE VIEW (>= 768px) */}
         <div className="hidden md:block overflow-x-auto">
           <table className="w-full text-left text-xs">
-            <thead className="bg-gray-50 text-gray-500 font-bold uppercase tracking-wider text-[10px] border-b border-gray-100">
+            <thead className="bg-gray-50/50 text-gray-400 font-medium uppercase tracking-wider text-[10px] border-b border-gray-100">
               <tr>
-                <th className="py-3 px-4">Booking ID</th>
-                <th className="py-3 px-4">Service Scope</th>
-                <th className="py-3 px-4">Customer</th>
-                <th className="py-3 px-4">Dates</th>
-                <th className="py-3 px-4">Deposit & Total</th>
-                <th className="py-3 px-4 text-right">Status</th>
+                <th className="py-2.5 px-4 font-medium">Booking ID</th>
+                <th className="py-2.5 px-4 font-medium">Service Scope</th>
+                <th className="py-2.5 px-4 font-medium">Customer</th>
+                <th className="py-2.5 px-4 font-medium">Dates</th>
+                <th className="py-2.5 px-4 font-medium">Deposit & Total</th>
+                <th className="py-2.5 px-4 text-right font-medium">Status</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-gray-100">
+            <tbody className="divide-y divide-gray-100 text-gray-700">
               {recentBookings.slice(0, 8).map((b, i) => {
                 const isRental = b.type === 'Rental' || b.type === 'Fleet';
                 const code = b.bookingCode || b.booking_code || `REF-${i + 100}`;
@@ -473,29 +473,29 @@ export default function DashboardView() {
                 const dateVal = b.startDate || b.travelDate || b.pickup_date || b.createdAt;
 
                 return (
-                  <tr key={i} className="hover:bg-gray-50/80 transition-colors">
-                    <td className="py-3.5 px-4 font-mono font-bold text-[#111827]">{code}</td>
-                    <td className="py-3.5 px-4">
-                      <span className={`inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold ${
-                        isRental ? 'bg-blue-50 text-blue-700 border border-blue-200' : 'bg-emerald-50 text-emerald-700 border border-emerald-200'
+                  <tr key={i} className="hover:bg-gray-50/60 transition-colors">
+                    <td className="py-3 px-4 font-mono font-medium text-gray-900">{code}</td>
+                    <td className="py-3 px-4">
+                      <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded text-[10px] font-medium ${
+                        isRental ? 'bg-blue-50 text-blue-700 border border-blue-200/60' : 'bg-emerald-50 text-emerald-700 border border-emerald-200/60'
                       }`}>
-                        {isRental ? <Car className="w-3 h-3" /> : <Compass className="w-3 h-3" />}
+                        {isRental ? <Car className="w-3 h-3 shrink-0" /> : <Compass className="w-3 h-3 shrink-0" />}
                         {b.type}
                       </span>
-                      <div className="text-[11px] font-semibold text-gray-700 mt-1">{itemName}</div>
+                      <div className="text-xs font-medium text-gray-900 mt-1">{itemName}</div>
                     </td>
-                    <td className="py-3.5 px-4">
-                      <div className="font-bold text-[#111827]">{name}</div>
-                      <div className="text-[10px] text-gray-400">{phone}</div>
+                    <td className="py-3 px-4">
+                      <div className="font-medium text-gray-900">{name}</div>
+                      <div className="text-[11px] text-gray-400">{phone}</div>
                     </td>
-                    <td className="py-3.5 px-4 text-gray-500">
+                    <td className="py-3 px-4 text-gray-500">
                       <div>{formatDate(dateVal)}</div>
                     </td>
-                    <td className="py-3.5 px-4">
-                      <div className="font-bold text-emerald-700">₹{depositPaid} (Deposit)</div>
-                      <div className="text-[10px] text-gray-400">Total: {formatCurrency(total)}</div>
+                    <td className="py-3 px-4">
+                      <div className="font-medium text-emerald-700">₹{depositPaid} (Deposit)</div>
+                      <div className="text-[11px] text-gray-400">Total: {formatCurrency(total)}</div>
                     </td>
-                    <td className="py-3.5 px-4 text-right">
+                    <td className="py-3 px-4 text-right">
                       <Badge color={statusColor(b.status || 'Confirmed')}>{b.status || 'Confirmed'}</Badge>
                     </td>
                   </tr>
