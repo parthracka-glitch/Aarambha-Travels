@@ -13,7 +13,7 @@ export default function CompanyLocationSection({ mode = 'all' }: { mode?: 'cars'
     : "https://wa.me/919021878717?text=Hi%20Aarambha%20Tours%20%26%20Car%20Rentals,%20I%20would%20like%20to%20inquire%20about%20your%20services.";
 
   const phoneUrl = mode === 'cars' ? "tel:+917820802985" : "tel:+919067617451";
-  const googleMapsUrl = "https://maps.google.com/?q=Green+Hills+Society+Katraj+Pune+Maharashtra+411046";
+  const googleMapsUrl = "https://maps.app.goo.gl/BtevybQv9VpBgcwRA";
 
   return (
     <section className="py-16 bg-[#FCFAF6] border-t border-[#EDE2D0]">
