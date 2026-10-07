@@ -58,7 +58,7 @@ export function Sidebar({ isOpen = false, onClose }: SidebarProps) {
   return (
     <>
       <aside
-        className={`fixed md:relative inset-y-0 left-0 z-50 w-60 bg-white text-gray-900 flex flex-col justify-between flex-shrink-0 border-r border-gray-200/90 shadow-2xs py-4 px-3 select-none transition-transform duration-300 ${
+        className={`fixed md:relative inset-y-0 left-0 z-50 w-64 bg-white text-gray-900 flex flex-col justify-between flex-shrink-0 border-r border-gray-200/90 shadow-2xs py-4 px-3 select-none transition-transform duration-300 ${
           isOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'
         }`}
       >

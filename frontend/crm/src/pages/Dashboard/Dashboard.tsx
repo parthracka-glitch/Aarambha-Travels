@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { Clock, ArrowUpRight, CalendarCheck, Compass, Car, Bus, ArrowRight, CheckCircle, AlertTriangle, ShieldAlert, Pencil, RefreshCw } from 'lucide-react';
+import { Clock, ArrowUpRight, CalendarCheck, Compass, Car, Bus, ArrowRight, CheckCircle, AlertTriangle, ShieldAlert, Pencil, RefreshCw, Search } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
 import { getToursBookings, getToursInquiries, getToursPackages } from '@/api/tours.api';
 import { getFleetBookings, getFleetInquiries, getFleetVehicles } from '@/api/fleet.api';
@@ -23,6 +23,10 @@ export default function DashboardView() {
   const [busRates, setBusRates] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const hasLoadedRef = useRef(false);
+
+  // Tabbed Inventory State
+  const [inventoryTab, setInventoryTab] = useState<'tours' | 'fleet'>('tours');
+  const [inventorySearch, setInventorySearch] = useState('');
 
   // Quick Rate Edit Modal State on Dashboard
   const [editingBus, setEditingBus] = useState<any | null>(null);
@@ -172,13 +176,22 @@ export default function DashboardView() {
     return db - da;
   });
 
-  // Highlight Pune-Mumbai and Mahabaleshwar packages
-  const packagesList = busRates.filter(b => 
-    b.category === 'urbania_pune_mumbai' ||
-    b.mumbaiRate > 0 ||
-    b.mahabaleshwarRate > 0 ||
-    b.category === 'local_ac'
-  );
+  // Filtered Inventory Lists based on search query
+  const filteredTours = (tours.packages || []).filter((pkg: any) => {
+    if (!inventorySearch) return true;
+    const q = inventorySearch.toLowerCase();
+    return (pkg.title || '').toLowerCase().includes(q) || (pkg.location || '').toLowerCase().includes(q);
+  });
+
+  const filteredBusRates = busRates.filter((b: any) => {
+    if (!inventorySearch) return true;
+    const q = inventorySearch.toLowerCase();
+    return (
+      (b.busType || '').toLowerCase().includes(q) ||
+      (b.category || '').toLowerCase().includes(q) ||
+      (b.seats ? String(b.seats).includes(q) : false)
+    );
+  });
 
   return (
     <div className="space-y-8">
@@ -189,7 +202,7 @@ export default function DashboardView() {
           <h1 className="text-xl sm:text-2xl font-bold tracking-tight text-gray-900">
             Admin Dashboard
           </h1>
-          <p className="text-xs text-gray-400 mt-0.5">
+          <p className="text-xs text-gray-500 mt-0.5">
             Overview of real-time bookings, payment verifications, and fleet operations.
           </p>
         </div>
@@ -213,7 +226,7 @@ export default function DashboardView() {
         </div>
       </div>
 
-      {/* KPI METRICS GRID — SEGREGATED & DISTINCT */}
+      {/* KPI METRICS GRID — CLEAN, DISTINCT & NO TRUNCATION */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         <KPICard
           label="Total Bookings"
@@ -232,9 +245,9 @@ export default function DashboardView() {
           onClick={() => navigate('/customers')}
         />
         <KPICard
-          label="Website Buses & Cabs"
+          label="Buses & Cabs"
           value={String(busRates.length)}
-          sub="Live Bus Rates & Rate Cards"
+          sub="Live Bus & Cab Rates"
           icon={<Bus className="w-3.5 h-3.5" />}
           variant="purple"
           onClick={() => navigate('/fleet')}
@@ -249,60 +262,116 @@ export default function DashboardView() {
         />
       </div>
 
-      {/* ⚡ DIRECT DASHBOARD TOUR PACKAGES & BUS RATES EDIT SECTION */}
+      {/* ⚡ DIRECT DASHBOARD TOUR PACKAGES & BUS RATES TABBED INVENTORY SECTION */}
       {!isViewer && (
         <div className="bg-white rounded-xl border border-gray-200/90 p-5 shadow-xs space-y-4">
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-gray-100 pb-3">
+          {/* SECTION HEADER & TAB CONTROLS */}
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-gray-100 pb-4">
             <div>
-              <h3 className="font-semibold text-sm sm:text-base text-gray-900">
-                {vertical === 'tours' ? 'Tour Packages & Departure Batches' : (vertical === 'fleet' ? 'Pune–Mumbai & Outstation Bus Package Rates' : 'Tour Packages & Bus Rental Rates')}
-              </h3>
-              <p className="text-xs text-gray-500 mt-0.5">
-                {vertical === 'tours'
-                  ? 'Directly edit prices, duration, and departure batch dates for tour packages listed on the website.'
-                  : 'Directly edit prices for Pune–Mumbai cabs, Mahabaleshwar packages, and bus rate cards listed on the website.'}
+              <div className="flex items-center gap-2">
+                <h3 className="font-semibold text-base text-gray-900 tracking-tight">
+                  Website Inventory & Rates
+                </h3>
+                <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[10px] font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200/60">
+                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                  Live on Website
+                </span>
+              </div>
+              <p className="text-xs text-gray-500 mt-1">
+                Directly view and adjust prices for tour packages, Pune–Mumbai cabs, and outstation bus rate cards.
               </p>
             </div>
 
-            <Link
-              to={vertical === 'tours' ? '/tours' : '/fleet'}
-              className="text-xs font-semibold text-gray-700 hover:text-gray-900 flex items-center gap-1 self-start sm:self-auto hover:underline"
-            >
-              <span>{vertical === 'tours' ? `View All (${tours.packages?.length || 0})` : `Full Inventory (${busRates.length})`}</span>
-              <ArrowRight className="w-3.5 h-3.5" />
-            </Link>
+            {/* Segmented Tab Switch & Navigation Link */}
+            <div className="flex flex-wrap items-center gap-2">
+              <div className="inline-flex p-0.5 bg-gray-100/90 border border-gray-200/80 rounded-lg text-xs">
+                <button
+                  onClick={() => setInventoryTab('tours')}
+                  className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md font-medium transition-all cursor-pointer ${
+                    inventoryTab === 'tours'
+                      ? 'bg-white text-gray-900 shadow-2xs font-semibold'
+                      : 'text-gray-500 hover:text-gray-800'
+                  }`}
+                >
+                  <Compass className={`w-3.5 h-3.5 ${inventoryTab === 'tours' ? 'text-amber-600' : 'text-gray-400'}`} />
+                  <span>Tour Packages ({tours.packages?.length || 0})</span>
+                </button>
+                <button
+                  onClick={() => setInventoryTab('fleet')}
+                  className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md font-medium transition-all cursor-pointer ${
+                    inventoryTab === 'fleet'
+                      ? 'bg-white text-gray-900 shadow-2xs font-semibold'
+                      : 'text-gray-500 hover:text-gray-800'
+                  }`}
+                >
+                  <Bus className={`w-3.5 h-3.5 ${inventoryTab === 'fleet' ? 'text-purple-600' : 'text-gray-400'}`} />
+                  <span>Buses & Cabs ({busRates.length})</span>
+                </button>
+              </div>
+
+              <Link
+                to={inventoryTab === 'tours' ? '/tours' : '/fleet'}
+                className="inline-flex items-center gap-1 px-2.5 py-1.5 text-xs font-semibold text-gray-700 hover:text-gray-900 hover:bg-gray-50 border border-gray-200 rounded-lg shadow-2xs transition-colors"
+              >
+                <span>Full Inventory</span>
+                <ArrowRight className="w-3.5 h-3.5" />
+              </Link>
+            </div>
           </div>
 
-          {/* TOUR PACKAGES LIST (WHEN VERTICAL IS TOURS OR ALL) */}
-          {(vertical === 'tours' || vertical === 'all') && tours.packages?.length > 0 && (
-            <div className="space-y-2.5">
-              {vertical === 'all' && (
-                <div className="flex items-center gap-2 font-semibold text-xs text-gray-800 bg-gray-50/80 px-3 py-1.5 rounded-lg border border-gray-150">
-                  <Compass className="w-3.5 h-3.5 text-amber-600" />
-                  <span>Tour Packages ({tours.packages.length})</span>
-                </div>
-              )}
-              <div className="overflow-x-auto no-scrollbar rounded-lg border border-gray-200/80">
-                <table className="w-full text-left text-xs">
-                  <thead className="bg-gray-50/90 text-gray-500 font-semibold uppercase text-[10px] tracking-wider border-b border-gray-200/80">
+          {/* INSTANT SEARCH TOOLBAR */}
+          <div className="flex items-center justify-between gap-3 pt-0.5">
+            <div className="relative flex-1 max-w-sm">
+              <Search className="w-3.5 h-3.5 text-gray-400 absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" />
+              <input
+                type="text"
+                value={inventorySearch}
+                onChange={(e) => setInventorySearch(e.target.value)}
+                placeholder={inventoryTab === 'tours' ? 'Search tour packages...' : 'Search bus types, seater, category...'}
+                className="w-full bg-gray-50 border border-gray-200 rounded-lg pl-9 pr-3 py-1.5 text-xs text-gray-900 placeholder-gray-400 focus:outline-none focus:bg-white focus:border-gray-300 focus:ring-2 focus:ring-gray-100 transition-all"
+              />
+            </div>
+            <span className="text-[11px] font-medium text-gray-400 hidden sm:inline-block">
+              {inventoryTab === 'tours' 
+                ? `Showing ${filteredTours.length} of ${tours.packages?.length || 0} packages`
+                : `Showing ${Math.min(filteredBusRates.length, 12)} of ${busRates.length} rate cards`}
+            </span>
+          </div>
+
+          {/* TAB 1: TOUR PACKAGES */}
+          {inventoryTab === 'tours' && (
+            <div className="overflow-x-auto no-scrollbar rounded-lg border border-gray-200/80">
+              <table className="w-full text-left text-xs">
+                <thead className="bg-gray-50/90 text-gray-500 font-semibold uppercase text-[10px] tracking-wider border-b border-gray-200/80">
+                  <tr>
+                    <th className="py-2.5 px-4">Tour Package Title</th>
+                    <th className="py-2.5 px-4">Duration</th>
+                    <th className="py-2.5 px-4">Base Price</th>
+                    <th className="py-2.5 px-4">Deposit Price</th>
+                    <th className="py-2.5 px-4">Departure Batches</th>
+                    <th className="py-2.5 px-4 text-right">Action</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-gray-100 text-gray-700">
+                  {filteredTours.length === 0 ? (
                     <tr>
-                      <th className="py-2.5 px-4">Tour Package Title</th>
-                      <th className="py-2.5 px-4">Duration</th>
-                      <th className="py-2.5 px-4">Base Price</th>
-                      <th className="py-2.5 px-4">Deposit Price</th>
-                      <th className="py-2.5 px-4">Departure Batches</th>
-                      <th className="py-2.5 px-4 text-right">Action</th>
+                      <td colSpan={6} className="py-8 text-center text-gray-400 text-xs">
+                        No tour packages found matching "{inventorySearch}".
+                      </td>
                     </tr>
-                  </thead>
-                  <tbody className="divide-y divide-gray-100 text-gray-700">
-                    {tours.packages.map((pkg: any) => (
-                      <tr key={pkg._id || pkg.id} className="hover:bg-gray-50/60 transition-colors">
-                        <td className="py-3 px-4 font-semibold text-gray-900 flex items-center gap-2">
-                          <Compass className="w-3.5 h-3.5 text-amber-600 shrink-0" />
-                          <span>{pkg.title}</span>
+                  ) : (
+                    filteredTours.map((pkg: any) => (
+                      <tr key={pkg._id || pkg.id} className="hover:bg-gray-50/70 transition-colors">
+                        <td className="py-3 px-4 font-semibold text-gray-900 flex items-center gap-2.5">
+                          <div className="w-7 h-7 rounded-lg bg-amber-50 text-amber-700 border border-amber-200/60 flex items-center justify-center shrink-0">
+                            <Compass className="w-3.5 h-3.5" />
+                          </div>
+                          <span className="truncate max-w-md">{pkg.title}</span>
                         </td>
                         <td className="py-3 px-4 text-gray-600">
-                          {pkg.durationDays || pkg.duration_days || 1}D / {pkg.durationNights || pkg.duration_nights || 0}N
+                          <span className="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-medium bg-gray-100 text-gray-700 border border-gray-200/60">
+                            {pkg.durationDays || pkg.duration_days || 1}D / {pkg.durationNights || pkg.duration_nights || 0}N
+                          </span>
                         </td>
                         <td className="py-3 px-4 font-bold text-gray-900">
                           {formatCurrency(pkg.basePrice || pkg.base_price || 0)}
@@ -325,22 +394,16 @@ export default function DashboardView() {
                           </button>
                         </td>
                       </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
+                    ))
+                  )}
+                </tbody>
+              </table>
             </div>
           )}
 
-          {/* BUS & FLEET RATES LIST (WHEN VERTICAL IS FLEET OR ALL) */}
-          {(vertical === 'fleet' || vertical === 'all') && busRates.length > 0 && (
-            <div className="space-y-2.5 pt-1">
-              {vertical === 'all' && (
-                <div className="flex items-center gap-2 font-semibold text-xs text-gray-800 bg-gray-50/80 px-3 py-1.5 rounded-lg border border-gray-150">
-                  <Bus className="w-3.5 h-3.5 text-purple-600" />
-                  <span>Bus & Chauffeur Rental Rates ({busRates.length})</span>
-                </div>
-              )}
+          {/* TAB 2: BUS & CHAUFFEUR RATES */}
+          {inventoryTab === 'fleet' && (
+            <div className="space-y-3">
               <div className="overflow-x-auto no-scrollbar rounded-lg border border-gray-200/80">
                 <table className="w-full text-left text-xs">
                   <thead className="bg-gray-50/90 text-gray-500 font-semibold uppercase text-[10px] tracking-wider border-b border-gray-200/80">
@@ -355,39 +418,69 @@ export default function DashboardView() {
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-gray-100 text-gray-700">
-                    {busRates.slice(0, 10).map((b) => (
-                      <tr key={b._id} className="hover:bg-gray-50/60 transition-colors">
-                        <td className="py-3 px-4 font-semibold text-gray-900 flex items-center gap-2">
-                          <Bus className="w-3.5 h-3.5 text-purple-600 shrink-0" />
-                          <span>{b.busType}</span>
-                        </td>
-                        <td className="py-3 px-4 text-gray-600">{b.seats} Seater</td>
-                        <td className="py-3 px-4 font-bold text-gray-900">
-                          {b.baseRate ? formatCurrency(b.baseRate) : '—'}
-                        </td>
-                        <td className="py-3 px-4 font-bold text-gray-900">
-                          {b.packageRate ? formatCurrency(b.packageRate) : (b.mumbaiRate ? formatCurrency(b.mumbaiRate) : '—')}
-                        </td>
-                        <td className="py-3 px-4 font-bold text-gray-900">
-                          {b.mahabaleshwarRate ? formatCurrency(b.mahabaleshwarRate) : '—'}
-                        </td>
-                        <td className="py-3 px-4 text-gray-500 font-medium">
-                          ₹{b.extraKmRate || 0}/km
-                        </td>
-                        <td className="py-3 px-4 text-right">
-                          <button
-                            onClick={() => handleOpenQuickEdit(b)}
-                            className="px-2.5 py-1 bg-white hover:bg-gray-50 text-gray-700 border border-gray-200 font-medium rounded-md text-xs inline-flex items-center gap-1.5 transition-colors cursor-pointer shadow-2xs hover:border-gray-300"
-                          >
-                            <Pencil className="w-3 h-3 text-gray-400" />
-                            <span>Edit</span>
-                          </button>
+                    {filteredBusRates.length === 0 ? (
+                      <tr>
+                        <td colSpan={7} className="py-8 text-center text-gray-400 text-xs">
+                          No bus rates found matching "{inventorySearch}".
                         </td>
                       </tr>
-                    ))}
+                    ) : (
+                      filteredBusRates.slice(0, 12).map((b) => (
+                        <tr key={b._id} className="hover:bg-gray-50/70 transition-colors">
+                          <td className="py-3 px-4 font-semibold text-gray-900 flex items-center gap-2.5">
+                            <div className="w-7 h-7 rounded-lg bg-purple-50 text-purple-700 border border-purple-200/60 flex items-center justify-center shrink-0">
+                              <Bus className="w-3.5 h-3.5" />
+                            </div>
+                            <div>
+                              <span className="block font-semibold">{b.busType}</span>
+                              <span className="block text-[10px] text-gray-400 uppercase tracking-wider">{b.category?.replace(/_/g, ' ') || 'Local & Outstation'}</span>
+                            </div>
+                          </td>
+                          <td className="py-3 px-4 text-gray-600">
+                            <span className="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-medium bg-gray-100 text-gray-700 border border-gray-200/60">
+                              {b.seats} Seater
+                            </span>
+                          </td>
+                          <td className="py-3 px-4 font-bold text-gray-900">
+                            {b.baseRate ? formatCurrency(b.baseRate) : '—'}
+                          </td>
+                          <td className="py-3 px-4 font-bold text-gray-900">
+                            {b.packageRate ? formatCurrency(b.packageRate) : (b.mumbaiRate ? formatCurrency(b.mumbaiRate) : '—')}
+                          </td>
+                          <td className="py-3 px-4 font-bold text-gray-900">
+                            {b.mahabaleshwarRate ? formatCurrency(b.mahabaleshwarRate) : '—'}
+                          </td>
+                          <td className="py-3 px-4 text-gray-500 font-medium">
+                            ₹{b.extraKmRate || 0}/km
+                          </td>
+                          <td className="py-3 px-4 text-right">
+                            <button
+                              onClick={() => handleOpenQuickEdit(b)}
+                              className="px-2.5 py-1 bg-white hover:bg-gray-50 text-gray-700 border border-gray-200 font-medium rounded-md text-xs inline-flex items-center gap-1.5 transition-colors cursor-pointer shadow-2xs hover:border-gray-300"
+                            >
+                              <Pencil className="w-3 h-3 text-gray-400" />
+                              <span>Edit</span>
+                            </button>
+                          </td>
+                        </tr>
+                      ))
+                    )}
                   </tbody>
                 </table>
               </div>
+
+              {filteredBusRates.length > 12 && (
+                <div className="flex items-center justify-between pt-2 text-xs text-gray-500 px-1">
+                  <span>Showing 12 of {busRates.length} bus & cab rate cards</span>
+                  <Link
+                    to="/fleet"
+                    className="text-xs font-semibold text-gray-700 hover:text-gray-900 flex items-center gap-1 hover:underline"
+                  >
+                    <span>View all in Fleet Manager</span>
+                    <ArrowRight className="w-3.5 h-3.5" />
+                  </Link>
+                </div>
+              )}
             </div>
           )}
         </div>
