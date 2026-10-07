@@ -9,6 +9,7 @@ import settingsRoutes from './settings.routes';
 import paymentRoutes from './payment.routes';
 import realtimeRoutes from './realtime.routes';
 import notificationsRoutes from './notifications.routes';
+import uploadRoutes from './upload.routes';
 
 export const registerRoutes = (app: Express): void => {
   // Primary Routes
@@ -22,6 +23,7 @@ export const registerRoutes = (app: Express): void => {
   app.use('/api/payments', paymentRoutes);
   app.use('/api/realtime', realtimeRoutes);
   app.use('/api/notifications', notificationsRoutes);
+  app.use('/api/upload', uploadRoutes);
 
   // Versioned v1 Aliases for Forward Compatibility
   app.use('/api/v1/auth', authRoutes);
@@ -34,6 +36,7 @@ export const registerRoutes = (app: Express): void => {
   app.use('/api/v1/payments', paymentRoutes);
   app.use('/api/v1/realtime', realtimeRoutes);
   app.use('/api/v1/notifications', notificationsRoutes);
+  app.use('/api/v1/upload', uploadRoutes);
 };
 
 export {
@@ -47,5 +50,6 @@ export {
   paymentRoutes,
   realtimeRoutes,
   notificationsRoutes,
+  uploadRoutes,
 };
 
