@@ -448,7 +448,7 @@ export default function BookingsView() {
           </p>
         </div>
 
-        <div className="flex items-center gap-3">
+        <div className="flex flex-wrap items-center gap-2 sm:gap-3">
           <Link
             to="/calendar"
             className="px-3.5 py-2 rounded-full border border-[#C65A2E]/30 bg-[#F8EFEA] hover:bg-[#EDE2D0] text-[#C65A2E] text-xs font-bold flex items-center gap-1.5 shadow-xs transition-all"

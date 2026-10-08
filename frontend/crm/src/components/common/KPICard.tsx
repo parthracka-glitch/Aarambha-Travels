@@ -48,27 +48,27 @@ export function KPICard({ label, value, sub, icon, variant = 'default', onClick 
   return (
     <div
       onClick={onClick}
-      className={`bg-white p-4.5 sm:p-5 rounded-xl border border-gray-200/80 shadow-xs hover:border-gray-300 hover:shadow-sm transition-all duration-150 flex flex-col justify-between min-h-[120px] relative group ${
+      className={`bg-white p-3.5 sm:p-5 rounded-xl border border-gray-200/80 shadow-xs hover:border-gray-300 hover:shadow-sm transition-all duration-150 flex flex-col justify-between min-h-[108px] sm:min-h-[120px] relative group tap-highlight-transparent touch-manipulation active:scale-[0.98] ${
         onClick ? 'cursor-pointer' : ''
       }`}
     >
-      <div className="flex items-center justify-between gap-2">
-        <span className="text-[11px] font-semibold text-gray-500 uppercase tracking-wider truncate">
+      <div className="flex items-center justify-between gap-1.5">
+        <span className="text-[10px] sm:text-[11px] font-semibold text-gray-500 uppercase tracking-wider truncate">
           {label}
         </span>
         {icon && (
-          <div className={`w-7 h-7 rounded-lg flex items-center justify-center shrink-0 ${cfg.iconBg}`}>
+          <div className={`w-6.5 h-6.5 sm:w-7 sm:h-7 rounded-md sm:rounded-lg flex items-center justify-center shrink-0 ${cfg.iconBg}`}>
             {icon}
           </div>
         )}
       </div>
 
-      <div className="pt-2">
-        <h3 className="text-2xl sm:text-3xl font-bold text-gray-900 tracking-tight leading-none">
+      <div className="pt-1.5 sm:pt-2">
+        <h3 className="text-xl sm:text-3xl font-bold text-gray-900 tracking-tight leading-none">
           {value}
         </h3>
-        <div className="mt-3 flex items-center justify-between text-xs pt-1 border-t border-gray-100">
-          <div className="flex items-center gap-1.5 truncate text-gray-500 font-medium">
+        <div className="mt-2.5 sm:mt-3 flex items-center justify-between text-[10px] sm:text-xs pt-1 border-t border-gray-100">
+          <div className="flex items-center gap-1.5 truncate text-gray-500 font-medium min-w-0">
             <span className={`w-1.5 h-1.5 rounded-full shrink-0 ${cfg.dot}`} />
             <span className="truncate">{sub || 'Total Interaction'}</span>
           </div>

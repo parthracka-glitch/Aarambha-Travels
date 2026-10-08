@@ -19,7 +19,7 @@ export function DashboardLayout() {
   };
 
   return (
-    <div className="min-h-screen h-screen w-full bg-[#F4F6F9] flex overflow-hidden font-sans relative">
+    <div className="min-h-screen h-[100dvh] w-full bg-[#F4F6F9] flex overflow-hidden font-sans relative">
       
       {/* Mobile Backdrop Overlay */}
       {mobileSidebarOpen && (
@@ -68,7 +68,7 @@ export function DashboardLayout() {
         )}
 
         {/* Dynamic Scrollable Page Content — NEVER BLOCKED */}
-        <main className="flex-1 overflow-y-auto px-3 sm:px-6 lg:px-8 py-3.5 sm:py-6 pb-24 md:pb-6">
+        <main className="flex-1 overflow-y-auto px-3 sm:px-6 lg:px-8 py-3.5 sm:py-6 pb-[calc(5.5rem+env(safe-area-inset-bottom,0px))] md:pb-6 overscroll-contain">
           <div className="w-full max-w-[1720px] mx-auto">
             <Outlet />
           </div>

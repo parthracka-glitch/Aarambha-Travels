@@ -290,7 +290,7 @@ export default function Navbar({ vertical = 'home' }: { vertical?: 'tours' | 'fl
           {/* ─── MOBILE HAMBURGER BUTTON ──────────────────────────────── */}
           <button
             onClick={() => setMobileOpen(!mobileOpen)}
-            className="lg:hidden p-2 rounded-lg bg-[#FCFAF6] text-[#493B34] border border-[#EDE2D0] transition-colors cursor-pointer hover:bg-[#F8EFEA]"
+            className="lg:hidden min-w-[42px] min-h-[42px] p-2 flex items-center justify-center rounded-xl bg-[#FCFAF6] text-[#493B34] border border-[#EDE2D0] transition-transform active:scale-95 cursor-pointer hover:bg-[#F8EFEA] touch-manipulation"
             aria-label="Toggle Navigation Menu"
           >
             {mobileOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
@@ -300,7 +300,7 @@ export default function Navbar({ vertical = 'home' }: { vertical?: 'tours' | 'fl
 
         {/* ─── MOBILE MENU DROPDOWN ─────────────────────────────────── */}
         {mobileOpen && (
-          <div className="lg:hidden bg-[#FCFAF6] border-b border-[#EDE2D0] px-5 py-4 space-y-4 shadow-xl">
+          <div className="lg:hidden bg-[#FCFAF6] border-b border-[#EDE2D0] px-5 py-4 space-y-4 shadow-xl max-h-[calc(100dvh-66px)] overflow-y-auto overscroll-contain pb-safe">
             
             {/* User status in mobile */}
             {user ? (

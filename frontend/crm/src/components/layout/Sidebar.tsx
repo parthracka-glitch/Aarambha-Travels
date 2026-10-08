@@ -58,7 +58,7 @@ export function Sidebar({ isOpen = false, onClose }: SidebarProps) {
   return (
     <>
       <aside
-        className={`fixed md:relative inset-y-0 left-0 z-50 w-64 bg-white text-gray-900 flex flex-col justify-between flex-shrink-0 border-r border-gray-200/90 shadow-2xs py-4 px-3 select-none transition-transform duration-300 ${
+        className={`fixed md:relative inset-y-0 left-0 z-50 w-72 sm:w-64 bg-white text-gray-900 flex flex-col justify-between flex-shrink-0 border-r border-gray-200/90 shadow-xl md:shadow-2xs py-4 px-3 select-none transition-transform duration-300 pt-[max(1rem,env(safe-area-inset-top,0px))] pb-[max(1rem,env(safe-area-inset-bottom,0px))] pl-[max(0.75rem,env(safe-area-inset-left,0px))] ${
           isOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'
         }`}
       >
@@ -90,9 +90,10 @@ export function Sidebar({ isOpen = false, onClose }: SidebarProps) {
 
             <button
               onClick={onClose}
-              className="md:hidden text-gray-400 hover:text-gray-700 p-1.5 rounded-lg hover:bg-gray-100"
+              className="md:hidden text-gray-400 hover:text-gray-700 p-2 rounded-lg hover:bg-gray-100 min-w-[36px] min-h-[36px] flex items-center justify-center cursor-pointer active:scale-95 transition-all"
+              aria-label="Close Navigation"
             >
-              <X className="w-4 h-4" />
+              <X className="w-5 h-5" />
             </button>
           </div>
 

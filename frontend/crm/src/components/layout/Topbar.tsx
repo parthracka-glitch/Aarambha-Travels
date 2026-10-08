@@ -24,17 +24,17 @@ export function Topbar({ onToggleMobileSidebar }: TopbarProps) {
 
   return (
     <>
-      <header className="bg-white px-4 sm:px-6 py-2.5 flex items-center justify-between gap-3 border-b border-gray-200/90 shadow-2xs select-none sticky top-0 z-30">
+      <header className="bg-white px-3 sm:px-6 py-2 sm:py-2.5 pt-[max(0.5rem,env(safe-area-inset-top,0px))] flex items-center justify-between gap-2 sm:gap-3 border-b border-gray-200/90 shadow-2xs select-none sticky top-0 z-30">
         
         {/* Mobile Hamburger & Search Bar */}
         <div className="flex items-center gap-2 sm:gap-3 max-w-md w-full">
           {/* Mobile Hamburger Button */}
           <button
             onClick={onToggleMobileSidebar}
-            className="md:hidden w-8 h-8 rounded-lg bg-gray-50 border border-gray-200 flex items-center justify-center text-gray-700 hover:text-gray-900 hover:bg-gray-100 active:scale-95 shrink-0 transition-colors"
+            className="md:hidden w-9 h-9 min-w-[36px] min-h-[36px] rounded-lg bg-gray-50 border border-gray-200 flex items-center justify-center text-gray-700 hover:text-gray-900 hover:bg-gray-100 active:scale-95 shrink-0 transition-colors cursor-pointer tap-highlight-transparent touch-manipulation"
             aria-label="Toggle Navigation Sidebar"
           >
-            <Menu className="w-4 h-4" />
+            <Menu className="w-4.5 h-4.5" />
           </button>
 
           {/* Search Input Bar */}
@@ -44,8 +44,8 @@ export function Topbar({ onToggleMobileSidebar }: TopbarProps) {
               type="text"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="Search bookings, tours, cars, leads..."
-              className="w-full bg-gray-50 border border-gray-200 rounded-lg pl-9 pr-11 py-1.5 text-xs text-gray-900 placeholder-gray-400 focus:outline-none focus:bg-white focus:border-gray-300 focus:ring-2 focus:ring-gray-100 transition-all"
+              placeholder="Search bookings, fleet, tours..."
+              className="w-full bg-gray-50 border border-gray-200 rounded-lg pl-9 pr-3 sm:pr-11 py-1.5 text-xs text-gray-900 placeholder-gray-400 focus:outline-none focus:bg-white focus:border-gray-300 focus:ring-2 focus:ring-gray-100 transition-all"
             />
             <kbd className="hidden sm:inline-flex items-center absolute right-2.5 top-1/2 -translate-y-1/2 px-1.5 py-0.5 text-[10px] font-medium text-gray-400 bg-white border border-gray-200 rounded shadow-2xs pointer-events-none">
               ⌘K
@@ -54,16 +54,19 @@ export function Topbar({ onToggleMobileSidebar }: TopbarProps) {
         </div>
 
         {/* Right Action Icons & Badges */}
-        <div className="flex items-center gap-2 sm:gap-3 shrink-0">
+        <div className="flex items-center gap-1.5 sm:gap-3 shrink-0">
           
           {/* Live API Status Pill */}
           <div 
-            className="flex items-center gap-1.5 px-2.5 py-0.5 rounded-md text-[11px] font-medium text-emerald-700 bg-emerald-50 border border-emerald-200/70"
+            className="flex items-center gap-1 sm:gap-1.5 px-2 sm:px-2.5 py-0.5 rounded-md text-[10px] sm:text-[11px] font-medium text-emerald-700 bg-emerald-50 border border-emerald-200/70"
             title={apiStatus === 'online' ? 'Connected to live database' : 'Connecting to backend...'}
           >
             <span className={`w-1.5 h-1.5 rounded-full ${apiStatus === 'online' ? 'bg-emerald-500' : 'bg-amber-500 animate-ping'}`} />
-            <span>
+            <span className="hidden xs:inline">
               {apiStatus === 'online' ? 'Live API' : 'Connecting...'}
+            </span>
+            <span className="xs:hidden">
+              {apiStatus === 'online' ? 'Live' : '...'}
             </span>
           </div>
 

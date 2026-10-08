@@ -210,7 +210,7 @@ export default function ToursView() {
           <p className="text-xs text-gray-500 font-medium mt-0.5">Manage custom itineraries, pricing, departure batch dates, and features.</p>
         </div>
 
-        <div className="flex items-center gap-3">
+        <div className="flex flex-wrap items-center gap-2 sm:gap-3">
           <button
             onClick={load}
             className="p-2 rounded-full border border-gray-200 bg-white text-gray-600 hover:text-black hover:bg-gray-50 text-xs font-semibold flex items-center gap-1.5 shadow-sm transition-all"

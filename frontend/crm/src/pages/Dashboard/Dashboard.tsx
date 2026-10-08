@@ -226,8 +226,8 @@ export default function DashboardView() {
         </div>
       </div>
 
-      {/* KPI METRICS GRID — CLEAN, DISTINCT & NO TRUNCATION */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+      {/* KPI METRICS GRID — 2 COLS ON MOBILE, 4 COLS ON DESKTOP */}
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-2.5 sm:gap-4">
         <KPICard
           label="Total Bookings"
           value={String(allBookings.length)}
@@ -264,12 +264,12 @@ export default function DashboardView() {
 
       {/* ⚡ DIRECT DASHBOARD TOUR PACKAGES & BUS RATES TABBED INVENTORY SECTION */}
       {!isViewer && (
-        <div className="bg-white rounded-xl border border-gray-200/90 p-5 shadow-xs space-y-4">
+        <div className="bg-white rounded-xl border border-gray-200/90 p-4 sm:p-5 shadow-xs space-y-4">
           {/* SECTION HEADER & TAB CONTROLS */}
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-gray-100 pb-4">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4 border-b border-gray-100 pb-3 sm:pb-4">
             <div>
               <div className="flex items-center gap-2">
-                <h3 className="font-semibold text-base text-gray-900 tracking-tight">
+                <h3 className="font-semibold text-sm sm:text-base text-gray-900 tracking-tight">
                   Website Inventory & Rates
                 </h3>
                 <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[10px] font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200/60">
@@ -277,28 +277,28 @@ export default function DashboardView() {
                   Live on Website
                 </span>
               </div>
-              <p className="text-xs text-gray-500 mt-1">
+              <p className="text-[11px] sm:text-xs text-gray-500 mt-0.5 sm:mt-1">
                 Directly view and adjust prices for tour packages, Pune–Mumbai cabs, and outstation bus rate cards.
               </p>
             </div>
 
             {/* Segmented Tab Switch & Navigation Link */}
             <div className="flex flex-wrap items-center gap-2">
-              <div className="inline-flex p-0.5 bg-gray-100/90 border border-gray-200/80 rounded-lg text-xs">
+              <div className="inline-flex w-full sm:w-auto p-0.5 bg-gray-100/90 border border-gray-200/80 rounded-lg text-xs">
                 <button
                   onClick={() => setInventoryTab('tours')}
-                  className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md font-medium transition-all cursor-pointer ${
+                  className={`flex-1 sm:flex-initial inline-flex items-center justify-center gap-1.5 px-3 py-1.5 rounded-md font-medium transition-all cursor-pointer tap-highlight-transparent touch-manipulation min-h-[34px] ${
                     inventoryTab === 'tours'
                       ? 'bg-white text-gray-900 shadow-2xs font-semibold'
                       : 'text-gray-500 hover:text-gray-800'
                   }`}
                 >
                   <Compass className={`w-3.5 h-3.5 ${inventoryTab === 'tours' ? 'text-amber-600' : 'text-gray-400'}`} />
-                  <span>Tour Packages ({tours.packages?.length || 0})</span>
+                  <span>Tours ({tours.packages?.length || 0})</span>
                 </button>
                 <button
                   onClick={() => setInventoryTab('fleet')}
-                  className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md font-medium transition-all cursor-pointer ${
+                  className={`flex-1 sm:flex-initial inline-flex items-center justify-center gap-1.5 px-3 py-1.5 rounded-md font-medium transition-all cursor-pointer tap-highlight-transparent touch-manipulation min-h-[34px] ${
                     inventoryTab === 'fleet'
                       ? 'bg-white text-gray-900 shadow-2xs font-semibold'
                       : 'text-gray-500 hover:text-gray-800'
@@ -311,7 +311,7 @@ export default function DashboardView() {
 
               <Link
                 to={inventoryTab === 'tours' ? '/tours' : '/fleet'}
-                className="inline-flex items-center gap-1 px-2.5 py-1.5 text-xs font-semibold text-gray-700 hover:text-gray-900 hover:bg-gray-50 border border-gray-200 rounded-lg shadow-2xs transition-colors"
+                className="hidden sm:inline-flex items-center gap-1 px-2.5 py-1.5 text-xs font-semibold text-gray-700 hover:text-gray-900 hover:bg-gray-50 border border-gray-200 rounded-lg shadow-2xs transition-colors"
               >
                 <span>Full Inventory</span>
                 <ArrowRight className="w-3.5 h-3.5" />
@@ -327,7 +327,7 @@ export default function DashboardView() {
                 type="text"
                 value={inventorySearch}
                 onChange={(e) => setInventorySearch(e.target.value)}
-                placeholder={inventoryTab === 'tours' ? 'Search tour packages...' : 'Search bus types, seater, category...'}
+                placeholder={inventoryTab === 'tours' ? 'Search tour packages...' : 'Search bus types, seater...'}
                 className="w-full bg-gray-50 border border-gray-200 rounded-lg pl-9 pr-3 py-1.5 text-xs text-gray-900 placeholder-gray-400 focus:outline-none focus:bg-white focus:border-gray-300 focus:ring-2 focus:ring-gray-100 transition-all"
               />
             </div>
@@ -340,71 +340,177 @@ export default function DashboardView() {
 
           {/* TAB 1: TOUR PACKAGES */}
           {inventoryTab === 'tours' && (
-            <div className="overflow-x-auto no-scrollbar rounded-lg border border-gray-200/80">
-              <table className="w-full text-left text-xs">
-                <thead className="bg-gray-50/90 text-gray-500 font-semibold uppercase text-[10px] tracking-wider border-b border-gray-200/80">
-                  <tr>
-                    <th className="py-2.5 px-4">Tour Package Title</th>
-                    <th className="py-2.5 px-4">Duration</th>
-                    <th className="py-2.5 px-4">Base Price</th>
-                    <th className="py-2.5 px-4">Deposit Price</th>
-                    <th className="py-2.5 px-4">Departure Batches</th>
-                    <th className="py-2.5 px-4 text-right">Action</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-gray-100 text-gray-700">
-                  {filteredTours.length === 0 ? (
-                    <tr>
-                      <td colSpan={6} className="py-8 text-center text-gray-400 text-xs">
-                        No tour packages found matching "{inventorySearch}".
-                      </td>
-                    </tr>
-                  ) : (
-                    filteredTours.map((pkg: any) => (
-                      <tr key={pkg._id || pkg.id} className="hover:bg-gray-50/70 transition-colors">
-                        <td className="py-3 px-4 font-semibold text-gray-900 flex items-center gap-2.5">
+            <div className="space-y-3">
+              {/* 📱 MOBILE TOUR PACKAGES CARDS (< 768px) */}
+              <div className="md:hidden space-y-3">
+                {filteredTours.length === 0 ? (
+                  <div className="py-8 text-center text-gray-400 text-xs bg-gray-50/50 rounded-lg border border-gray-150">
+                    No tour packages found matching "{inventorySearch}".
+                  </div>
+                ) : (
+                  filteredTours.map((pkg: any) => (
+                    <div key={pkg._id || pkg.id} className="bg-white rounded-xl border border-gray-200/90 p-3.5 shadow-2xs space-y-2.5">
+                      <div className="flex items-start justify-between gap-2">
+                        <div className="flex items-center gap-2">
                           <div className="w-7 h-7 rounded-lg bg-amber-50 text-amber-700 border border-amber-200/60 flex items-center justify-center shrink-0">
                             <Compass className="w-3.5 h-3.5" />
                           </div>
-                          <span className="truncate max-w-md">{pkg.title}</span>
-                        </td>
-                        <td className="py-3 px-4 text-gray-600">
-                          <span className="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-medium bg-gray-100 text-gray-700 border border-gray-200/60">
-                            {pkg.durationDays || pkg.duration_days || 1}D / {pkg.durationNights || pkg.duration_nights || 0}N
-                          </span>
-                        </td>
-                        <td className="py-3 px-4 font-bold text-gray-900">
-                          {formatCurrency(pkg.basePrice || pkg.base_price || 0)}
-                        </td>
-                        <td className="py-3 px-4 text-gray-500">
-                          {formatCurrency(pkg.depositPrice || pkg.deposit_price || 500)}
-                        </td>
-                        <td className="py-3 px-4 text-gray-500">
-                          <span className="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-medium bg-emerald-50 text-emerald-700 border border-emerald-200/60">
-                            {Array.isArray(pkg.batchDates) ? pkg.batchDates.length : 0} Available
-                          </span>
-                        </td>
-                        <td className="py-3 px-4 text-right">
-                          <button
-                            onClick={() => navigate('/tours')}
-                            className="px-2.5 py-1 bg-white hover:bg-gray-50 text-gray-700 border border-gray-200 font-medium rounded-md text-xs inline-flex items-center gap-1.5 transition-colors cursor-pointer shadow-2xs hover:border-gray-300"
-                          >
-                            <Pencil className="w-3 h-3 text-gray-400" />
-                            <span>Edit</span>
-                          </button>
+                          <div>
+                            <h4 className="font-semibold text-xs text-gray-900 leading-snug">{pkg.title}</h4>
+                            <span className="text-[10px] text-gray-400">{pkg.durationDays || pkg.duration_days || 1}D / {pkg.durationNights || pkg.duration_nights || 0}N</span>
+                          </div>
+                        </div>
+                        <span className="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-medium bg-emerald-50 text-emerald-700 border border-emerald-200/60 shrink-0">
+                          {Array.isArray(pkg.batchDates) ? pkg.batchDates.length : 0} Batches
+                        </span>
+                      </div>
+
+                      <div className="grid grid-cols-2 gap-2 bg-gray-50/80 rounded-lg p-2.5 text-xs">
+                        <div>
+                          <span className="text-[10px] text-gray-400 block">Base Price</span>
+                          <span className="font-bold text-gray-900">{formatCurrency(pkg.basePrice || pkg.base_price || 0)}</span>
+                        </div>
+                        <div>
+                          <span className="text-[10px] text-gray-400 block">Deposit</span>
+                          <span className="font-medium text-gray-600">{formatCurrency(pkg.depositPrice || pkg.deposit_price || 500)}</span>
+                        </div>
+                      </div>
+
+                      <button
+                        onClick={() => navigate('/tours')}
+                        className="w-full py-2 bg-white hover:bg-gray-50 text-gray-700 border border-gray-200 font-semibold rounded-lg text-xs flex items-center justify-center gap-1.5 transition-colors cursor-pointer shadow-2xs active:scale-98 min-h-[38px] tap-highlight-transparent touch-manipulation"
+                      >
+                        <Pencil className="w-3 h-3 text-gray-400" />
+                        <span>Edit Package Itinerary & Dates</span>
+                      </button>
+                    </div>
+                  ))
+                )}
+              </div>
+
+              {/* 💻 DESKTOP TABLE VIEW (>= 768px) */}
+              <div className="hidden md:block overflow-x-auto no-scrollbar rounded-lg border border-gray-200/80">
+                <table className="w-full text-left text-xs">
+                  <thead className="bg-gray-50/90 text-gray-500 font-semibold uppercase text-[10px] tracking-wider border-b border-gray-200/80">
+                    <tr>
+                      <th className="py-2.5 px-4">Tour Package Title</th>
+                      <th className="py-2.5 px-4">Duration</th>
+                      <th className="py-2.5 px-4">Base Price</th>
+                      <th className="py-2.5 px-4">Deposit Price</th>
+                      <th className="py-2.5 px-4">Departure Batches</th>
+                      <th className="py-2.5 px-4 text-right">Action</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-gray-100 text-gray-700">
+                    {filteredTours.length === 0 ? (
+                      <tr>
+                        <td colSpan={6} className="py-8 text-center text-gray-400 text-xs">
+                          No tour packages found matching "{inventorySearch}".
                         </td>
                       </tr>
-                    ))
-                  )}
-                </tbody>
-              </table>
+                    ) : (
+                      filteredTours.map((pkg: any) => (
+                        <tr key={pkg._id || pkg.id} className="hover:bg-gray-50/70 transition-colors">
+                          <td className="py-3 px-4 font-semibold text-gray-900 flex items-center gap-2.5">
+                            <div className="w-7 h-7 rounded-lg bg-amber-50 text-amber-700 border border-amber-200/60 flex items-center justify-center shrink-0">
+                              <Compass className="w-3.5 h-3.5" />
+                            </div>
+                            <span className="truncate max-w-md">{pkg.title}</span>
+                          </td>
+                          <td className="py-3 px-4 text-gray-600">
+                            <span className="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-medium bg-gray-100 text-gray-700 border border-gray-200/60">
+                              {pkg.durationDays || pkg.duration_days || 1}D / {pkg.durationNights || pkg.duration_nights || 0}N
+                            </span>
+                          </td>
+                          <td className="py-3 px-4 font-bold text-gray-900">
+                            {formatCurrency(pkg.basePrice || pkg.base_price || 0)}
+                          </td>
+                          <td className="py-3 px-4 text-gray-500">
+                            {formatCurrency(pkg.depositPrice || pkg.deposit_price || 500)}
+                          </td>
+                          <td className="py-3 px-4 text-gray-500">
+                            <span className="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-medium bg-emerald-50 text-emerald-700 border border-emerald-200/60">
+                              {Array.isArray(pkg.batchDates) ? pkg.batchDates.length : 0} Available
+                            </span>
+                          </td>
+                          <td className="py-3 px-4 text-right">
+                            <button
+                              onClick={() => navigate('/tours')}
+                              className="px-2.5 py-1 bg-white hover:bg-gray-50 text-gray-700 border border-gray-200 font-medium rounded-md text-xs inline-flex items-center gap-1.5 transition-colors cursor-pointer shadow-2xs hover:border-gray-300"
+                            >
+                              <Pencil className="w-3 h-3 text-gray-400" />
+                              <span>Edit</span>
+                            </button>
+                          </td>
+                        </tr>
+                      ))
+                    )}
+                  </tbody>
+                </table>
+              </div>
             </div>
           )}
 
           {/* TAB 2: BUS & CHAUFFEUR RATES */}
           {inventoryTab === 'fleet' && (
             <div className="space-y-3">
-              <div className="overflow-x-auto no-scrollbar rounded-lg border border-gray-200/80">
+              {/* 📱 MOBILE BUS RATES CARDS (< 768px) */}
+              <div className="md:hidden space-y-3">
+                {filteredBusRates.length === 0 ? (
+                  <div className="py-8 text-center text-gray-400 text-xs bg-gray-50/50 rounded-lg border border-gray-150">
+                    No bus rates found matching "{inventorySearch}".
+                  </div>
+                ) : (
+                  filteredBusRates.slice(0, 10).map((b: any) => (
+                    <div key={b._id} className="bg-white rounded-xl border border-gray-200/90 p-3.5 shadow-2xs space-y-2.5">
+                      <div className="flex items-start justify-between gap-2">
+                        <div className="flex items-center gap-2">
+                          <div className="w-7 h-7 rounded-lg bg-purple-50 text-purple-700 border border-purple-200/60 flex items-center justify-center shrink-0">
+                            <Bus className="w-3.5 h-3.5" />
+                          </div>
+                          <div>
+                            <h4 className="font-semibold text-xs text-gray-900 leading-snug">{b.busType}</h4>
+                            <span className="text-[10px] text-gray-400 uppercase tracking-wider">{b.category?.replace(/_/g, ' ') || 'Local & Outstation'}</span>
+                          </div>
+                        </div>
+                        <span className="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-medium bg-gray-100 text-gray-700 border border-gray-200/60 shrink-0">
+                          {b.seats} Seater
+                        </span>
+                      </div>
+
+                      <div className="grid grid-cols-2 gap-2 bg-gray-50/80 rounded-lg p-2.5 text-xs">
+                        <div>
+                          <span className="text-[10px] text-gray-400 block">Local (8h/80km)</span>
+                          <span className="font-bold text-gray-900">{b.baseRate ? formatCurrency(b.baseRate) : '—'}</span>
+                        </div>
+                        <div>
+                          <span className="text-[10px] text-gray-400 block">Mumbai Package</span>
+                          <span className="font-bold text-gray-900">{b.packageRate ? formatCurrency(b.packageRate) : (b.mumbaiRate ? formatCurrency(b.mumbaiRate) : '—')}</span>
+                        </div>
+                        <div>
+                          <span className="text-[10px] text-gray-400 block">Mahabaleshwar</span>
+                          <span className="font-bold text-gray-900">{b.mahabaleshwarRate ? formatCurrency(b.mahabaleshwarRate) : '—'}</span>
+                        </div>
+                        <div>
+                          <span className="text-[10px] text-gray-400 block">Extra KM</span>
+                          <span className="font-medium text-gray-700">₹{b.extraKmRate || 0}/km</span>
+                        </div>
+                      </div>
+
+                      <button
+                        onClick={() => handleOpenQuickEdit(b)}
+                        className="w-full py-2 bg-white hover:bg-gray-50 text-gray-700 border border-gray-200 font-semibold rounded-lg text-xs flex items-center justify-center gap-1.5 transition-colors cursor-pointer shadow-2xs active:scale-98 min-h-[38px] tap-highlight-transparent touch-manipulation"
+                      >
+                        <Pencil className="w-3 h-3 text-gray-400" />
+                        <span>Quick Edit Rate Card</span>
+                      </button>
+                    </div>
+                  ))
+                )}
+              </div>
+
+              {/* 💻 DESKTOP TABLE VIEW (>= 768px) */}
+              <div className="hidden md:block overflow-x-auto no-scrollbar rounded-lg border border-gray-200/80">
                 <table className="w-full text-left text-xs">
                   <thead className="bg-gray-50/90 text-gray-500 font-semibold uppercase text-[10px] tracking-wider border-b border-gray-200/80">
                     <tr>
@@ -628,69 +734,69 @@ export default function DashboardView() {
               />
             </div>
 
-            <div className="grid grid-cols-2 gap-3">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               <div>
-                <label className="font-bold text-[#C65A2E] block mb-1">Pune–Mumbai Rate (₹)</label>
+                <label className="font-semibold text-gray-900 block mb-1">Pune–Mumbai Rate (₹)</label>
                 <input
                   type="number"
                   value={busForm.packageRate || busForm.mumbaiRate}
                   onChange={e => setBusForm({ ...busForm, packageRate: Number(e.target.value), mumbaiRate: Number(e.target.value) })}
-                  className="w-full p-2 rounded-lg border border-[#EDE2D0] font-bold text-gray-900"
+                  className="w-full p-2.5 rounded-lg border border-gray-200 font-bold text-gray-900 text-base sm:text-xs bg-white focus:outline-none focus:border-gray-400"
                 />
               </div>
 
               <div>
-                <label className="font-bold text-[#C65A2E] block mb-1">Mahabaleshwar Rate (₹)</label>
+                <label className="font-semibold text-gray-900 block mb-1">Mahabaleshwar Rate (₹)</label>
                 <input
                   type="number"
                   value={busForm.mahabaleshwarRate}
                   onChange={e => setBusForm({ ...busForm, mahabaleshwarRate: Number(e.target.value) })}
-                  className="w-full p-2 rounded-lg border border-[#EDE2D0] font-bold text-gray-900"
+                  className="w-full p-2.5 rounded-lg border border-gray-200 font-bold text-gray-900 text-base sm:text-xs bg-white focus:outline-none focus:border-gray-400"
                 />
               </div>
             </div>
 
-            <div className="grid grid-cols-3 gap-3">
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
               <div>
-                <label className="font-medium block mb-1">Local Base Rate (₹)</label>
+                <label className="font-medium text-gray-600 block mb-1">Local Base Rate (₹)</label>
                 <input
                   type="number"
                   value={busForm.baseRate}
                   onChange={e => setBusForm({ ...busForm, baseRate: Number(e.target.value) })}
-                  className="w-full p-2 rounded-lg border border-[#EDE2D0]"
+                  className="w-full p-2.5 rounded-lg border border-gray-200 text-base sm:text-xs bg-white focus:outline-none focus:border-gray-400"
                 />
               </div>
               <div>
-                <label className="font-medium block mb-1">Extra KM Rate (₹)</label>
+                <label className="font-medium text-gray-600 block mb-1">Extra KM Rate (₹)</label>
                 <input
                   type="number"
                   value={busForm.extraKmRate}
                   onChange={e => setBusForm({ ...busForm, extraKmRate: Number(e.target.value) })}
-                  className="w-full p-2 rounded-lg border border-[#EDE2D0]"
+                  className="w-full p-2.5 rounded-lg border border-gray-200 text-base sm:text-xs bg-white focus:outline-none focus:border-gray-400"
                 />
               </div>
               <div>
-                <label className="font-medium block mb-1">Extra Hour Rate (₹)</label>
+                <label className="font-medium text-gray-600 block mb-1">Extra Hour Rate (₹)</label>
                 <input
                   type="number"
                   value={busForm.extraHourRate}
                   onChange={e => setBusForm({ ...busForm, extraHourRate: Number(e.target.value) })}
-                  className="w-full p-2 rounded-lg border border-[#EDE2D0]"
+                  className="w-full p-2.5 rounded-lg border border-gray-200 text-base sm:text-xs bg-white focus:outline-none focus:border-gray-400"
                 />
               </div>
             </div>
 
-            <div className="pt-2 flex justify-end gap-2">
+            <div className="pt-2 flex flex-col-reverse sm:flex-row justify-end gap-2">
               <button
                 type="button"
                 onClick={() => setEditingBus(null)}
-                className="px-4 py-2 rounded-lg border border-[#EDE2D0] text-[#493B34] font-bold hover:bg-[#F8EFEA]"
+                className="w-full sm:w-auto px-4 py-2.5 rounded-lg border border-gray-200 text-gray-700 font-semibold hover:bg-gray-50 min-h-[44px] cursor-pointer text-xs"
               >
                 Cancel
               </button>
               <button
                 type="submit"
-                className="px-5 py-2 rounded-lg bg-[#C65A2E] hover:bg-[#B24E25] text-white font-bold shadow-xs cursor-pointer"
+                className="w-full sm:w-auto px-5 py-2.5 rounded-lg bg-gray-900 hover:bg-black text-white font-semibold shadow-xs min-h-[44px] cursor-pointer text-xs"
               >
                 Update Price & Save Live
               </button>

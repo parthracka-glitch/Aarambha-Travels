@@ -722,8 +722,11 @@ export default function CalendarView() {
             </div>
           </div>
 
-          {/* Days of Week Header */}
-          <div className="grid grid-cols-7 border-b border-gray-100 bg-gray-50/80 text-center">
+          {/* Calendar Table Container with Mobile Horizontal Scrolling */}
+          <div className="overflow-x-auto">
+            <div className="min-w-[680px]">
+              {/* Days of Week Header */}
+              <div className="grid grid-cols-7 border-b border-gray-100 bg-gray-50/80 text-center">
             {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map((d, i) => (
               <div
                 key={d}
@@ -849,6 +852,8 @@ export default function CalendarView() {
                 </div>
               );
             })}
+          </div>
+            </div>
           </div>
         </div>
       )}

@@ -142,109 +142,214 @@ export default function FinanceView() {
 
       {/* ─── Invoices Tab ─── */}
       {activeTab === 'invoices' && (
-        <div className="bg-white rounded-[24px] border border-gray-100 overflow-hidden shadow-sm">
-          <div className="overflow-x-auto">
-            <table className="w-full text-xs">
-              <thead className="bg-[#2D1F18] text-left text-[#EDE2D0] font-bold uppercase tracking-wider">
-                <tr>
-                  <th className="px-5 py-3.5">Booking Ref</th>
-                  <th className="px-5 py-3.5">Type</th>
-                  <th className="px-5 py-3.5">Customer</th>
-                  <th className="px-5 py-3.5">Date</th>
-                  <th className="px-5 py-3.5">Total</th>
-                  <th className="px-5 py-3.5">Deposit</th>
-                  <th className="px-5 py-3.5">Status</th>
-                  <th className="px-5 py-3.5 text-right">Invoice</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-gray-100">
-                {allBookings.map((b, i) => {
-                  const isFleet = b._vertical === 'fleet';
-                  const code = b.bookingCode || b.booking_code;
-                  const name = b.customerName || b.customer_name || 'Customer';
-                  const total = b.totalAmount || b.total_amount || b.totalRentalAmount || 0;
-                  const deposit = b.depositAmount || b.depositPaid || 500;
+        <div className="space-y-3">
+          {/* 📱 Mobile Invoices Card View (< 768px) */}
+          <div className="md:hidden space-y-3">
+            {allBookings.map((b, i) => {
+              const isFleet = b._vertical === 'fleet';
+              const code = b.bookingCode || b.booking_code;
+              const name = b.customerName || b.customer_name || 'Customer';
+              const total = b.totalAmount || b.total_amount || b.totalRentalAmount || 0;
+              const deposit = b.depositAmount || b.depositPaid || 500;
 
-                  return (
-                    <tr key={i} className="hover:bg-gray-50/80 transition-colors">
-                      <td className="px-5 py-4 font-mono font-bold text-[#2D1F18]">{code}</td>
-                      <td className="px-5 py-4">
+              return (
+                <div key={i} className="bg-white rounded-2xl border border-gray-100 p-4 shadow-sm space-y-3">
+                  <div className="flex items-start justify-between gap-2">
+                    <div>
+                      <div className="flex items-center gap-1.5 flex-wrap">
+                        <span className="font-mono font-bold text-xs text-[#2D1F18]">{code}</span>
                         <span className={`px-2 py-0.5 rounded-full font-bold text-[10px] ${isFleet ? 'bg-[#F8EFEA] text-[#C65A2E]' : 'bg-emerald-50 text-emerald-700'}`}>
                           {isFleet ? 'Car Rental' : 'Tour'}
                         </span>
-                      </td>
-                      <td className="px-5 py-4 font-bold text-[#2D1F18]">{name}</td>
-                      <td className="px-5 py-4 text-gray-500">{formatDate(b.createdAt || b.created_at)}</td>
-                      <td className="px-5 py-4 font-bold text-[#2D1F18]">{formatCurrency(total)}</td>
-                      <td className="px-5 py-4 text-emerald-600 font-semibold">₹{deposit}</td>
-                      <td className="px-5 py-4">
-                        <span className={`px-2 py-0.5 rounded-full font-bold text-[10px] ${
-                          b.status === 'Picked Up (Paid in Full)' || b.status === 'Returned'
-                            ? 'bg-emerald-50 text-emerald-700'
-                            : 'bg-amber-50 text-amber-700'
-                        }`}>
-                          {b.status || 'Deposit Paid'}
-                        </span>
-                      </td>
-                      <td className="px-5 py-4 text-right">
-                        <div className="flex items-center justify-end gap-1.5">
-                          <button
-                            type="button"
-                            onClick={() => setWhatsAppModalBooking(b)}
-                            className="inline-flex items-center gap-1 px-2.5 py-1.5 bg-emerald-50 hover:bg-emerald-100 text-emerald-700 border border-emerald-200 rounded-full text-[11px] font-bold transition-all cursor-pointer"
-                            title="Send WhatsApp Balance / Payment Reminder"
-                          >
-                            <MessageSquare className="w-3 h-3 text-emerald-600" /> Remind
-                          </button>
-                          <button
-                            onClick={() => handleDownloadInvoice(b)}
-                            className="inline-flex items-center gap-1 px-3 py-1.5 bg-[#2D1F18] hover:bg-[#C65A2E] text-white rounded-full text-[11px] font-bold transition-all cursor-pointer"
-                          >
-                            <FileDown className="w-3 h-3" /> PDF
-                          </button>
-                        </div>
-                      </td>
-                    </tr>
-                  );
-                })}
-                {allBookings.length === 0 && (
-                  <tr><td colSpan={8} className="px-5 py-12 text-center text-gray-400">No bookings found. Add bookings to generate invoices.</td></tr>
-                )}
-              </tbody>
-            </table>
+                      </div>
+                      <h4 className="font-bold text-sm text-[#2D1F18] mt-1">{name}</h4>
+                      <p className="text-[11px] text-gray-500">{formatDate(b.createdAt || b.created_at)}</p>
+                    </div>
+                    <span className={`px-2 py-0.5 rounded-full font-bold text-[10px] shrink-0 ${
+                      b.status === 'Picked Up (Paid in Full)' || b.status === 'Returned'
+                        ? 'bg-emerald-50 text-emerald-700'
+                        : 'bg-amber-50 text-amber-700'
+                    }`}>
+                      {b.status || 'Deposit Paid'}
+                    </span>
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-2 bg-gray-50 rounded-xl p-2.5 text-xs">
+                    <div>
+                      <span className="text-[10px] text-gray-500 block font-semibold">Total Amount</span>
+                      <span className="font-bold text-[#2D1F18]">{formatCurrency(total)}</span>
+                    </div>
+                    <div>
+                      <span className="text-[10px] text-gray-500 block font-semibold">Deposit Paid</span>
+                      <span className="font-bold text-emerald-600">₹{deposit}</span>
+                    </div>
+                  </div>
+
+                  <div className="flex items-center gap-2 pt-1 border-t border-gray-100">
+                    <button
+                      type="button"
+                      onClick={() => setWhatsAppModalBooking(b)}
+                      className="flex-1 min-h-[40px] inline-flex items-center justify-center gap-1 px-3 py-2 bg-emerald-50 hover:bg-emerald-100 text-emerald-700 border border-emerald-200 rounded-xl text-xs font-bold transition-all active:scale-95 cursor-pointer touch-manipulation"
+                      title="Send WhatsApp Balance / Payment Reminder"
+                    >
+                      <MessageSquare className="w-3.5 h-3.5 text-emerald-600" /> Remind
+                    </button>
+                    <button
+                      onClick={() => handleDownloadInvoice(b)}
+                      className="flex-1 min-h-[40px] inline-flex items-center justify-center gap-1 px-3 py-2 bg-[#2D1F18] hover:bg-[#C65A2E] text-white rounded-xl text-xs font-bold transition-all active:scale-95 cursor-pointer touch-manipulation"
+                    >
+                      <FileDown className="w-3.5 h-3.5" /> PDF
+                    </button>
+                  </div>
+                </div>
+              );
+            })}
+            {allBookings.length === 0 && (
+              <div className="bg-white rounded-2xl p-8 text-center text-gray-400 text-xs border border-gray-100">
+                No bookings found. Add bookings to generate invoices.
+              </div>
+            )}
+          </div>
+
+          {/* 💻 Desktop Table View (>= 768px) */}
+          <div className="hidden md:block bg-white rounded-[24px] border border-gray-100 overflow-hidden shadow-sm">
+            <div className="overflow-x-auto">
+              <table className="w-full text-xs">
+                <thead className="bg-[#2D1F18] text-left text-[#EDE2D0] font-bold uppercase tracking-wider">
+                  <tr>
+                    <th className="px-5 py-3.5">Booking Ref</th>
+                    <th className="px-5 py-3.5">Type</th>
+                    <th className="px-5 py-3.5">Customer</th>
+                    <th className="px-5 py-3.5">Date</th>
+                    <th className="px-5 py-3.5">Total</th>
+                    <th className="px-5 py-3.5">Deposit</th>
+                    <th className="px-5 py-3.5">Status</th>
+                    <th className="px-5 py-3.5 text-right">Invoice</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-gray-100">
+                  {allBookings.map((b, i) => {
+                    const isFleet = b._vertical === 'fleet';
+                    const code = b.bookingCode || b.booking_code;
+                    const name = b.customerName || b.customer_name || 'Customer';
+                    const total = b.totalAmount || b.total_amount || b.totalRentalAmount || 0;
+                    const deposit = b.depositAmount || b.depositPaid || 500;
+
+                    return (
+                      <tr key={i} className="hover:bg-gray-50/80 transition-colors">
+                        <td className="px-5 py-4 font-mono font-bold text-[#2D1F18]">{code}</td>
+                        <td className="px-5 py-4">
+                          <span className={`px-2 py-0.5 rounded-full font-bold text-[10px] ${isFleet ? 'bg-[#F8EFEA] text-[#C65A2E]' : 'bg-emerald-50 text-emerald-700'}`}>
+                            {isFleet ? 'Car Rental' : 'Tour'}
+                          </span>
+                        </td>
+                        <td className="px-5 py-4 font-bold text-[#2D1F18]">{name}</td>
+                        <td className="px-5 py-4 text-gray-500">{formatDate(b.createdAt || b.created_at)}</td>
+                        <td className="px-5 py-4 font-bold text-[#2D1F18]">{formatCurrency(total)}</td>
+                        <td className="px-5 py-4 text-emerald-600 font-semibold">₹{deposit}</td>
+                        <td className="px-5 py-4">
+                          <span className={`px-2 py-0.5 rounded-full font-bold text-[10px] ${
+                            b.status === 'Picked Up (Paid in Full)' || b.status === 'Returned'
+                              ? 'bg-emerald-50 text-emerald-700'
+                              : 'bg-amber-50 text-amber-700'
+                          }`}>
+                            {b.status || 'Deposit Paid'}
+                          </span>
+                        </td>
+                        <td className="px-5 py-4 text-right">
+                          <div className="flex items-center justify-end gap-1.5">
+                            <button
+                              type="button"
+                              onClick={() => setWhatsAppModalBooking(b)}
+                              className="inline-flex items-center gap-1 px-2.5 py-1.5 bg-emerald-50 hover:bg-emerald-100 text-emerald-700 border border-emerald-200 rounded-full text-[11px] font-bold transition-all cursor-pointer"
+                              title="Send WhatsApp Balance / Payment Reminder"
+                            >
+                              <MessageSquare className="w-3 h-3 text-emerald-600" /> Remind
+                            </button>
+                            <button
+                              onClick={() => handleDownloadInvoice(b)}
+                              className="inline-flex items-center gap-1 px-3 py-1.5 bg-[#2D1F18] hover:bg-[#C65A2E] text-white rounded-full text-[11px] font-bold transition-all cursor-pointer"
+                            >
+                              <FileDown className="w-3 h-3" /> PDF
+                            </button>
+                          </div>
+                        </td>
+                      </tr>
+                    );
+                  })}
+                  {allBookings.length === 0 && (
+                    <tr><td colSpan={8} className="px-5 py-12 text-center text-gray-400">No bookings found. Add bookings to generate invoices.</td></tr>
+                  )}
+                </tbody>
+              </table>
+            </div>
           </div>
         </div>
       )}
 
       {/* ─── Promo Codes Tab ─── */}
       {activeTab === 'promos' && (
-        <div className="bg-white rounded-[24px] border border-gray-100 overflow-hidden shadow-sm">
-          <div className="overflow-x-auto">
-            <table className="w-full text-sm">
-              <thead className="bg-[#2D1F18] text-left text-xs text-[#EDE2D0] uppercase">
-                <tr>
-                  <th className="px-4 py-3">Code</th>
-                  <th className="px-4 py-3">Discount %</th>
-                  <th className="px-4 py-3">Max Amount</th>
-                  <th className="px-4 py-3">Valid Vertical</th>
-                  <th className="px-4 py-3">Status</th>
-                </tr>
-              </thead>
-              <tbody>
-                {promos.map((p: any, i: number) => (
-                  <tr key={i} className="border-t border-gray-100 hover:bg-gray-50">
-                    <td className="px-4 py-3 font-bold font-mono text-[#2D1F18]">{p.code}</td>
-                    <td className="px-4 py-3 font-medium">{p.discountPercentage || p.discount_percentage}%</td>
-                    <td className="px-4 py-3">{formatCurrency(p.maxDiscountAmount || p.max_discount_amount || 0)}</td>
-                    <td className="px-4 py-3"><Badge color={p.validVertical === 'tours' ? 'terracotta' : p.validVertical === 'fleet' ? 'sand' : 'cocoa'}>{(p.validVertical || p.valid_vertical || 'all').toUpperCase()}</Badge></td>
-                    <td className="px-4 py-3"><Badge color={p.isActive ? 'green' : 'red'}>{p.isActive ? 'Active' : 'Inactive'}</Badge></td>
+        <div className="space-y-3">
+          {/* 📱 Mobile Promo Cards (< 768px) */}
+          <div className="md:hidden space-y-3">
+            {promos.map((p: any, i: number) => (
+              <div key={i} className="bg-white rounded-2xl border border-gray-100 p-4 shadow-sm space-y-2.5">
+                <div className="flex items-center justify-between">
+                  <span className="font-mono font-bold text-sm text-[#2D1F18]">{p.code}</span>
+                  <Badge color={p.isActive ? 'green' : 'red'}>{p.isActive ? 'Active' : 'Inactive'}</Badge>
+                </div>
+                <div className="grid grid-cols-3 gap-2 bg-gray-50 rounded-xl p-2.5 text-xs">
+                  <div>
+                    <span className="text-[10px] text-gray-500 block font-semibold">Discount</span>
+                    <span className="font-bold text-[#2D1F18]">{p.discountPercentage || p.discount_percentage}%</span>
+                  </div>
+                  <div>
+                    <span className="text-[10px] text-gray-500 block font-semibold">Max Limit</span>
+                    <span className="font-bold text-[#2D1F18]">{formatCurrency(p.maxDiscountAmount || p.max_discount_amount || 0)}</span>
+                  </div>
+                  <div>
+                    <span className="text-[10px] text-gray-500 block font-semibold">Vertical</span>
+                    <span className="font-bold text-[#C65A2E]">{(p.validVertical || p.valid_vertical || 'all').toUpperCase()}</span>
+                  </div>
+                </div>
+              </div>
+            ))}
+            {promos.length === 0 && (
+              <div className="bg-white rounded-2xl p-8 text-center text-gray-400 text-xs border border-gray-100">
+                No promo codes yet.
+              </div>
+            )}
+          </div>
+
+          {/* 💻 Desktop Promo Table (>= 768px) */}
+          <div className="hidden md:block bg-white rounded-[24px] border border-gray-100 overflow-hidden shadow-sm">
+            <div className="overflow-x-auto">
+              <table className="w-full text-sm">
+                <thead className="bg-[#2D1F18] text-left text-xs text-[#EDE2D0] uppercase">
+                  <tr>
+                    <th className="px-4 py-3">Code</th>
+                    <th className="px-4 py-3">Discount %</th>
+                    <th className="px-4 py-3">Max Amount</th>
+                    <th className="px-4 py-3">Valid Vertical</th>
+                    <th className="px-4 py-3">Status</th>
                   </tr>
-                ))}
-                {promos.length === 0 && (
-                  <tr><td colSpan={5} className="px-4 py-12 text-center text-gray-400">No promo codes yet.</td></tr>
-                )}
-              </tbody>
-            </table>
+                </thead>
+                <tbody>
+                  {promos.map((p: any, i: number) => (
+                    <tr key={i} className="border-t border-gray-100 hover:bg-gray-50">
+                      <td className="px-4 py-3 font-bold font-mono text-[#2D1F18]">{p.code}</td>
+                      <td className="px-4 py-3 font-medium">{p.discountPercentage || p.discount_percentage}%</td>
+                      <td className="px-4 py-3">{formatCurrency(p.maxDiscountAmount || p.max_discount_amount || 0)}</td>
+                      <td className="px-4 py-3"><Badge color={p.validVertical === 'tours' ? 'terracotta' : p.validVertical === 'fleet' ? 'sand' : 'cocoa'}>{(p.validVertical || p.valid_vertical || 'all').toUpperCase()}</Badge></td>
+                      <td className="px-4 py-3"><Badge color={p.isActive ? 'green' : 'red'}>{p.isActive ? 'Active' : 'Inactive'}</Badge></td>
+                    </tr>
+                  ))}
+                  {promos.length === 0 && (
+                    <tr><td colSpan={5} className="px-4 py-12 text-center text-gray-400">No promo codes yet.</td></tr>
+                  )}
+                </tbody>
+              </table>
+            </div>
           </div>
         </div>
       )}

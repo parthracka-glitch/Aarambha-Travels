@@ -27,7 +27,7 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen bg-[#FCFAF6] flex items-center justify-center p-4 font-sans select-none">
+    <div className="min-h-[100dvh] bg-[#FCFAF6] flex items-center justify-center p-4 font-sans select-none pt-[max(1rem,env(safe-area-inset-top,0px))] pb-[max(1rem,env(safe-area-inset-bottom,0px))]">
       <div className="w-full max-w-md">
         
         {/* Brand Header */}
@@ -54,7 +54,7 @@ export default function LoginPage() {
         </div>
 
         {/* Login Card */}
-        <div className="bg-white border border-[#EDE2D0] rounded-xl p-6 sm:p-8 shadow-xs">
+        <div className="bg-white border border-[#EDE2D0] rounded-xl p-5 sm:p-8 shadow-xs">
           <div className="mb-5 pb-4 border-b border-[#EDE2D0]">
             <h2 className="text-base font-bold text-[#2D1F18]">Sign In to Portal</h2>
             <p className="text-xs text-[#756B63] mt-0.5">
@@ -86,7 +86,7 @@ export default function LoginPage() {
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder="Enter your email address"
-                  className="w-full pl-9 pr-3 py-2.5 bg-[#F8EFEA] border border-[#EDE2D0] rounded-lg text-xs text-[#2D1F18] placeholder-[#756B63] focus:bg-white focus:border-[#C65A2E] focus:outline-none transition-all"
+                  className="w-full pl-9 pr-3 py-2.5 bg-[#F8EFEA] border border-[#EDE2D0] rounded-lg text-base sm:text-xs text-[#2D1F18] placeholder-[#756B63] focus:bg-white focus:border-[#C65A2E] focus:outline-none transition-all"
                 />
               </div>
             </div>
@@ -106,12 +106,12 @@ export default function LoginPage() {
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   placeholder="Enter your password"
-                  className="w-full pl-9 pr-10 py-2.5 bg-[#F8EFEA] border border-[#EDE2D0] rounded-lg text-xs text-[#2D1F18] placeholder-[#756B63] focus:bg-white focus:border-[#C65A2E] focus:outline-none transition-all"
+                  className="w-full pl-9 pr-10 py-2.5 bg-[#F8EFEA] border border-[#EDE2D0] rounded-lg text-base sm:text-xs text-[#2D1F18] placeholder-[#756B63] focus:bg-white focus:border-[#C65A2E] focus:outline-none transition-all"
                 />
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-700 transition-colors"
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-700 transition-colors p-1"
                 >
                   {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                 </button>
@@ -123,7 +123,7 @@ export default function LoginPage() {
               id="login-submit"
               type="submit"
               disabled={loading}
-              className="w-full flex items-center justify-center gap-2 py-3 bg-[#C65A2E] hover:bg-[#B24E25] disabled:opacity-50 text-white font-bold text-xs rounded-lg transition-all shadow-xs border border-black/10 mt-3 cursor-pointer"
+              className="w-full min-h-[48px] flex items-center justify-center gap-2 py-3 bg-[#C65A2E] hover:bg-[#B24E25] disabled:opacity-50 text-white font-bold text-xs sm:text-sm rounded-lg transition-all shadow-xs border border-black/10 mt-3 cursor-pointer tap-highlight-transparent touch-manipulation active:scale-[0.98]"
             >
               {loading ? (
                 <Loader2 className="w-4 h-4 animate-spin text-white" />
