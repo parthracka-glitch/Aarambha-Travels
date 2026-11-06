@@ -19,7 +19,7 @@ jobs:
         run: |
           BACKEND_URL="${{ secrets.BACKEND_URL }}"
           if [ -z "$BACKEND_URL" ]; then
-            BACKEND_URL="https://aarambha-backend-api.onrender.com"
+            BACKEND_URL="https://aarambha-travels.onrender.com"
           fi
           
           echo "Dispatching healthcheck request to: $BACKEND_URL/api/health"

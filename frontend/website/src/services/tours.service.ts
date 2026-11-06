@@ -78,21 +78,16 @@ export function formatTourPackageFromApi(apiPkg: any, fallback?: TourPackage): T
 
 export function formatTourPackagesFromApi(liveList: any[] | null): TourPackage[] {
   if (!Array.isArray(liveList) || liveList.length === 0) {
-    return TOUR_PACKAGES.map(p => formatTourPackageFromApi(p, p));
+    return TOUR_PACKAGES;
   }
 
-  // Map each static package to its live API counterpart, plus any new packages from API
-  const matched = TOUR_PACKAGES.map(staticPkg => {
-    const apiMatch = liveList.find(a => a.slug === staticPkg.slug || a._id === staticPkg.id || a.id === staticPkg.id);
-    return apiMatch ? formatTourPackageFromApi(apiMatch, staticPkg) : formatTourPackageFromApi(staticPkg, staticPkg);
+  // Live API data is the single source of truth - no ghost static packages
+  return liveList.map(apiPkg => {
+    const fallback = TOUR_PACKAGES.find(
+      p => p.slug === apiPkg.slug || p.id === apiPkg._id || p.id === apiPkg.id || p.id === apiPkg.slug
+    ) || TOUR_PACKAGES[0];
+    return formatTourPackageFromApi(apiPkg, fallback);
   });
-
-  // Add any completely new packages created in CRM that don't match static ones
-  const newOnes = liveList
-    .filter(a => !TOUR_PACKAGES.some(s => s.slug === a.slug || s.id === a._id || s.id === a.id))
-    .map(a => formatTourPackageFromApi(a));
-
-  return [...matched, ...newOnes];
 }
 
 export async function fetchLiveTourPackages(): Promise<TourPackage[]> {

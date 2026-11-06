@@ -1,4 +1,4 @@
-export const PRODUCTION_RENDER_API = 'https://aarambha-backend-api.onrender.com';
+export const PRODUCTION_RENDER_API = 'https://aarambha-travels.onrender.com';
 
 /**
  * Intelligent Base API Resolver:

@@ -42,7 +42,7 @@ export default function WhatsAppEnquiryForm({ mode = 'cars' }: { mode?: 'cars' |
     phone: '',
     tourId: TOUR_PACKAGES[0]?.id || '3-jyotirlinga-yatra-ujjain-omkareshwar-ghrishneshwar',
     date: '',
-    destination: '3 Jyotirlinga / Krishna Yatra / Tirupati Balaji',
+    destination: '2 Jyotirlinga / Krishna Yatra / Tirupati Balaji',
     message: '',
   });
   const [tourSubmitted, setTourSubmitted] = useState(false);

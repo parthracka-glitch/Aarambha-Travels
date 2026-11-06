@@ -68,18 +68,18 @@ export interface TourPackage {
 
 export const TOUR_PACKAGES: TourPackage[] = [
   {
-    id: '3-jyotirlinga-yatra-ujjain-omkareshwar-ghrishneshwar',
-    slug: '3-jyotirlinga-yatra-ujjain-omkareshwar-ghrishneshwar',
-    title: '3 Jyotirlinga Yatra – Ujjain, Omkareshwar, Ghrishneshwar, Maheshwar',
-    subtitle: 'Mahakaleshwar Jyotirlinga, Mahakal Corridor, Shaktipeeths, Omkareshwar, Mamleshwar, Maheshwar Rajwada & Ghrishneshwar',
+    id: '2-jyotirlinga-yatra--ujjain-omkareshwar-maheshwar',
+    slug: '2-jyotirlinga-yatra--ujjain-omkareshwar-maheshwar',
+    title: '2 Jyotirlinga Yatra – Ujjain, Omkareshwar, Maheshwar',
+    subtitle: 'Mahakaleshwar Jyotirlinga, Mahakal Corridor, Shaktipeeths, Omkareshwar, Mamleshwar & Maheshwar Rajwada',
     destination: 'Ujjain & Omkareshwar',
     state: 'Madhya Pradesh & Maharashtra',
     durationDays: 3,
     durationNights: 2,
     durationLabel: '3 Days / 2 Nights',
     datesLabel: '',
-    basePrice: 6499,
-    priceDisplay: '₹6,499 per person',
+    basePrice: 5999,
+    priceDisplay: '₹5,999 per person',
     depositPrice: 1999,
     advanceLabel: 'Advance: ₹1,999',
     rating: 4.9,
@@ -109,7 +109,7 @@ export const TOUR_PACKAGES: TourPackage[] = [
       'Ghrishneshwar Jyotirlinga',
     ],
     inclusions: [
-      'New Urbania Pushback AC Bus',
+      'New 2*2 Sleeper AC Bus',
       'Hotel Stay (4–5 sharing rooms)',
       '1 Veg Meal per Day',
       'Drinking Water with Meals',
@@ -131,7 +131,7 @@ export const TOUR_PACKAGES: TourPackage[] = [
       {
         day: 1,
         title: 'Arrival in Ujjain & Mahakal Corridor Darshan',
-        description: 'Depart by New Urbania AC Bus to Ujjain. Experience divine Bhasma Aarti and darshan at Mahakaleshwar Jyotirlinga, explore the grandeur of Mahakal Corridor, visit Harsiddhi Mata Shaktipeeth, Bada Ganesh, Kaal Bhairav, and holy Ram Ghat on the Shipra River.',
+        description: 'Depart by New 2*2 Sleeper AC Bus to Ujjain. Experience divine Bhasma Aarti and darshan at Mahakaleshwar Jyotirlinga, explore the grandeur of Mahakal Corridor, visit Harsiddhi Mata Shaktipeeth, Bada Ganesh, Kaal Bhairav, and holy Ram Ghat on the Shipra River.',
         highlights: ['Mahakaleshwar Jyotirlinga', 'Mahakal Corridor', 'Harsiddhi Mata Shaktipeeth', 'Kaal Bhairav', 'Ram Ghat Aarti'],
       },
       {
@@ -142,13 +142,13 @@ export const TOUR_PACKAGES: TourPackage[] = [
       },
       {
         day: 3,
-        title: 'Ghrishneshwar Jyotirlinga & Blessed Return',
-        description: 'Travel to Ghrishneshwar Jyotirlinga, the 12th and last Jyotirlinga temple of Lord Shiva. Complete the sacred 3 Jyotirlinga pilgrimage with divine blessings and embark on the return journey.',
-        highlights: ['Ghrishneshwar Jyotirlinga Darshan', 'Conch & Temple Blessings', 'Comfortable AC Return Transfer'],
+        title: 'Ghrishneshwar Darshan & Blessed Return',
+        description: 'Complete the sacred spiritual pilgrimage with divine blessings and embark on the return journey.',
+        highlights: ['Jyotirlinga Blessings', 'Conch & Temple Blessings', 'Comfortable AC Return Transfer'],
       },
     ],
     batchDates: [],
-    overview: 'Embark on a soul-cleansing 3-day spiritual pilgrimage covering 3 sacred Jyotirlingas (Mahakaleshwar, Omkareshwar, Ghrishneshwar) alongside 15 holy temples, Shaktipeeths, and majestic Maheshwar ghats with New Urbania Pushback AC comfort.',
+    overview: 'Embark on a soul-cleansing 3-day spiritual pilgrimage covering 2 sacred Jyotirlingas (Mahakaleshwar & Omkareshwar) alongside 15 holy temples, Shaktipeeths, and majestic Maheshwar ghats with New 2*2 Sleeper AC comfort.',
   },
   {
     id: 'krishna-yatra-vrindavan-mathura-khatu-shyam-ujjain',
