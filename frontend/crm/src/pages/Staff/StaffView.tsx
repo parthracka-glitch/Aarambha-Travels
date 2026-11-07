@@ -43,10 +43,10 @@ export default function StaffView() {
     <div className="space-y-6 font-sans select-none">
       <div className="flex items-center justify-between">
         <div>
-          <h3 className="text-xl font-extrabold text-[#2D1F18] tracking-tight flex items-center gap-2">
-            <UserCheck className="w-5 h-5 text-[#C65A2E]" /> Staff &amp; Roles
+          <h3 className="text-xl font-bold text-[#17233D] tracking-tight flex items-center gap-2">
+            <UserCheck className="w-5 h-5 text-[#3569F6]" /> Staff &amp; Roles
           </h3>
-          <p className="text-xs text-gray-500 font-medium mt-0.5">
+          <p className="text-xs text-[#77839A] font-medium mt-0.5">
             Manage system administrators and viewing permissions (2 Super Admins &middot; 1 Viewer).
           </p>
         </div>
@@ -60,15 +60,15 @@ export default function StaffView() {
           return (
             <div
               key={staff.email}
-              className="bg-white rounded-2xl border border-gray-200/80 p-5 shadow-sm space-y-4 hover:border-gray-300 transition-all flex flex-col justify-between"
+              className="bg-white rounded-2xl border border-[#E8ECF4] p-5 shadow-xs space-y-4 hover:border-blue-200 transition-all flex flex-col justify-between"
             >
               <div className="space-y-3">
                 <div className="flex items-center justify-between">
                   <div
-                    className={`w-11 h-11 rounded-2xl flex items-center justify-center font-extrabold text-sm shadow-sm ${
+                    className={`w-11 h-11 rounded-2xl flex items-center justify-center font-extrabold text-sm shadow-xs ${
                       isSuper
-                        ? 'bg-[#2D1F18] text-[#EDE2D0]'
-                        : 'bg-[#F8EFEA] text-[#C65A2E]'
+                        ? 'bg-[#101F40] text-white'
+                        : 'bg-[#EDF3FF] text-[#3569F6]'
                     }`}
                   >
                     {staff.initials}

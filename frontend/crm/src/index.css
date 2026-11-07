@@ -6,31 +6,35 @@
 
 @layer base {
   :root {
-    --ramp-primary: #0F172A;
-    --ramp-navy: #1E293B;
-    --ramp-charcoal: #0F172A;
-    --ramp-cta: #0F172A;
-    --ramp-surface: #FFFFFF;
-    --ramp-surface-subtle: #F4F6F9;
-    --ramp-border: #E2E8F0;
-    --ramp-slate: #64748B;
+    --navy-primary: #101F40;
+    --navy-secondary: #1C315A;
+    --blue-primary: #3569F6;
+    --blue-soft: #EDF3FF;
+    --bg-main: #F5F7FC;
+    --card-bg: #FFFFFF;
+    --border-subtle: #E8ECF4;
+    --text-primary: #17233D;
+    --text-secondary: #77839A;
+    --success: #12A879;
+    --warning: #F3A23A;
+    --purple: #9560EF;
   }
 
   body {
     margin: 0;
-    background-color: #F4F6F9;
+    background-color: #F5F7FC;
     font-family: 'Inter', -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", Roboto, "Helvetica Neue", sans-serif;
     line-height: 1.5;
     font-weight: 400;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
-    color: #0F172A;
+    color: #17233D;
   }
 
   h1, h2, h3, h4, h5, h6 {
-    font-family: 'Inter', -apple-system, BlinkMacSystemFont, "SF Pro Display", sans-serif;
-    font-weight: 600;
-    color: #0F172A;
+    font-family: 'Plus Jakarta Sans', 'Inter', -apple-system, BlinkMacSystemFont, "SF Pro Display", sans-serif;
+    font-weight: 700;
+    color: #17233D;
   }
 }
 

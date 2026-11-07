@@ -110,14 +110,14 @@ export default function FinanceView() {
     <div className="space-y-6">
       {/* Header */}
       <div className="flex items-center justify-between">
-        <h3 className="text-xl font-extrabold text-[#2D1F18] tracking-tight">Finance</h3>
+        <h3 className="text-xl font-extrabold text-[#101F40] tracking-tight">Finance</h3>
         <div className="flex items-center gap-3">
           {activeTab === 'promos' && (
-            <button onClick={() => setIsModalOpen(true)} className="px-4 py-2 bg-[#2D1F18] hover:bg-[#C65A2E] text-white text-xs font-bold rounded-full flex items-center gap-2 shadow transition-all cursor-pointer">
+            <button onClick={() => setIsModalOpen(true)} className="px-4 py-2 bg-[#101F40] hover:bg-[#3569F6] text-white text-xs font-bold rounded-full flex items-center gap-2 shadow transition-all cursor-pointer">
               <Plus className="w-4 h-4" /> Create Promo
             </button>
           )}
-          <button onClick={load} className="text-xs flex items-center gap-1 text-gray-500 hover:text-[#2D1F18] p-2 rounded-full border border-gray-200">
+          <button onClick={load} className="text-xs flex items-center gap-1 text-gray-500 hover:text-[#101F40] p-2 rounded-full border border-gray-200">
             <RefreshCw className="w-3.5 h-3.5" />
           </button>
         </div>
@@ -129,11 +129,10 @@ export default function FinanceView() {
           <button
             key={tab.id}
             onClick={() => setActiveTab(tab.id)}
-            className={`flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer ${
-              activeTab === tab.id
-                ? 'bg-white text-[#C65A2E] shadow-sm'
-                : 'text-gray-500 hover:text-[#2D1F18]'
-            }`}
+            className={`flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer ${activeTab === tab.id
+                ? 'bg-white text-[#3569F6] shadow-sm'
+                : 'text-gray-500 hover:text-[#101F40]'
+              }`}
           >
             {tab.icon} {tab.label}
           </button>
@@ -157,19 +156,18 @@ export default function FinanceView() {
                   <div className="flex items-start justify-between gap-2">
                     <div>
                       <div className="flex items-center gap-1.5 flex-wrap">
-                        <span className="font-mono font-bold text-xs text-[#2D1F18]">{code}</span>
-                        <span className={`px-2 py-0.5 rounded-full font-bold text-[10px] ${isFleet ? 'bg-[#F8EFEA] text-[#C65A2E]' : 'bg-emerald-50 text-emerald-700'}`}>
+                        <span className="font-mono font-bold text-xs text-[#101F40]">{code}</span>
+                        <span className={`px-2 py-0.5 rounded-full font-bold text-[10px] ${isFleet ? 'bg-[#EDF3FF] text-[#3569F6]' : 'bg-emerald-50 text-emerald-700'}`}>
                           {isFleet ? 'Car Rental' : 'Tour'}
                         </span>
                       </div>
-                      <h4 className="font-bold text-sm text-[#2D1F18] mt-1">{name}</h4>
+                      <h4 className="font-bold text-sm text-[#101F40] mt-1">{name}</h4>
                       <p className="text-[11px] text-gray-500">{formatDate(b.createdAt || b.created_at)}</p>
                     </div>
-                    <span className={`px-2 py-0.5 rounded-full font-bold text-[10px] shrink-0 ${
-                      b.status === 'Picked Up (Paid in Full)' || b.status === 'Returned'
+                    <span className={`px-2 py-0.5 rounded-full font-bold text-[10px] shrink-0 ${b.status === 'Picked Up (Paid in Full)' || b.status === 'Returned'
                         ? 'bg-emerald-50 text-emerald-700'
                         : 'bg-amber-50 text-amber-700'
-                    }`}>
+                      }`}>
                       {b.status || 'Deposit Paid'}
                     </span>
                   </div>
@@ -177,7 +175,7 @@ export default function FinanceView() {
                   <div className="grid grid-cols-2 gap-2 bg-gray-50 rounded-xl p-2.5 text-xs">
                     <div>
                       <span className="text-[10px] text-gray-500 block font-semibold">Total Amount</span>
-                      <span className="font-bold text-[#2D1F18]">{formatCurrency(total)}</span>
+                      <span className="font-bold text-[#101F40]">{formatCurrency(total)}</span>
                     </div>
                     <div>
                       <span className="text-[10px] text-gray-500 block font-semibold">Deposit Paid</span>
@@ -196,7 +194,7 @@ export default function FinanceView() {
                     </button>
                     <button
                       onClick={() => handleDownloadInvoice(b)}
-                      className="flex-1 min-h-[40px] inline-flex items-center justify-center gap-1 px-3 py-2 bg-[#2D1F18] hover:bg-[#C65A2E] text-white rounded-xl text-xs font-bold transition-all active:scale-95 cursor-pointer touch-manipulation"
+                      className="flex-1 min-h-[40px] inline-flex items-center justify-center gap-1 px-3 py-2 bg-[#101F40] hover:bg-[#3569F6] text-white rounded-xl text-xs font-bold transition-all active:scale-95 cursor-pointer touch-manipulation"
                     >
                       <FileDown className="w-3.5 h-3.5" /> PDF
                     </button>
@@ -215,7 +213,7 @@ export default function FinanceView() {
           <div className="hidden md:block bg-white rounded-[24px] border border-gray-100 overflow-hidden shadow-sm">
             <div className="overflow-x-auto">
               <table className="w-full text-xs">
-                <thead className="bg-[#2D1F18] text-left text-[#EDE2D0] font-bold uppercase tracking-wider">
+                <thead className="bg-[#101F40] text-left text-[#F5F7FC] font-bold uppercase tracking-wider">
                   <tr>
                     <th className="px-5 py-3.5">Booking Ref</th>
                     <th className="px-5 py-3.5">Type</th>
@@ -237,22 +235,21 @@ export default function FinanceView() {
 
                     return (
                       <tr key={i} className="hover:bg-gray-50/80 transition-colors">
-                        <td className="px-5 py-4 font-mono font-bold text-[#2D1F18]">{code}</td>
+                        <td className="px-5 py-4 font-mono font-bold text-[#101F40]">{code}</td>
                         <td className="px-5 py-4">
-                          <span className={`px-2 py-0.5 rounded-full font-bold text-[10px] ${isFleet ? 'bg-[#F8EFEA] text-[#C65A2E]' : 'bg-emerald-50 text-emerald-700'}`}>
+                          <span className={`px-2 py-0.5 rounded-full font-bold text-[10px] ${isFleet ? 'bg-[#EDF3FF] text-[#3569F6]' : 'bg-emerald-50 text-emerald-700'}`}>
                             {isFleet ? 'Car Rental' : 'Tour'}
                           </span>
                         </td>
-                        <td className="px-5 py-4 font-bold text-[#2D1F18]">{name}</td>
+                        <td className="px-5 py-4 font-bold text-[#101F40]">{name}</td>
                         <td className="px-5 py-4 text-gray-500">{formatDate(b.createdAt || b.created_at)}</td>
-                        <td className="px-5 py-4 font-bold text-[#2D1F18]">{formatCurrency(total)}</td>
+                        <td className="px-5 py-4 font-bold text-[#101F40]">{formatCurrency(total)}</td>
                         <td className="px-5 py-4 text-emerald-600 font-semibold">₹{deposit}</td>
                         <td className="px-5 py-4">
-                          <span className={`px-2 py-0.5 rounded-full font-bold text-[10px] ${
-                            b.status === 'Picked Up (Paid in Full)' || b.status === 'Returned'
+                          <span className={`px-2 py-0.5 rounded-full font-bold text-[10px] ${b.status === 'Picked Up (Paid in Full)' || b.status === 'Returned'
                               ? 'bg-emerald-50 text-emerald-700'
                               : 'bg-amber-50 text-amber-700'
-                          }`}>
+                            }`}>
                             {b.status || 'Deposit Paid'}
                           </span>
                         </td>
@@ -268,7 +265,7 @@ export default function FinanceView() {
                             </button>
                             <button
                               onClick={() => handleDownloadInvoice(b)}
-                              className="inline-flex items-center gap-1 px-3 py-1.5 bg-[#2D1F18] hover:bg-[#C65A2E] text-white rounded-full text-[11px] font-bold transition-all cursor-pointer"
+                              className="inline-flex items-center gap-1 px-3 py-1.5 bg-[#101F40] hover:bg-[#3569F6] text-white rounded-full text-[11px] font-bold transition-all cursor-pointer"
                             >
                               <FileDown className="w-3 h-3" /> PDF
                             </button>
@@ -295,21 +292,21 @@ export default function FinanceView() {
             {promos.map((p: any, i: number) => (
               <div key={i} className="bg-white rounded-2xl border border-gray-100 p-4 shadow-sm space-y-2.5">
                 <div className="flex items-center justify-between">
-                  <span className="font-mono font-bold text-sm text-[#2D1F18]">{p.code}</span>
+                  <span className="font-mono font-bold text-sm text-[#101F40]">{p.code}</span>
                   <Badge color={p.isActive ? 'green' : 'red'}>{p.isActive ? 'Active' : 'Inactive'}</Badge>
                 </div>
                 <div className="grid grid-cols-3 gap-2 bg-gray-50 rounded-xl p-2.5 text-xs">
                   <div>
                     <span className="text-[10px] text-gray-500 block font-semibold">Discount</span>
-                    <span className="font-bold text-[#2D1F18]">{p.discountPercentage || p.discount_percentage}%</span>
+                    <span className="font-bold text-[#101F40]">{p.discountPercentage || p.discount_percentage}%</span>
                   </div>
                   <div>
                     <span className="text-[10px] text-gray-500 block font-semibold">Max Limit</span>
-                    <span className="font-bold text-[#2D1F18]">{formatCurrency(p.maxDiscountAmount || p.max_discount_amount || 0)}</span>
+                    <span className="font-bold text-[#101F40]">{formatCurrency(p.maxDiscountAmount || p.max_discount_amount || 0)}</span>
                   </div>
                   <div>
                     <span className="text-[10px] text-gray-500 block font-semibold">Vertical</span>
-                    <span className="font-bold text-[#C65A2E]">{(p.validVertical || p.valid_vertical || 'all').toUpperCase()}</span>
+                    <span className="font-bold text-[#3569F6]">{(p.validVertical || p.valid_vertical || 'all').toUpperCase()}</span>
                   </div>
                 </div>
               </div>
@@ -325,7 +322,7 @@ export default function FinanceView() {
           <div className="hidden md:block bg-white rounded-[24px] border border-gray-100 overflow-hidden shadow-sm">
             <div className="overflow-x-auto">
               <table className="w-full text-sm">
-                <thead className="bg-[#2D1F18] text-left text-xs text-[#EDE2D0] uppercase">
+                <thead className="bg-[#101F40] text-left text-xs text-[#F5F7FC] uppercase">
                   <tr>
                     <th className="px-4 py-3">Code</th>
                     <th className="px-4 py-3">Discount %</th>
@@ -337,7 +334,7 @@ export default function FinanceView() {
                 <tbody>
                   {promos.map((p: any, i: number) => (
                     <tr key={i} className="border-t border-gray-100 hover:bg-gray-50">
-                      <td className="px-4 py-3 font-bold font-mono text-[#2D1F18]">{p.code}</td>
+                      <td className="px-4 py-3 font-bold font-mono text-[#101F40]">{p.code}</td>
                       <td className="px-4 py-3 font-medium">{p.discountPercentage || p.discount_percentage}%</td>
                       <td className="px-4 py-3">{formatCurrency(p.maxDiscountAmount || p.max_discount_amount || 0)}</td>
                       <td className="px-4 py-3"><Badge color={p.validVertical === 'tours' ? 'terracotta' : p.validVertical === 'fleet' ? 'sand' : 'cocoa'}>{(p.validVertical || p.valid_vertical || 'all').toUpperCase()}</Badge></td>
@@ -358,28 +355,28 @@ export default function FinanceView() {
       <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} title="Create New Promo Code">
         <form onSubmit={handleCreatePromo} className="space-y-4 text-sm">
           <div>
-            <label className="block text-xs font-semibold text-[#2D1F18] mb-1">Promo Code</label>
+            <label className="block text-xs font-semibold text-[#101F40] mb-1">Promo Code</label>
             <input type="text" required value={form.code} onChange={e => setForm({ ...form, code: e.target.value.toUpperCase() })} className="w-full p-2.5 border rounded-lg font-mono uppercase" placeholder="Enter coupon code" />
           </div>
           <div className="grid grid-cols-2 gap-3">
             <div>
-              <label className="block text-xs font-semibold text-[#2D1F18] mb-1">Discount %</label>
+              <label className="block text-xs font-semibold text-[#101F40] mb-1">Discount %</label>
               <input type="number" required max={100} value={form.discountPercentage} onChange={e => setForm({ ...form, discountPercentage: +e.target.value })} className="w-full p-2.5 border rounded-lg" />
             </div>
             <div>
-              <label className="block text-xs font-semibold text-[#2D1F18] mb-1">Max Discount Amount (₹)</label>
+              <label className="block text-xs font-semibold text-[#101F40] mb-1">Max Discount Amount (₹)</label>
               <input type="number" required value={form.maxDiscountAmount} onChange={e => setForm({ ...form, maxDiscountAmount: +e.target.value })} className="w-full p-2.5 border rounded-lg" />
             </div>
           </div>
           <div>
-            <label className="block text-xs font-semibold text-[#2D1F18] mb-1">Target Vertical</label>
+            <label className="block text-xs font-semibold text-[#101F40] mb-1">Target Vertical</label>
             <select value={form.validVertical} onChange={e => setForm({ ...form, validVertical: e.target.value })} className="w-full p-2.5 border rounded-lg bg-white">
               <option value="all">All Verticals (Tours + Fleet)</option>
               <option value="tours">Tours & Travels Only</option>
               <option value="fleet">Self-Drive Fleet Only</option>
             </select>
           </div>
-          <button type="submit" className="w-full py-3 bg-[#2D1F18] text-white font-bold rounded-lg hover:bg-[#C65A2E] transition-colors cursor-pointer">
+          <button type="submit" className="w-full py-3 bg-[#101F40] text-white font-bold rounded-lg hover:bg-[#3569F6] transition-colors cursor-pointer">
             Create Promo Code
           </button>
         </form>

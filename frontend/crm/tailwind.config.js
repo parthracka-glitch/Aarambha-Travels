@@ -27,81 +27,80 @@ export default {
         serif: ['"Playfair Display"', 'Georgia', 'serif'],
       },
       colors: {
-        ivory: '#FCFAF6',
-        sand: '#EDE2D0',
-        peach: '#E8B9A5',
-        taupe: '#756B63',
-        cocoa: {
-          DEFAULT: '#493B34',
-          dark: '#2D1F18',
-          light: '#756B63',
+        // ─── AARAMBHA CRM PREMIUM SAAS DESIGN SYSTEM ───
+        navy: {
+          950: '#0A1329',
+          900: '#101F40', // Primary Navy Sidebar
+          850: '#15284F',
+          800: '#1C315A', // Secondary Navy Active/Hover
+          700: '#253F72',
+          600: '#325291',
         },
-        terracotta: {
-          DEFAULT: '#C65A2E',
-          hover: '#B24E25',
-          light: '#F8EFEA',
-          border: '#E8B9A5',
-        },
-        ramp: {
-          primary: '#C65A2E',          // Brand Terracotta
-          navy: '#493B34',             // Deep Cocoa
-          charcoal: '#2D1F18',         // Dark text
-          cta: '#C65A2E',              // Terracotta CTA
-          'cta-hover': '#B24E25',      // Hover Terracotta
-          'cta-active': '#9E431E',
-          'blue-light': '#E8B9A5',     // Peach Light
-          'blue-pale': '#F8EFEA',      // Warm Pale
-          surface: '#FCFAF6',          // Cloud Ivory surface
-          'surface-subtle': '#F8EFEA', // Light Warm subtle
-          border: '#EDE2D0',           // Sand border
-          stone: '#756B63',
-          slate: '#756B63',            // Muted text
-          nearBlack: '#2D1F18',
-          black: '#1A120E',
+        brand: {
+          blue: '#3569F6',        // Primary Blue
+          'blue-hover': '#2455DC',
+          'soft-blue': '#EDF3FF', // Soft Blue Background / Pill
+          navy: '#101F40',        // Primary Navy
+          'navy-secondary': '#1C315A',
+          success: '#12A879',     // Live / Active Success Green
+          'success-soft': '#E7F7F2',
+          warning: '#F3A23A',     // Warning / Inquiry Orange
+          'warning-soft': '#FEF5EB',
+          purple: '#9560EF',      // Purple Fleet Accent
+          'purple-soft': '#F4EEFD',
+          bg: '#F5F7FC',          // App Background Canvas
+          card: '#FFFFFF',        // Pure White Surface
+          border: '#E8ECF4',      // Crisp Border
+          text: '#17233D',        // Dark Primary Text
+          muted: '#77839A',       // Secondary / Muted Text
         },
         primary: {
-          DEFAULT: '#C65A2E',
-          hover: '#B24E25',
-          light: '#E8B9A5',
-          pale: '#F8EFEA',
-          dark: '#493B34',
+          DEFAULT: '#3569F6',
+          hover: '#2455DC',
+          light: '#EDF3FF',
+          dark: '#101F40',
         },
-        secondary: {
-          DEFAULT: '#493B34',
-          hover: '#2D1F18',
-          light: '#756B63',
+        // Legacy fallbacks for existing modules
+        ivory: '#FCFAF6',
+        sand: '#EDE2D0',
+        taupe: '#756B63',
+        terracotta: {
+          DEFAULT: '#3569F6',
+          hover: '#2455DC',
+          light: '#EDF3FF',
+          border: '#E8ECF4',
         },
-        cta: {
-          DEFAULT: '#C65A2E',
-          hover: '#B24E25',
-          active: '#9E431E',
-          text: '#FFFFFF',
+        cocoa: {
+          DEFAULT: '#17233D',
+          dark: '#101F40',
+          light: '#77839A',
         },
-        charcoal: '#2D1F18',
+        charcoal: '#17233D',
         surface: {
-          DEFAULT: '#FCFAF6',
-          subtle: '#F8EFEA',
-          border: '#EDE2D0',
+          DEFAULT: '#F5F7FC',
+          subtle: '#EDF3FF',
+          border: '#E8ECF4',
           white: '#FFFFFF',
         },
       },
       borderRadius: {
-        'btn': '8px',
+        'btn': '10px',
         'input': '10px',
-        'card': '14px',
-        'badge': '6px',
+        'card': '16px',
+        'badge': '8px',
         'md': '10px',
         'lg': '14px',
         'xl': '18px',
-        '2xl': '22px',
+        '2xl': '24px',
       },
       boxShadow: {
-        'subtle': 'rgba(73, 59, 52, 0.04) 0px 1px 3px',
-        'card-hover': 'rgba(73, 59, 52, 0.08) 0px 4px 12px',
-        'btn-hover': 'rgba(198, 90, 46, 0.2) 0px 2px 6px',
-        'cta-glow': 'rgba(198, 90, 46, 0.2) 0px 8px 24px',
-        'dropdown': 'rgba(73, 59, 52, 0.1) 0px 10px 30px 0px, rgba(73, 59, 52, 0.05) 0px 1px 3px 0px',
-        'focus-ring': '0px 0px 0px 3px rgba(198, 90, 46, 0.2)',
+        'card-subtle': '0px 2px 8px rgba(16, 31, 64, 0.04)',
+        'card-hover': '0px 8px 24px rgba(16, 31, 64, 0.08)',
+        'btn-hover': '0px 4px 12px rgba(53, 105, 246, 0.25)',
+        'dropdown': '0px 12px 36px rgba(16, 31, 64, 0.12)',
+        'sidebar-pill': '0px 2px 6px rgba(0, 0, 0, 0.15)',
+        '2xs': '0 1px 2px 0 rgba(16, 31, 64, 0.03)',
+        'xs': '0 1px 3px 0 rgba(16, 31, 64, 0.05)',
       },
       spacing: {
         '4.5': '18px',

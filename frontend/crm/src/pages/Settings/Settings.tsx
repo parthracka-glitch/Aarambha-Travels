@@ -190,11 +190,10 @@ export default function SettingsView() {
           <button
             type="button"
             onClick={() => setActiveTab('profile')}
-            className={`flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer ${
-              activeTab === 'profile'
-                ? 'bg-white text-[#C65A2E] shadow-sm border border-gray-200/60'
+            className={`flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer ${activeTab === 'profile'
+                ? 'bg-white text-[#3569F6] shadow-sm border border-gray-200/60'
                 : 'text-gray-600 hover:text-black'
-            }`}
+              }`}
           >
             <User className="w-3.5 h-3.5" />
             <span>Personal Profile</span>
@@ -202,11 +201,10 @@ export default function SettingsView() {
           <button
             type="button"
             onClick={() => setActiveTab('system')}
-            className={`flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer ${
-              activeTab === 'system'
-                ? 'bg-white text-[#C65A2E] shadow-sm border border-gray-200/60'
+            className={`flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer ${activeTab === 'system'
+                ? 'bg-white text-[#3569F6] shadow-sm border border-gray-200/60'
                 : 'text-gray-600 hover:text-black'
-            }`}
+              }`}
           >
             <QrCode className="w-3.5 h-3.5" />
             <span>UPI &amp; Business</span>
@@ -217,9 +215,9 @@ export default function SettingsView() {
       {/* ─── TAB 1: PERSONAL PROFILE & LOGIN CREDENTIALS ──────────── */}
       {activeTab === 'profile' && (
         <form onSubmit={handleSaveProfile} className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          
+
           <div className="lg:col-span-2 space-y-6">
-            
+
             {/* Success & Error Banners */}
             {profileSuccess && (
               <div className="flex items-center gap-2.5 bg-emerald-50 border border-emerald-200 rounded-2xl px-4 py-3 text-emerald-800 text-xs font-semibold animate-fadeIn">
@@ -238,11 +236,11 @@ export default function SettingsView() {
             {/* Card 1: Display Name & Login ID */}
             <div className="bg-white rounded-3xl border border-gray-200 p-6 sm:p-7 shadow-sm space-y-5">
               <div className="flex items-center gap-3 pb-4 border-b border-gray-100">
-                <div className="w-9 h-9 rounded-xl bg-[#C65A2E]/10 text-[#C65A2E] flex items-center justify-center">
+                <div className="w-9 h-9 rounded-xl bg-[#3569F6]/10 text-[#3569F6] flex items-center justify-center">
                   <User className="w-5 h-5" />
                 </div>
                 <div>
-                  <h4 className="font-syne font-bold text-sm text-[#2D1F18]">
+                  <h4 className="font-syne font-bold text-sm text-[#101F40]">
                     Personal Identity &amp; Login ID
                   </h4>
                   <p className="text-[11px] text-gray-500">
@@ -262,7 +260,7 @@ export default function SettingsView() {
                     value={profileName}
                     onChange={(e) => setProfileName(e.target.value)}
                     placeholder="e.g. Aarambha Admin"
-                    className="w-full px-3.5 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs font-bold text-[#2D1F18] focus:outline-none focus:border-[#C65A2E] focus:bg-white"
+                    className="w-full px-3.5 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs font-bold text-[#101F40] focus:outline-none focus:border-[#3569F6] focus:bg-white"
                   />
                   <span className="text-[10px] text-gray-400 block">Appears in topbar avatar and CRM reports.</span>
                 </div>
@@ -277,7 +275,7 @@ export default function SettingsView() {
                     value={profileEmail}
                     onChange={(e) => setProfileEmail(e.target.value)}
                     placeholder="e.g. admin@aarambhatravels.in"
-                    className="w-full px-3.5 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs font-mono font-bold text-[#2D1F18] focus:outline-none focus:border-[#C65A2E] focus:bg-white"
+                    className="w-full px-3.5 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs font-mono font-bold text-[#101F40] focus:outline-none focus:border-[#3569F6] focus:bg-white"
                   />
                   <span className="text-[10px] text-gray-400 block">Use this new email to log into the CRM portal.</span>
                 </div>
@@ -287,7 +285,7 @@ export default function SettingsView() {
                     Assigned Portal Role
                   </label>
                   <div className="flex items-center gap-2">
-                    <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-[#F8EFEA] border border-[#E8B9A5] text-[#C65A2E] font-bold text-xs">
+                    <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-[#EDF3FF] border border-[#C7D9FE] text-[#3569F6] font-bold text-xs">
                       <ShieldCheck className="w-3.5 h-3.5" />
                       {user?.role === 'viewer' ? 'Viewer (Read-Only Access)' : 'Super Admin (Full Administrative Authority)'}
                     </span>
@@ -303,7 +301,7 @@ export default function SettingsView() {
                   <Key className="w-5 h-5" />
                 </div>
                 <div>
-                  <h4 className="font-syne font-bold text-sm text-[#2D1F18]">
+                  <h4 className="font-syne font-bold text-sm text-[#101F40]">
                     Security &amp; Change Password
                   </h4>
                   <p className="text-[11px] text-gray-500">
@@ -313,7 +311,7 @@ export default function SettingsView() {
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 text-xs">
-                
+
                 {/* Current Password */}
                 <div className="space-y-1.5">
                   <label className="font-bold text-gray-700 block">
@@ -325,7 +323,7 @@ export default function SettingsView() {
                       value={currentPassword}
                       onChange={(e) => setCurrentPassword(e.target.value)}
                       placeholder="Current password"
-                      className="w-full px-3.5 py-2.5 pr-9 bg-gray-50 border border-gray-200 rounded-xl text-xs text-[#2D1F18] focus:outline-none focus:border-[#C65A2E] focus:bg-white"
+                      className="w-full px-3.5 py-2.5 pr-9 bg-gray-50 border border-gray-200 rounded-xl text-xs text-[#101F40] focus:outline-none focus:border-[#3569F6] focus:bg-white"
                     />
                     <button
                       type="button"
@@ -348,7 +346,7 @@ export default function SettingsView() {
                       value={newPassword}
                       onChange={(e) => setNewPassword(e.target.value)}
                       placeholder="New password (min 6)"
-                      className="w-full px-3.5 py-2.5 pr-9 bg-gray-50 border border-gray-200 rounded-xl text-xs text-[#2D1F18] focus:outline-none focus:border-[#C65A2E] focus:bg-white"
+                      className="w-full px-3.5 py-2.5 pr-9 bg-gray-50 border border-gray-200 rounded-xl text-xs text-[#101F40] focus:outline-none focus:border-[#3569F6] focus:bg-white"
                     />
                     <button
                       type="button"
@@ -371,7 +369,7 @@ export default function SettingsView() {
                       value={confirmPassword}
                       onChange={(e) => setConfirmPassword(e.target.value)}
                       placeholder="Repeat new password"
-                      className="w-full px-3.5 py-2.5 pr-9 bg-gray-50 border border-gray-200 rounded-xl text-xs text-[#2D1F18] focus:outline-none focus:border-[#C65A2E] focus:bg-white"
+                      className="w-full px-3.5 py-2.5 pr-9 bg-gray-50 border border-gray-200 rounded-xl text-xs text-[#101F40] focus:outline-none focus:border-[#3569F6] focus:bg-white"
                     />
                     <button
                       type="button"
@@ -391,7 +389,7 @@ export default function SettingsView() {
               <button
                 type="submit"
                 disabled={savingProfile}
-                className="px-6 py-3 bg-[#C65A2E] hover:bg-[#B24E25] text-white rounded-2xl text-xs font-bold shadow-lg shadow-[#C65A2E]/20 transition-all flex items-center gap-2 cursor-pointer"
+                className="px-6 py-3 bg-[#3569F6] hover:bg-[#2351D4] text-white rounded-2xl text-xs font-bold shadow-lg shadow-[#3569F6]/20 transition-all flex items-center gap-2 cursor-pointer"
               >
                 {savingProfile ? (
                   <Loader2 className="w-4 h-4 animate-spin" />
@@ -407,30 +405,30 @@ export default function SettingsView() {
           {/* Right Column: Profile Summary Preview Card */}
           <div className="space-y-6">
             <div className="bg-white rounded-3xl border border-gray-200 p-6 shadow-sm space-y-5 text-center">
-              <div className="w-20 h-20 rounded-3xl bg-gradient-to-tr from-[#C65A2E] to-[#493B34] text-white flex items-center justify-center font-black text-2xl mx-auto shadow-lg shadow-[#C65A2E]/20 border-2 border-white">
+              <div className="w-20 h-20 rounded-3xl bg-gradient-to-tr from-[#3569F6] to-[#1C315A] text-white flex items-center justify-center font-black text-2xl mx-auto shadow-lg shadow-[#3569F6]/20 border-2 border-white">
                 {profileName
                   ? profileName
-                      .split(' ')
-                      .map((n) => n[0])
-                      .join('')
-                      .toUpperCase()
-                      .slice(0, 2)
+                    .split(' ')
+                    .map((n) => n[0])
+                    .join('')
+                    .toUpperCase()
+                    .slice(0, 2)
                   : 'SA'}
               </div>
 
               <div className="space-y-1">
-                <h4 className="font-syne font-bold text-base text-[#2D1F18]">
+                <h4 className="font-syne font-bold text-base text-[#101F40]">
                   {profileName || 'Aarambha Super Admin'}
                 </h4>
                 <p className="text-xs text-gray-500 font-mono">{profileEmail || 'admin@aarambhatravels.in'}</p>
-                <span className="inline-block text-[10px] font-extrabold uppercase tracking-wider text-[#C65A2E] bg-[#C65A2E]/10 px-2.5 py-0.5 rounded-full mt-1">
+                <span className="inline-block text-[10px] font-extrabold uppercase tracking-wider text-[#3569F6] bg-[#3569F6]/10 px-2.5 py-0.5 rounded-full mt-1">
                   {user?.role === 'viewer' ? 'Viewer' : 'Super Admin'}
                 </span>
               </div>
 
               <div className="pt-4 border-t border-gray-100 text-[11px] text-gray-400 text-left space-y-2 leading-relaxed">
                 <div className="flex items-center gap-2 text-gray-600 font-medium">
-                  <Shield className="w-3.5 h-3.5 text-[#C65A2E]" />
+                  <Shield className="w-3.5 h-3.5 text-[#3569F6]" />
                   <span>Session Protected (JWT 7-Day)</span>
                 </div>
                 <div className="flex items-center gap-2 text-gray-600 font-medium">
@@ -447,18 +445,18 @@ export default function SettingsView() {
       {/* ─── TAB 2: SYSTEM & PAYMENT GATEWAY SETTINGS ─────────────── */}
       {activeTab === 'system' && (
         <form onSubmit={handleSaveSettings} className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          
+
           {/* Left 2 Columns: Form Fields */}
           <div className="lg:col-span-2 space-y-6">
-            
+
             {/* Card 1: UPI Gateway / Manual QR Settings */}
             <div className="bg-white rounded-3xl border border-gray-200 p-6 sm:p-7 shadow-sm space-y-5">
               <div className="flex items-center gap-3 pb-4 border-b border-gray-100">
-                <div className="w-9 h-9 rounded-xl bg-[#C65A2E]/10 text-[#C65A2E] flex items-center justify-center">
+                <div className="w-9 h-9 rounded-xl bg-[#3569F6]/10 text-[#3569F6] flex items-center justify-center">
                   <QrCode className="w-5 h-5" />
                 </div>
                 <div>
-                  <h4 className="font-syne font-bold text-sm text-[#2D1F18]">
+                  <h4 className="font-syne font-bold text-sm text-[#101F40]">
                     Direct UPI QR Code Configuration
                   </h4>
                   <p className="text-[11px] text-gray-500">
@@ -479,7 +477,7 @@ export default function SettingsView() {
                     value={settings.upi_id || ''}
                     onChange={(e) => setSettings({ ...settings, upi_id: e.target.value })}
                     placeholder="e.g. 8208211478@ybl"
-                    className="w-full px-3.5 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs font-mono font-bold text-[#2D1F18] focus:outline-none focus:border-[#C65A2E] focus:bg-white"
+                    className="w-full px-3.5 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs font-mono font-bold text-[#101F40] focus:outline-none focus:border-[#3569F6] focus:bg-white"
                   />
                   <span className="text-[10px] text-gray-400 block">Must be an active merchant/personal UPI handle.</span>
                 </div>
@@ -495,7 +493,7 @@ export default function SettingsView() {
                     value={settings.upi_payee_name || ''}
                     onChange={(e) => setSettings({ ...settings, upi_payee_name: e.target.value })}
                     placeholder="e.g. Aarambh Travels"
-                    className="w-full px-3.5 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs font-bold text-[#2D1F18] focus:outline-none focus:border-[#C65A2E] focus:bg-white"
+                    className="w-full px-3.5 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs font-bold text-[#101F40] focus:outline-none focus:border-[#3569F6] focus:bg-white"
                   />
                   <span className="text-[10px] text-gray-400 block">Shown inside banking apps (GPay, PhonePe).</span>
                 </div>
@@ -510,7 +508,7 @@ export default function SettingsView() {
                     value={settings.verification_timeframe || ''}
                     onChange={(e) => setSettings({ ...settings, verification_timeframe: e.target.value })}
                     placeholder="e.g. 2-4 hours"
-                    className="w-full px-3.5 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs font-medium text-[#2D1F18] focus:outline-none focus:border-[#C65A2E] focus:bg-white"
+                    className="w-full px-3.5 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs font-medium text-[#101F40] focus:outline-none focus:border-[#3569F6] focus:bg-white"
                   />
                   <span className="text-[10px] text-gray-400 block">Promised turn-around for customer UTR checks.</span>
                 </div>
@@ -533,11 +531,11 @@ export default function SettingsView() {
             {/* Card 2: Business & Contact Info */}
             <div className="bg-white rounded-3xl border border-gray-200 p-6 sm:p-7 shadow-sm space-y-5">
               <div className="flex items-center gap-3 pb-4 border-b border-gray-100">
-                <div className="w-9 h-9 rounded-xl bg-[#F8EFEA] text-[#2D1F18] flex items-center justify-center">
-                  <Building className="w-5 h-5 text-[#C65A2E]" />
+                <div className="w-9 h-9 rounded-xl bg-[#EDF3FF] text-[#101F40] flex items-center justify-center">
+                  <Building className="w-5 h-5 text-[#3569F6]" />
                 </div>
                 <div>
-                  <h4 className="font-syne font-bold text-sm text-[#2D1F18]">
+                  <h4 className="font-syne font-bold text-sm text-[#101F40]">
                     Enterprise Profile &amp; Contact Channels
                   </h4>
                   <p className="text-[11px] text-gray-500">
@@ -554,7 +552,7 @@ export default function SettingsView() {
                     disabled={isViewer}
                     value={settings.business_name || ''}
                     onChange={(e) => setSettings({ ...settings, business_name: e.target.value })}
-                    className="w-full px-3.5 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs font-medium text-[#2D1F18] focus:outline-none focus:border-[#C65A2E] focus:bg-white"
+                    className="w-full px-3.5 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs font-medium text-[#101F40] focus:outline-none focus:border-[#3569F6] focus:bg-white"
                   />
                 </div>
 
@@ -565,7 +563,7 @@ export default function SettingsView() {
                     disabled={isViewer}
                     value={settings.contact_phone || ''}
                     onChange={(e) => setSettings({ ...settings, contact_phone: e.target.value })}
-                    className="w-full px-3.5 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs font-medium text-[#2D1F18] focus:outline-none focus:border-[#C65A2E] focus:bg-white"
+                    className="w-full px-3.5 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs font-medium text-[#101F40] focus:outline-none focus:border-[#3569F6] focus:bg-white"
                   />
                 </div>
 
@@ -576,7 +574,7 @@ export default function SettingsView() {
                     disabled={isViewer}
                     value={settings.contact_email || ''}
                     onChange={(e) => setSettings({ ...settings, contact_email: e.target.value })}
-                    className="w-full px-3.5 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs font-medium text-[#2D1F18] focus:outline-none focus:border-[#C65A2E] focus:bg-white"
+                    className="w-full px-3.5 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs font-medium text-[#101F40] focus:outline-none focus:border-[#3569F6] focus:bg-white"
                   />
                 </div>
               </div>
@@ -588,7 +586,7 @@ export default function SettingsView() {
                 <button
                   type="submit"
                   disabled={savingSettings}
-                  className="px-6 py-3 bg-[#C65A2E] hover:bg-[#B24E25] text-white rounded-2xl text-xs font-bold shadow-lg shadow-[#C65A2E]/20 transition-all flex items-center gap-2 cursor-pointer"
+                  className="px-6 py-3 bg-[#3569F6] hover:bg-[#2351D4] text-white rounded-2xl text-xs font-bold shadow-lg shadow-[#3569F6]/20 transition-all flex items-center gap-2 cursor-pointer"
                 >
                   {savingSettings ? (
                     <Loader2 className="w-4 h-4 animate-spin" />
@@ -607,11 +605,11 @@ export default function SettingsView() {
           {/* Right 1 Column: Live UPI QR Preview Box */}
           <div className="space-y-6">
             <div className="bg-white rounded-3xl border border-gray-200 p-6 shadow-sm space-y-4 text-center">
-              <span className="text-[10px] font-bold uppercase tracking-wider text-[#C65A2E] font-syne bg-[#C65A2E]/10 px-3 py-1 rounded-full border border-[#C65A2E]/20">
+              <span className="text-[10px] font-bold uppercase tracking-wider text-[#3569F6] font-syne bg-[#3569F6]/10 px-3 py-1 rounded-full border border-[#3569F6]/20">
                 LIVE CUSTOMER QR PREVIEW
               </span>
 
-              <div className="max-w-[200px] mx-auto p-2 bg-white rounded-2xl border-2 border-[#2D1F18] shadow-md overflow-hidden">
+              <div className="max-w-[200px] mx-auto p-2 bg-white rounded-2xl border-2 border-[#101F40] shadow-md overflow-hidden">
                 <img
                   src="/images/phonepe-qr.jpg"
                   alt="PhonePe Scanner"
@@ -620,9 +618,9 @@ export default function SettingsView() {
               </div>
 
               <div className="space-y-1">
-                <strong className="block text-xs font-syne text-[#2D1F18]">SHAM UMAKANT SURYAWANSHI</strong>
+                <strong className="block text-xs font-syne text-[#101F40]">SHAM UMAKANT SURYAWANSHI</strong>
                 <span className="text-[11px] text-gray-500 block">{settings.upi_payee_name || 'Aarambh Travels'}</span>
-                <span className="text-xs font-mono text-[#C65A2E] font-bold block">{settings.upi_id || '8208211478@ybl'}</span>
+                <span className="text-xs font-mono text-[#3569F6] font-bold block">{settings.upi_id || '8208211478@ybl'}</span>
               </div>
 
               <button

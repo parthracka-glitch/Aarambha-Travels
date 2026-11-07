@@ -204,25 +204,25 @@ export default function ToursView() {
       {/* Top Action Bar */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h3 className="text-xl font-extrabold text-[#111827] tracking-tight">
+          <h3 className="text-xl sm:text-2xl font-extrabold text-[#17233D] tracking-tight">
             Tour Packages ({packages.length})
           </h3>
-          <p className="text-xs text-gray-500 font-medium mt-0.5">Manage custom itineraries, pricing, departure batch dates, and features.</p>
+          <p className="text-xs text-[#77839A] font-medium mt-0.5">Manage custom itineraries, pricing, departure batch dates, and features.</p>
         </div>
 
         <div className="flex flex-wrap items-center gap-2 sm:gap-3">
           <button
             onClick={load}
-            className="p-2 rounded-full border border-gray-200 bg-white text-gray-600 hover:text-black hover:bg-gray-50 text-xs font-semibold flex items-center gap-1.5 shadow-sm transition-all"
+            className="px-3.5 py-2 rounded-xl border border-[#E8ECF4] bg-white text-[#17233D] hover:bg-[#F5F7FC] text-xs font-semibold flex items-center gap-1.5 shadow-2xs transition-all cursor-pointer"
           >
-            <RefreshCw className="w-3.5 h-3.5" /> Refresh
+            <RefreshCw className="w-3.5 h-3.5 text-[#77839A]" /> Refresh
           </button>
           
           <button
             onClick={handleOpenCreate}
-            className="px-4 py-2 bg-[#111827] hover:bg-black text-white rounded-full text-xs font-bold shadow-sm transition-all flex items-center gap-2"
+            className="px-4 py-2 bg-[#101F40] hover:bg-[#1C315A] text-white rounded-xl text-xs font-bold shadow-xs transition-all flex items-center gap-2 cursor-pointer active:scale-95"
           >
-            <Plus className="w-4 h-4" /> Add Tour Package
+            <Plus className="w-4 h-4 text-[#3569F6]" /> Add Tour Package
           </button>
         </div>
       </div>
@@ -232,40 +232,40 @@ export default function ToursView() {
         {packages.map((pkg: any, i: number) => {
           const dateCount = Array.isArray(pkg.batchDates) ? pkg.batchDates.length : 0;
           return (
-            <div key={i} className="bg-white rounded-[24px] border border-gray-100 p-5 shadow-aether-card flex flex-col justify-between hover:shadow-md transition-shadow">
+            <div key={i} className="bg-white rounded-2xl border border-[#E8ECF4] p-5 shadow-xs hover:border-[#CBD5E1] hover:shadow-card-hover transition-all flex flex-col justify-between">
               <div>
                 <div className="flex items-start justify-between gap-2">
-                  <h4 className="font-bold text-[#111827] text-base leading-snug">{pkg.title}</h4>
+                  <h4 className="font-bold text-[#17233D] text-base leading-snug">{pkg.title}</h4>
                   <div className="flex items-center gap-1">
                     <button
                       onClick={() => handleOpenEdit(pkg)}
                       title="Edit Package"
-                      className="p-1.5 text-gray-400 hover:text-[#C65A2E] hover:bg-[#F8EFEA] rounded-full transition-colors"
+                      className="p-1.5 text-[#77839A] hover:text-[#3569F6] hover:bg-[#EDF3FF] rounded-lg transition-colors cursor-pointer"
                     >
                       <Pencil className="w-3.5 h-3.5" />
                     </button>
                     <button
                       onClick={() => handleDeletePackage(pkg._id || pkg.id)}
                       title="Delete Package"
-                      className="p-1.5 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-full transition-colors"
+                      className="p-1.5 text-[#77839A] hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors cursor-pointer"
                     >
                       <Trash2 className="w-3.5 h-3.5" />
                     </button>
                   </div>
                 </div>
-                <p className="text-xs text-[#C65A2E] font-semibold mt-1 mb-2">{pkg.durationDays || pkg.duration_days}D / {pkg.durationNights || pkg.duration_nights}N • <span className="font-mono text-gray-400">{pkg.slug}</span></p>
-                <p className="text-xs text-gray-500 line-clamp-2 mb-3 leading-relaxed">{pkg.description}</p>
+                <p className="text-xs text-[#3569F6] font-bold mt-1 mb-2">{pkg.durationDays || pkg.duration_days}D / {pkg.durationNights || pkg.duration_nights}N • <span className="font-mono text-[#77839A] text-[11px] font-normal">{pkg.slug}</span></p>
+                <p className="text-xs text-[#77839A] line-clamp-2 mb-3 leading-relaxed">{pkg.description}</p>
               </div>
 
-              <div className="space-y-3 pt-3 border-t border-gray-100">
+              <div className="space-y-3 pt-3 border-t border-[#F5F7FC]">
                 <div className="flex items-center justify-between">
                   <div>
-                    <span className="text-[10px] text-gray-400 font-medium block">Total Price</span>
-                    <span className="text-base font-extrabold text-[#111827]">{formatCurrency(pkg.basePrice || pkg.base_price || 0)}</span>
+                    <span className="text-[10px] text-[#77839A] font-medium block">Total Price</span>
+                    <span className="text-base font-extrabold text-[#17233D]">{formatCurrency(pkg.basePrice || pkg.base_price || 0)}</span>
                   </div>
                   <div className="text-right">
-                    <span className="text-[10px] text-gray-400 font-medium block">Required Deposit</span>
-                    <span className="text-xs font-bold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-100">₹{pkg.depositPrice || pkg.deposit_price || 500}</span>
+                    <span className="text-[10px] text-[#77839A] font-medium block">Required Deposit</span>
+                    <span className="text-xs font-bold text-[#12A879] bg-[#E7F7F2] px-2.5 py-0.5 rounded-full border border-[#BDEBDC]">₹{pkg.depositPrice || pkg.deposit_price || 500}</span>
                   </div>
                 </div>
 
@@ -273,17 +273,17 @@ export default function ToursView() {
                 <div className="grid grid-cols-2 gap-2">
                   <button
                     onClick={() => handleOpenManageBatches(pkg)}
-                    className="py-2 px-2.5 bg-[#F8EFEA] hover:bg-[#EDE2D0] text-[#C65A2E] font-bold rounded-xl text-xs flex items-center justify-center gap-1.5 transition-all shadow-sm border border-[#E8B9A5]"
+                    className="py-2 px-2.5 bg-[#EDF3FF] hover:bg-[#D3E2FE] text-[#3569F6] font-bold rounded-xl text-xs flex items-center justify-center gap-1.5 transition-all shadow-2xs border border-[#D3E2FE] cursor-pointer"
                   >
-                    <Calendar className="w-3.5 h-3.5 text-[#C65A2E]" />
+                    <Calendar className="w-3.5 h-3.5 text-[#3569F6]" />
                     <span>Batches ({dateCount})</span>
                   </button>
 
                   <button
                     onClick={() => navigate('/calendar')}
-                    className="py-2 px-2.5 bg-slate-900 hover:bg-black text-white font-bold rounded-xl text-xs flex items-center justify-center gap-1.5 transition-all shadow-sm"
+                    className="py-2 px-2.5 bg-[#101F40] hover:bg-[#1C315A] text-white font-bold rounded-xl text-xs flex items-center justify-center gap-1.5 transition-all shadow-xs cursor-pointer"
                   >
-                    <Users className="w-3.5 h-3.5 text-red-400" />
+                    <Users className="w-3.5 h-3.5 text-[#60A5FA]" />
                     <span>Members List</span>
                   </button>
                 </div>
@@ -293,7 +293,7 @@ export default function ToursView() {
         })}
 
         {packages.length === 0 && (
-          <div className="bg-white rounded-[24px] border border-gray-100 p-12 text-center text-gray-400 col-span-3">
+          <div className="bg-white rounded-2xl border border-[#E8ECF4] p-12 text-center text-[#77839A] col-span-3">
             No tour packages found. Click "+ Add Tour Package" above to create one.
           </div>
         )}
@@ -398,7 +398,7 @@ export default function ToursView() {
 
           <button
             type="submit"
-            className="w-full py-3 bg-[#111827] hover:bg-black text-white font-bold rounded-xl text-xs shadow-md transition-all mt-2"
+            className="w-full py-3 bg-[#101F40] hover:bg-[#1C315A] text-white font-bold rounded-xl text-xs shadow-xs transition-all mt-2 cursor-pointer"
           >
             {editingPkg ? "Update Tour Package" : "Create Tour Package"}
           </button>
@@ -422,9 +422,9 @@ export default function ToursView() {
               <div className="lg:col-span-5 space-y-4">
                 
                 {/* Header Banner */}
-                <div className="bg-[#09090b] text-white p-5 rounded-2xl border border-white/10 shadow-lg relative overflow-hidden space-y-2">
-                  <div className="flex items-center gap-2 text-amber-400 font-extrabold text-[10px] uppercase tracking-widest">
-                    <Calendar className="w-4 h-4 text-amber-400" /> Fixed Departure Manager
+                <div className="bg-[#101F40] text-white p-5 rounded-2xl border border-white/10 shadow-sm relative overflow-hidden space-y-2">
+                  <div className="flex items-center gap-2 text-blue-300 font-extrabold text-[10px] uppercase tracking-widest">
+                    <Calendar className="w-4 h-4 text-blue-300" /> Fixed Departure Manager
                   </div>
                   <h4 className="font-syne text-lg font-black text-white leading-tight">
                     Add & Change Dates
@@ -435,8 +435,8 @@ export default function ToursView() {
                 </div>
 
                 {/* Quick Date Presets */}
-                <div className="bg-[#F8EFEA] border border-[#E8B9A5] rounded-2xl p-4 space-y-2.5">
-                  <span className="text-[10px] font-extrabold uppercase tracking-widest text-[#2D1F18] block font-syne">
+                <div className="bg-[#EDF3FF] border border-[#C7D9FE] rounded-2xl p-4 space-y-2.5">
+                  <span className="text-[10px] font-extrabold uppercase tracking-widest text-[#101F40] block font-syne">
                     ⚡ Quick Date Presets
                   </span>
                   <div className="grid grid-cols-3 gap-2">
@@ -447,7 +447,7 @@ export default function ToursView() {
                         setNewBatchStart('2026-08-04');
                         setNewBatchEnd('2026-08-10');
                       }}
-                      className="p-2 rounded-xl bg-white border border-[#E8B9A5] text-[#C65A2E] hover:bg-[#C65A2E] hover:text-white font-bold text-[10px] transition-all shadow-xs text-center"
+                      className="p-2 rounded-xl bg-white border border-[#C7D9FE] text-[#3569F6] hover:bg-[#3569F6] hover:text-white font-bold text-[10px] transition-all shadow-xs text-center"
                     >
                       Early Month<br /><span className="text-[9px] opacity-75">(04 - 10)</span>
                     </button>
@@ -458,7 +458,7 @@ export default function ToursView() {
                         setNewBatchStart('2026-08-14');
                         setNewBatchEnd('2026-08-20');
                       }}
-                      className="p-2 rounded-xl bg-white border border-[#E8B9A5] text-[#C65A2E] hover:bg-[#C65A2E] hover:text-white font-bold text-[10px] transition-all shadow-xs text-center"
+                      className="p-2 rounded-xl bg-white border border-[#C7D9FE] text-[#3569F6] hover:bg-[#3569F6] hover:text-white font-bold text-[10px] transition-all shadow-xs text-center"
                     >
                       Mid Month<br /><span className="text-[9px] opacity-75">(14 - 20)</span>
                     </button>
@@ -469,7 +469,7 @@ export default function ToursView() {
                         setNewBatchStart('2026-08-24');
                         setNewBatchEnd('2026-08-30');
                       }}
-                      className="p-2 rounded-xl bg-white border border-[#E8B9A5] text-[#C65A2E] hover:bg-[#C65A2E] hover:text-white font-bold text-[10px] transition-all shadow-xs text-center"
+                      className="p-2 rounded-xl bg-white border border-[#C7D9FE] text-[#3569F6] hover:bg-[#3569F6] hover:text-white font-bold text-[10px] transition-all shadow-xs text-center"
                     >
                       Late Month<br /><span className="text-[9px] opacity-75">(24 - 30)</span>
                     </button>
@@ -487,7 +487,7 @@ export default function ToursView() {
                     <select
                       value={newBatchMonth}
                       onChange={e => setNewBatchMonth(e.target.value)}
-                      className="w-full px-3 py-2 bg-gray-50 border border-gray-200 rounded-xl font-bold text-gray-800 focus:outline-none focus:border-[#C65A2E]"
+                      className="w-full px-3 py-2 bg-gray-50 border border-gray-200 rounded-xl font-bold text-gray-800 focus:outline-none focus:border-[#3569F6]"
                     >
                       {['August', 'September', 'October', 'November', 'December', 'January', 'February', 'March'].map(m => (
                         <option key={m} value={m}>{m}</option>
@@ -502,7 +502,7 @@ export default function ToursView() {
                       required
                       value={newBatchTag}
                       onChange={e => setNewBatchTag(e.target.value)}
-                      className="w-full px-3 py-2 bg-gray-50 border border-gray-200 rounded-xl font-bold text-gray-800 focus:outline-none focus:border-[#C65A2E]"
+                      className="w-full px-3 py-2 bg-gray-50 border border-gray-200 rounded-xl font-bold text-gray-800 focus:outline-none focus:border-[#3569F6]"
                       placeholder="e.g. Monsoon Weekend Special"
                     />
                   </div>
@@ -545,7 +545,7 @@ export default function ToursView() {
 
                   <button
                     type="submit"
-                    className="w-full py-3 bg-[#2D1F18] hover:bg-[#C65A2E] text-white font-extrabold rounded-xl shadow-md transition-all flex items-center justify-center gap-2 uppercase tracking-wider text-xs"
+                    className="w-full py-3 bg-[#101F40] hover:bg-[#3569F6] text-white font-extrabold rounded-xl shadow-md transition-all flex items-center justify-center gap-2 uppercase tracking-wider text-xs"
                   >
                     <Plus className="w-4 h-4" /> Add Departure Batch
                   </button>
@@ -568,7 +568,7 @@ export default function ToursView() {
                       <button
                         onClick={() => setActiveMonthFilter('All')}
                         className={`px-3 py-1 rounded-full font-extrabold text-[11px] transition-all whitespace-nowrap ${
-                          activeMonthFilter === 'All' ? 'bg-[#2D1F18] text-white shadow-sm' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                          activeMonthFilter === 'All' ? 'bg-[#101F40] text-white shadow-sm' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
                         }`}
                       >
                         All ({pkgBatches.length})
@@ -579,7 +579,7 @@ export default function ToursView() {
                           key={m}
                           onClick={() => setActiveMonthFilter(m)}
                           className={`px-3 py-1 rounded-full font-extrabold text-[11px] transition-all whitespace-nowrap ${
-                            activeMonthFilter === m ? 'bg-[#C65A2E] text-white shadow-sm' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                            activeMonthFilter === m ? 'bg-[#3569F6] text-white shadow-sm' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
                           }`}
                         >
                           {m} ({pkgBatches.filter(b => b.month === m).length})
@@ -595,7 +595,7 @@ export default function ToursView() {
                       return (
                         <div
                           key={batch.id || index}
-                          className="p-4 rounded-2xl border border-gray-200 bg-white hover:border-[#C65A2E]/50 hover:shadow-md transition-all flex flex-col sm:flex-row sm:items-center justify-between gap-3 group"
+                          className="p-4 rounded-2xl border border-gray-200 bg-white hover:border-[#3569F6]/50 hover:shadow-md transition-all flex flex-col sm:flex-row sm:items-center justify-between gap-3 group"
                         >
                           <div className="space-y-1 flex-1">
                             <div className="flex items-center gap-2 flex-wrap">

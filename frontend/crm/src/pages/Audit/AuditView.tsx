@@ -18,30 +18,30 @@ export default function AuditView() {
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
-        <h3 className="text-lg font-bold text-espresso">Audit Trail & Action Logs ({logs.length})</h3>
-        <button onClick={load} className="text-xs flex items-center gap-1 text-gray-500 hover:text-terracotta">
+        <h3 className="text-xl font-bold text-[#17233D]">Audit Trail &amp; Action Logs ({logs.length})</h3>
+        <button onClick={load} className="text-xs flex items-center gap-1.5 text-[#77839A] hover:text-[#3569F6] bg-white border border-[#E8ECF4] px-3 py-1.5 rounded-xl shadow-xs transition-all">
           <RefreshCw className="w-3.5 h-3.5" /> Refresh
         </button>
       </div>
-      <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
-        <table className="w-full text-sm">
-          <thead className="bg-gray-50 text-left text-xs text-gray-500 uppercase">
+      <div className="bg-white rounded-2xl border border-[#E8ECF4] overflow-hidden shadow-xs">
+        <table className="w-full text-xs">
+          <thead className="bg-[#101F40] text-left text-[11px] text-[#F5F7FC] uppercase tracking-wider">
             <tr>
-              <th className="px-4 py-3">Action</th>
-              <th className="px-4 py-3">Actor</th>
-              <th className="px-4 py-3">Target</th>
-              <th className="px-4 py-3">Details</th>
-              <th className="px-4 py-3">Timestamp</th>
+              <th className="px-5 py-3.5 font-bold">Action</th>
+              <th className="px-5 py-3.5 font-bold">Actor</th>
+              <th className="px-5 py-3.5 font-bold">Target</th>
+              <th className="px-5 py-3.5 font-bold">Details</th>
+              <th className="px-5 py-3.5 font-bold">Timestamp</th>
             </tr>
           </thead>
-          <tbody>
+          <tbody className="divide-y divide-[#E8ECF4]">
             {logs.map((l: any, i: number) => (
-              <tr key={i} className="border-t border-gray-100 hover:bg-gray-50">
-                <td className="px-4 py-3 font-semibold text-espresso">{l.action}</td>
-                <td className="px-4 py-3 text-gray-600">{l.actorName || l.actor_name}</td>
-                <td className="px-4 py-3 text-xs text-gray-500">{l.targetType || l.target_type}</td>
-                <td className="px-4 py-3 text-xs text-gray-500 font-mono max-w-[200px] truncate">{JSON.stringify(l.details)}</td>
-                <td className="px-4 py-3 text-xs text-gray-500">{new Date(l.createdAt || l.created_at).toLocaleString()}</td>
+              <tr key={i} className="hover:bg-[#F5F7FC]/70 transition-colors">
+                <td className="px-5 py-3.5 font-bold text-[#17233D]">{l.action}</td>
+                <td className="px-5 py-3.5 text-gray-700 font-medium">{l.actorName || l.actor_name}</td>
+                <td className="px-5 py-3.5 text-xs text-[#77839A]">{l.targetType || l.target_type}</td>
+                <td className="px-5 py-3.5 text-xs text-[#77839A] font-mono max-w-[200px] truncate">{JSON.stringify(l.details)}</td>
+                <td className="px-5 py-3.5 text-xs text-[#77839A]">{new Date(l.createdAt || l.created_at).toLocaleString()}</td>
               </tr>
             ))}
           </tbody>

@@ -722,6 +722,119 @@
           "stayDetails": "Mumbai Drop"
         }
       ]
+    },
+    {
+      "_id": "pkg-girnar-dwarka-somnath",
+      "id": "pune-to-girnar-dwarka-somnath-jyotirlinga",
+      "slug": "pune-to-girnar-dwarka-somnath-jyotirlinga",
+      "title": "Pune to Girnar Parvat | Dwarka, Somnath Jyotirlinga | Statue of Unity",
+      "subtitle": "पुणे ते गिरनार पर्वत – द्वारकाधीश, बेट द्वारका, सोमनाथ व नागेश्वर ज्योतिर्लिंग, निळकंठ धाम आणि स्टॅच्यू ऑफ युनिटी",
+      "description": "एका यात्रेत पवित्र दर्शन: गिरनार पर्वत, द्वारका, बेट द्वारका, सोमनाथ ज्योतिर्लिंग, नागेश्वर ज्योतिर्लिंग, निळकंठ धाम, स्टॅच्यू ऑफ युनिटी (2×2 AC Sleeper कोच).",
+      "overview": "पुणे ते गिरनार पर्वत, द्वारकाधीश, बेट द्वारका, सोमनाथ व नागेश्वर ज्योतिर्लिंग, निळकंठ धाम आणि स्टॅच्यू ऑफ युनिटी – एकाच यात्रेत पवित्र दर्शन! 2×2 AC स्लीपर कोचने आरामदायक प्रवास, 2 रात्री AC हॉटेल मुक्काम, नाश्ता व जेवणाची उत्तम सोय.",
+      "durationDays": 6,
+      "durationNights": 2,
+      "basePrice": 11999,
+      "lowerSeatPrice": 12999,
+      "upperSeatPrice": 11999,
+      "depositPrice": 2999,
+      "datesLabel": "27 Nov 2026 – 03 Dec 2026 (Pune to Pune)",
+      "destination": "Girnar, Dwarka & Somnath",
+      "state": "Gujarat",
+      "images": [
+        "https://images.unsplash.com/photo-1609766857041-ed402ea8069a?q=80&w=1200&auto=format&fit=crop",
+        "https://images.unsplash.com/photo-1596707328905-234b3e811c75?q=80&w=1200&auto=format&fit=crop"
+      ],
+      "sites": [
+        "गिरनार पर्वत (Girnar Parvat - Guru Dattatreya & Ambaji Darshan)",
+        "द्वारकाधीश मंदिर (Dwarkadhish Temple, Dwarka)",
+        "बेट द्वारका (Bet Dwarka Island & Temple)",
+        "सोमनाथ ज्योतिर्लिंग (Shree Somnath Mahadev 1st Jyotirlinga)",
+        "नागेश्वर ज्योतिर्लिंग (Shree Nageshwar Jyotirlinga)",
+        "निळकंठ धाम (Nilkanthdham Swaminarayan Temple, Poicha)",
+        "सरदार वल्लभभाई पटेल पुतळा - स्टॅच्यू ऑफ युनिटी (Statue of Unity)",
+        "गोमती घाट व सुदामा सेतू (Gomti Ghat, Dwarka)",
+        "भालका तीर्थ (Bhalka Tirth, Veraval)",
+        "जुनागढ (Junagadh Heritage & Foot of Girnar)"
+      ],
+      "inclusions": [
+        "Sleeper Coach (2×2 AC Pushback/Sleeper Bus Travel)",
+        "उत्तम Ac हॉटेलमध्ये 2 रात्री मुक्काम (2 Nights AC Hotel Stay)",
+        "4 व्यक्ती शेअरिंग रूम (4-Person Sharing Rooms)",
+        "दिवसातून 2 वेळेस शुद्ध शाकाहारी जेवण (Lunch & Dinner)",
+        "रोज सकाळी चहा आणि नाश्ता (Morning Tea & Breakfast)",
+        "अंघोळीसाठी रोज सकाळी हॉटेल रूम (Daily Morning Fresh-up Room)",
+        "जेवणाच्या वेळी शुद्ध पिण्याचे पाणी (Drinking Water During Meals)",
+        "ट्रॅव्हल इन्शुरन्स (Comprehensive Travel Insurance)"
+      ],
+      "exclusions": [
+        "गिरनार पर्वत रोपवे तिकीट (Ropeway Ticket Charges)",
+        "पूजा / अभिषेक व विशेष विधी खर्च (Personal Puja / Abhishek)",
+        "दर्शन पास / व्हीआयपी पास (VIP Darshan Passes)",
+        "लोकल प्रवास / ऑटो रिक्षा खर्च (Local Rickshaw / Transport)",
+        "बेट द्वारका बोटिंग व फेरी तिकीट (Boating Charges at Bet Dwarka)",
+        "वैयक्तिक खर्च व खरेदी (Personal Expenses & Shopping)"
+      ],
+      "terms": [
+        "ऍडव्हान्स (₹२,९९९/-) मिळाल्यावरच बुकिंग निश्चित होईल.",
+        "कॅन्सलेशन केल्यास भरलेली रक्कम परत (Non-refundable) मिळणार नाही.",
+        "तुमच्या ऐवजी दुसरी व्यक्ती पाठवू शकता (Seat Transfer Allowed).",
+        "सीट्स मर्यादित आहेत – आजच तुमची जागा निश्चित करा!"
+      ],
+      "batchDates": [
+        {
+          "id": "batch-girnar-nov-2026",
+          "month": "November",
+          "label": "27 Nov 2026 – 03 Dec 2026 (Pune to Pune)",
+          "tag": "Special Gujarat Pilgrimage 2026 • Upper ₹11,999 / Lower ₹12,999",
+          "startDate": "2026-11-27",
+          "endDate": "2026-12-03",
+          "status": "available"
+        }
+      ],
+      "itineraries": [
+        {
+          "dayNumber": 1,
+          "title": "पुणे प्रस्थान – 2×2 AC Sleeper कोचने गुजरातकडे प्रस्थान",
+          "description": "पुणे (कात्रज / मस्तान हॉटेल / स्वारगेट) येथून 2×2 AC स्लीपर कोच बसने गुजरातकडे सुखद व आनंददायी प्रवासाला सुरुवात. प्रवासात भक्तीमय वातावरण आणि रात्रीचा प्रवास.",
+          "meals": "Pure Veg Meals",
+          "stayDetails": "2×2 AC Sleeper Coach"
+        },
+        {
+          "dayNumber": 2,
+          "title": "निळकंठ धाम (पोईचा) व स्टॅच्यू ऑफ युनिटी दर्शन",
+          "description": "सकाळी फ्रेश-अप व नाश्ता. पोईचा येथील भव्य निळकंठ धाम स्वामिनारायण मंदिर दर्शन. त्यानंतर जगातील सर्वात उंच सरदार वल्लभभाई पटेल यांच्या 'स्टॅच्यू ऑफ युनिटी'चे भव्य दर्शन. संध्याकाळी द्वारकेकडे प्रवास.",
+          "meals": "Tea, Breakfast & Pure Veg Meals",
+          "stayDetails": "2×2 AC Sleeper Coach"
+        },
+        {
+          "dayNumber": 3,
+          "title": "द्वारकाधीश मंदिर, गोमती घाट, नागेश्वर ज्योतिर्लिंग व बेट द्वारका दर्शन",
+          "description": "सकाळी द्वारका आगमन व AC हॉटेलमध्ये चेक-इन. जगप्रसिद्ध द्वारकाधीश मंदिर दर्शन, गोमती घाट स्नान व दर्शन. त्यानंतर १२ ज्योतिर्लिंगांपैकी एक नागेश्वर ज्योतिर्लिंग व समुद्रातील पवित्र बेट द्वारका दर्शन. रात्री द्वारका येथे AC हॉटेलमध्ये मुक्काम.",
+          "meals": "Pure Veg Meals (Lunch & Dinner)",
+          "stayDetails": "AC Hotel in Dwarka (Night 1)"
+        },
+        {
+          "dayNumber": 4,
+          "title": "सोमनाथ ज्योतिर्लिंग, भालका तीर्थ व संध्याकाळची भव्य आरती",
+          "description": "सकाळी नाश्ता करून सोमनाथकडे प्रस्थान. भगवान श्रीकृष्णांचे निर्वाण स्थळ भालका तीर्थ दर्शन. प्रथम ज्योतिर्लिंग श्री सोमनाथ महादेव मंदिराचे पवित्र दर्शन, संध्याकाळची भव्य महाआरती व लेझर शो. रात्री सोमनाथ येथे उत्तम AC हॉटेलमध्ये मुक्काम.",
+          "meals": "Pure Veg Meals (Lunch & Dinner)",
+          "stayDetails": "AC Hotel in Somnath (Night 2)"
+        },
+        {
+          "dayNumber": 5,
+          "title": "जुनागढ व पवित्र गिरनार पर्वत दर्शन (दत्तात्रेय व अंबा माता दर्शन)",
+          "description": "सकाळी जुनागढ पायथ्याशी आगमन. पवित्र गिरनार पर्वतावर रोपवे अथवा पायऱ्यांनी चढून श्री अंबाजी माता व गुरु दत्तात्रेय पादुकांचे परम पावन दर्शन. संध्याकाळी पुणेकडे परतीचा प्रवास सुरू.",
+          "meals": "Pure Veg Meals",
+          "stayDetails": "2×2 AC Sleeper Coach"
+        },
+        {
+          "dayNumber": 6,
+          "title": "पुणे आगमन – यात्रेची यशस्वी व मंगलमयी सांगता",
+          "description": "दिवसभराचा प्रवास, वाटेत चहा, नाश्ता व जेवणाची उत्तम सोय. दुपारी/संध्याकाळी पुण्यामध्ये सुखद व मंगलमयी आगमन. हर हर महादेव!",
+          "meals": "Tea, Breakfast & Meals",
+          "stayDetails": "Pune Drop"
+        }
+      ]
     }
   ]
 }

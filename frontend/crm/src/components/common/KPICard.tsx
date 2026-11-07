@@ -1,83 +1,126 @@
 import React from 'react';
-import { ArrowUpRight } from 'lucide-react';
 
 export interface KPICardProps {
   label: string;
   value: string;
-  sub: string;
+  sub?: string;
+  trend?: string;
+  trendLabel?: string;
+  trendType?: 'up' | 'neutral' | 'down';
   icon?: React.ReactNode;
-  variant?: 'blue' | 'amber' | 'purple' | 'emerald' | 'peach' | 'green' | 'default';
-  color?: string;
+  variant?: 'blue' | 'amber' | 'purple' | 'emerald' | 'green' | 'default';
   onClick?: () => void;
 }
 
-const variantConfig: Record<string, { iconBg: string; dot: string }> = {
+const variantConfig: Record<string, { iconBg: string; stroke: string; fill: string; trendColor: string }> = {
   blue: {
-    iconBg: 'bg-blue-50/80 text-blue-600 border border-blue-200/60',
-    dot: 'bg-blue-500',
+    iconBg: 'bg-[#EDF3FF] text-[#3569F6]',
+    stroke: '#3569F6',
+    fill: '#EDF3FF',
+    trendColor: 'text-[#12A879]',
   },
   amber: {
-    iconBg: 'bg-amber-50/80 text-amber-700 border border-amber-200/60',
-    dot: 'bg-amber-500',
-  },
-  peach: {
-    iconBg: 'bg-amber-50/80 text-amber-700 border border-amber-200/60',
-    dot: 'bg-amber-500',
+    iconBg: 'bg-[#FEF5EB] text-[#F3A23A]',
+    stroke: '#F3A23A',
+    fill: '#FEF5EB',
+    trendColor: 'text-[#F3A23A]',
   },
   purple: {
-    iconBg: 'bg-purple-50/80 text-purple-600 border border-purple-200/60',
-    dot: 'bg-purple-500',
+    iconBg: 'bg-[#F4EEFD] text-[#9560EF]',
+    stroke: '#9560EF',
+    fill: '#F4EEFD',
+    trendColor: 'text-[#12A879]',
   },
   emerald: {
-    iconBg: 'bg-emerald-50/80 text-emerald-600 border border-emerald-200/60',
-    dot: 'bg-emerald-500',
+    iconBg: 'bg-[#E7F7F2] text-[#12A879]',
+    stroke: '#12A879',
+    fill: '#E7F7F2',
+    trendColor: 'text-[#12A879]',
   },
   green: {
-    iconBg: 'bg-emerald-50/80 text-emerald-600 border border-emerald-200/60',
-    dot: 'bg-emerald-500',
+    iconBg: 'bg-[#E7F7F2] text-[#12A879]',
+    stroke: '#12A879',
+    fill: '#E7F7F2',
+    trendColor: 'text-[#12A879]',
   },
   default: {
-    iconBg: 'bg-gray-50 text-gray-600 border border-gray-200/70',
-    dot: 'bg-gray-400',
+    iconBg: 'bg-[#F5F7FC] text-[#77839A]',
+    stroke: '#77839A',
+    fill: '#F5F7FC',
+    trendColor: 'text-[#77839A]',
   },
 };
 
-export function KPICard({ label, value, sub, icon, variant = 'default', onClick }: KPICardProps) {
+export function KPICard({
+  label,
+  value,
+  sub,
+  trend = '+12%',
+  trendLabel = 'vs last week',
+  trendType = 'up',
+  icon,
+  variant = 'default',
+  onClick,
+}: KPICardProps) {
   const cfg = variantConfig[variant] || variantConfig.default;
 
   return (
     <div
       onClick={onClick}
-      className={`bg-white p-3.5 sm:p-5 rounded-xl border border-gray-200/80 shadow-xs hover:border-gray-300 hover:shadow-sm transition-all duration-150 flex flex-col justify-between min-h-[108px] sm:min-h-[120px] relative group tap-highlight-transparent touch-manipulation active:scale-[0.98] ${
+      className={`bg-white p-4 sm:p-5 rounded-2xl border border-[#E8ECF4] shadow-xs hover:border-[#CBD5E1] hover:shadow-card-hover transition-all duration-200 flex flex-col justify-between min-h-[120px] relative group tap-highlight-transparent touch-manipulation ${
         onClick ? 'cursor-pointer' : ''
       }`}
     >
-      <div className="flex items-center justify-between gap-1.5">
-        <span className="text-[10px] sm:text-[11px] font-semibold text-gray-500 uppercase tracking-wider truncate">
-          {label}
-        </span>
-        {icon && (
-          <div className={`w-6.5 h-6.5 sm:w-7 sm:h-7 rounded-md sm:rounded-lg flex items-center justify-center shrink-0 ${cfg.iconBg}`}>
-            {icon}
+      <div className="flex items-start justify-between gap-2">
+        <div className="flex items-center gap-3">
+          {icon && (
+            <div className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 ${cfg.iconBg} shadow-2xs`}>
+              {icon}
+            </div>
+          )}
+          <div>
+            <span className="text-xs font-semibold text-[#77839A] block">
+              {label}
+            </span>
+            <h3 className="text-2xl sm:text-[30px] font-extrabold text-[#17233D] tracking-tight leading-none mt-1">
+              {value}
+            </h3>
           </div>
-        )}
+        </div>
       </div>
 
-      <div className="pt-1.5 sm:pt-2">
-        <h3 className="text-xl sm:text-3xl font-bold text-gray-900 tracking-tight leading-none">
-          {value}
-        </h3>
-        <div className="mt-2.5 sm:mt-3 flex items-center justify-between text-[10px] sm:text-xs pt-1 border-t border-gray-100">
-          <div className="flex items-center gap-1.5 truncate text-gray-500 font-medium min-w-0">
-            <span className={`w-1.5 h-1.5 rounded-full shrink-0 ${cfg.dot}`} />
-            <span className="truncate">{sub || 'Total Interaction'}</span>
-          </div>
-          {onClick && (
-            <span className="hidden sm:inline-flex items-center gap-0.5 text-[11px] font-semibold text-gray-400 group-hover:text-gray-900 transition-colors shrink-0 ml-1">
-              <span>View</span>
-              <ArrowUpRight className="w-3 h-3" />
-            </span>
-          )}
+      <div className="mt-3.5 pt-2.5 border-t border-[#F5F7FC] flex items-center justify-between text-xs">
+        <div className="flex items-center gap-1.5 truncate">
+          <span className={`font-bold ${trendType === 'neutral' ? 'text-[#F3A23A]' : cfg.trendColor}`}>
+            {trendType === 'up' ? '↑ ' : trendType === 'neutral' ? '→ ' : '↓ '}
+            {trend}
+          </span>
+          <span className="text-[#77839A] text-[11px] font-normal truncate">
+            {trendLabel}
+          </span>
+        </div>
+
+        {/* Elegant SVG Mini Sparkline Curve */}
+        <div className="w-16 h-6 shrink-0 opacity-80 group-hover:opacity-100 transition-opacity">
+          <svg viewBox="0 0 64 24" className="w-full h-full overflow-visible">
+            <defs>
+              <linearGradient id={`grad-${variant}`} x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" stopColor={cfg.stroke} stopOpacity="0.3" />
+                <stop offset="100%" stopColor={cfg.stroke} stopOpacity="0.0" />
+              </linearGradient>
+            </defs>
+            <path
+              d="M 0 18 Q 16 6, 32 14 T 64 8 L 64 24 L 0 24 Z"
+              fill={`url(#grad-${variant})`}
+            />
+            <path
+              d="M 0 18 Q 16 6, 32 14 T 64 8"
+              fill="none"
+              stroke={cfg.stroke}
+              strokeWidth="2.2"
+              strokeLinecap="round"
+            />
+          </svg>
         </div>
       </div>
     </div>

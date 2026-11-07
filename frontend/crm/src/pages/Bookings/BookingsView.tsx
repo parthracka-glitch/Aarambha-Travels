@@ -433,15 +433,15 @@ export default function BookingsView() {
       {/* Top Bar Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h3 className="text-xl font-extrabold text-[#2D1F18] tracking-tight flex items-center gap-2">
+          <h3 className="text-xl sm:text-2xl font-extrabold text-[#17233D] tracking-tight flex items-center gap-2">
             Bookings {isViewer && (
-              <span className="text-[10px] font-bold bg-[#F8EFEA] text-[#C65A2E] border border-[#E8B9A5] px-2.5 py-1 rounded-full uppercase tracking-wider">
+              <span className="text-[10px] font-bold bg-[#FEF5EB] text-[#F3A23A] border border-[#FCE1C2] px-2.5 py-1 rounded-full uppercase tracking-wider">
                 View Only
               </span>
             )}
-            <span className="text-gray-400 font-normal text-base">({allBookings.length})</span>
+            <span className="text-[#77839A] font-normal text-base">({allBookings.length})</span>
           </h3>
-          <p className="text-xs text-gray-500 font-medium mt-0.5">
+          <p className="text-xs text-[#77839A] font-medium mt-0.5">
             {isViewer
               ? 'View and filter all booking records.'
               : 'Verify UPI UTR payments, track lock deposits, and manage fleet handovers.'}
@@ -451,60 +451,60 @@ export default function BookingsView() {
         <div className="flex flex-wrap items-center gap-2 sm:gap-3">
           <Link
             to="/calendar"
-            className="px-3.5 py-2 rounded-full border border-[#C65A2E]/30 bg-[#F8EFEA] hover:bg-[#EDE2D0] text-[#C65A2E] text-xs font-bold flex items-center gap-1.5 shadow-xs transition-all"
+            className="px-3.5 py-2 rounded-xl border border-[#D3E2FE] bg-[#EDF3FF] hover:bg-[#D3E2FE] text-[#3569F6] text-xs font-bold flex items-center gap-1.5 shadow-2xs transition-all"
             title="Open All-in-One Operations Calendar"
           >
-            <CalendarIcon className="w-3.5 h-3.5 text-[#C65A2E]" /> Calendar View
+            <CalendarIcon className="w-3.5 h-3.5 text-[#3569F6]" /> Calendar View
           </Link>
 
           <button
             onClick={load}
-            className="p-2 rounded-full border border-[#EDE2D0] bg-white text-[#493B34] hover:text-[#2D1F18] hover:bg-[#F8EFEA] text-xs font-semibold flex items-center gap-1.5 shadow-xs transition-all"
+            className="px-3 py-2 rounded-xl border border-[#E8ECF4] bg-white text-[#17233D] hover:bg-[#F5F7FC] text-xs font-semibold flex items-center gap-1.5 shadow-2xs transition-all cursor-pointer"
             title="Refresh Bookings"
           >
-            <RefreshCw className="w-3.5 h-3.5" /> Refresh
+            <RefreshCw className="w-3.5 h-3.5 text-[#77839A]" /> Refresh
           </button>
 
           <button
             onClick={() => exportToExcel(allBookings)}
-            className="px-3.5 py-2 rounded-full border border-[#EDE2D0] bg-[#F8EFEA] hover:bg-[#EDE2D0] text-[#2D1F18] text-xs font-bold flex items-center gap-1.5 shadow-xs transition-all"
+            className="px-3.5 py-2 rounded-xl border border-[#D3E2FE] bg-[#EDF3FF] hover:bg-[#D3E2FE] text-[#3569F6] text-xs font-bold flex items-center gap-1.5 shadow-2xs transition-all cursor-pointer"
             title="Download Bookings as Excel / CSV"
           >
-            <FileSpreadsheet className="w-3.5 h-3.5 text-[#C65A2E]" /> Export Excel
+            <FileSpreadsheet className="w-3.5 h-3.5 text-[#3569F6]" /> Export Excel
           </button>
 
           <button
             onClick={() => setShowFilters(!showFilters)}
-            className={`px-4 py-2 rounded-full text-xs font-bold shadow-xs transition-all flex items-center gap-2 border ${
+            className={`px-4 py-2 rounded-xl text-xs font-bold shadow-2xs transition-all flex items-center gap-2 border cursor-pointer ${
               showFilters || activeFilters > 0
-                ? 'bg-[#2D1F18] text-[#FCFAF6] border-[#2D1F18]'
-                : 'bg-white text-[#493B34] border-[#EDE2D0] hover:bg-[#F8EFEA]'
+                ? 'bg-[#101F40] text-white border-[#101F40]'
+                : 'bg-white text-[#17233D] border-[#E8ECF4] hover:bg-[#F5F7FC]'
             }`}
           >
             <Filter className="w-3.5 h-3.5" />
-            Filters {activeFilters > 0 && <span className="bg-[#C65A2E] text-white rounded-full w-4 h-4 flex items-center justify-center text-[10px] font-black">{activeFilters}</span>}
+            Filters {activeFilters > 0 && <span className="bg-[#3569F6] text-white rounded-full w-4 h-4 flex items-center justify-center text-[10px] font-black">{activeFilters}</span>}
           </button>
 
           {/* Add Offline Booking — superadmin only */}
           {!isViewer && (
             <button
               onClick={() => setIsOfflineModalOpen(true)}
-              className="px-4 py-2 bg-[#C65A2E] hover:bg-[#B24E25] text-white rounded-full text-xs font-bold shadow-xs transition-all flex items-center gap-2 cursor-pointer"
+              className="px-4 py-2 bg-[#101F40] hover:bg-[#1C315A] text-white rounded-xl text-xs font-bold shadow-xs transition-all flex items-center gap-2 cursor-pointer active:scale-95"
             >
-              <Plus className="w-4 h-4" /> Add Offline Booking
+              <Plus className="w-4 h-4 text-[#3569F6]" /> Add Offline Booking
             </button>
           )}
         </div>
       </div>
 
       {/* Quick Navigation Filter Tabs */}
-      <div className="flex flex-wrap items-center gap-2 pt-1 border-b border-gray-200 pb-3">
+      <div className="flex flex-wrap items-center gap-2 pt-1 border-b border-[#E8ECF4] pb-3">
         <button
           onClick={() => { setFilterPayment('all'); setFilterSection('all'); }}
-          className={`px-4 py-2 rounded-full text-xs font-bold transition-all cursor-pointer ${
+          className={`px-4 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer ${
             filterPayment === 'all' && filterSection === 'all'
-              ? 'bg-[#2D1F18] text-[#FCFAF6] shadow-xs'
-              : 'bg-white text-gray-600 border border-gray-200 hover:border-gray-300'
+              ? 'bg-[#101F40] text-white shadow-xs'
+              : 'bg-white text-[#77839A] border border-[#E8ECF4] hover:text-[#17233D] hover:bg-[#F5F7FC]'
           }`}
         >
           All Bookings ({rawAllBookings.length})
@@ -529,10 +529,10 @@ export default function BookingsView() {
 
         <button
           onClick={() => { setFilterSection('fleet'); setFilterPayment('all'); }}
-          className={`px-4 py-2 rounded-full text-xs font-bold transition-all cursor-pointer ${
+          className={`px-4 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer ${
             filterSection === 'fleet' && filterPayment === 'all'
-              ? 'bg-[#C65A2E] text-white shadow-xs'
-              : 'bg-white text-gray-600 border border-gray-200 hover:border-gray-300'
+              ? 'bg-[#101F40] text-white shadow-xs'
+              : 'bg-white text-[#77839A] border border-[#E8ECF4] hover:text-[#17233D] hover:bg-[#F5F7FC]'
           }`}
         >
           Car Rental ({fleetBookings.length})
@@ -540,13 +540,13 @@ export default function BookingsView() {
 
         <button
           onClick={() => { setFilterSection('tours'); setFilterPayment('all'); }}
-          className={`px-4 py-2 rounded-full text-xs font-bold transition-all cursor-pointer ${
+          className={`px-4 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer ${
             filterSection === 'tours' && filterPayment === 'all'
-              ? 'bg-[#C65A2E] text-white shadow-xs'
-              : 'bg-white text-gray-600 border border-gray-200 hover:border-gray-300'
+              ? 'bg-[#101F40] text-white shadow-xs'
+              : 'bg-white text-[#77839A] border border-[#E8ECF4] hover:text-[#17233D] hover:bg-[#F5F7FC]'
           }`}
         >
-          Tours & Travels ({toursBookings.length})
+          Tours &amp; Travels ({toursBookings.length})
         </button>
       </div>
 
@@ -761,7 +761,7 @@ export default function BookingsView() {
 
                 <div className="bg-gray-50 p-2 rounded-xl">
                   <span className="text-[10px] text-gray-400 block font-medium">Amount</span>
-                  <div className="font-bold text-[#C65A2E] text-xs">₹{depositPaid} (Deposit)</div>
+                  <div className="font-bold text-[#3569F6] text-xs">₹{depositPaid} (Deposit)</div>
                   <div className="text-[10px] text-gray-400">Total: {formatCurrency(total)}</div>
                 </div>
               </div>
@@ -770,8 +770,8 @@ export default function BookingsView() {
               {(b.utrNumber || b.paymentScreenshot || b.payment_screenshot) && (
                 <div className="space-y-1.5">
                   {b.utrNumber && (
-                    <div className="flex items-center justify-between bg-[#F8EFEA] p-2 rounded-xl border border-[#E8B9A5] text-xs">
-                      <div className="font-mono font-bold text-[#C65A2E] text-[11px]">UTR: {b.utrNumber}</div>
+                    <div className="flex items-center justify-between bg-[#EDF3FF] p-2 rounded-xl border border-[#C7D9FE] text-xs">
+                      <div className="font-mono font-bold text-[#3569F6] text-[11px]">UTR: {b.utrNumber}</div>
                       <button
                         onClick={() => handleCopyUtr(b._id || b.id, b.utrNumber)}
                         className="text-gray-500 hover:text-black p-1"
@@ -966,7 +966,7 @@ export default function BookingsView() {
                       )}
                     </td>
                     <td className="px-5 py-4">
-                      <div className="font-bold text-[#C65A2E]">₹{depositPaid} (Deposit)</div>
+                      <div className="font-bold text-[#3569F6]">₹{depositPaid} (Deposit)</div>
                       <div className="text-[11px] text-gray-500">Total: {formatCurrency(total)}</div>
                     </td>
 
@@ -974,7 +974,7 @@ export default function BookingsView() {
                     <td className="px-5 py-4">
                       {b.utrNumber ? (
                         <div className="space-y-1.5">
-                          <div className="inline-flex items-center gap-1.5 font-mono text-[11px] font-bold text-[#C65A2E] bg-[#F8EFEA] px-2.5 py-1 rounded-lg border border-[#E8B9A5]">
+                          <div className="inline-flex items-center gap-1.5 font-mono text-[11px] font-bold text-[#3569F6] bg-[#EDF3FF] px-2.5 py-1 rounded-lg border border-[#C7D9FE]">
                             <span>UTR: {b.utrNumber}</span>
                             <button
                               onClick={() => handleCopyUtr(b._id || b.id, b.utrNumber)}
@@ -1138,7 +1138,7 @@ export default function BookingsView() {
                               };
                               generateInvoicePDF(invoiceData);
                             }}
-                            className="px-3 py-1.5 bg-[#2D1F18] hover:bg-[#493B34] text-[#FCFAF6] rounded-full text-[11px] font-bold shadow-xs transition-all flex items-center gap-1 cursor-pointer"
+                            className="px-3 py-1.5 bg-[#101F40] hover:bg-[#1C315A] text-[#F5F7FC] rounded-full text-[11px] font-bold shadow-xs transition-all flex items-center gap-1 cursor-pointer"
                           >
                             <FileDown className="w-3 h-3" /> Invoice
                           </button>
@@ -1158,9 +1158,9 @@ export default function BookingsView() {
                         <button
                           onClick={() => exportToExcel([b])}
                           title="Export booking to Excel / CSV"
-                          className="p-1.5 rounded-full border border-[#EDE2D0] bg-white text-[#493B34] hover:text-[#C65A2E] hover:border-[#E8B9A5] hover:bg-[#F8EFEA] transition-all cursor-pointer"
+                          className="p-1.5 rounded-full border border-[#E8ECF4] bg-white text-[#1C315A] hover:text-[#3569F6] hover:border-[#C7D9FE] hover:bg-[#EDF3FF] transition-all cursor-pointer"
                         >
-                          <FileSpreadsheet className="w-3.5 h-3.5 text-[#C65A2E]" />
+                          <FileSpreadsheet className="w-3.5 h-3.5 text-[#3569F6]" />
                         </button>
 
                         {/* Status-change & delete buttons — superadmin only */}
@@ -1453,9 +1453,9 @@ export default function BookingsView() {
           <div className="bg-white rounded-3xl max-w-xl w-full max-h-[92vh] flex flex-col shadow-2xl border border-gray-100 overflow-hidden">
             
             {/* Modal Header */}
-            <div className="p-4 sm:p-5 bg-[#2D1F18] text-white flex items-center justify-between">
+            <div className="p-4 sm:p-5 bg-[#101F40] text-white flex items-center justify-between">
               <div className="flex items-center gap-2.5">
-                <div className="w-8 h-8 rounded-full bg-[#C65A2E] text-white flex items-center justify-center">
+                <div className="w-8 h-8 rounded-full bg-[#3569F6] text-white flex items-center justify-center">
                   <ImageIcon className="w-4 h-4" />
                 </div>
                 <div>
