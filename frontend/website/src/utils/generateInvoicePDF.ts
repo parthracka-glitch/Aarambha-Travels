@@ -3,6 +3,13 @@
 // Supports 2-Page Car Rental Invoice & 2-Page Tours & Travels Invoice
 // Shared across Website & CRM
 
+export interface PassengerRecord {
+  seatNo?: number | string;
+  name: string;
+  age: number | string;
+  gender: string;
+}
+
 export interface InvoiceData {
   invoiceNumber: string;
   invoiceDate: string;
@@ -39,6 +46,7 @@ export interface InvoiceData {
   perPersonPrice?: number;
   sevaTicketPrice?: number;
   darshanType?: string;
+  passengers?: PassengerRecord[];
   // Financials
   subtotal?: number;
   discount?: number;
@@ -338,6 +346,78 @@ export function generateCarRentalInvoiceHTML(data: InvoiceData): string {
       font-size: 11.5px;
       font-weight: 700;
       color: var(--dark);
+    }
+
+    /* ── PASSENGER MANIFEST ──────────────────── */
+    .manifest-wrap {
+      margin-top: 14px;
+      margin-bottom: 14px;
+      border: 1px solid var(--border-subtle);
+      border-radius: 8px;
+      overflow: hidden;
+      background: #FFFFFF;
+    }
+
+    .manifest-header {
+      background: var(--bg-light);
+      padding: 6px 12px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid var(--border-subtle);
+    }
+
+    .manifest-title {
+      font-size: 9px;
+      font-weight: 800;
+      letter-spacing: 1.2px;
+      text-transform: uppercase;
+      color: var(--primary);
+    }
+
+    .manifest-sub {
+      font-size: 8.5px;
+      font-weight: 600;
+      color: var(--text-muted);
+    }
+
+    .manifest-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 10.5px;
+    }
+
+    .manifest-table th {
+      background: #FFFFFF;
+      padding: 6px 10px;
+      font-size: 8.5px;
+      font-weight: 800;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.6px;
+      border-bottom: 1px solid var(--border-subtle);
+    }
+
+    .manifest-table td {
+      padding: 6px 10px;
+      border-bottom: 1px solid #F1F5F9;
+      color: var(--dark);
+      vertical-align: middle;
+    }
+
+    .manifest-table tr:last-child td {
+      border-bottom: none;
+    }
+
+    .manifest-status {
+      display: inline-block;
+      padding: 1.5px 6px;
+      border-radius: 4px;
+      background: #ECFDF5;
+      color: #059669;
+      font-weight: 700;
+      font-size: 9px;
+      border: 1px solid #A7F3D0;
     }
 
     /* ── TABLE ───────────────────────────────── */
@@ -1193,7 +1273,22 @@ export function generateToursInvoiceHTML(data: InvoiceData): string {
   const customerAddress = data.customerAddress || 'Pune, Maharashtra, India';
   const pickupPoint = data.pickupLocation || 'Green Hills Soc, Katraj, Pune (HQ Direct)';
   
-  const pax = Number(data.numberOfTravelers) || 1;
+  const rawPassengers: any[] = Array.isArray(data.passengers) ? data.passengers : [];
+  const pax = Number(data.numberOfTravelers) || (rawPassengers.length > 0 ? rawPassengers.length : 1);
+  const passengersList: PassengerRecord[] = rawPassengers.length > 0
+    ? rawPassengers.map((p, idx) => ({
+        seatNo: p.seatNo || idx + 1,
+        name: p.name || `Passenger ${idx + 1}`,
+        age: p.age ? `${p.age} Yrs` : '—',
+        gender: p.gender || '—',
+      }))
+    : [{
+        seatNo: 1,
+        name: customerName,
+        age: '—',
+        gender: '—',
+      }];
+
   const rate = data.perPersonPrice || (data.totalAmount ? Math.round(data.totalAmount / pax) : 6500);
   const subtotal = data.subtotal || (rate * pax) || data.totalAmount || (6500 * pax);
   const discount = data.discount || 0;
@@ -1463,6 +1558,78 @@ export function generateToursInvoiceHTML(data: InvoiceData): string {
       font-size: 11.5px;
       font-weight: 700;
       color: var(--dark);
+    }
+
+    /* ── PASSENGER MANIFEST ──────────────────── */
+    .manifest-wrap {
+      margin-top: 14px;
+      margin-bottom: 14px;
+      border: 1px solid var(--border-subtle);
+      border-radius: 8px;
+      overflow: hidden;
+      background: #FFFFFF;
+    }
+
+    .manifest-header {
+      background: var(--bg-light);
+      padding: 6px 12px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid var(--border-subtle);
+    }
+
+    .manifest-title {
+      font-size: 9px;
+      font-weight: 800;
+      letter-spacing: 1.2px;
+      text-transform: uppercase;
+      color: var(--primary);
+    }
+
+    .manifest-sub {
+      font-size: 8.5px;
+      font-weight: 600;
+      color: var(--text-muted);
+    }
+
+    .manifest-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 10.5px;
+    }
+
+    .manifest-table th {
+      background: #FFFFFF;
+      padding: 6px 10px;
+      font-size: 8.5px;
+      font-weight: 800;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.6px;
+      border-bottom: 1px solid var(--border-subtle);
+    }
+
+    .manifest-table td {
+      padding: 6px 10px;
+      border-bottom: 1px solid #F1F5F9;
+      color: var(--dark);
+      vertical-align: middle;
+    }
+
+    .manifest-table tr:last-child td {
+      border-bottom: none;
+    }
+
+    .manifest-status {
+      display: inline-block;
+      padding: 1.5px 6px;
+      border-radius: 4px;
+      background: #ECFDF5;
+      color: #059669;
+      font-weight: 700;
+      font-size: 9px;
+      border: 1px solid #A7F3D0;
     }
 
     /* ── TABLE ───────────────────────────────── */
@@ -2087,6 +2254,39 @@ export function generateToursInvoiceHTML(data: InvoiceData): string {
             <div class="r-value">VIP Darshan Assistance</div>
           </div>
         </div>
+      </div>
+
+      <!-- PASSENGER MANIFEST (RAILWAY TICKET STYLE) -->
+      <div class="manifest-wrap">
+        <div class="manifest-header">
+          <div class="manifest-title">✦ PASSENGER &amp; PILGRIM MANIFEST (${passengersList.length} PAX)</div>
+          <div class="manifest-sub">Coach Seat Allotment &amp; Darshan Entry Pass</div>
+        </div>
+        <table class="manifest-table">
+          <thead>
+            <tr>
+              <th style="width: 10%; text-align: center;">Seat #</th>
+              <th style="width: 44%; text-align: left;">Passenger Full Name</th>
+              <th style="width: 14%; text-align: center;">Age</th>
+              <th style="width: 16%; text-align: center;">Gender</th>
+              <th style="width: 16%; text-align: right;">Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${passengersList.map((p, idx) => `
+              <tr ${idx % 2 === 1 ? 'style="background: #FAFBFD;"' : ''}>
+                <td style="text-align: center; font-weight: 800; color: var(--primary);">Seat ${p.seatNo || idx + 1}</td>
+                <td style="font-weight: 700; color: var(--dark);">
+                  ${p.name}
+                  ${idx === 0 ? '<span style="font-size: 8.5px; font-weight: 600; color: var(--text-muted); margin-left: 4px;">(Primary)</span>' : ''}
+                </td>
+                <td style="text-align: center; font-weight: 600; color: #475569;">${p.age}</td>
+                <td style="text-align: center; font-weight: 600; color: #475569;">${p.gender}</td>
+                <td style="text-align: right;"><span class="manifest-status">Confirmed (CNF)</span></td>
+              </tr>
+            `).join('')}
+          </tbody>
+        </table>
       </div>
 
       <!-- ITEMS TABLE -->

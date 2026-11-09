@@ -106,6 +106,18 @@ export const createTourBookingSchema = z.object({
   razorpay_payment_id: z.string().trim().max(100).optional(),
   razorpay_signature: z.string().trim().max(200).optional(),
 
+  // Passenger Manifest (Railway ticket style)
+  passengers: z
+    .array(
+      z.object({
+        name: z.string().trim().min(1, 'Passenger name is required'),
+        age: z.union([z.number(), z.string()]),
+        gender: z.string().trim(),
+        seatNo: z.union([z.number(), z.string()]).optional(),
+      })
+    )
+    .optional(),
+
   // Additional fields
   specialRequests: notesSchema,
   special_requests: notesSchema,
@@ -114,7 +126,7 @@ export const createTourBookingSchema = z.object({
   agreement_accepted: z.boolean().optional(),
   termsAccepted: z.boolean().optional(),
   terms_accepted: z.boolean().optional(),
-});
+}).passthrough();
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Fleet/Self-Drive Booking — POST /api/fleet/bookings

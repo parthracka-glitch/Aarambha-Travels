@@ -31,6 +31,12 @@ export interface LaunchRazorpayParams {
   guestsCount?: number;
   pickupLocation?: string;
   notes?: string;
+  passengers?: Array<{
+    seatNo?: number | string;
+    name: string;
+    age: number | string;
+    gender: string;
+  }>;
   bookingDetails?: Record<string, any>;
   onSuccess?: (data: RazorpaySuccessResult) => void;
   onError?: (error: string) => void;
@@ -88,6 +94,7 @@ export async function launchRazorpayPayment(options: LaunchRazorpayParams): Prom
     paxCount: options.guestsCount || 1,
     pickupLocation: options.pickupLocation || 'pune-swargate',
     specialNotes: options.notes,
+    passengers: options.passengers || options.bookingDetails?.passengers || [],
     totalPrice: options.totalAmount || options.amount,
     totalAmount: options.totalAmount || options.amount,
     depositPaid: options.amount,

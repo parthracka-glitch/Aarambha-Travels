@@ -34,9 +34,18 @@ import { useRouter } from 'next/navigation';
 import { launchRazorpayPayment } from '@/services/razorpay.service';
 import { generateInvoicePDF, getNextInvoiceNumber, type InvoiceData } from '@/utils/generateInvoicePDF';
 import UPIPaymentVerificationSection from './UPIPaymentVerificationSection';
+import GoogleAuthButton from '@/components/auth/GoogleAuthButton';
+import AuthCard from '@/components/auth/AuthCard';
 import { SHARED_BUS_CONTACT } from '@/constants/busData';
 import { SHARED_CAR_CONTACT } from '@/constants/carsData';
 import { SHARED_TOUR_CONTACT } from '@/constants/toursData';
+
+export interface PassengerDetail {
+  seatNo?: number | string;
+  name: string;
+  age: string;
+  gender: 'Male' | 'Female' | 'Other' | '';
+}
 
 export interface BookingModalItem {
   id: string;
@@ -60,7 +69,9 @@ interface BookingModalProps {
 export default function BookingModal({ isOpen, onClose, item, onSuccess }: BookingModalProps) {
   const router = useRouter();
   // Current user authentication state
-  const [currentUser, setCurrentUser] = useState<{ name: string; email: string; phone?: string } | null>(null);
+  const [currentUser, setCurrentUser] = useState<{ id?: string; name: string; email: string; phone?: string } | null>(null);
+  const [showAuthGate, setShowAuthGate] = useState(false);
+  const [authMode, setAuthMode] = useState<'login' | 'signup'>('login');
 
   const activeBatches = React.useMemo(() => {
     if (!item) return [];
@@ -88,6 +99,9 @@ export default function BookingModal({ isOpen, onClose, item, onSuccess }: Booki
   const [email, setEmail] = useState('');
   const [phone, setPhone] = useState('');
   const [guests, setGuests] = useState(1);
+  const [passengers, setPassengers] = useState<PassengerDetail[]>([
+    { seatNo: 1, name: '', age: '', gender: '' },
+  ]);
   const [pickupLocation, setPickupLocation] = useState('pune-swargate');
   const [customAddress, setCustomAddress] = useState('');
   const [idProofType, setIdProofType] = useState('aadhaar');
@@ -139,11 +153,25 @@ export default function BookingModal({ isOpen, onClose, item, onSuccess }: Booki
         const stored = localStorage.getItem('aarambha_user');
         if (stored) {
           const parsed = JSON.parse(stored);
-          setCurrentUser(parsed);
-          if (parsed.name) setFullName(parsed.name);
-          if (parsed.email) setEmail(parsed.email);
-          if (parsed.phone) setPhone(parsed.phone);
+          if (parsed && (parsed.email || parsed.name)) {
+            setCurrentUser(parsed);
+            if (parsed.name) {
+              setFullName((prev) => prev || parsed.name);
+              setPassengers((prev) => {
+                if (!prev[0] || !prev[0].name) {
+                  const updated = [...prev];
+                  updated[0] = { ...updated[0], name: parsed.name };
+                  return updated;
+                }
+                return prev;
+              });
+            }
+            if (parsed.email) setEmail((prev) => prev || parsed.email);
+            if (parsed.phone) setPhone((prev) => prev || parsed.phone);
+            return;
+          }
         }
+        setCurrentUser(null);
       } catch {
         setCurrentUser(null);
       }
@@ -183,12 +211,12 @@ export default function BookingModal({ isOpen, onClose, item, onSuccess }: Booki
                 localStorage.setItem('aarambha_user_bookings', JSON.stringify(updated));
                 window.dispatchEvent(new Event('aarambha_booking_updated'));
               }
-            } catch (_e) {}
+            } catch (_e) { }
           } else if (matched.status === 'Rejected') {
             setLiveBookingStatus('Rejected');
           }
         }
-      } catch (_e) {}
+      } catch (_e) { }
     };
 
     intervalId = setInterval(pollStatus, 2500);
@@ -226,12 +254,56 @@ export default function BookingModal({ isOpen, onClose, item, onSuccess }: Booki
     }
   };
 
+  const handleGuestsChange = (newCount: number) => {
+    const safeCount = Math.max(1, Math.min(50, newCount));
+    setGuests(safeCount);
+    setPassengers((prev) => {
+      const updated = [...prev];
+      while (updated.length < safeCount) {
+        updated.push({
+          seatNo: updated.length + 1,
+          name: '',
+          age: '',
+          gender: '',
+        });
+      }
+      return updated.slice(0, safeCount);
+    });
+  };
+
+  const getSanitizedPassengers = () => {
+    if (item?.type === 'tour') {
+      return passengers.map((p, idx) => ({
+        seatNo: p.seatNo || idx + 1,
+        name: (p.name || '').trim(),
+        age: parseInt(String(p.age), 10) || p.age,
+        gender: p.gender || 'Not Specified',
+      }));
+    }
+    return [
+      {
+        seatNo: 1,
+        name: fullName.trim() || 'Hirer',
+        age: '—',
+        gender: '—',
+      },
+    ];
+  };
+
   const handleProceedToPayment = (e: React.FormEvent) => {
     e.preventDefault();
     setValidationError('');
 
+    // 1. Strict Authentication Enforcement: Without signin no bookings can be made!
+    if (!currentUser || !currentUser.email) {
+      setValidationError('Please sign in to your Aarambha account before proceeding with booking.');
+      setShowAuthGate(true);
+      return;
+    }
+
+    // 2. Validate Primary Traveler / Hirer Details
     if (!fullName.trim()) {
-      setValidationError('Please enter your full name.');
+      setValidationError('Please enter primary full name.');
       return;
     }
     const cleanPhone = phone.replace(/\D/g, '');
@@ -243,22 +315,32 @@ export default function BookingModal({ isOpen, onClose, item, onSuccess }: Booki
       setValidationError('Please enter a valid email address.');
       return;
     }
+
+    // 3. Railway-Style Passenger Manifest Validation (For Tour Packages)
+    if (item.type === 'tour') {
+      for (let i = 0; i < passengers.length; i++) {
+        const p = passengers[i];
+        if (!p.name || p.name.trim().length < 2) {
+          setValidationError(`Please enter the full name for Passenger #${i + 1} (as per Govt ID).`);
+          return;
+        }
+        const ageNum = parseInt(String(p.age), 10);
+        if (!p.age || isNaN(ageNum) || ageNum < 1 || ageNum > 120) {
+          setValidationError(`Please enter a valid age (1-120) for Passenger #${i + 1} (${p.name.trim()}).`);
+          return;
+        }
+        if (!p.gender) {
+          setValidationError(`Please select gender for Passenger #${i + 1} (${p.name.trim()}).`);
+          return;
+        }
+      }
+    }
+
+    // 4. Terms Acceptance
     if (!termsAccepted) {
       setValidationError('Please agree to the booking terms and cancellation guidelines.');
       return;
     }
-
-    // Auto-save user session if not logged in
-    try {
-      const userObj = {
-        name: fullName.trim(),
-        email: email.trim().toLowerCase(),
-        phone: phone.trim(),
-        loggedIn: true,
-      };
-      localStorage.setItem('aarambha_user', JSON.stringify(userObj));
-      window.dispatchEvent(new Event('aarambha_auth_changed'));
-    } catch {}
 
     const refNo = (item.type === 'car' ? 'AAR-CAR-' : 'AAR-TRIP-') + Math.floor(100000 + Math.random() * 900000);
     const invNum = getNextInvoiceNumber(item.type === 'car' ? 'car' : 'tour');
@@ -269,8 +351,15 @@ export default function BookingModal({ isOpen, onClose, item, onSuccess }: Booki
 
   const handleConfirmUpiPayment = async ({ utrNumber, paymentScreenshot }: { utrNumber: string; paymentScreenshot?: string }) => {
     if (!item) return;
+    if (!currentUser || !currentUser.email) {
+      setValidationError('Please sign in before completing payment.');
+      setShowAuthGate(true);
+      return;
+    }
+
     setIsSubmitting(true);
     setSubmittedUtr(utrNumber);
+    const sanitizedPassengers = getSanitizedPassengers();
 
     const bookingPayload = {
       id: bookingRef,
@@ -300,6 +389,7 @@ export default function BookingModal({ isOpen, onClose, item, onSuccess }: Booki
       pickupLocation: pickupLocation === 'custom' ? customAddress : pickupLocation,
       idProofType: idProofType,
       specialNotes: specialNotes,
+      passengers: sanitizedPassengers,
       termsAccepted: true,
       termsAcceptedAt: new Date().toISOString(),
       termsVersion: '2026.1-STANDARD',
@@ -341,8 +431,15 @@ export default function BookingModal({ isOpen, onClose, item, onSuccess }: Booki
 
   const handlePayWithRazorpay = async () => {
     if (!item) return;
+    if (!currentUser || !currentUser.email) {
+      setValidationError('Please sign in before paying with Razorpay.');
+      setShowAuthGate(true);
+      return;
+    }
+
     setIsRazorpayLoading(true);
     setValidationError('');
+    const sanitizedPassengers = getSanitizedPassengers();
 
     try {
       const res = await launchRazorpayPayment({
@@ -361,6 +458,7 @@ export default function BookingModal({ isOpen, onClose, item, onSuccess }: Booki
         guestsCount: Math.max(1, guests),
         pickupLocation: pickupLocation === 'custom' ? customAddress : pickupLocation,
         notes: specialNotes,
+        passengers: sanitizedPassengers,
       });
 
       if (res.success && res.bookingCode) {
@@ -394,6 +492,7 @@ export default function BookingModal({ isOpen, onClose, item, onSuccess }: Booki
             pickupLocation: pickupLocation === 'custom' ? customAddress : pickupLocation,
             idProofType: idProofType,
             specialNotes: specialNotes,
+            passengers: sanitizedPassengers,
             termsAccepted: true,
             termsAcceptedAt: new Date().toISOString(),
             status: 'Deposit Paid',
@@ -438,9 +537,9 @@ export default function BookingModal({ isOpen, onClose, item, onSuccess }: Booki
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-black/60 backdrop-blur-xs select-none">
-      
+
       <div className="relative w-full max-w-xl bg-white rounded-3xl border border-[#EDE2D0] shadow-2xl overflow-hidden flex flex-col max-h-[92vh]">
-        
+
         {/* Close Top-Right Button */}
         <button
           onClick={handleResetAndClose}
@@ -450,7 +549,51 @@ export default function BookingModal({ isOpen, onClose, item, onSuccess }: Booki
           <X className="w-4 h-4" />
         </button>
 
-        {isSuccess ? (
+        {showAuthGate && !currentUser ? (
+          /* ─── SCREEN 0: INLINE AUTHENTICATION GATE ────────────────────── */
+          <div className="p-6 overflow-y-auto flex-1 space-y-4 font-sans">
+            <div className="flex items-center justify-between pb-3 border-b border-[#EDE2D0]">
+              <button
+                type="button"
+                onClick={() => setShowAuthGate(false)}
+                className="inline-flex items-center gap-1.5 text-xs font-semibold text-[#756B63] hover:text-[#493B34] cursor-pointer"
+              >
+                <ArrowLeft className="w-3.5 h-3.5" /> Back to Booking Details
+              </button>
+              <span className="text-[10px] font-bold tracking-wider uppercase px-2.5 py-0.5 rounded-full bg-amber-50 text-amber-800 border border-amber-200 flex items-center gap-1">
+                <Lock className="w-3 h-3" /> Sign In Required
+              </span>
+            </div>
+
+            <div className="text-center space-y-1 pt-1 pb-2">
+              <h3 className="font-serif text-xl sm:text-2xl font-bold text-[#493B34]">
+                Sign In to Reserve Your Seats
+              </h3>
+              <p className="text-xs text-[#756B63] max-w-sm mx-auto">
+                Sign in or create an account with Aarambha Travels to confirm passenger tickets and download official tax invoices.
+              </p>
+            </div>
+
+            <div className="max-w-md mx-auto">
+              <AuthCard
+                initialMode={authMode}
+                onSuccess={() => {
+                  setShowAuthGate(false);
+                  const stored = localStorage.getItem('aarambha_user');
+                  if (stored) {
+                    try {
+                      const u = JSON.parse(stored);
+                      setCurrentUser(u);
+                      if (u.name) setFullName(u.name);
+                      if (u.email) setEmail(u.email);
+                      if (u.phone) setPhone(u.phone);
+                    } catch { }
+                  }
+                }}
+              />
+            </div>
+          </div>
+        ) : isSuccess ? (
           /* ─── SCREEN 1: INSTANT PROVISIONAL CONFIRMATION ──────────────── */
           <div className="p-6 sm:p-8 overflow-y-auto flex-1 text-center space-y-5 font-sans">
             <div className="w-16 h-16 rounded-full bg-emerald-50 border border-emerald-200 text-emerald-600 flex items-center justify-center mx-auto shadow-xs">
@@ -474,11 +617,10 @@ export default function BookingModal({ isOpen, onClose, item, onSuccess }: Booki
               <div className="flex items-center justify-between pb-2 border-b border-[#EDE2D0]">
                 <span className="font-bold text-xs text-[#493B34]">Verification Status</span>
                 <span
-                  className={`text-[10px] font-bold px-2.5 py-1 rounded-full border ${
-                    liveBookingStatus === 'Confirmed'
+                  className={`text-[10px] font-bold px-2.5 py-1 rounded-full border ${liveBookingStatus === 'Confirmed'
                       ? 'bg-emerald-50 text-emerald-700 border-emerald-200'
                       : 'bg-amber-50 text-amber-800 border-amber-200'
-                  }`}
+                    }`}
                 >
                   {liveBookingStatus === 'Confirmed' ? 'Verified & Confirmed' : 'Verification In Progress'}
                 </span>
@@ -520,18 +662,19 @@ export default function BookingModal({ isOpen, onClose, item, onSuccess }: Booki
                     customerPhone: phone,
                     ...(isCar
                       ? {
-                          carModel: item.title,
-                          rentalStartDate: startDate || new Date().toISOString().split('T')[0],
-                          rentalEndDate: endDate || new Date(Date.now() + 86400000 * 3).toISOString().split('T')[0],
-                          numberOfDays: computedDays,
-                          perDayRate: item.price,
-                        }
+                        carModel: item.title,
+                        rentalStartDate: startDate || new Date().toISOString().split('T')[0],
+                        rentalEndDate: endDate || new Date(Date.now() + 86400000 * 3).toISOString().split('T')[0],
+                        numberOfDays: computedDays,
+                        perDayRate: item.price,
+                      }
                       : {
-                          packageName: item.title,
-                          travelDates: `${startDate || ''} → ${endDate || ''}`,
-                          numberOfTravelers: guests,
-                          perPersonPrice: item.price,
-                        }),
+                        packageName: item.title,
+                        travelDates: `${startDate || ''} → ${endDate || ''}`,
+                        numberOfTravelers: guests,
+                        perPersonPrice: item.price,
+                        passengers: getSanitizedPassengers(),
+                      }),
                     totalAmount: calculatedTotal,
                     depositPaid: calculatedDeposit,
                     balanceAmount: calculatedBalance,
@@ -718,7 +861,7 @@ export default function BookingModal({ isOpen, onClose, item, onSuccess }: Booki
         ) : (
           /* ─── SCREEN 3: COMPREHENSIVE TRIP RESERVATION FORM ────────────── */
           <form onSubmit={handleProceedToPayment} className="flex flex-col flex-1 min-h-0 overflow-hidden">
-            
+
             {/* Header with Luxury Brand Banner */}
             <div className="bg-[#493B34] text-white p-5 flex items-center gap-4 flex-shrink-0">
               <img
@@ -747,12 +890,65 @@ export default function BookingModal({ isOpen, onClose, item, onSuccess }: Booki
 
             {/* Scrollable Form Body */}
             <div className="p-5 sm:p-6 overflow-y-auto flex-1 space-y-4 text-xs font-sans">
-              
+
               {/* Validation Error Banner */}
               {validationError && (
                 <div className="p-3 bg-red-50 border border-red-200 rounded-xl text-red-700 text-xs font-semibold flex items-center gap-2">
                   <AlertCircle className="w-4 h-4 shrink-0" />
                   <span>{validationError}</span>
+                </div>
+              )}
+
+              {/* ─── MANDATORY USER SIGN-IN GATE BANNER ─── */}
+              {!currentUser ? (
+                <div className="p-4 bg-[#FFF8F5] border border-[#F3C5B1] rounded-2xl space-y-3">
+                  <div className="flex items-start gap-3">
+                    <div className="w-8 h-8 rounded-xl bg-[#C65A2E]/10 text-[#C65A2E] flex items-center justify-center shrink-0 mt-0.5">
+                      <Lock className="w-4 h-4" />
+                    </div>
+                    <div className="flex-1">
+                      <h4 className="font-bold text-[#3B2E27] text-xs">Sign In Required to Make a Booking</h4>
+                      <p className="text-[11px] text-[#756B63] mt-0.5">
+                        Please sign in with your account to confirm passenger seats, secure booking verification, and generate official GST invoices.
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="flex flex-col sm:flex-row items-center gap-2 pt-1">
+                    <div className="w-full sm:flex-1">
+                      <GoogleAuthButton
+                        text="Sign in with Google"
+                        onSuccess={(user) => {
+                          setCurrentUser(user as any);
+                          if (user.name) setFullName(user.name);
+                          if (user.email) setEmail(user.email);
+                          setValidationError('');
+                        }}
+                      />
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setAuthMode('login');
+                        setShowAuthGate(true);
+                      }}
+                      className="w-full sm:w-auto px-4 py-2.5 rounded-xl bg-white border border-[#EDE2D0] hover:bg-[#FCFAF6] text-[#493B34] text-xs font-bold transition-all text-center cursor-pointer shadow-2xs whitespace-nowrap"
+                    >
+                      Email &amp; Password
+                    </button>
+                  </div>
+                </div>
+              ) : (
+                <div className="bg-[#F0FDF4] border border-[#BBF7D0] rounded-xl px-3.5 py-2.5 flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
+                    <span className="text-xs text-emerald-900 font-medium">
+                      Booking signed in as <strong>{currentUser.name}</strong> ({currentUser.email})
+                    </span>
+                  </div>
+                  <span className="text-[10px] font-bold text-emerald-700 bg-white px-2 py-0.5 rounded-full border border-[#BBF7D0]">
+                    Verified Account
+                  </span>
                 </div>
               )}
 
@@ -777,11 +973,10 @@ export default function BookingModal({ isOpen, onClose, item, onSuccess }: Booki
                             key={m}
                             type="button"
                             onClick={() => handleMonthChange(m)}
-                            className={`px-3 py-1 rounded-lg text-xs font-semibold transition-all shrink-0 cursor-pointer ${
-                              selectedMonth === m
+                            className={`px-3 py-1 rounded-lg text-xs font-semibold transition-all shrink-0 cursor-pointer ${selectedMonth === m
                                 ? 'bg-[#C65A2E] text-white shadow-2xs'
                                 : 'text-[#756B63] hover:text-[#493B34]'
-                            }`}
+                              }`}
                           >
                             {m}
                           </button>
@@ -800,11 +995,10 @@ export default function BookingModal({ isOpen, onClose, item, onSuccess }: Booki
                               key={b.id}
                               type="button"
                               onClick={() => handleBatchSelect(b.id)}
-                              className={`p-2.5 rounded-xl border text-left transition-all cursor-pointer flex flex-col justify-between ${
-                                isSelected
+                              className={`p-2.5 rounded-xl border text-left transition-all cursor-pointer flex flex-col justify-between ${isSelected
                                   ? 'bg-[#F8EFEA] border-[#C65A2E] shadow-2xs'
                                   : 'bg-white border-[#EDE2D0] hover:border-[#C65A2E]/50'
-                              }`}
+                                }`}
                             >
                               <div className="flex items-center justify-between gap-1">
                                 <span className={`text-xs font-bold ${isSelected ? 'text-[#C65A2E]' : 'text-[#493B34]'}`}>
@@ -878,14 +1072,13 @@ export default function BookingModal({ isOpen, onClose, item, onSuccess }: Booki
                       <button
                         key={num}
                         type="button"
-                        onClick={() => setGuests(num)}
-                        className={`py-1.5 px-2 text-xs font-semibold rounded-xl transition-all border cursor-pointer ${
-                          guests === num
+                        onClick={() => handleGuestsChange(num)}
+                        className={`py-1.5 px-2 text-xs font-semibold rounded-xl transition-all border cursor-pointer ${guests === num
                             ? 'bg-[#C65A2E] text-white border-[#C65A2E] shadow-2xs'
                             : 'bg-white text-[#493B34] border-[#EDE2D0] hover:bg-[#FCFAF6]'
-                        }`}
+                          }`}
                       >
-                        {num} {num === 1 ? 'Pax' : 'Pax'}
+                        {num} Pax
                       </button>
                     ))}
                   </div>
@@ -896,7 +1089,7 @@ export default function BookingModal({ isOpen, onClose, item, onSuccess }: Booki
                     <div className="flex items-center gap-2">
                       <button
                         type="button"
-                        onClick={() => setGuests((prev: number) => Math.max(1, prev - 1))}
+                        onClick={() => handleGuestsChange(guests - 1)}
                         disabled={guests <= 1}
                         className="w-7 h-7 rounded-lg bg-[#FCFAF6] hover:bg-[#EDE2D0] disabled:opacity-40 disabled:cursor-not-allowed flex items-center justify-center text-[#493B34] transition-colors border border-[#EDE2D0]"
                       >
@@ -908,18 +1101,135 @@ export default function BookingModal({ isOpen, onClose, item, onSuccess }: Booki
                         min={1}
                         max={50}
                         value={guests}
-                        onChange={(e) => setGuests(Math.max(1, parseInt(e.target.value) || 1))}
+                        onChange={(e) => handleGuestsChange(parseInt(e.target.value) || 1)}
                         className="w-12 text-center font-bold text-xs text-[#493B34] bg-[#FCFAF6] border border-[#EDE2D0] rounded-lg py-1 focus:outline-none focus:border-[#C65A2E]"
                       />
 
                       <button
                         type="button"
-                        onClick={() => setGuests((prev: number) => Math.min(50, prev + 1))}
+                        onClick={() => handleGuestsChange(guests + 1)}
                         className="w-7 h-7 rounded-lg bg-[#C65A2E] hover:bg-[#B24E25] flex items-center justify-center text-white transition-colors"
                       >
                         <Plus className="w-3.5 h-3.5" />
                       </button>
                     </div>
+                  </div>
+                </div>
+              )}
+
+              {/* ─── PASSENGER MANIFEST DETAILS (RAILWAY TICKET STYLE) ─── */}
+              {item.type === 'tour' && (
+                <div className="space-y-3 bg-[#FCFAF6] border border-[#EDE2D0] p-3.5 sm:p-4 rounded-2xl">
+                  <div className="flex items-center justify-between border-b border-[#EDE2D0] pb-2.5">
+                    <div>
+                      <h4 className="font-bold text-[#493B34] text-xs flex items-center gap-1.5">
+                        <Users className="w-4 h-4 text-[#C65A2E]" />
+                        <span>Passenger Information (As per Govt. Photo ID) *</span>
+                      </h4>
+                      <p className="text-[10px] text-[#756B63] mt-0.5">
+                        Required for verified train/coach seat allocation, 3★ hotel stays &amp; Darshan passes
+                      </p>
+                    </div>
+                    <span className="text-[10px] font-bold text-[#C65A2E] bg-white px-2 py-0.5 rounded-full border border-[#EDE2D0]">
+                      {guests} {guests === 1 ? 'Passenger' : 'Passengers'}
+                    </span>
+                  </div>
+
+                  <div className="space-y-2.5 pt-1">
+                    {passengers.map((p, idx) => (
+                      <div
+                        key={idx}
+                        className="bg-white border border-[#EDE2D0] rounded-xl p-3 space-y-2 shadow-2xs hover:border-[#C65A2E]/50 transition-colors"
+                      >
+                        <div className="flex items-center justify-between">
+                          <span className="text-[11px] font-bold text-[#3B2E27] flex items-center gap-1.5">
+                            <span className="w-5 h-5 rounded-full bg-[#F8EFEA] text-[#C65A2E] flex items-center justify-center text-[10px] font-extrabold border border-[#C65A2E]/20">
+                              {idx + 1}
+                            </span>
+                            <span>Passenger {idx + 1} {idx === 0 ? '(Primary Pilgrim)' : ''}</span>
+                          </span>
+                          <span className="text-[9.5px] font-semibold text-[#756B63] bg-[#FCFAF6] px-2 py-0.5 rounded border border-[#EDE2D0]">
+                            Seat #{idx + 1}
+                          </span>
+                        </div>
+
+                        <div className="grid grid-cols-1 sm:grid-cols-12 gap-2">
+                          {/* Full Name */}
+                          <div className="sm:col-span-6 space-y-1">
+                            <label className="text-[10px] font-semibold text-[#756B63] block">
+                              Full Name (as on Govt ID) *
+                            </label>
+                            <input
+                              type="text"
+                              required
+                              placeholder="e.g. Ramesh Sharma"
+                              value={p.name}
+                              onChange={(e) => {
+                                const val = e.target.value;
+                                setPassengers((prev) => {
+                                  const arr = [...prev];
+                                  arr[idx] = { ...arr[idx], name: val };
+                                  return arr;
+                                });
+                                if (idx === 0) {
+                                  setFullName(val);
+                                }
+                              }}
+                              className="w-full bg-[#FCFAF6] border border-[#EDE2D0] rounded-lg px-2.5 py-1.5 text-xs text-[#493B34] focus:outline-none focus:border-[#C65A2E] focus:bg-white"
+                            />
+                          </div>
+
+                          {/* Age */}
+                          <div className="sm:col-span-3 space-y-1">
+                            <label className="text-[10px] font-semibold text-[#756B63] block">
+                              Age (Years) *
+                            </label>
+                            <input
+                              type="number"
+                              min={1}
+                              max={120}
+                              required
+                              placeholder="Age"
+                              value={p.age}
+                              onChange={(e) => {
+                                const val = e.target.value;
+                                setPassengers((prev) => {
+                                  const arr = [...prev];
+                                  arr[idx] = { ...arr[idx], age: val };
+                                  return arr;
+                                });
+                              }}
+                              className="w-full bg-[#FCFAF6] border border-[#EDE2D0] rounded-lg px-2.5 py-1.5 text-xs text-[#493B34] focus:outline-none focus:border-[#C65A2E] focus:bg-white"
+                            />
+                          </div>
+
+                          {/* Gender */}
+                          <div className="sm:col-span-3 space-y-1">
+                            <label className="text-[10px] font-semibold text-[#756B63] block">
+                              Gender *
+                            </label>
+                            <select
+                              required
+                              value={p.gender}
+                              onChange={(e) => {
+                                const val = e.target.value as any;
+                                setPassengers((prev) => {
+                                  const arr = [...prev];
+                                  arr[idx] = { ...arr[idx], gender: val };
+                                  return arr;
+                                });
+                              }}
+                              className="w-full bg-[#FCFAF6] border border-[#EDE2D0] rounded-lg px-2 py-1.5 text-xs text-[#493B34] focus:outline-none focus:border-[#C65A2E] focus:bg-white cursor-pointer"
+                            >
+                              <option value="">Select</option>
+                              <option value="Male">Male</option>
+                              <option value="Female">Female</option>
+                              <option value="Other">Other</option>
+                            </select>
+                          </div>
+                        </div>
+                      </div>
+                    ))}
                   </div>
                 </div>
               )}
@@ -1057,7 +1367,7 @@ export default function BookingModal({ isOpen, onClose, item, onSuccess }: Booki
                     </div>
                   </>
                 )}
-                
+
                 <div className="flex justify-between items-center text-xs font-bold text-[#493B34] pt-1.5 border-t border-[#EDE2D0]">
                   <span>Total Estimated Fare:</span>
                   <span className="text-sm font-bold text-[#493B34]">₹{calculatedTotal.toLocaleString('en-IN')}</span>
@@ -1077,9 +1387,8 @@ export default function BookingModal({ isOpen, onClose, item, onSuccess }: Booki
               {/* ─── TERMS CHECKBOX ─── */}
               <div className="pt-1">
                 <label
-                  className={`flex items-start gap-2.5 p-3 rounded-xl border transition-all cursor-pointer select-none ${
-                    termsAccepted ? 'bg-[#F8EFEA] border-[#C65A2E]/50' : 'bg-[#FCFAF6] border-[#EDE2D0] hover:border-[#C65A2E]/30'
-                  }`}
+                  className={`flex items-start gap-2.5 p-3 rounded-xl border transition-all cursor-pointer select-none ${termsAccepted ? 'bg-[#F8EFEA] border-[#C65A2E]/50' : 'bg-[#FCFAF6] border-[#EDE2D0] hover:border-[#C65A2E]/30'
+                    }`}
                 >
                   <input
                     type="checkbox"
@@ -1122,15 +1431,23 @@ export default function BookingModal({ isOpen, onClose, item, onSuccess }: Booki
               <button
                 type="submit"
                 disabled={!termsAccepted || isSubmitting}
-                className={`text-xs font-bold px-6 py-3 rounded-xl flex items-center gap-2 transition-all cursor-pointer ${
-                  !termsAccepted || isSubmitting
+                className={`text-xs font-bold px-6 py-3 rounded-xl flex items-center gap-2 transition-all cursor-pointer ${!termsAccepted || isSubmitting
                     ? 'bg-gray-200 text-gray-400 cursor-not-allowed'
                     : 'bg-[#C65A2E] hover:bg-[#B24E25] text-white shadow-xs'
-                }`}
+                  }`}
               >
-                <QrCode className="w-4 h-4 text-white" />
-                <span>Proceed to Pay Advance (₹{calculatedDeposit.toLocaleString('en-IN')})</span>
-                <ArrowRight className="w-3.5 h-3.5 text-white" />
+                {!currentUser ? (
+                  <>
+                    <Lock className="w-4 h-4 text-white" />
+                    <span>Sign In to Continue Booking</span>
+                  </>
+                ) : (
+                  <>
+                    <QrCode className="w-4 h-4 text-white" />
+                    <span>Proceed to Pay Advance (₹{calculatedDeposit.toLocaleString('en-IN')})</span>
+                    <ArrowRight className="w-3.5 h-3.5 text-white" />
+                  </>
+                )}
               </button>
             </div>
 

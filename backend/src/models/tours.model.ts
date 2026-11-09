@@ -182,6 +182,12 @@ export interface ITourBooking extends Document {
   termsAcceptedAt?: Date;
   termsVersion?: string;
   specialRequests?: string;
+  passengers?: Array<{
+    seatNo?: number | string;
+    name: string;
+    age: number | string;
+    gender: string;
+  }>;
   createdAt: Date;
 }
 
@@ -212,6 +218,12 @@ const TourBookingSchema = new Schema<ITourBooking>({
   termsAcceptedAt: { type: Date, default: Date.now },
   termsVersion: { type: String, default: '2026.1-STANDARD' },
   specialRequests: { type: String },
+  passengers: [{
+    seatNo: { type: Schema.Types.Mixed },
+    name: { type: String },
+    age: { type: Schema.Types.Mixed },
+    gender: { type: String },
+  }],
   createdAt: { type: Date, default: Date.now },
 });
 

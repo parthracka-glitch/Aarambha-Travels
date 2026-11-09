@@ -118,6 +118,7 @@ function BookingSuccessContent() {
     paymentStatus: 'Advance Received (Confirmed)',
     transactionId: booking?.razorpayPaymentId || paymentId || 'RZP-PAID',
     pickupLocation: booking?.pickupLocation || 'Pune',
+    passengers: Array.isArray(booking?.passengers) ? booking.passengers : undefined,
   };
 
   const handleDownloadInvoice = () => {
@@ -298,6 +299,45 @@ function BookingSuccessContent() {
                     <span className="font-semibold text-[#101F40] mt-0.5 block">
                       {booking?.pickupLocation}
                     </span>
+                  </div>
+                )}
+
+                {booking?.passengers && Array.isArray(booking.passengers) && booking.passengers.length > 0 && (
+                  <div className="pt-3 border-t border-[#E8ECF4] space-y-2">
+                    <span className="text-[#77839A] block text-[11px] font-bold uppercase tracking-wider">
+                      👥 Confirmed Passenger Manifest ({booking.passengers.length} Yatris)
+                    </span>
+                    <div className="bg-[#F8FAFC] border border-[#E8ECF4] rounded-xl overflow-hidden text-xs">
+                      <table className="w-full text-left">
+                        <thead className="bg-[#EEF2F6] text-[10px] uppercase font-bold text-[#77839A] border-b border-[#E8ECF4]">
+                          <tr>
+                            <th className="py-2 px-3">Seat</th>
+                            <th className="py-2 px-3">Passenger Name</th>
+                            <th className="py-2 px-3 text-center">Age</th>
+                            <th className="py-2 px-3 text-center">Gender</th>
+                            <th className="py-2 px-3 text-right">Status</th>
+                          </tr>
+                        </thead>
+                        <tbody className="divide-y divide-[#E8ECF4]">
+                          {booking.passengers.map((p: any, idx: number) => (
+                            <tr key={idx} className="text-[#101F40] hover:bg-white/80 transition-colors">
+                              <td className="py-2 px-3 font-bold text-[#3569F6]">Seat #{p.seatNo || idx + 1}</td>
+                              <td className="py-2 px-3 font-semibold">
+                                {p.name}
+                                {idx === 0 && <span className="ml-1.5 text-[10px] text-[#77839A] font-normal">(Primary)</span>}
+                              </td>
+                              <td className="py-2 px-3 text-center text-[#77839A] font-medium">{p.age ? `${p.age} Yrs` : '—'}</td>
+                              <td className="py-2 px-3 text-center text-[#77839A] font-medium">{p.gender || '—'}</td>
+                              <td className="py-2 px-3 text-right">
+                                <span className="inline-block px-2 py-0.5 rounded-full text-[10px] font-bold bg-[#E7F7F2] text-[#12A879] border border-[#BDEBDC]">
+                                  Confirmed
+                                </span>
+                              </td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
                   </div>
                 )}
               </div>

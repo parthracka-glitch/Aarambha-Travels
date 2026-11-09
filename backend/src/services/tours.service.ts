@@ -238,6 +238,7 @@ export class ToursService {
             termsAcceptedAt: new Date(body.termsAcceptedAt || Date.now()),
             termsVersion: body.termsVersion || '2026.1-STANDARD',
             specialRequests: specialRequests || '',
+            passengers: Array.isArray(body.passengers) ? body.passengers : [],
           });
 
           await recordAudit({
@@ -292,6 +293,7 @@ export class ToursService {
       termsAccepted: true,
       termsAcceptedAt: body.termsAcceptedAt || new Date().toISOString(),
       termsVersion: body.termsVersion || '2026.1-STANDARD',
+      passengers: Array.isArray(body.passengers) ? body.passengers : [],
       createdAt: new Date().toISOString(),
     };
     return localStore.addToursBooking(newBooking);

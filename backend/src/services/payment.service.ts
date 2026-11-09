@@ -121,6 +121,7 @@ export class PaymentService {
     const idProofType = body.idProofType || 'aadhaar';
     const specialRequests = body.specialRequests || body.special_requests || body.specialNotes || '';
     const itemTitle = body.title || body.packageName || body.vehicleName || 'Aarambha Spiritual Journey';
+    const passengersList = Array.isArray(body.passengers) ? body.passengers : [];
 
     const totalAmount = Number(body.totalAmount || body.totalPrice || 6499 * paxCount);
     const depositPaid = Number(body.depositPaid || body.amount || body.depositAmount || 1999 * paxCount);
@@ -177,6 +178,7 @@ export class PaymentService {
             agreementAccepted: true,
             agreementAcceptedAt: new Date(),
             specialRequests,
+            passengers: passengersList,
           });
         } catch (_dbErr) {}
       }
@@ -211,6 +213,7 @@ export class PaymentService {
         pickupLocation,
         idProofType,
         specialNotes: specialRequests,
+        passengers: passengersList,
         createdAt: new Date().toISOString(),
       };
 
