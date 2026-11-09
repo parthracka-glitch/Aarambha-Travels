@@ -17,64 +17,49 @@ import {
 
 const HERO_SLIDES = [
   {
-    id: 'fleet',
-    image: '/images/hero_luxury_fleet.jpg',
-    badge: '🚩 आरंभ Luxury Travel Ecosystem',
-    label: 'All-Fleet & Tours',
-    tag: 'Flagship Overview',
-    title: 'Sacred Pilgrimages, Luxury Buses & Self-Drive Fleet',
-    subtitle: 'Pune’s premier travel ecosystem for all-inclusive spiritual yatras, Force Urbania & luxury coach hire, and zero-deposit self-drive cars.',
-    tab: 'tours' as const,
-  },
-  {
-    id: 'spiritual',
+    id: '2-jyotirlinga',
     image: '/images/hero_spiritual_tours.jpg',
-    badge: '🪷 Curated Spiritual Yatras',
-    label: 'Spiritual Yatras',
-    tag: 'Holy Darshan & Stays',
-    title: 'Sacred Temple Yatras Departing from Pune',
-    subtitle: 'All-inclusive spiritual tours with confirmed AC pushback seats, verified 3★ stays, pure satvik meals, and expert tour captains.',
-    tab: 'tours' as const,
+    badge: '🛕 Holy Darshan • 3D / 2N AC Sleeper Coach',
+    label: '2 Jyotirlinga Yatra',
+    tag: 'Ujjain & Omkareshwar',
+    title: 'Pune to 2 Jyotirlinga Yatra — Ujjain & Omkareshwar',
+    subtitle: 'Mahakaleshwar Bhasma Aarti, Mahakal Corridor, Omkareshwar Jyotirlinga, Mamleshwar & Maheshwar Rajwada with verified 3★ stays and satvik meals.',
+    slug: 'pune-to-2-jyotirlinga-yatra--ujjain-omkareshwar-maheshwar',
+    price: '₹5,999',
+    deposit: '₹1,999',
   },
   {
-    id: 'urbania',
-    image: '/images/urbania_fleet.jpg',
-    badge: '🚐 VIP Force Urbania Luxury',
-    label: 'Force Urbania (13/17S)',
-    tag: 'VIP Reclining Vans',
-    title: 'Force Urbania Luxury Vans with Chauffeur',
-    subtitle: 'Experience airplane-style individual reading lights, high-roof panoramic windows, whisper-quiet cabin, and plush captain seating.',
-    tab: 'bus' as const,
+    id: 'sanwaliya-seth',
+    image: 'https://images.unsplash.com/photo-1548013146-72479768bada?q=80&w=1600&auto=format&fit=crop',
+    badge: '🌸 Divine Miracles • 4D / 3N Yatra',
+    label: 'Sanwaliya Seth Yatra',
+    tag: 'Salasar & Khatu Shyam',
+    title: 'Pune to Sanwaliya Seth | Salasar Balaji | Khatu Shyam',
+    subtitle: 'Seek sacred blessings at Khatu Shyam Baba, miraculous Sanwaliya Seth Mandir, and holy Salasar Balaji Dham traveling in 2×2 AC Sleeper Coach.',
+    slug: 'pune-to-sanwaliya-seth---khatu-shyam-babaujjain-mahakal',
+    price: '₹7,999',
+    deposit: '₹1,999',
   },
   {
-    id: 'buses',
-    image: '/images/luxury_fleet_vehicles.jpg',
-    badge: '🚌 Commercial Luxury Coach Rentals',
-    label: 'Luxury Bus Rentals',
-    tag: '20–50 Seater Coaches',
-    title: 'Luxury Bus & Coach Rentals for Groups',
-    subtitle: 'Comfortable outstation tours, corporate events, and wedding fleet across Maharashtra with commercial tourist permits.',
-    tab: 'bus' as const,
-  },
-  {
-    id: 'self-drive',
-    image: '/images/hillstation_featured.jpg',
-    badge: '🚗 Zero-Deposit Self-Drive',
-    label: 'Scenic Self-Drive',
-    tag: 'Unlimited Kilometers',
-    title: 'Drive Your Way to Hill Stations & Coastlines',
-    subtitle: 'Rent Thar 4x4, Fortuner, Ertiga & Swift with ₹0 security deposit and door-to-door delivery in Pune for your weekend road trips.',
-    tab: 'cars' as const,
+    id: 'girnar-trip',
+    image: 'https://images.unsplash.com/photo-1609766857041-ed402ea8069a?q=80&w=1600&auto=format&fit=crop',
+    badge: '⛰️ Sacred Mountain Pilgrimage • 6 Days',
+    label: 'Girnar Mountain Yatra',
+    tag: 'Dwarka & Somnath Jyotirlinga',
+    title: 'Pune to Girnar Mountain | Dwarka & Somnath Jyotirlinga',
+    subtitle: 'Sacred spiritual yatra covering holy Girnar Mountain, Dwarkadhish, Bet Dwarka, Somnath Jyotirlinga, Nageshwar & Statue of Unity.',
+    slug: 'pune-to-girnar-dwarka-somnath-jyotirlinga',
+    price: '₹11,999',
+    deposit: '₹2,999',
   },
 ];
 
 export default function EpicHeroShowcase() {
   const router = useRouter();
-  const [activeTab, setActiveTab] = useState<'tours' | 'bus' | 'cars'>('tours');
   const [currentSlide, setCurrentSlide] = useState(0);
   const [isPaused, setIsPaused] = useState(false);
 
-  // Auto-play carousel
+  // Auto-play carousel every 5.5s
   useEffect(() => {
     if (isPaused) return;
     const timer = setInterval(() => {
@@ -85,30 +70,14 @@ export default function EpicHeroShowcase() {
 
   const goToSlide = (idx: number) => {
     setCurrentSlide(idx);
-    setActiveTab(HERO_SLIDES[idx].tab);
   };
 
   const nextSlide = () => {
-    setCurrentSlide((prev) => {
-      const next = (prev + 1) % HERO_SLIDES.length;
-      setActiveTab(HERO_SLIDES[next].tab);
-      return next;
-    });
+    setCurrentSlide((prev) => (prev + 1) % HERO_SLIDES.length);
   };
 
   const prevSlide = () => {
-    setCurrentSlide((prev) => {
-      const next = (prev - 1 + HERO_SLIDES.length) % HERO_SLIDES.length;
-      setActiveTab(HERO_SLIDES[next].tab);
-      return next;
-    });
-  };
-
-  const handleTabChange = (tab: 'tours' | 'bus' | 'cars') => {
-    setActiveTab(tab);
-    if (tab === 'tours') setCurrentSlide(1);
-    else if (tab === 'bus') setCurrentSlide(2);
-    else if (tab === 'cars') setCurrentSlide(4);
+    setCurrentSlide((prev) => (prev - 1 + HERO_SLIDES.length) % HERO_SLIDES.length);
   };
 
   return (
@@ -180,34 +149,46 @@ export default function EpicHeroShowcase() {
         </p>
 
         {/* ─── 3. SLEEK HERO ACTION BUTTONS ─── */}
-        <div className="flex flex-wrap items-center justify-center gap-3 sm:gap-4 mb-4 sm:mb-6 select-none">
+        <div className="flex flex-wrap items-center justify-center gap-3 sm:gap-4 mb-3 sm:mb-4 select-none">
           <button
             type="button"
-            onClick={() => router.push('/tours-travels')}
+            onClick={() => router.push(`/tours-travels/${HERO_SLIDES[currentSlide].slug}`)}
             className="px-6 py-3.5 rounded-full bg-[#C65A2E] hover:bg-[#B24E25] text-white text-xs sm:text-sm font-bold shadow-lg hover:shadow-xl transition-all flex items-center gap-2 cursor-pointer active:scale-95"
           >
             <Compass className="w-4 h-4 text-white" />
-            <span>Explore Spiritual Tours</span>
+            <span>Book This Tour (Advance: {HERO_SLIDES[currentSlide].deposit})</span>
             <ArrowRight className="w-4 h-4 text-white/80" />
           </button>
 
           <button
             type="button"
-            onClick={() => router.push('/bus-rentals')}
+            onClick={() => router.push('/tours-travels')}
             className="px-6 py-3.5 rounded-full bg-white/20 hover:bg-white/30 backdrop-blur-md text-white border border-white/40 text-xs sm:text-sm font-bold shadow-md transition-all flex items-center gap-2 cursor-pointer active:scale-95"
           >
-            <Bus className="w-4 h-4 text-white" />
-            <span>Luxury Bus Rentals</span>
+            <span>View All Yatra Packages</span>
           </button>
+        </div>
 
-          <button
-            type="button"
-            onClick={() => router.push('/car-rentals')}
-            className="px-6 py-3.5 rounded-full bg-white/20 hover:bg-white/30 backdrop-blur-md text-white border border-white/40 text-xs sm:text-sm font-bold shadow-md transition-all flex items-center gap-2 cursor-pointer active:scale-95"
-          >
-            <Car className="w-4 h-4 text-white" />
-            <span>Self-Drive Fleet</span>
-          </button>
+        {/* ─── 3 YATRA DIRECT SELECTOR PILLS ─── */}
+        <div className="flex flex-wrap items-center justify-center gap-2 sm:gap-3 mb-2 select-none">
+          {HERO_SLIDES.map((slide, idx) => {
+            const isActive = idx === currentSlide;
+            return (
+              <button
+                key={slide.id}
+                type="button"
+                onClick={() => goToSlide(idx)}
+                className={`px-3 sm:px-4 py-1.5 rounded-full text-xs font-semibold transition-all cursor-pointer backdrop-blur-md border ${
+                  isActive
+                    ? 'bg-white text-[#C65A2E] border-white shadow-md font-bold'
+                    : 'bg-black/35 hover:bg-black/50 text-white/90 border-white/20'
+                }`}
+              >
+                <span>{slide.label}</span>
+                <span className="ml-1.5 text-[10px] opacity-80">({slide.price})</span>
+              </button>
+            );
+          })}
         </div>
 
         {/* Subtle Minimal Carousel Slide Indicators */}
