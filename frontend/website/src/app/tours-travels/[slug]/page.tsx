@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import Link from 'next/link';
 import { useParams } from 'next/navigation';
 import {
@@ -29,13 +29,22 @@ import TermsConditionsSection from '@/components/shared/TermsConditionsSection';
 import BookingModal, { BookingModalItem } from '@/components/booking/BookingModal';
 import { TOUR_PACKAGES, SHARED_TOUR_CONTACT, TourPackage } from '@/constants/toursData';
 import { fetchLiveTourPackageBySlug } from '@/services/tours.service';
+import { useAutoRefresh } from '@/hooks/useRealtimeSync';
 import JsonLd, { getTourPackageSchema } from '@/components/shared/JsonLd';
 
 export default function TourPackageDetailPage() {
   const params = useParams();
   const slug = params?.slug as string;
 
-  const defaultTour = TOUR_PACKAGES.find((t) => t.slug === slug || t.id === slug) || TOUR_PACKAGES[0];
+  const defaultTour = TOUR_PACKAGES.find((t) => 
+    t.slug === slug || 
+    t.id === slug || 
+    t.slug === `pune-to-${slug}` ||
+    slug === `pune-to-${t.slug}` ||
+    (slug.includes('2-jyotirlinga') && t.slug.includes('2-jyotirlinga')) ||
+    (slug.includes('girnar') && t.slug.includes('girnar'))
+  ) || TOUR_PACKAGES[0];
+
   const [tour, setTour] = useState<TourPackage>(defaultTour);
   const [selectedImage, setSelectedImage] = useState(defaultTour.image);
   const [openDay, setOpenDay] = useState<number | null>(1);
@@ -43,9 +52,9 @@ export default function TourPackageDetailPage() {
   const [selectedBatchId, setSelectedBatchId] = useState<string | undefined>(undefined);
   const [batchMonthFilter, setBatchMonthFilter] = useState('All');
 
-  useEffect(() => {
+  const loadTour = useCallback(() => {
     if (slug) {
-      fetchLiveTourPackageBySlug(slug).then((liveTour) => {
+      fetchLiveTourPackageBySlug(slug, true).then((liveTour) => {
         if (liveTour) {
           setTour(liveTour);
           setSelectedImage(liveTour.image);
@@ -53,6 +62,8 @@ export default function TourPackageDetailPage() {
       });
     }
   }, [slug]);
+
+  useAutoRefresh(loadTour, ['TOURS_UPDATED'], 8000);
 
   const modalItem: BookingModalItem = {
     id: tour.id,
@@ -307,7 +318,7 @@ export default function TourPackageDetailPage() {
 
                             <button
                               disabled={isFull}
-                              onClick={() => handleBookBatch(batch.id)}
+                              onClick={() => handleBookBatch(batch.id || batch._id || '')}
                               className={`w-full py-2 px-3 rounded-lg text-xs font-bold uppercase tracking-wider flex items-center justify-center gap-1 transition-all cursor-pointer ${
                                 isFull
                                   ? 'bg-gray-200 text-gray-400 cursor-not-allowed'

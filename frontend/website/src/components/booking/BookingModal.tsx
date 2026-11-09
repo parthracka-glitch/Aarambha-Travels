@@ -12,6 +12,7 @@ import {
   CreditCard,
   Download,
   ArrowRight,
+  ArrowLeft,
   Users,
   Plus,
   Minus,
@@ -22,8 +23,15 @@ import {
   FileCheck,
   Compass,
   Car,
+  Loader2,
+  Sparkles,
+  ChevronDown,
+  ChevronUp,
+  Lock,
 } from 'lucide-react';
 import { apiFetch } from '@/services/api-client';
+import { useRouter } from 'next/navigation';
+import { launchRazorpayPayment } from '@/services/razorpay.service';
 import { generateInvoicePDF, getNextInvoiceNumber, type InvoiceData } from '@/utils/generateInvoicePDF';
 import UPIPaymentVerificationSection from './UPIPaymentVerificationSection';
 import { SHARED_BUS_CONTACT } from '@/constants/busData';
@@ -50,6 +58,7 @@ interface BookingModalProps {
 }
 
 export default function BookingModal({ isOpen, onClose, item, onSuccess }: BookingModalProps) {
+  const router = useRouter();
   // Current user authentication state
   const [currentUser, setCurrentUser] = useState<{ name: string; email: string; phone?: string } | null>(null);
 
@@ -85,6 +94,8 @@ export default function BookingModal({ isOpen, onClose, item, onSuccess }: Booki
   const [specialNotes, setSpecialNotes] = useState('');
 
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isRazorpayLoading, setIsRazorpayLoading] = useState(false);
+  const [showManualUpi, setShowManualUpi] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
   const [isPaymentStep, setIsPaymentStep] = useState(false);
   const [bookingRef, setBookingRef] = useState('');
@@ -328,6 +339,95 @@ export default function BookingModal({ isOpen, onClose, item, onSuccess }: Booki
     if (onSuccess) onSuccess();
   };
 
+  const handlePayWithRazorpay = async () => {
+    if (!item) return;
+    setIsRazorpayLoading(true);
+    setValidationError('');
+
+    try {
+      const res = await launchRazorpayPayment({
+        packageId: item.id,
+        itemType: item.type,
+        itemTitle: item.title,
+        amount: calculatedDeposit,
+        totalAmount: calculatedTotal,
+        balanceAmount: calculatedBalance,
+        bookingCode: bookingRef,
+        customerName: fullName.trim(),
+        customerEmail: email.trim().toLowerCase(),
+        customerPhone: phone.trim(),
+        travelDate: startDate || new Date().toISOString().split('T')[0],
+        endDate: endDate || new Date(Date.now() + 86400000 * 3).toISOString().split('T')[0],
+        guestsCount: Math.max(1, guests),
+        pickupLocation: pickupLocation === 'custom' ? customAddress : pickupLocation,
+        notes: specialNotes,
+      });
+
+      if (res.success && res.bookingCode) {
+        // Persist booking to localStorage as well for instant client-side retrieval
+        try {
+          const bookingPayload = {
+            id: res.bookingCode,
+            bookingCode: res.bookingCode,
+            type: item.type === 'car' ? 'Fleet' : 'Tours',
+            title: item.title,
+            packageName: item.title,
+            vehicleName: item.title,
+            image: item.image,
+            startDate: startDate || new Date().toISOString().split('T')[0],
+            endDate: endDate || new Date(Date.now() + 86400000 * 3).toISOString().split('T')[0],
+            travelDate: startDate || new Date().toISOString().split('T')[0],
+            durationDays: item.type === 'car' ? computedDays : undefined,
+            guestsCount: Math.max(1, guests),
+            paxCount: Math.max(1, guests),
+            numberOfTravelers: Math.max(1, guests),
+            perPersonPrice: item.price,
+            totalPrice: calculatedTotal,
+            totalAmount: calculatedTotal,
+            depositPaid: calculatedDeposit,
+            balanceAmount: calculatedBalance,
+            customerName: fullName.trim(),
+            customerEmail: email.trim().toLowerCase(),
+            email: email.trim().toLowerCase(),
+            customerPhone: phone.trim(),
+            phone: phone.trim(),
+            pickupLocation: pickupLocation === 'custom' ? customAddress : pickupLocation,
+            idProofType: idProofType,
+            specialNotes: specialNotes,
+            termsAccepted: true,
+            termsAcceptedAt: new Date().toISOString(),
+            status: 'Deposit Paid',
+            paymentStatus: 'Deposit Paid',
+            paymentMethod: 'Razorpay',
+            razorpayPaymentId: res.paymentId,
+            razorpayOrderId: res.orderId,
+            createdAt: new Date().toISOString(),
+          };
+
+          const existingStr = localStorage.getItem('aarambha_user_bookings');
+          const existing = existingStr ? JSON.parse(existingStr) : [];
+          existing.unshift(bookingPayload);
+          localStorage.setItem('aarambha_user_bookings', JSON.stringify(existing));
+          window.dispatchEvent(new Event('aarambha_booking_updated'));
+        } catch (e) {
+          console.error('Error saving local booking:', e);
+        }
+
+        // Close modal and redirect to official Booking Success Page
+        onClose();
+        if (onSuccess) onSuccess();
+        router.push(
+          `/booking-success?ref=${encodeURIComponent(res.bookingCode)}&type=${item.type}&paymentId=${encodeURIComponent(res.paymentId || '')}`
+        );
+      }
+    } catch (err: any) {
+      console.error('Razorpay payment error:', err);
+      setValidationError(err?.message || 'Payment could not be completed. Please try again.');
+    } finally {
+      setIsRazorpayLoading(false);
+    }
+  };
+
   const handleResetAndClose = () => {
     setIsSuccess(false);
     setIsPaymentStep(false);
@@ -457,20 +557,163 @@ export default function BookingModal({ isOpen, onClose, item, onSuccess }: Booki
             </div>
           </div>
         ) : isPaymentStep ? (
-          /* ─── SCREEN 2: DYNAMIC UPI QR & UTR VERIFICATION SCREEN ──────── */
-          <div className="p-6 overflow-y-auto flex-1 min-h-0 max-h-[85vh]">
-            <UPIPaymentVerificationSection
-              bookingCode={bookingRef}
-              itemTitle={item.title}
-              itemType={item.type}
-              totalPrice={calculatedTotal}
-              depositAmount={calculatedDeposit}
-              customerName={fullName}
-              customerPhone={phone}
-              onConfirmPayment={handleConfirmUpiPayment}
-              onBack={() => setIsPaymentStep(false)}
-              isSubmitting={isSubmitting}
-            />
+          /* ─── SCREEN 2: RAZORPAY INSTANT PAYMENT & SECURE CHECKOUT ──────── */
+          <div className="p-5 sm:p-6 overflow-y-auto flex-1 min-h-0 space-y-4 font-sans">
+            {/* Header / Back */}
+            <div className="flex items-center justify-between pb-3 border-b border-[#EDE2D0]">
+              <button
+                type="button"
+                onClick={() => setIsPaymentStep(false)}
+                className="inline-flex items-center gap-1.5 text-xs font-semibold text-[#756B63] hover:text-[#493B34] transition-colors cursor-pointer"
+              >
+                <ArrowLeft className="w-3.5 h-3.5" /> Back to Edit
+              </button>
+              <span className="text-[10px] font-bold tracking-wider uppercase px-2.5 py-0.5 rounded-full bg-blue-50 text-[#3569F6] border border-blue-200">
+                Step 2 of 2: Secure Payment
+              </span>
+            </div>
+
+            {/* Error Banner */}
+            {validationError && (
+              <div className="p-3 bg-red-50 border border-red-200 rounded-xl text-red-700 text-xs font-semibold flex items-center gap-2">
+                <AlertCircle className="w-4 h-4 shrink-0" />
+                <span>{validationError}</span>
+              </div>
+            )}
+
+            {/* Booking Summary Box */}
+            <div className="bg-[#FCFAF6] border border-[#EDE2D0] rounded-2xl p-4 space-y-3">
+              <div className="flex items-start gap-3">
+                <img
+                  src={item.image}
+                  alt={item.title}
+                  className="w-14 h-14 rounded-xl object-cover border border-[#EDE2D0] shrink-0"
+                />
+                <div className="min-w-0 flex-1">
+                  <div className="flex items-center gap-2">
+                    <span className="text-[10px] font-bold uppercase tracking-wider text-[#C65A2E]">
+                      {item.type === 'car' ? 'Car Rental' : 'Yatra Tour'}
+                    </span>
+                    <span className="text-[10px] text-[#756B63] font-mono">Ref: {bookingRef}</span>
+                  </div>
+                  <h4 className="font-bold text-[#493B34] text-sm truncate">{item.title}</h4>
+                  <p className="text-[11px] text-[#756B63] mt-0.5">
+                    {item.type === 'tour'
+                      ? `${guests} Traveler${guests > 1 ? 's' : ''} • Departure: ${startDate || 'Upcoming'}`
+                      : `${computedDays} Day${computedDays > 1 ? 's' : ''} • ${startDate} to ${endDate}`}
+                  </p>
+                </div>
+              </div>
+
+              {/* Price Breakdown */}
+              <div className="pt-3 border-t border-[#EDE2D0] space-y-1.5 text-xs">
+                <div className="flex justify-between text-[#756B63]">
+                  <span>Total Booking Cost</span>
+                  <span className="font-semibold text-[#493B34]">₹{calculatedTotal.toLocaleString('en-IN')}</span>
+                </div>
+                <div className="flex justify-between text-[#756B63]">
+                  <span>Remaining Balance (Due on Travel/Handover)</span>
+                  <span className="font-semibold text-[#493B34]">₹{calculatedBalance.toLocaleString('en-IN')}</span>
+                </div>
+                <div className="flex justify-between items-center pt-2 border-t border-[#EDE2D0]">
+                  <div>
+                    <span className="font-bold text-[#101F40] text-sm block">Advance Payable Now</span>
+                    <span className="text-[10px] text-[#12A879] font-medium">To confirm reservation instantly</span>
+                  </div>
+                  <span className="font-serif text-2xl font-bold text-[#3569F6]">
+                    ₹{calculatedDeposit.toLocaleString('en-IN')}
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            {/* Primary Action: Razorpay Payment Gateway */}
+            <div className="bg-gradient-to-br from-[#101F40] to-[#1C315A] text-white p-5 rounded-2xl space-y-4 shadow-lg border border-[#101F40]">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <div className="w-8 h-8 rounded-lg bg-white/10 flex items-center justify-center">
+                    <CreditCard className="w-4 h-4 text-white" />
+                  </div>
+                  <div>
+                    <span className="font-bold text-sm block">Instant Online Payment</span>
+                    <span className="text-[10.5px] text-blue-200">Official Razorpay Gateway Integration</span>
+                  </div>
+                </div>
+                <div className="flex items-center gap-1 bg-white/10 px-2 py-1 rounded-md text-[10px] text-emerald-300 font-semibold border border-white/15">
+                  <Lock className="w-3 h-3" /> 256-Bit SSL
+                </div>
+              </div>
+
+              {/* Supported Payment Methods Badges */}
+              <div className="flex flex-wrap items-center gap-1.5 text-[10px] text-white/80">
+                <span className="bg-white/15 px-2 py-0.5 rounded">UPI (GPay / PhonePe / Paytm)</span>
+                <span className="bg-white/15 px-2 py-0.5 rounded">Credit & Debit Cards</span>
+                <span className="bg-white/15 px-2 py-0.5 rounded">NetBanking</span>
+                <span className="bg-white/15 px-2 py-0.5 rounded">EMI</span>
+              </div>
+
+              {/* Main Pay CTA Button */}
+              <button
+                type="button"
+                onClick={handlePayWithRazorpay}
+                disabled={isRazorpayLoading}
+                className="w-full py-3.5 px-4 bg-gradient-to-r from-[#3569F6] to-[#2552d4] hover:from-[#2c5ae0] hover:to-[#1e46bc] disabled:opacity-70 text-white font-bold text-sm rounded-xl transition-all shadow-md hover:shadow-lg flex items-center justify-center gap-2 cursor-pointer"
+              >
+                {isRazorpayLoading ? (
+                  <>
+                    <Loader2 className="w-4 h-4 animate-spin text-white" />
+                    <span>Connecting to Razorpay...</span>
+                  </>
+                ) : (
+                  <>
+                    <Sparkles className="w-4 h-4 text-amber-300" />
+                    <span>Pay ₹{calculatedDeposit.toLocaleString('en-IN')} with Razorpay</span>
+                    <ArrowRight className="w-4 h-4 text-white/80" />
+                  </>
+                )}
+              </button>
+
+              <div className="flex items-center justify-center gap-4 text-[10.5px] text-white/70 pt-1">
+                <span className="flex items-center gap-1">
+                  <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" /> Instant PDF Invoice
+                </span>
+                <span className="flex items-center gap-1">
+                  <ShieldCheck className="w-3.5 h-3.5 text-blue-300" /> 100% Refundable per Policy
+                </span>
+              </div>
+            </div>
+
+            {/* Secondary Option: Manual UPI QR Dropdown */}
+            <div className="border border-[#EDE2D0] rounded-2xl overflow-hidden bg-white">
+              <button
+                type="button"
+                onClick={() => setShowManualUpi(!showManualUpi)}
+                className="w-full p-3.5 flex items-center justify-between text-left text-xs font-semibold text-[#493B34] hover:bg-[#FCFAF6] transition-colors cursor-pointer"
+              >
+                <span className="flex items-center gap-2">
+                  <QrCode className="w-4 h-4 text-[#C65A2E]" />
+                  <span>Prefer offline UPI QR code scan & UTR entry?</span>
+                </span>
+                {showManualUpi ? <ChevronUp className="w-4 h-4 text-[#756B63]" /> : <ChevronDown className="w-4 h-4 text-[#756B63]" />}
+              </button>
+
+              {showManualUpi && (
+                <div className="p-4 border-t border-[#EDE2D0] bg-[#FCFAF6]">
+                  <UPIPaymentVerificationSection
+                    bookingCode={bookingRef}
+                    itemTitle={item.title}
+                    itemType={item.type}
+                    totalPrice={calculatedTotal}
+                    depositAmount={calculatedDeposit}
+                    customerName={fullName}
+                    customerPhone={phone}
+                    onConfirmPayment={handleConfirmUpiPayment}
+                    onBack={() => setShowManualUpi(false)}
+                    isSubmitting={isSubmitting}
+                  />
+                </div>
+              )}
+            </div>
           </div>
         ) : (
           /* ─── SCREEN 3: COMPREHENSIVE TRIP RESERVATION FORM ────────────── */

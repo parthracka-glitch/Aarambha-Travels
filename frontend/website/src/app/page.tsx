@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import Link from 'next/link';
 import dynamic from 'next/dynamic';
 import {
@@ -25,6 +25,7 @@ import { FLEET_VEHICLES, CarVehicle } from '@/constants/carsData';
 import { TOUR_PACKAGES, TourPackage, SHARED_TOUR_CONTACT } from '@/constants/toursData';
 import { fetchLiveTourPackages } from '@/services/tours.service';
 import { fetchLiveFleetVehicles } from '@/services/fleet.service';
+import { useAutoRefresh } from '@/hooks/useRealtimeSync';
 
 const BookingModal = dynamic(() => import('@/components/booking/BookingModal'), {
   ssr: false,
@@ -40,8 +41,8 @@ export default function MainLandingPage() {
     FLEET_VEHICLES.find((c) => c.id === 'fortuner-2017') || FLEET_VEHICLES[7],
   ]);
 
-  useEffect(() => {
-    fetchLiveTourPackages().then((tours) => {
+  const loadToursAndFleet = useCallback(() => {
+    fetchLiveTourPackages(true).then((tours) => {
       if (Array.isArray(tours) && tours.length > 0) {
         setFamousTours(tours.slice(0, 3));
       }
@@ -57,6 +58,8 @@ export default function MainLandingPage() {
       }
     });
   }, []);
+
+  useAutoRefresh(loadToursAndFleet, ['TOURS_UPDATED', 'FLEET_UPDATED'], 10000);
 
   return (
     <div className="min-h-screen bg-[#FCFAF6] text-[#493B34] flex flex-col font-sans select-none">

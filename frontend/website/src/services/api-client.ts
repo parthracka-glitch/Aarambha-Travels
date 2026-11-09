@@ -1,6 +1,11 @@
-const RENDER_API = 'https://aarambha-travels.onrender.com';
+export const RENDER_API = 'https://aarambha-travels.onrender.com';
 
-function getApiBaseUrl(): string {
+export function getApiBaseUrl(): string {
+  if (typeof window !== 'undefined') {
+    const stored = localStorage.getItem('website_api_url');
+    if (stored && stored.startsWith('http')) return stored.replace(/\/+$/, '');
+  }
+
   const envUrl = process.env.NEXT_PUBLIC_API_URL;
   if (envUrl && typeof envUrl === 'string' && envUrl.trim()) {
     const cleaned = envUrl.trim().replace(/\/+$/, '');
@@ -12,64 +17,89 @@ function getApiBaseUrl(): string {
     }
     return cleaned;
   }
+
   if (typeof window !== 'undefined') {
     const isLocal = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
     if (!isLocal) {
       return RENDER_API;
     }
   }
-  return 'http://127.0.0.1:8000';
-}
 
-const API_BASE_URL = getApiBaseUrl();
-
-const cache = new Map<string, { data: any; timestamp: number }>();
-const CACHE_TTL_MS = 15000; // 15 seconds TTL
-
-export async function apiFetch<T>(endpoint: string, options?: RequestInit): Promise<T> {
-  const method = (options?.method || 'GET').toUpperCase();
-  const cacheKey = `${method}:${endpoint}`;
-
-  if (method !== 'GET') {
-    cache.clear();
+  // If in production build / SSR on Vercel
+  if (process.env.NODE_ENV === 'production' || process.env.VERCEL) {
+    return RENDER_API;
   }
 
-  if (method === 'GET' && cache.has(cacheKey)) {
+  return RENDER_API;
+}
+
+const cache = new Map<string, { data: any; timestamp: number }>();
+const CACHE_TTL_MS = 2000; // 2 seconds short cache to allow snappy navigation while staying in live sync
+
+export interface ApiFetchOptions extends RequestInit {
+  bypassCache?: boolean;
+}
+
+export async function apiFetch<T>(endpoint: string, options?: ApiFetchOptions): Promise<T> {
+  const method = (options?.method || 'GET').toUpperCase();
+  const cacheKey = `${method}:${endpoint}`;
+  const baseUrl = getApiBaseUrl();
+
+  if (method !== 'GET' || options?.bypassCache) {
+    cache.delete(cacheKey);
+  }
+
+  if (method === 'GET' && !options?.bypassCache && cache.has(cacheKey)) {
     const entry = cache.get(cacheKey)!;
     if (Date.now() - entry.timestamp < CACHE_TTL_MS) {
-      // Revalidate in background
-      fetch(`${API_BASE_URL}${endpoint}`, {
-        headers: { 'Content-Type': 'application/json', ...(options?.headers || {}) },
-        ...options,
-      })
-        .then((r) => (r.ok ? r.json() : null))
-        .then((fresh) => {
-          if (fresh) cache.set(cacheKey, { data: fresh, timestamp: Date.now() });
-        })
-        .catch(() => {});
-
       return entry.data as T;
     }
   }
 
-  const controllerSignal = options?.signal || AbortSignal.timeout(30000);
+  const controllerSignal = options?.signal || AbortSignal.timeout(15000);
 
-  const res = await fetch(`${API_BASE_URL}${endpoint}`, {
-    headers: {
-      'Content-Type': 'application/json',
-      ...(options?.headers || {}),
-    },
-    signal: controllerSignal,
-    ...options,
-  });
+  // Attempt fetch against primary URL; on connection failure (e.g. offline localhost), failover to Render API
+  let res: Response | null = null;
+  let primaryError: any = null;
 
-  if (!res.ok) {
-    const errorData = await res.json().catch(() => ({ detail: res.statusText }));
-    throw new Error(errorData.detail || 'API request failed');
+  try {
+    res = await fetch(`${baseUrl}${endpoint}`, {
+      cache: 'no-store',
+      headers: {
+        'Content-Type': 'application/json',
+        ...(options?.headers || {}),
+      },
+      signal: controllerSignal,
+      ...options,
+    });
+  } catch (err: any) {
+    primaryError = err;
+    if (baseUrl !== RENDER_API) {
+      try {
+        res = await fetch(`${RENDER_API}${endpoint}`, {
+          cache: 'no-store',
+          headers: {
+            'Content-Type': 'application/json',
+            ...(options?.headers || {}),
+          },
+          signal: AbortSignal.timeout(15000),
+          ...options,
+        });
+      } catch (_fallbackErr) {
+        throw primaryError;
+      }
+    } else {
+      throw primaryError;
+    }
+  }
+
+  if (!res || !res.ok) {
+    const errorData = await res?.json().catch(() => ({ detail: res?.statusText || 'Request failed' }));
+    throw new Error(errorData?.detail || errorData?.message || 'API request failed');
   }
 
   const data = await res.json();
-  if (method === 'GET') {
+  if (method === 'GET' && !options?.bypassCache) {
     cache.set(cacheKey, { data, timestamp: Date.now() });
   }
 

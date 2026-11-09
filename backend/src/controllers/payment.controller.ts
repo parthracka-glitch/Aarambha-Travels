@@ -3,13 +3,13 @@ import { PaymentService } from '../services/payment.service';
 
 export class PaymentController {
   static getRazorpayKey(req: Request, res: Response): void {
-    res.json(PaymentService.getRazorpayKey());
+    const serviceType = (req.query.service_type as string) || 'tours';
+    res.json(PaymentService.getRazorpayKey(serviceType));
   }
 
   static async createOrder(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
-      const { service_type, reference_id } = req.body;
-      const order = await PaymentService.createOrder(service_type, reference_id);
+      const order = await PaymentService.createOrder(req.body);
       res.status(201).json(order);
     } catch (err) {
       next(err);
@@ -20,6 +20,15 @@ export class PaymentController {
     try {
       const booking = await PaymentService.verifyPaymentAndCreateBooking(req.body, req.ip);
       res.status(201).json(booking);
+    } catch (err) {
+      next(err);
+    }
+  }
+
+  static async getBookingDetails(req: Request, res: Response, next: NextFunction): Promise<void> {
+    try {
+      const details = await PaymentService.getBookingDetailsByCode(req.params.code);
+      res.json(details);
     } catch (err) {
       next(err);
     }

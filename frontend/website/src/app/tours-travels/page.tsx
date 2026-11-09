@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import Link from 'next/link';
 import {
   Search,
@@ -28,6 +28,7 @@ import CompanyLocationSection from '@/components/home/CompanyLocationSection';
 import BookingModal, { BookingModalItem } from '@/components/booking/BookingModal';
 import { TOUR_PACKAGES, SHARED_TOUR_CONTACT, TourPackage } from '@/constants/toursData';
 import { fetchLiveTourPackages } from '@/services/tours.service';
+import { useAutoRefresh } from '@/hooks/useRealtimeSync';
 
 export default function ToursTravelsLandingPage() {
   const [searchQuery, setSearchQuery] = useState('');
@@ -36,13 +37,15 @@ export default function ToursTravelsLandingPage() {
   const [selectedBookingTour, setSelectedBookingTour] = useState<BookingModalItem | null>(null);
   const [packagesList, setPackagesList] = useState<TourPackage[]>(TOUR_PACKAGES);
 
-  useEffect(() => {
-    fetchLiveTourPackages().then((data) => {
+  const loadTours = useCallback(() => {
+    fetchLiveTourPackages(true).then((data) => {
       if (Array.isArray(data) && data.length > 0) {
         setPackagesList(data);
       }
     });
   }, []);
+
+  useAutoRefresh(loadTours, ['TOURS_UPDATED'], 8000);
 
   const filteredPackages = packagesList.filter((pkg) => {
     const matchesSearch =
@@ -255,7 +258,7 @@ export default function ToursTravelsLandingPage() {
 
             {/* Destination Filter Tabs */}
             <div className="flex flex-wrap gap-1.5">
-              {['all', 'Madhya Pradesh', 'Uttar Pradesh', 'Maharashtra'].map((dest) => (
+              {['all', 'Madhya Pradesh', 'Gujarat', 'Rajasthan', 'Uttar Pradesh', 'South India', 'Maharashtra'].map((dest) => (
                 <button
                   key={dest}
                   onClick={() => setSelectedDestination(dest)}

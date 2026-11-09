@@ -6,7 +6,8 @@ export interface TourItineraryDay {
 }
 
 export interface TourBatchDate {
-  id: string;
+  id?: string;
+  _id?: string;
   month: string;
   label: string;
   tag: string;
@@ -68,727 +69,1033 @@ export interface TourPackage {
 
 export const TOUR_PACKAGES: TourPackage[] = [
   {
-    id: '2-jyotirlinga-yatra--ujjain-omkareshwar-maheshwar',
-    slug: '2-jyotirlinga-yatra--ujjain-omkareshwar-maheshwar',
-    title: '2 Jyotirlinga Yatra – Ujjain, Omkareshwar, Maheshwar',
-    subtitle: 'Mahakaleshwar Jyotirlinga, Mahakal Corridor, Shaktipeeths, Omkareshwar, Mamleshwar & Maheshwar Rajwada',
-    destination: 'Ujjain & Omkareshwar',
-    state: 'Madhya Pradesh & Maharashtra',
-    durationDays: 3,
-    durationNights: 2,
-    durationLabel: '3 Days / 2 Nights',
-    datesLabel: '',
-    basePrice: 5999,
-    priceDisplay: '₹5,999 per person',
-    depositPrice: 1999,
-    advanceLabel: 'Advance: ₹1,999',
-    rating: 4.9,
-    reviewsCount: 148,
-    featured: true,
-    image: '/images/tours_travels_bg.jpg',
-    gallery: [
-      '/images/tours_travels_bg.jpg',
-      'https://images.unsplash.com/photo-1609766857041-ed402ea8069a?q=80&w=1000&auto=format&fit=crop',
-      'https://images.unsplash.com/photo-1596707328905-234b3e811c75?q=80&w=1000&auto=format&fit=crop',
+    "id": "3-jyotirlinga-yatra-ujjain-omkareshwar-ghrishneshwar",
+    "slug": "3-jyotirlinga-yatra-ujjain-omkareshwar-ghrishneshwar",
+    "title": "3 Jyotirlinga Yatra – Ujjain, Omkareshwar, Ghrishneshwar, Maheshwar",
+    "subtitle": "Mahakaleshwar Jyotirlinga, Mahakal Corridor, Shaktipeeths, Omkareshwar, Mamleshwar, Maheshwar Rajwada & Ghrishneshwar",
+    "destination": "Ujjain & Omkareshwar",
+    "state": "Madhya Pradesh & Maharashtra",
+    "durationDays": 3,
+    "durationNights": 2,
+    "durationLabel": "3 Days / 2 Nights",
+    "datesLabel": "Upcoming Departures",
+    "basePrice": 6499,
+    "priceDisplay": "₹6,499 per person",
+    "depositPrice": 1999,
+    "advanceLabel": "Advance: ₹1,999",
+    "rating": 4.9,
+    "reviewsCount": 140,
+    "featured": true,
+    "image": "/images/tours_travels_bg.jpg",
+    "gallery": [
+      "/images/tours_travels_bg.jpg"
     ],
-    sites: [
-      'Mahakaleshwar Jyotirlinga',
-      'Mahakal Corridor',
-      'Harsiddhi Mata Shaktipeeth',
-      'Bada Ganesh Temple',
-      'Kaal Bhairav Temple',
-      'Gadkalika Mata Shaktipeeth',
-      'Mangalnath Temple',
-      'Sandipani Ashram',
-      'Ram Ghat',
-      'Runmukteshwar Mahadev',
-      'Omkareshwar Jyotirlinga',
-      'Mamleshwar Temple',
-      'Maheshwar Rajwada',
-      'Maheshwar Ghat',
-      'Ghrishneshwar Jyotirlinga',
+    "sites": [
+      "Mahakaleshwar Jyotirlinga",
+      "Mahakal Corridor",
+      "Harsiddhi Mata Shaktipeeth",
+      "Bada Ganesh Temple",
+      "Kaal Bhairav Temple",
+      "Gadkalika Mata Shaktipeeth",
+      "Mangalnath Temple",
+      "Sandipani Ashram",
+      "Ram Ghat",
+      "Runmukteshwar Mahadev",
+      "Omkareshwar Jyotirlinga",
+      "Mamleshwar Temple",
+      "Maheshwar Rajwada",
+      "Maheshwar Ghat",
+      "Ghrishneshwar Jyotirlinga"
     ],
-    inclusions: [
-      'New 2*2 Sleeper AC Bus',
-      'Hotel Stay (4–5 sharing rooms)',
-      '1 Veg Meal per Day',
-      'Drinking Water with Meals',
-      'Travel Insurance',
+    "inclusions": [
+      "New Urbania Pushback AC Bus",
+      "Hotel Stay (4-5 sharing)",
+      "1 Veg Meal/Day",
+      "Drinking Water",
+      "Travel Insurance"
     ],
-    exclusions: [
-      'Puja / Abhishek Charges',
-      'VIP Darshan Pass',
-      'Local Travel / Auto Rickshaw',
-      'Boating Charges',
-      'Personal Expenses & Shopping',
+    "exclusions": [
+      "Puja / Abhishek Charges",
+      "VIP Darshan Pass",
+      "Local Travel / Auto Rickshaw",
+      "Boating Charges",
+      "Personal Expenses & Shopping"
     ],
-    terms: [
-      'Booking confirmed only after advance received',
-      'No refund on cancellation',
-      'Substitute traveler allowed',
+    "terms": [
+      "Booking confirmed only after advance received",
+      "No refund on cancellation",
+      "Substitute traveler allowed"
     ],
-    itinerary: [
+    "itinerary": [
       {
-        day: 1,
-        title: 'Arrival in Ujjain & Mahakal Corridor Darshan',
-        description: 'Depart by New 2*2 Sleeper AC Bus to Ujjain. Experience divine Bhasma Aarti and darshan at Mahakaleshwar Jyotirlinga, explore the grandeur of Mahakal Corridor, visit Harsiddhi Mata Shaktipeeth, Bada Ganesh, Kaal Bhairav, and holy Ram Ghat on the Shipra River.',
-        highlights: ['Mahakaleshwar Jyotirlinga', 'Mahakal Corridor', 'Harsiddhi Mata Shaktipeeth', 'Kaal Bhairav', 'Ram Ghat Aarti'],
+        "day": 1,
+        "title": "Ujjain Mahakal & Corridor Darshan",
+        "description": "Mahakaleshwar Jyotirlinga, Mahakal Corridor, Shaktipeeths and Ram Ghat.",
+        "highlights": []
       },
       {
-        day: 2,
-        title: 'Omkareshwar Jyotirlinga, Mamleshwar & Maheshwar Rajwada',
-        description: 'Proceed towards the sacred island of Omkareshwar on Narmada River. Seek blessings at Omkareshwar Jyotirlinga & Mamleshwar Temple. In the afternoon, visit the historic Maheshwar Rajwada, Ahilya Fort, and the serene Maheshwar Narmada Ghats.',
-        highlights: ['Omkareshwar Jyotirlinga', 'Mamleshwar Temple', 'Runmukteshwar Mahadev', 'Maheshwar Rajwada & Ghats'],
+        "day": 2,
+        "title": "Omkareshwar Jyotirlinga & Maheshwar Rajwada",
+        "description": "Omkareshwar Jyotirlinga, Mamleshwar, and Maheshwar Ghats.",
+        "highlights": []
       },
       {
-        day: 3,
-        title: 'Ghrishneshwar Darshan & Blessed Return',
-        description: 'Complete the sacred spiritual pilgrimage with divine blessings and embark on the return journey.',
-        highlights: ['Jyotirlinga Blessings', 'Conch & Temple Blessings', 'Comfortable AC Return Transfer'],
-      },
+        "day": 3,
+        "title": "Ghrishneshwar Jyotirlinga & Return",
+        "description": "Ghrishneshwar Jyotirlinga darshan and return journey.",
+        "highlights": []
+      }
     ],
-    batchDates: [],
-    overview: 'Embark on a soul-cleansing 3-day spiritual pilgrimage covering 2 sacred Jyotirlingas (Mahakaleshwar & Omkareshwar) alongside 15 holy temples, Shaktipeeths, and majestic Maheshwar ghats with New 2*2 Sleeper AC comfort.',
+    "batchDates": [],
+    "overview": "Embark on a soul-cleansing 3-day spiritual pilgrimage covering 3 sacred Jyotirlingas (Mahakaleshwar, Omkareshwar, Ghrishneshwar) alongside 15 holy temples, Shaktipeeths, and majestic Maheshwar ghats with New Urbania Pushback AC comfort."
   },
   {
-    id: 'krishna-yatra-vrindavan-mathura-khatu-shyam-ujjain',
-    slug: 'krishna-yatra-vrindavan-mathura-khatu-shyam-ujjain',
-    title: 'Shree Krishna Yatra – Vrindavan, Mathura | Khatu Shyam Baba | Ujjain Mahakal Darshan',
-    subtitle: 'Special Spiritual Yatra 2026 • Pune to Uttar Pradesh, Madhya Pradesh & Rajasthan • Divine Confluence of Bhakti, Devotion & Bliss',
-    destination: 'Mathura & Vrindavan',
-    state: 'Uttar Pradesh, Madhya Pradesh & Rajasthan',
-    durationDays: 6,
-    durationNights: 2,
-    durationLabel: '6 Days Journey (7th Day Pune Return) • 2 Nights AC Hotel Stay',
-    datesLabel: '23 Oct 2026 – 29 Oct 2026 (Pune to Pune)',
-    basePrice: 11999,
-    lowerSeatPrice: 12999,
-    upperSeatPrice: 11999,
-    priceDisplay: 'Lower seat ₹12,999 / Upper seat ₹11,999 per person',
-    depositPrice: 2999,
-    advanceLabel: 'Advance: ₹2,999',
-    rating: 5.0,
-    reviewsCount: 226,
-    featured: true,
-    image: 'https://images.unsplash.com/photo-1548013146-72479768bada?q=80&w=1000&auto=format&fit=crop',
-    gallery: [
-      'https://images.unsplash.com/photo-1548013146-72479768bada?q=80&w=1000&auto=format&fit=crop',
-      'https://images.unsplash.com/photo-1600100397608-f010f443b74a?q=80&w=1000&auto=format&fit=crop',
-      'https://images.unsplash.com/photo-1621847468516-1ed5d0df56fe?q=80&w=1000&auto=format&fit=crop',
+    "id": "krishna-yatra-vrindavan-mathura-khatu-shyam-ujjain",
+    "slug": "krishna-yatra-vrindavan-mathura-khatu-shyam-ujjain",
+    "title": "Shree Krishna Yatra – Vrindavan, Mathura | Khatu Shyam Baba | Ujjain Mahakal Darshan",
+    "subtitle": "Special Spiritual Yatra 2026 • Pune to Uttar Pradesh, Madhya Pradesh & Rajasthan • Divine Confluence of Bhakti, Devotion & Bliss",
+    "destination": "Mathura & Vrindavan",
+    "state": "Uttar Pradesh, Madhya Pradesh & Rajasthan",
+    "durationDays": 6,
+    "durationNights": 2,
+    "durationLabel": "6 Days / 2 Nights",
+    "datesLabel": "23 Oct 2026 – 29 Oct 2026 (Pune to Pune)",
+    "basePrice": 11999,
+    "priceDisplay": "₹11,999 per person",
+    "depositPrice": 2999,
+    "advanceLabel": "Advance: ₹2,999",
+    "rating": 4.9,
+    "reviewsCount": 140,
+    "featured": true,
+    "image": "https://images.unsplash.com/photo-1548013146-72479768bada?q=80&w=800&auto=format&fit=crop",
+    "gallery": [
+      "https://images.unsplash.com/photo-1548013146-72479768bada?q=80&w=800&auto=format&fit=crop"
     ],
-    sites: [
-      'Mathura – Vrindavan',
-      'Shri Krishna Janmabhoomi (Mathura)',
-      'Prem Mandir (Vrindavan)',
-      'Banke Bihari Mandir (Vrindavan)',
-      'Vrindavan Chardham',
-      'Barsana (Shri Radha Rani Mandir)',
-      'Khatu Shyam Baba (Rajasthan)',
-      'Salasar Balaji (Rajasthan)',
-      'Ujjain – Shri Mahakaleshwar Jyotirlinga',
-      'Kaal Bhairav Mandir (Ujjain)',
-      'Omkareshwar Jyotirlinga',
-      'Mamleshwar Jyotirlinga',
-      'Sanwaliya Seth Mandir (Mandphiya)',
-      'Agra Taj Mahal',
+    "sites": [
+      "Mathura – Vrindavan",
+      "Shri Krishna Janmabhoomi (Mathura)",
+      "Prem Mandir (Vrindavan)",
+      "Banke Bihari Mandir (Vrindavan)",
+      "Vrindavan Chardham",
+      "Barsana (Shri Radha Rani Mandir)",
+      "Khatu Shyam Baba (Rajasthan)",
+      "Salasar Balaji (Rajasthan)",
+      "Ujjain – Shri Mahakaleshwar Jyotirlinga",
+      "Kaal Bhairav Mandir (Ujjain)",
+      "Omkareshwar Jyotirlinga",
+      "Mamleshwar Jyotirlinga",
+      "Sanwaliya Seth Mandir (Mandphiya)",
+      "Agra Taj Mahal"
     ],
-    inclusions: [
-      'Sleeper Coach (2×2 AC Pushback/Sleeper Luxury Travel)',
-      '2 Nights Stay in Premium AC Hotel',
-      '4-Person Sharing Rooms (Quad Sharing)',
-      '2 Pure Vegetarian Meals per Day (Lunch & Dinner)',
-      'Daily Morning Tea & Breakfast',
-      'Packaged Drinking Water Provided During Meals',
-      'Comprehensive Travel Insurance',
+    "inclusions": [
+      "Sleeper Coach (2×2 AC Pushback/Sleeper Luxury Travel)",
+      "2 Nights Stay in Premium AC Hotel",
+      "4-Person Sharing Rooms (Quad Sharing)",
+      "2 Pure Vegetarian Meals per Day (Lunch & Dinner)",
+      "Daily Morning Tea & Breakfast",
+      "Packaged Drinking Water Provided During Meals",
+      "Comprehensive Travel Insurance"
     ],
-    exclusions: [
-      'Puja, Archana & Abhishek Charges',
-      'VIP / Fast-track Darshan Passes',
-      'Local Travel / Auto-Rickshaw / E-Rickshaw Charges',
-      'Boating Charges at Holy Ghats',
-      'Personal Expenses, Shopping & Extra Food',
+    "exclusions": [
+      "Puja, Archana & Abhishek Charges",
+      "VIP / Fast-track Darshan Passes",
+      "Local Travel / Auto-Rickshaw / E-Rickshaw Charges",
+      "Boating Charges at Holy Ghats",
+      "Personal Expenses, Shopping & Extra Food"
     ],
-    terms: [
-      'Booking is confirmed strictly upon receipt of the ₹2,999/- advance amount.',
-      'Strict No Refund policy in case of cancellation.',
-      'You can send another person in your place (ticket transfer permitted).',
+    "terms": [
+      "Booking is confirmed strictly upon receipt of the ₹2,999/- advance amount.",
+      "Strict No Refund policy in case of cancellation.",
+      "You can send another person in your place (ticket transfer permitted)."
     ],
-    itinerary: [
+    "itinerary": [
       {
-        day: 1,
-        title: 'Pune Departure & En Route Omkareshwar, Mamleshwar Jyotirlinga',
-        description: 'Depart from Pune (Katraj / Mastan Hotel / Swargate) in comfortable 2×2 AC Sleeper Coach. Scenic highway journey towards Madhya Pradesh. Seek holy blessings at Omkareshwar Jyotirlinga and Mamleshwar Jyotirlinga along the sacred Narmada River.',
-        highlights: ['Pune 2×2 AC Sleeper Departure', 'Narmada River Ghats', 'Omkareshwar & Mamleshwar Jyotirlinga Darshan'],
+        "day": 1,
+        "title": "Pune Departure & En Route Omkareshwar, Mamleshwar Jyotirlinga",
+        "description": "Depart from Pune in comfortable 2×2 AC Sleeper Coach towards MP. Seek blessings at Omkareshwar Jyotirlinga and Mamleshwar Jyotirlinga along sacred Narmada river.",
+        "highlights": []
       },
       {
-        day: 2,
-        title: 'Ujjain Mahakaleshwar, Kaal Bhairav & Drive to Sanwaliya Seth',
-        description: 'Morning arrival in sacred Ujjain. Experience divine Mahakaleshwar Jyotirlinga Darshan, explore the magnificent Mahakal Lok Corridor, and visit Kaal Bhairav Mandir. Afternoon drive into Rajasthan to visit the miraculous Sanwaliya Seth Mandir (Mandphiya) before proceeding towards Braj Bhoomi.',
-        highlights: ['Mahakaleshwar Jyotirlinga', 'Mahakal Lok Corridor', 'Kaal Bhairav Mandir', 'Sanwaliya Seth Darshan'],
+        "day": 2,
+        "title": "Ujjain Mahakaleshwar, Kaal Bhairav & Drive to Sanwaliya Seth",
+        "description": "Experience Mahakaleshwar Jyotirlinga Darshan, Mahakal Lok Corridor, and Kaal Bhairav Mandir. Afternoon drive into Rajasthan to visit miraculous Sanwaliya Seth Mandir.",
+        "highlights": []
       },
       {
-        day: 3,
-        title: 'Khatu Shyam Baba, Salasar Balaji & Vrindavan Hotel Check-in',
-        description: 'Soulful early darshan of Khatu Shyam Baba ("Haare Ka Sahara, Baba Shyam Hamara") in Rajasthan. Proceed to the revered Salasar Balaji Temple for Hanuman Ji\'s divine blessings. Evening drive to Braj Bhoomi and check-in to premium AC hotel in Vrindavan for dinner and restful stay.',
-        highlights: ['Khatu Shyam Baba Darshan', 'Salasar Balaji Temple', 'Vrindavan AC Hotel Check-In (Night 1)'],
+        "day": 3,
+        "title": "Khatu Shyam Baba, Salasar Balaji & Vrindavan Hotel Check-in",
+        "description": "Soulful darshan of Khatu Shyam Baba and Salasar Balaji Temple. Evening drive to Braj Bhoomi and check-in to premium AC hotel in Vrindavan for dinner & restful stay.",
+        "highlights": []
       },
       {
-        day: 4,
-        title: 'Mathura Shri Krishna Janmabhoomi, Banke Bihari & Prem Mandir',
-        description: 'Full day immersed in Krishna Bhakti. Visit the sacred Shri Krishna Janmabhoomi Temple complex in Mathura and Yamuna Vishram Ghat. In Vrindavan, seek blessings at the world-famous Banke Bihari Mandir and ISKCON. Evening witness the mesmerizing illuminated Prem Mandir light and musical fountain show.',
-        highlights: ['Shri Krishna Janmabhoomi', 'Banke Bihari Temple', 'Prem Mandir Evening Light Show', 'AC Hotel Stay (Night 2)'],
+        "day": 4,
+        "title": "Mathura Shri Krishna Janmabhoomi, Banke Bihari & Prem Mandir",
+        "description": "Visit sacred Shri Krishna Janmabhoomi Temple complex in Mathura. In Vrindavan, seek blessings at Banke Bihari Mandir and witness illuminated Prem Mandir light show.",
+        "highlights": []
       },
       {
-        day: 5,
-        title: 'Vrindavan Chardham, Barsana Radha Rani & Agra Taj Mahal',
-        description: 'Morning visits to Vrindavan Chardham and the vibrant hill temple of Barsana (Shri Radha Rani Mandir / Ladli Ji). Afternoon journey to Agra to witness the world-famous wonder, the Taj Mahal. Evening board your 2×2 AC Sleeper Coach for the return journey towards Pune.',
-        highlights: ['Vrindavan Chardham', 'Barsana Radha Rani Mandir', 'Agra Taj Mahal Exploration', 'Return Coach Boarding'],
+        "day": 5,
+        "title": "Vrindavan Chardham, Barsana Radha Rani & Agra Taj Mahal",
+        "description": "Morning visits to Vrindavan Chardham and Barsana Radha Rani Mandir. Afternoon journey to Agra to witness the world-famous Taj Mahal. Evening board AC Sleeper Coach for Pune.",
+        "highlights": []
       },
       {
-        day: 6,
-        title: 'Highway Return Journey with Group Fellowship & Bhajans',
-        description: 'Comfortable day-long transit in AC Sleeper Coach through Madhya Pradesh and Maharashtra. Relish morning tea, breakfast, pure veg meals, and share memorable pilgrimage experiences and devotional bhajans with fellow yatris.',
-        highlights: ['2×2 AC Sleeper Comfort', 'Delicious Veg Meals & Tea', 'Devotional Atmosphere & Bhajans'],
+        "day": 6,
+        "title": "Highway Return Journey with Group Fellowship & Bhajans",
+        "description": "Comfortable day-long transit in AC Sleeper Coach through MP and Maharashtra with tea, breakfast, pure veg meals, and devotional bhajans.",
+        "highlights": []
       },
       {
-        day: 7,
-        title: 'Morning Arrival in Pune with Blessed Memories & Prasad',
-        description: 'Arrive back in Pune (Katraj / Mangadewadi / Swargate) early morning on Day 7 with divine prasad, eternal memories, and lifelong blessings of Lord Krishna, Khatu Shyam Baba, and Lord Mahakal.',
-        highlights: ['Early Morning Pune Drop', 'Divine Prasad Distribution', 'Successful Yatra Completion'],
-      },
+        "day": 7,
+        "title": "Morning Arrival in Pune with Blessed Memories & Prasad",
+        "description": "Early morning arrival back in Pune (Katraj / Mangadewadi / Swargate) with divine prasad, eternal memories, and lifelong blessings.",
+        "highlights": []
+      }
     ],
-    batchDates: [
+    "batchDates": [
       {
-        id: 'batch-vrindavan-oct-2026',
-        month: 'October',
-        label: '23 Oct 2026 – 29 Oct 2026 (Pune to Pune)',
-        tag: 'Special Spiritual Yatra 2026 • Lower ₹12,999 / Upper ₹11,999',
-        startDate: '2026-10-23',
-        endDate: '2026-10-29',
-        status: 'available',
-      },
+        "id": "batch-vrindavan-oct-2026",
+        "month": "October",
+        "label": "23 Oct 2026 – 29 Oct 2026 (Pune to Pune)",
+        "tag": "Special Spiritual Yatra 2026 • Lower ₹12,999 / Upper ₹11,999",
+        "startDate": "2026-10-23",
+        "endDate": "2026-10-29",
+        "status": "available",
+        "_id": "6af07156a7e7406a2ef3e5a2"
+      }
     ],
-    overview: 'Experience the divine confluence of Bhakti, Shraddha & Bliss on this grand 2026 spiritual pilgrimage from Pune covering Mathura-Vrindavan, Shri Krishna Janmabhoomi, Banke Bihari, Prem Mandir, Barsana, Khatu Shyam Baba, Salasar Balaji, Ujjain Mahakal, Omkareshwar, Mamleshwar, Sanwaliya Seth, and Agra Taj Mahal traveling in 2×2 AC Sleeper Coach with 2 Nights AC Hotel stay.',
+    "overview": "Experience the divine confluence of Bhakti, Shraddha & Bliss on this grand 2026 spiritual pilgrimage from Pune covering Mathura-Vrindavan, Shri Krishna Janmabhoomi, Banke Bihari, Prem Mandir, Barsana, Khatu Shyam Baba, Salasar Balaji, Ujjain Mahakal, Omkareshwar, Mamleshwar, Sanwaliya Seth, and Agra Taj Mahal traveling in 2×2 AC Sleeper Coach with 2 Nights AC Hotel stay."
   },
   {
-    id: 'pune-sanwaliya-seth-salasar-balaji-khatu-shyam',
-    slug: 'pune-sanwaliya-seth-salasar-balaji-khatu-shyam',
-    title: 'Pune to Sanwaliya Seth | Salasar Balaji Dham | Khatu Shyam Baba',
-    subtitle: 'Special Spiritual Yatra 2026 • Pune to Pune • Sacred Darshan of Khatu Shyam Baba, Sanwaliya Seth & Salasar Balaji Dham',
-    destination: 'Rajasthan & Madhya Pradesh',
-    state: 'Rajasthan & Maharashtra',
-    durationDays: 3,
-    durationNights: 1,
-    durationLabel: '3 Days Journey (4th Day Pune Return) • 1 Night AC Hotel Stay',
-    datesLabel: '23 Oct 2026 – 26 Oct 2026 (Pune to Pune)',
-    basePrice: 7499,
-    lowerSeatPrice: 8499,
-    upperSeatPrice: 7499,
-    priceDisplay: 'Lower seat ₹8,499 / Upper seat ₹7,499 per person',
-    depositPrice: 2999,
-    advanceLabel: 'Advance: ₹2,999',
-    rating: 4.9,
-    reviewsCount: 184,
-    featured: true,
-    image: '/images/tours/khatu_shyam_salasar_tour.jpg',
-    gallery: [
-      '/images/tours/khatu_shyam_salasar_tour.jpg',
-      'https://images.unsplash.com/photo-1545126178-862d2ad693b7?q=80&w=1000&auto=format&fit=crop',
-      'https://images.unsplash.com/photo-1600100397608-f010f443b74a?q=80&w=1000&auto=format&fit=crop',
+    "id": "mumbai-ujjain-mahakal-omkareshwar-maheshwar",
+    "slug": "mumbai-ujjain-mahakal-omkareshwar-maheshwar",
+    "title": "Mumbai to Ujjain Mahakal | Omkareshwar Jyotirlinga | Maheshwar",
+    "subtitle": "Special Spiritual Yatra 2026 • Mumbai to Mumbai • Sacred Darshan of Mahakaleshwar, Kaal Bhairav, Omkareshwar, Mamleshwar & Maheshwar Rajwada",
+    "destination": "Ujjain & Omkareshwar",
+    "state": "Madhya Pradesh & Maharashtra",
+    "durationDays": 3,
+    "durationNights": 1,
+    "durationLabel": "3 Days / 1 Nights",
+    "datesLabel": "16 Oct 2026 – 19 Oct 2026 (Mumbai to Mumbai)",
+    "basePrice": 7499,
+    "priceDisplay": "₹7,499 per person",
+    "depositPrice": 2999,
+    "advanceLabel": "Advance: ₹2,999",
+    "rating": 4.9,
+    "reviewsCount": 140,
+    "featured": true,
+    "image": "/images/tours/mumbai_ujjain_omkareshwar_tour.jpg",
+    "gallery": [
+      "/images/tours/mumbai_ujjain_omkareshwar_tour.jpg"
     ],
-    sites: [
-      'Khatu Shyam Baba (Rajasthan)',
-      'Shri Sanwaliya Seth Mandir (Mandphiya)',
-      'Salasar Balaji Dham (Hanuman Ji)',
+    "sites": [
+      "Ujjain Mahakaleshwar Jyotirlinga",
+      "Shri Kaal Bhairav Mandir (Ujjain)",
+      "Harsiddhi Mata Shaktipeeth",
+      "Mangalnath Mandir",
+      "Runmukteshwar Mahadev Mandir",
+      "Ramghat Shipra River Evening Aarti",
+      "Shri Mahakal Lok Corridor",
+      "Omkareshwar Jyotirlinga",
+      "Mamleshwar Temple",
+      "Ahilyabai Holkar Rajwada (Maheshwar)",
+      "Maheshwari Saree Market & Narmada Ghats"
     ],
-    inclusions: [
-      'Sleeper Coach (2×2 AC Pushback/Sleeper Luxury Travel)',
-      '1 Night Stay in Premium AC Hotel',
-      '4-Person Sharing Rooms (Quad Sharing)',
-      '2 Pure Vegetarian Meals per Day (Lunch & Dinner)',
-      'Daily Morning Tea',
-      'Fresh Breakfast Daily',
-      'Packaged Drinking Water Provided During Meals',
-      'Comprehensive Travel Insurance',
+    "inclusions": [
+      "Sleeper Coach (2×2 AC Pushback/Sleeper Luxury Travel)",
+      "1 Night Stay in Premium AC Hotel",
+      "4-Person Sharing Rooms (Quad Sharing)",
+      "2 Pure Vegetarian Meals per Day (Lunch & Dinner)",
+      "Daily Morning Tea",
+      "Fresh Breakfast Daily",
+      "Packaged Drinking Water Provided During Meals",
+      "Comprehensive Travel Insurance"
     ],
-    exclusions: [
-      'Puja, Archana & Abhishek Charges',
-      'VIP / Fast-track Darshan Passes',
-      'Local Travel / Auto-Rickshaw / E-Rickshaw Charges',
-      'Boating Charges',
-      'Personal Expenses, Shopping & Extra Food',
+    "exclusions": [
+      "Puja, Archana & Abhishek Charges",
+      "VIP / Fast-track Darshan Passes",
+      "Local Travel / Auto-Rickshaw / E-Rickshaw Charges",
+      "Boating Charges",
+      "Personal Expenses, Shopping & Extra Food"
     ],
-    terms: [
-      'Booking is confirmed strictly upon receipt of the ₹2,999/- advance amount.',
-      'Strict No Refund policy in case of cancellation.',
-      'You can send another person in your place (ticket transfer permitted).',
+    "terms": [
+      "Booking is confirmed strictly upon receipt of the ₹2,999/- advance amount.",
+      "Strict No Refund policy in case of cancellation.",
+      "You can send another person in your place (ticket transfer permitted)."
     ],
-    itinerary: [
+    "itinerary": [
       {
-        day: 1,
-        title: 'Pune Departure & Highway Journey to Sanwaliya Seth',
-        description: 'Depart from Pune (Green Hill Society, Katraj / Swargate) in comfortable 2×2 AC Sleeper Coach. Relax and enjoy a smooth highway transit towards Rajasthan with devotional music and fellow yatris.',
-        highlights: ['Departure from Pune (23 Oct 2026)', '2×2 AC Sleeper Coach Travel', 'Devotional Group Atmosphere'],
+        "day": 1,
+        "title": "Mumbai Departure & Overnight Highway Journey to Ujjain",
+        "description": "Depart from Mumbai in 2×2 AC Sleeper Coach. Overnight scenic drive towards MP with group fellowship.",
+        "highlights": []
       },
       {
-        day: 2,
-        title: 'Sanwaliya Seth Darshan & Drive to Khatu Dham (AC Hotel Stay)',
-        description: 'Arrive in Mandphiya (Chittorgarh) for divine darshan of miraculous Shri Sanwaliya Seth (Lord Krishna in rich regal swaroop). Afternoon drive across Rajasthan towards Sikar/Khatu. Check into premium AC hotel for fresh-up, dinner, and 1 night restful stay.',
-        highlights: ['Shri Sanwaliya Seth Darshan (Mandphiya)', 'Scenic Rajasthan Highway Transit', 'Premium AC Hotel Check-In & Dinner (Night 1)'],
+        "day": 2,
+        "title": "Ujjain Mahakal, Kaal Bhairav, Shaktipeeths & Ramghat Aarti (AC Hotel Stay)",
+        "description": "Darshan of Mahakaleshwar Jyotirlinga, Mahakal Lok Corridor, Kaal Bhairav, Shaktipeeths and Ramghat Aarti. AC hotel stay.",
+        "highlights": []
       },
       {
-        day: 3,
-        title: 'Khatu Shyam Baba Darshan, Salasar Balaji Dham & Return Boarding',
-        description: 'Early morning soulful darshan of Khatu Shyam Baba ("Haare Ka Sahara, Baba Shyam Hamara"). Seek blessings for prosperity and peace. Proceed to revered Salasar Balaji Dham for Hanuman Ji’s darshan. Evening board your 2×2 AC Sleeper Coach for the return journey towards Pune.',
-        highlights: ['Khatu Shyam Baba Holy Darshan', 'Salasar Balaji Dham Hanuman Darshan', 'Evening Boarding 2×2 AC Sleeper Coach'],
+        "day": 3,
+        "title": "Omkareshwar Jyotirlinga, Mamleshwar & Maheshwar Rajwada",
+        "description": "Darshan of Omkareshwar & Mamleshwar Jyotirlinga. Visit Ahilyabai Holkar Rajwada and Maheshwari Saree Market. Evening return coach boarding.",
+        "highlights": []
       },
       {
-        day: 4,
-        title: 'Highway Return Journey & Safe Arrival in Pune',
-        description: 'Relaxed journey along the highway with morning tea, breakfast, and delicious pure veg meals. Arrive safely back in Pune (Katraj / Mangadewadi) on 26 October 2026 carrying divine prasad and lifelong memories.',
-        highlights: ['Delicious Pure Veg Meals & Tea', 'Arrival in Pune on 26 October 2026', 'Blessed Memories & Holy Prasad'],
-      },
+        "day": 4,
+        "title": "Highway Return Journey & Arrival in Mumbai",
+        "description": "Day-long transit with morning tea, breakfast & pure veg meals. Safe arrival back in Mumbai on 19 October 2026.",
+        "highlights": []
+      }
     ],
-    batchDates: [
+    "batchDates": [
       {
-        id: 'batch-khatu-salasar-oct-2026',
-        month: 'October',
-        label: '23 Oct 2026 – 26 Oct 2026 (Pune to Pune)',
-        tag: 'Special Spiritual Yatra 2026 • Lower ₹8,499 / Upper ₹7,499',
-        startDate: '2026-10-23',
-        endDate: '2026-10-26',
-        status: 'available',
-      },
+        "id": "batch-mumbai-ujjain-oct-2026",
+        "month": "October",
+        "label": "16 Oct 2026 – 19 Oct 2026 (Mumbai to Mumbai)",
+        "tag": "Special Spiritual Yatra 2026 • Lower ₹7,999 / Upper ₹7,499",
+        "startDate": "2026-10-16",
+        "endDate": "2026-10-19",
+        "status": "available",
+        "_id": "6af07157a7e7406a2ef3e5be"
+      }
     ],
-    overview: 'Embark on a sacred 3-day spiritual pilgrimage (returning on 4th day) from Pune covering holy Khatu Shyam Baba, miraculous Sanwaliya Seth Mandir, and revered Salasar Balaji Dham with 1 Night AC Hotel stay and 2×2 AC Sleeper Coach comfort.',
+    "overview": "Seek the holy blessings of Lord Shiva on this 3-day spiritual pilgrimage (returning on 4th day) from Mumbai covering Ujjain Mahakaleshwar Jyotirlinga, Mahakal Corridor, Kaal Bhairav, Omkareshwar Jyotirlinga, Mamleshwar, and historic Maheshwar Rajwada traveling in 2×2 AC Sleeper Coach with 1 Night AC Hotel stay."
   },
   {
-    id: 'mumbai-ujjain-mahakal-omkareshwar-maheshwar',
-    slug: 'mumbai-ujjain-mahakal-omkareshwar-maheshwar',
-    title: 'Mumbai to Ujjain Mahakal | Omkareshwar Jyotirlinga | Maheshwar',
-    subtitle: 'Special Spiritual Yatra 2026 • Mumbai to Mumbai • Sacred Darshan of Mahakaleshwar, Kaal Bhairav, Omkareshwar, Mamleshwar & Maheshwar Rajwada',
-    destination: 'Ujjain & Omkareshwar',
-    state: 'Madhya Pradesh & Maharashtra',
-    durationDays: 3,
-    durationNights: 1,
-    durationLabel: '3 Days Journey (4th Day Mumbai Return) • 1 Night AC Hotel Stay',
-    datesLabel: '16 Oct 2026 – 19 Oct 2026 (Mumbai to Mumbai)',
-    basePrice: 7499,
-    lowerSeatPrice: 7999,
-    upperSeatPrice: 7499,
-    priceDisplay: 'Lower seat ₹7,999 / Upper seat ₹7,499 per person',
-    depositPrice: 2999,
-    advanceLabel: 'Advance: ₹2,999',
-    rating: 4.9,
-    reviewsCount: 162,
-    featured: true,
-    image: '/images/tours/mumbai_ujjain_omkareshwar_tour.jpg',
-    gallery: [
-      '/images/tours/mumbai_ujjain_omkareshwar_tour.jpg',
-      'https://images.unsplash.com/photo-1609766857041-ed402ea8069a?q=80&w=1000&auto=format&fit=crop',
-      'https://images.unsplash.com/photo-1596707328905-234b3e811c75?q=80&w=1000&auto=format&fit=crop',
+    "id": "pune-sanwaliya-seth-salasar-balaji-khatu-shyam",
+    "slug": "pune-sanwaliya-seth-salasar-balaji-khatu-shyam",
+    "title": "Pune to Sanwaliya Seth | Salasar Balaji Dham | Khatu Shyam Baba",
+    "subtitle": "Special Spiritual Yatra 2026 • Pune to Pune • Sacred Darshan of Khatu Shyam Baba, Sanwaliya Seth & Salasar Balaji Dham",
+    "destination": "Rajasthan & Madhya Pradesh",
+    "state": "Rajasthan & Maharashtra",
+    "durationDays": 3,
+    "durationNights": 1,
+    "durationLabel": "3 Days / 1 Nights",
+    "datesLabel": "23 Oct 2026 – 26 Oct 2026 (Pune to Pune)",
+    "basePrice": 7499,
+    "priceDisplay": "₹7,499 per person",
+    "depositPrice": 2999,
+    "advanceLabel": "Advance: ₹2,999",
+    "rating": 4.9,
+    "reviewsCount": 140,
+    "featured": true,
+    "image": "/images/tours/khatu_shyam_salasar_tour.jpg",
+    "gallery": [
+      "/images/tours/khatu_shyam_salasar_tour.jpg"
     ],
-    sites: [
-      'Ujjain Mahakaleshwar Jyotirlinga',
-      'Shri Kaal Bhairav Mandir (Ujjain)',
-      'Harsiddhi Mata Shaktipeeth',
-      'Mangalnath Mandir',
-      'Runmukteshwar Mahadev Mandir',
-      'Ramghat Shipra River Evening Aarti',
-      'Shri Mahakal Lok Corridor',
-      'Omkareshwar Jyotirlinga',
-      'Mamleshwar Temple',
-      'Ahilyabai Holkar Rajwada (Maheshwar)',
-      'Maheshwari Saree Market & Narmada Ghats',
+    "sites": [
+      "Khatu Shyam Baba (Rajasthan)",
+      "Shri Sanwaliya Seth Mandir (Mandphiya)",
+      "Salasar Balaji Dham (Hanuman Ji)"
     ],
-    inclusions: [
-      'Sleeper Coach (2×2 AC Pushback/Sleeper Luxury Travel)',
-      '1 Night Stay in Premium AC Hotel',
-      '4-Person Sharing Rooms (Quad Sharing)',
-      '2 Pure Vegetarian Meals per Day (Lunch & Dinner)',
-      'Daily Morning Tea',
-      'Fresh Breakfast Daily',
-      'Packaged Drinking Water Provided During Meals',
-      'Comprehensive Travel Insurance',
+    "inclusions": [
+      "Sleeper Coach (2×2 AC Pushback/Sleeper Luxury Travel)",
+      "1 Night Stay in Premium AC Hotel",
+      "4-Person Sharing Rooms (Quad Sharing)",
+      "2 Pure Vegetarian Meals per Day (Lunch & Dinner)",
+      "Daily Morning Tea",
+      "Fresh Breakfast Daily",
+      "Packaged Drinking Water Provided During Meals",
+      "Comprehensive Travel Insurance"
     ],
-    exclusions: [
-      'Puja, Archana & Abhishek Charges',
-      'VIP / Fast-track Darshan Passes',
-      'Local Travel / Auto-Rickshaw / E-Rickshaw Charges',
-      'Boating Charges',
-      'Personal Expenses, Shopping & Extra Food',
+    "exclusions": [
+      "Puja, Archana & Abhishek Charges",
+      "VIP / Fast-track Darshan Passes",
+      "Local Travel / Auto-Rickshaw / E-Rickshaw Charges",
+      "Boating Charges",
+      "Personal Expenses, Shopping & Extra Food"
     ],
-    terms: [
-      'Booking is confirmed strictly upon receipt of the ₹2,999/- advance amount.',
-      'Strict No Refund policy in case of cancellation.',
-      'You can send another person in your place (ticket transfer permitted).',
+    "terms": [
+      "Booking is confirmed strictly upon receipt of the ₹2,999/- advance amount.",
+      "Strict No Refund policy in case of cancellation.",
+      "You can send another person in your place (ticket transfer permitted)."
     ],
-    itinerary: [
+    "itinerary": [
       {
-        day: 1,
-        title: 'Mumbai Departure & Overnight Highway Journey to Ujjain',
-        description: 'Depart from Mumbai on 16 October 2026 in 2×2 AC Sleeper Coach. Enjoy a comfortable overnight ride towards Madhya Pradesh with group fellowship and devotional ambiance.',
-        highlights: ['Departure from Mumbai (16 Oct 2026)', '2×2 AC Sleeper Coach Travel', 'Overnight Scenic Highway Drive'],
+        "day": 1,
+        "title": "Pune Departure & Highway Journey to Sanwaliya Seth",
+        "description": "Depart from Pune in luxury 2×2 AC Sleeper Coach towards Rajasthan with group devotion.",
+        "highlights": []
       },
       {
-        day: 2,
-        title: 'Ujjain Mahakal, Kaal Bhairav, Shaktipeeths & Ramghat Aarti (AC Hotel Stay)',
-        description: 'Morning arrival in sacred Ujjain. Check into premium AC hotel. Sacred darshan of Mahakaleshwar Jyotirlinga, explore the grand Mahakal Lok Corridor, and visit Kaal Bhairav Mandir, Harsiddhi Mata Shaktipeeth, Mangalnath, and Runmukteshwar Mahadev. In the evening, witness the divine Shipra River Deep Aarti at Ramghat. Dinner and 1 night AC hotel stay.',
-        highlights: ['Mahakaleshwar Jyotirlinga & Mahakal Lok', 'Kaal Bhairav & Harsiddhi Shaktipeeth', 'Ramghat Shipra River Aarti', 'Premium AC Hotel Stay in Ujjain (Night 1)'],
+        "day": 2,
+        "title": "Sanwaliya Seth Darshan & Drive to Khatu Dham (AC Hotel Stay)",
+        "description": "Darshan at miraculous Shri Sanwaliya Seth Mandir. Drive to Khatu, hotel check-in, dinner and night stay.",
+        "highlights": []
       },
       {
-        day: 3,
-        title: 'Omkareshwar Jyotirlinga, Mamleshwar & Maheshwar Rajwada',
-        description: 'Early morning drive to holy Omkareshwar on Mandhata island. Seek blessings at Omkareshwar Jyotirlinga and Mamleshwar Mandir along the Narmada River. Proceed to historic Maheshwar to visit Rani Ahilyabai Holkar Rajwada, picturesque ghats, and shop for authentic world-famous Maheshwari handloom sarees. Evening boarding of 2×2 AC Sleeper Coach for return journey to Mumbai.',
-        highlights: ['Omkareshwar & Mamleshwar Jyotirlinga Darshan', 'Ahilyabai Holkar Rajwada & Ghats', 'Maheshwari Saree Market Shopping', 'Return AC Coach Boarding'],
+        "day": 3,
+        "title": "Khatu Shyam Baba Darshan, Salasar Balaji Dham & Return Boarding",
+        "description": "Early morning holy darshan of Khatu Shyam Baba and Salasar Balaji Dham. Evening boarding AC coach for Pune.",
+        "highlights": []
       },
       {
-        day: 4,
-        title: 'Highway Return Journey & Arrival in Mumbai',
-        description: 'Comfortable day-long transit through Maharashtra with morning tea, breakfast, and delicious pure veg meals. Arrive safely back in Mumbai on 19 October 2026 carrying Mahakal’s divine blessings, sacred holy water, and joyful memories.',
-        highlights: ['Delicious Veg Meals & Tea', 'Arrival in Mumbai on 19 October 2026', 'Blessed Memories & Divine Prasad'],
-      },
+        "day": 4,
+        "title": "Highway Return Journey & Safe Arrival in Pune",
+        "description": "Comfortable transit with morning tea, breakfast & pure veg meals. Safe arrival back in Pune on 26 October 2026.",
+        "highlights": []
+      }
     ],
-    batchDates: [
+    "batchDates": [
       {
-        id: 'batch-mumbai-ujjain-oct-2026',
-        month: 'October',
-        label: '16 Oct 2026 – 19 Oct 2026 (Mumbai to Mumbai)',
-        tag: 'Special Spiritual Yatra 2026 • Lower ₹7,999 / Upper ₹7,499',
-        startDate: '2026-10-16',
-        endDate: '2026-10-19',
-        status: 'available',
-      },
+        "id": "batch-khatu-salasar-oct-2026",
+        "month": "October",
+        "label": "23 Oct 2026 – 26 Oct 2026 (Pune to Pune)",
+        "tag": "Special Spiritual Yatra 2026 • Lower ₹8,499 / Upper ₹7,499",
+        "startDate": "2026-10-23",
+        "endDate": "2026-10-26",
+        "status": "available",
+        "_id": "6af07157a7e7406a2ef3e5b3"
+      }
     ],
-    overview: 'Seek the holy blessings of Lord Shiva on this 3-day spiritual pilgrimage (returning on 4th day) from Mumbai covering Ujjain Mahakaleshwar Jyotirlinga, Mahakal Corridor, Kaal Bhairav, Omkareshwar Jyotirlinga, Mamleshwar, and historic Maheshwar Rajwada traveling in 2×2 AC Sleeper Coach with 1 Night AC Hotel stay.',
+    "overview": "Embark on a sacred 3-day spiritual pilgrimage (returning on 4th day) from Pune covering holy Khatu Shyam Baba, miraculous Sanwaliya Seth Mandir, and revered Salasar Balaji Dham with 1 Night AC Hotel stay and 2×2 AC Sleeper Coach comfort."
   },
   {
-    id: 'tirupati-balaji-srisailam-jyotirlinga-kolhapur-mahalakshmi',
-    slug: 'tirupati-balaji-srisailam-jyotirlinga-kolhapur-mahalakshmi',
-    title: 'Tirupati Balaji, Srisailam Jyotirlinga, Mahanandi, Kolhapur Mahalakshmi',
-    subtitle: 'Lord Venkateswara Tirupati Balaji, Mallikarjuna Srisailam Jyotirlinga, Kalahasti Rahu-Ketu, Mahanandi & Kolhapur Mahalakshmi',
-    destination: 'Tirupati & Srisailam',
-    state: 'Andhra Pradesh & Maharashtra',
-    durationDays: 6,
-    durationNights: 5,
-    durationLabel: '6 Days',
-    datesLabel: '',
-    basePrice: 10999,
-    priceDisplay: '₹10,999 per person',
-    depositPrice: 2999,
-    advanceLabel: 'Advance: ₹2,999',
-    rating: 4.9,
-    reviewsCount: 134,
-    featured: true,
-    image: 'https://images.unsplash.com/photo-1582510003544-4d00b7f74220?q=80&w=1000&auto=format&fit=crop',
-    gallery: [
-      'https://images.unsplash.com/photo-1582510003544-4d00b7f74220?q=80&w=1000&auto=format&fit=crop',
-      'https://images.unsplash.com/photo-1609766857041-ed402ea8069a?q=80&w=1000&auto=format&fit=crop',
-      'https://images.unsplash.com/photo-1590050752117-238cb0fb12b1?q=80&w=1000&auto=format&fit=crop',
+    "id": "pune-to-2-jyotirlinga-yatra--ujjain-omkareshwar-maheshwar",
+    "slug": "pune-to-2-jyotirlinga-yatra--ujjain-omkareshwar-maheshwar",
+    "title": "pune to 2 Jyotirlinga Yatra – Ujjain, Omkareshwar, Maheshwar",
+    "subtitle": "Mahakaleshwar Jyotirlinga, Mahakal Corridor, Shaktipeeths, Omkareshwar, Mamleshwar, Maheshwar Rajwada & Ghrishneshwar",
+    "destination": "Ujjain & Omkareshwar",
+    "state": "Madhya Pradesh & Maharashtra",
+    "durationDays": 3,
+    "durationNights": 2,
+    "durationLabel": "3 Days / 2 Nights",
+    "datesLabel": "16 Nov 2026 Onwards (14 Batches)",
+    "basePrice": 5999,
+    "priceDisplay": "₹5,999 per person",
+    "depositPrice": 1999,
+    "advanceLabel": "Advance: ₹1,999",
+    "rating": 4.9,
+    "reviewsCount": 140,
+    "featured": true,
+    "image": "/images/tours_travels_bg.jpg",
+    "gallery": [
+      "/images/tours_travels_bg.jpg"
     ],
-    sites: [
-      'Srisailam Jyotirlinga',
-      'Mahanandi Temple',
-      'Kalahasti Temple',
-      'Tirupati Balaji Temple',
-      'Padmavati Ammavari Temple',
-      'Kolhapur Mahalakshmi Temple',
+    "sites": [
+      "Mahakaleshwar Jyotirlinga",
+      "Mahakal Corridor",
+      "Harsiddhi Mata Shaktipeeth",
+      "Bada Ganesh Temple",
+      "Kaal Bhairav Temple",
+      "Gadkalika Mata Shaktipeeth",
+      "Mangalnath Temple",
+      "Sandipani Ashram",
+      "Ram Ghat",
+      "Runmukteshwar Mahadev",
+      "Omkareshwar Jyotirlinga",
+      "Mamleshwar Temple",
+      "Maheshwar Rajwada",
+      "Maheshwar Ghat",
+      "Ghrishneshwar Jyotirlinga"
     ],
-    inclusions: [
-      'New Urbania AC Pushback Bus',
-      'Hotel Stay (4-Person Sharing Room)',
-      'Daily Morning Tea',
-      'Drinking Water Provided',
-      'Travel Insurance',
+    "inclusions": [
+      "2*2 sleeper  AC Bus",
+      "Hotel Stay (4-5 sharing)",
+      "1 Veg Meal/Day",
+      "Drinking Water",
+      "Travel Insurance"
     ],
-    exclusions: [
-      'Puja / Abhishek Charges',
-      'VIP Darshan Pass',
-      'Local Travel / Auto Rickshaw',
-      'Boating Charges',
-      'Personal Expenses / Shopping',
+    "exclusions": [
+      "Puja / Abhishek Charges",
+      "VIP Darshan Pass",
+      "Local Travel / Auto Rickshaw",
+      "Boating Charges",
+      "Personal Expenses & Shopping"
     ],
-    terms: [
-      'Booking confirmed only after advance received',
-      'No refund on cancellation',
-      'Substitute traveler allowed',
+    "terms": [
+      "Booking confirmed only after advance received",
+      "No refund on cancellation",
+      "Substitute traveler allowed"
     ],
-    itinerary: [
+    "itinerary": [
       {
-        day: 1,
-        title: 'Departure & Kolhapur Mahalakshmi Darshan',
-        description: 'Depart from Pune in New Urbania AC Pushback Bus. Reach the holy city of Kolhapur for auspicious darshan at the ancient Shri Ambabai Mahalakshmi Shaktipeeth Temple.',
-        highlights: ['Urbania AC Bus Departure', 'Kolhapur Mahalakshmi Darshan', 'Overnight Journey to Srisailam'],
+        "day": 1,
+        "title": "Ujjain Mahakal & Corridor Darshan",
+        "description": "Mahakaleshwar Jyotirlinga, Mahakal Corridor, Shaktipeeths and Ram Ghat.",
+        "highlights": []
       },
       {
-        day: 2,
-        title: 'Srisailam Mallikarjuna Jyotirlinga & Bhramaramba Devi',
-        description: 'Arrive at the sacred Nallamala Hills. Perform holy darshan at Sri Mallikarjuna Swamy Jyotirlinga and Bhramaramba Devi Shaktipeeth on the banks of Krishna River.',
-        highlights: ['Mallikarjuna Jyotirlinga', 'Bhramaramba Devi Shaktipeeth', 'Patalganga View'],
+        "day": 2,
+        "title": "Omkareshwar Jyotirlinga & Maheshwar Rajwada",
+        "description": "Omkareshwar Jyotirlinga, Mamleshwar, and Maheshwar Ghats.",
+        "highlights": []
       },
       {
-        day: 3,
-        title: 'Mahanandi Temple & Scenic Drive to Kalahasti',
-        description: 'Visit the historic Mahanandi Temple with its crystalline freshwater Kalyani Pushkarini, followed by a scenic drive towards Srikalahasti.',
-        highlights: ['Mahanandi Sacred Spring', 'Ancient Architecture', 'Hotel Check-In'],
-      },
-      {
-        day: 4,
-        title: 'Srikalahasteeswara Temple & Arrival in Tirupati',
-        description: 'Seek blessings at the famous Srikalahasti Vayu Lingam temple (renowned for Rahu-Ketu remedies) and proceed to the holy foothills of Tirupati.',
-        highlights: ['Srikalahasteeswara Vayu Lingam', 'Rahu Ketu Kshetra', 'Tirupati Foothills'],
-      },
-      {
-        day: 5,
-        title: 'Sacred Tirumala Tirupati Balaji & Padmavati Darshan',
-        description: 'Ascend the sacred Seven Hills to Tirumala for unforgettable darshan of Lord Venkateswara (Tirupati Balaji), followed by Padmavati Ammavari Temple at Tiruchanur.',
-        highlights: ['Lord Venkateswara Balaji Darshan', 'Tirupati Laddu Prasad', 'Padmavati Ammavari Temple'],
-      },
-      {
-        day: 6,
-        title: 'Return Journey to Pune with Divine Blessings',
-        description: 'Concluding the auspicious pilgrimage with morning prayers and relaxed travel back to Pune in New Urbania AC comfort.',
-        highlights: ['Comfortable Return Journey', 'Divine Blessings & Prasad'],
-      },
+        "day": 3,
+        "title": "Ghrishneshwar Jyotirlinga & Return",
+        "description": "Ghrishneshwar Jyotirlinga darshan and return journey.",
+        "highlights": []
+      }
     ],
-    batchDates: [],
-    overview: 'Embark on a sanctified South Indian pilgrimage to seek the divine blessings of Lord Venkateswara at Tirupati Balaji, Sri Mallikarjuna Jyotirlinga at Srisailam, Srikalahasti, and Kolhapur Mahalakshmi Mata traveling comfortably in New Urbania AC Pushback Bus.',
+    "batchDates": [
+      {
+        "id": "batch-1793856594659",
+        "month": "November",
+        "label": "12 Nov 2026 – 15 Nov 2021",
+        "tag": "Batch Special",
+        "startDate": "2026-11-12",
+        "endDate": "2021-11-15",
+        "status": "full",
+        "_id": "6aec1526e9d432feed11d110"
+      },
+      {
+        "id": "batch-1794075175808",
+        "month": "November",
+        "label": "16 Nov 2026 – 19 Nov 2026",
+        "tag": "Batch #2 (Mid Nov)",
+        "startDate": "2026-11-16",
+        "endDate": "2026-11-19",
+        "status": "available",
+        "_id": "6aef6d1f6d1889e3ab6f9d4e"
+      },
+      {
+        "id": "batch-1794075244631",
+        "month": "November",
+        "label": "20 Nov 2026 – 23 Nov 2026",
+        "tag": "Batch #2 (Mid Nov)",
+        "startDate": "2026-11-20",
+        "endDate": "2026-11-23",
+        "status": "available",
+        "_id": "6aef6d1f6d1889e3ab6f9d4f"
+      },
+      {
+        "id": "batch-1794075280428",
+        "month": "November",
+        "label": "27 Nov 2026 – 30 Nov 2026",
+        "tag": "Batch #3 (Late Nov)",
+        "startDate": "2026-11-27",
+        "endDate": "2026-11-30",
+        "status": "available",
+        "_id": "6aef6d1f6d1889e3ab6f9d50"
+      },
+      {
+        "id": "batch-1794075340956",
+        "month": "December",
+        "label": "04 Dec 2026 – 07 Nov 2026",
+        "tag": "Batch #1 (Early Dec)",
+        "startDate": "2026-12-04",
+        "endDate": "2026-11-07",
+        "status": "available",
+        "_id": "6aef6d1f6d1889e3ab6f9d51"
+      },
+      {
+        "id": "batch-1794075375933",
+        "month": "December",
+        "label": "11 Dec 2026 – 14 Dec 2026",
+        "tag": "Batch #1 (Early Dec)",
+        "startDate": "2026-12-11",
+        "endDate": "2026-12-14",
+        "status": "available",
+        "_id": "6aef6d1f6d1889e3ab6f9d52"
+      },
+      {
+        "id": "batch-1794075460348",
+        "month": "December",
+        "label": "18 Dec 2026 – 21 Dec 2026",
+        "tag": "Batch #2 (Mid Dec)",
+        "startDate": "2026-12-18",
+        "endDate": "2026-12-21",
+        "status": "available",
+        "_id": "6aef6d1f6d1889e3ab6f9d53"
+      },
+      {
+        "id": "batch-1794075507720",
+        "month": "December",
+        "label": "25 Dec 2026 – 28 Dec 2026",
+        "tag": "Batch #3 (Late Dec)",
+        "startDate": "2026-12-25",
+        "endDate": "2026-12-28",
+        "status": "available",
+        "_id": "6aef6d1f6d1889e3ab6f9d54"
+      },
+      {
+        "id": "batch-1794075557173",
+        "month": "December",
+        "label": "25 Dec 2026 – 28 Dec 2026",
+        "tag": "Batch #3 (Late Dec)",
+        "startDate": "2026-12-25",
+        "endDate": "2026-12-28",
+        "status": "available",
+        "_id": "6aef6d1f6d1889e3ab6f9d55"
+      },
+      {
+        "id": "batch-1794075566207",
+        "month": "December",
+        "label": "25 Dec 2026 – 28 Dec 2026",
+        "tag": "Batch #3 (Late Dec)",
+        "startDate": "2026-12-25",
+        "endDate": "2026-12-28",
+        "status": "available",
+        "_id": "6aef6d1f6d1889e3ab6f9d56"
+      },
+      {
+        "id": "batch-1794075781991",
+        "month": "January",
+        "label": "01 Jan 2027 – 04 Jan 2027",
+        "tag": "Batch #1 (Early Jan)",
+        "startDate": "2027-01-01",
+        "endDate": "2027-01-04",
+        "status": "available",
+        "_id": "6aef6d1f6d1889e3ab6f9d57"
+      },
+      {
+        "id": "batch-1794075817912",
+        "month": "January",
+        "label": "08 Jan 2027 – 11 Jan 2027",
+        "tag": "Batch #1 (Early Jan)",
+        "startDate": "2027-01-08",
+        "endDate": "2027-01-11",
+        "status": "available",
+        "_id": "6aef6d1f6d1889e3ab6f9d58"
+      },
+      {
+        "id": "batch-1794075830631",
+        "month": "January",
+        "label": "15 Jan 2027 – 18 Jan 2027",
+        "tag": "Batch #1 (Early Jan)",
+        "startDate": "2027-01-15",
+        "endDate": "2027-01-18",
+        "status": "available",
+        "_id": "6aef6d1f6d1889e3ab6f9d59"
+      },
+      {
+        "id": "batch-1794075881813",
+        "month": "January",
+        "label": "29 Jan 2027 – 01 Feb 2027",
+        "tag": "Batch #1 (Early Jan)",
+        "startDate": "2027-01-29",
+        "endDate": "2027-02-01",
+        "status": "available",
+        "_id": "6aef6d1f6d1889e3ab6f9d5a"
+      }
+    ],
+    "overview": "Embark on a soul-cleansing 3-day spiritual pilgrimage covering 3 sacred Jyotirlingas (Mahakaleshwar, Omkareshwar, Ghrishneshwar) alongside 15 holy temples, Shaktipeeths, and majestic Maheshwar ghats with New Urbania Pushback AC comfort."
   },
   {
-    id: 'south-india-premium-mysore-ooty-munnar-thekkady-alleppey-kochi',
-    slug: 'south-india-premium-mysore-ooty-munnar-thekkady-alleppey-kochi',
-    title: 'South India Premium Tour – Mysore, Ooty, Pollachi, Munnar, Thekkady, Alleppey, Kochi',
-    subtitle: 'Experience royal Mysore, chilly Ooty hills, lush Munnar tea gardens, Thekkady wilderness & serene Alleppey backwaters in AC Urbania comfort',
-    destination: 'Mysore, Ooty & Kerala',
-    state: 'Karnataka, Tamil Nadu & Kerala',
-    durationDays: 7,
-    durationNights: 4,
-    durationLabel: '7 Days / 4–5 Nights',
-    datesLabel: '01 Oct 2026 – 08 Oct 2026',
-    basePrice: 15999,
-    priceDisplay: '₹15,999 per person',
-    depositPrice: 4999,
-    advanceLabel: 'Advance: ₹4,999',
-    rating: 5.0,
-    reviewsCount: 118,
-    featured: true,
-    image: 'https://images.unsplash.com/photo-1602216056096-3b40cc0c9944?q=80&w=1000&auto=format&fit=crop',
-    gallery: [
-      'https://images.unsplash.com/photo-1602216056096-3b40cc0c9944?q=80&w=1000&auto=format&fit=crop',
-      'https://images.unsplash.com/photo-1600100397800-47b2511475e1?q=80&w=1000&auto=format&fit=crop',
-      'https://images.unsplash.com/photo-1596176530529-78163a4f7af2?q=80&w=1000&auto=format&fit=crop',
-      'https://images.unsplash.com/photo-1589182373726-e4f658ab50f0?q=80&w=1000&auto=format&fit=crop',
+    "id": "pune-to-girnar-dwarka-somnath-jyotirlinga",
+    "slug": "pune-to-girnar-dwarka-somnath-jyotirlinga",
+    "title": "Pune to Girnar Mountain | Dwarka, Somnath Jyotirlinga | Statue of Unity",
+    "subtitle": "Sacred Pilgrimage in One Trip • Girnar Mountain, Dwarkadhish, Bet Dwarka, Somnath Jyotirlinga, Nageshwar, Neelkanth Dham & Statue of Unity",
+    "destination": "Girnar, Dwarka & Somnath",
+    "state": "Gujarat",
+    "durationDays": 6,
+    "durationNights": 2,
+    "durationLabel": "6 Days / 2 Nights",
+    "datesLabel": "27 Nov 2026 – 03 Dec 2026 (Pune to Pune)",
+    "basePrice": 11999,
+    "priceDisplay": "₹11,999 per person",
+    "depositPrice": 2999,
+    "advanceLabel": "Advance: ₹2,999",
+    "rating": 4.9,
+    "reviewsCount": 140,
+    "featured": true,
+    "image": "https://images.unsplash.com/photo-1609766857041-ed402ea8069a?q=80&w=1200&auto=format&fit=crop",
+    "gallery": [
+      "https://images.unsplash.com/photo-1609766857041-ed402ea8069a?q=80&w=1200&auto=format&fit=crop",
+      "https://images.unsplash.com/photo-1596707328905-234b3e811c75?q=80&w=1200&auto=format&fit=crop"
     ],
-    sites: [
-      'Magnificent Mysore Palace',
-      'Chamundeshwari Temple & Chamundi Hills',
-      'Beautiful Brindavan Gardens',
-      'Ooty Lake & Picturesque Boating',
-      'Botanical Garden & Doddabetta Peak',
-      'Pine Forest & Nilgiri Tea Gardens',
-      'Pollachi Coconut Groves & Mountain Ghat Roads',
-      'Mattupetty Dam & Echo Point',
-      'Kundala Lake & Munnar Tea Museum',
-      'Periyar Wildlife Sanctuary Region & Spice Plantations',
-      'Alleppey Famous Backwaters Sightseeing & Boating',
-      'Fort Kochi, Marine Drive & Chinese Fishing Nets',
-      'St. Francis Church & Kochi City Shopping',
+    "sites": [
+      "Girnar Mountain (Guru Dattatreya & Ambaji Darshan)",
+      "Dwarkadhish Temple (Dwarka)",
+      "Bet Dwarka (Island & Holy Shrine)",
+      "Shree Somnath Jyotirlinga Temple",
+      "Nageshwar Jyotirlinga Temple",
+      "Neelkanth Dham (Swaminarayan Temple, Poicha)",
+      "Statue of Sardar Vallabhbhai Patel (Statue of Unity)",
+      "Gomti Ghat & Sudama Setu (Dwarka)",
+      "Bhalka Tirth (Lord Krishna Sacred Site)",
+      "Junagadh Heritage & Girnar Foothills"
     ],
-    inclusions: [
-      'Round-trip travel from Pune to Pune by AC Urbania (Pushback seats)',
-      'Dedicated comfortable vehicle for the entire itinerary',
-      'Minimum 4 nights stay in clean, quality family hotels (5th night stay subject to schedule)',
-      'Room accommodation on 3 to 4 sharing basis',
-      'Sightseeing as per the itinerary',
-      'Driver allowance, toll charges, parking fees, and state entry permits',
-      'Complete tour planning and guidance throughout the trip',
+    "inclusions": [
+      "Sleeper Coach (2×2 AC Pushback/Sleeper Bus Travel)",
+      "Overnight Stay in Comfortable AC Hotels (2 Nights Accommodation)",
+      "4-Person Sharing Rooms",
+      "2 Meals per Day (Pure Vegetarian Lunch & Dinner)",
+      "Daily Morning Tea",
+      "Daily Morning Breakfast",
+      "Daily Morning Access to Hotel Facilities for Bathing & Fresh-up",
+      "Drinking Water Provided During Meals",
+      "Comprehensive Travel Insurance"
     ],
-    exclusions: [
-      'Daily breakfast, lunch, and dinner',
-      'Entry tickets for boating, safaris, monuments, and viewpoints',
-      'Personal shopping, laundry, and individual expenses',
-      'Additional sightseeing spots not mentioned in the itinerary',
-      'Any extra costs arising from weather, traffic delays, or natural causes',
+    "exclusions": [
+      "Girnar Ropeway Ticket Charges",
+      "Puja / Abhishek Rituals & Special Offerings",
+      "VIP / Fast-track Darshan Passes",
+      "Local Transport / Rickshaw Fares",
+      "Boating Charges at Bet Dwarka",
+      "Personal Expenses, Laundry & Shopping"
     ],
-    terms: [
-      'The hotel stay covers a minimum of 4 nights; a 5th night stay may be added based on route timing and conditions.',
-      'Accommodation will be on a 3 to 4 persons per room basis.',
-      'Seats will be confirmed only upon payment of the ₹4,999/- advance booking amount.',
-      'Remaining tour balance must be cleared before the designated date prior to departure.',
-      'The order of sightseeing points may change based on traffic, weather, or local circumstances.',
-      'All travelers must carry a valid government-issued photo ID.',
-      'Please carry necessary warm clothing and personal medications for high-altitude areas.',
-      'Bookings are accepted on a first-come, first-served basis due to limited seats (15 seats only).',
+    "terms": [
+      "Booking is confirmed strictly upon receipt of the ₹2,999/- advance payment.",
+      "Strict No Refund policy in case of cancellation.",
+      "You may send another person in your place (ticket transfer permitted).",
+      "Seats are limited – secure your spot today!"
     ],
-    itinerary: [
+    "itinerary": [
       {
-        day: 1,
-        title: 'Thursday Night Departure from Pune to Mysore',
-        description: 'Depart comfortably on Thursday night (01 October 2026) from Pune in New AC Urbania with Pushback seats. Embark on a smooth overnight road journey towards Karnataka.',
-        highlights: ['Departure from Pune (Thursday Night, 1 Oct)', 'New AC Urbania with Pushback Seats', 'Scenic Overnight Highway Drive'],
+        "day": 1,
+        "title": "Pune Departure & Highway Journey towards Gujarat",
+        "description": "Depart in the evening from Pune (Katraj / Mastan Hotel / Swargate) in comfortable 2×2 AC Sleeper Coach. Enjoy scenic highway travel towards Gujarat with devotional group ambiance.",
+        "highlights": []
       },
       {
-        day: 2,
-        title: 'Arrival in Royal Mysore – Palace, Chamundeshwari Temple & Brindavan Gardens',
-        description: 'Arrive in the royal heritage city of Mysore. Hotel check-in and refresh. Visit the world-famous magnificent Mysore Palace, seek blessings at Sri Chamundeshwari Temple atop Chamundi Hills, and witness the captivating evening illuminated musical fountains at Brindavan Gardens.',
-        highlights: ['Magnificent Mysore Palace', 'Chamundeshwari Temple', 'Brindavan Gardens', 'Mysore Local City Tour'],
+        "day": 2,
+        "title": "Neelkanth Dham (Poicha) & Statue of Unity Sightseeing",
+        "description": "Morning hotel fresh-up and breakfast. Visit the magnificent Neelkanth Dham Swaminarayan Temple in Poicha. Proceed to marvel at the world-famous Statue of Sardar Vallabhbhai Patel (Statue of Unity). Evening journey towards Dwarka.",
+        "highlights": []
       },
       {
-        day: 3,
-        title: 'Mysore to Ooty – Queen of Hill Stations, Lake & Tea Gardens',
-        description: 'Scenic morning drive ascending the Nilgiri Mountain ghat roads into chilly Ooty. Experience panoramic views from Doddabetta Peak (highest vantage in the Nilgiris), stroll through the Government Botanical Garden, wander the lush Pine Forest, enjoy boating at Ooty Lake, and explore rolling green tea plantations.',
-        highlights: ['Nilgiri Mountain Ghat Roads', 'Doddabetta Peak Viewpoint', 'Ooty Lake & Boating', 'Botanical Garden & Pine Forest', 'Tea Garden Photo Spots'],
+        "day": 3,
+        "title": "Dwarkadhish Temple, Gomti Ghat, Nageshwar Jyotirlinga & Bet Dwarka",
+        "description": "Morning arrival in holy Dwarka and check-in to AC hotel. Experience divine blessings at Dwarkadhish Mandir and Gomti Ghat. Visit sacred Nageshwar Jyotirlinga and take a boat ferry to holy Bet Dwarka Island. Overnight stay in AC hotel at Dwarka.",
+        "highlights": []
       },
       {
-        day: 4,
-        title: 'Ooty to Munnar via Pollachi Coconut Groves & Waterfalls',
-        description: 'Descend through the picturesque landscapes of Pollachi, surrounded by sprawling coconut plantations, mountain ghat roads, and cascading roadside waterfalls. Ascend into God’s Own Country (Kerala) to Munnar, the world-renowned paradise of rolling tea hills. Hotel check-in and evening relaxation.',
-        highlights: ['Pollachi Coconut Groves', 'Mountain Ghat Waterfalls & Photo Spots', 'Scenic Drive to Munnar', 'Munnar Hotel Check-In'],
+        "day": 4,
+        "title": "Somnath Jyotirlinga, Bhalka Tirth & Evening Sound and Light Show",
+        "description": "Morning breakfast and drive to Prabhas Patan, Somnath. Visit sacred Bhalka Tirth. Seek divine darshan at the 1st Jyotirlinga Shree Somnath Mahadev Temple, followed by the enchanting evening Aarti and Sound & Light Show by the Arabian Sea. Overnight stay in AC hotel at Somnath.",
+        "highlights": []
       },
       {
-        day: 5,
-        title: 'Munnar Tea Plantations Sightseeing to Thekkady Spice Trails',
-        description: 'Morning exploration of Munnar visiting Mattupetty Dam, Echo Point, Kundala Lake, and the historic Munnar Tea Gardens & Museum. In the afternoon, scenic drive to Thekkady bordering the Periyar Wildlife Sanctuary. Visit aromatic spice plantations and local spice markets for authentic Kerala cardamom, cinnamon, and pepper shopping.',
-        highlights: ['Mattupetty Dam & Echo Point', 'Kundala Lake & Tea Museum', 'Periyar Wildlife Sanctuary Region', 'Authentic Kerala Spice Shopping'],
+        "day": 5,
+        "title": "Junagadh & Sacred Girnar Mountain Darshan (Dattatreya & Ambaji)",
+        "description": "Morning arrival at the foothills of holy Girnar Mountain in Junagadh. Ascend by ropeway or steps to seek divine darshan of Shri Ambaji Mata and Guru Dattatreya Holy Padukas. Evening departure on the return highway journey towards Pune.",
+        "highlights": []
       },
       {
-        day: 6,
-        title: 'Thekkady to Alleppey Backwaters Boating & Fort Kochi Heritage',
-        description: 'Morning transfer to Alleppey, the Venice of the East. Experience serene backwater boating through palm-fringed canals, witnessing traditional Kerala village life and lush paddy fields. In the afternoon, proceed to Kochi. Explore Fort Kochi, the iconic Chinese Fishing Nets, and the vibrant Marine Drive promenade.',
-        highlights: ['Alleppey Backwaters Boating', 'Palm-fringed Waterways', 'Fort Kochi & Chinese Fishing Nets', 'Marine Drive Promenade'],
-      },
-      {
-        day: 7,
-        title: 'Kochi City Heritage Tour & Return Journey to Pune',
-        description: 'Morning visit to St. Francis Church and local Kochi heritage landmarks. Begin the relaxing return journey in AC Urbania back to Pune. Arrive in Pune on Thursday morning, 8 October 2026, carrying divine memories of an unforgettable South India tour.',
-        highlights: ['St. Francis Church & Heritage Tour', 'Local Kochi Shopping', 'Comfortable AC Urbania Return Transfer', 'Arrival in Pune on Thursday Morning (8 Oct)'],
-      },
+        "day": 6,
+        "title": "Return Highway Journey & Safe Arrival in Pune",
+        "description": "Day-long highway journey with morning tea, fresh breakfast, and pure vegetarian meals provided en route. Safe and blessed arrival back in Pune. Har Har Mahadev!",
+        "highlights": []
+      }
     ],
-    batchDates: [
+    "batchDates": [
       {
-        id: 'batch-south-india-oct-2026',
-        month: 'October',
-        label: '01 Oct 2026 – 08 Oct 2026 (Pune to Pune)',
-        tag: 'Limited 15 Seats • Premium AC Urbania',
-        startDate: '2026-10-01',
-        endDate: '2026-10-08',
-        status: 'available',
-      },
+        "id": "batch-girnar-nov-2026",
+        "month": "November",
+        "label": "27 Nov 2026 – 03 Dec 2026 (Pune to Pune)",
+        "tag": "Special Gujarat Pilgrimage 2026 • Lower ₹12,999 / Upper ₹11,999",
+        "startDate": "2026-11-27",
+        "endDate": "2026-12-03",
+        "status": "available",
+        "_id": "6af07158a7e7406a2ef3e5e7"
+      }
     ],
-    overview: 'Experience the royal heritage of Mysore, the chilly breeze of Ooty, the lush tea gardens of Munnar, the wilderness of Thekkady, and the serene backwaters of Alleppey—all in one premium 7-day tour package traveling Pune to Pune by comfortable AC Urbania (Pushback seats) for only 15 travelers.',
+    "overview": "Embark on a divine 6-day spiritual pilgrimage from Pune covering sacred Girnar Mountain, Dwarkadhish Temple, Bet Dwarka, Somnath Jyotirlinga, Nageshwar Jyotirlinga, Neelkanth Dham, and the iconic Statue of Sardar Vallabhbhai Patel traveling comfortably in 2×2 AC Sleeper Coach with 2 Nights AC Hotel Stay and pure vegetarian meals."
   },
   {
-    id: 'pune-to-girnar-dwarka-somnath-jyotirlinga',
-    slug: 'pune-to-girnar-dwarka-somnath-jyotirlinga',
-    title: 'Pune to Girnar Mountain | Dwarka, Somnath Jyotirlinga | Statue of Unity',
-    subtitle: 'Sacred Pilgrimage in One Trip • Girnar Mountain, Dwarkadhish, Bet Dwarka, Somnath Jyotirlinga, Nageshwar, Neelkanth Dham & Statue of Unity',
-    destination: 'Girnar, Dwarka & Somnath',
-    state: 'Gujarat',
-    durationDays: 6,
-    durationNights: 2,
-    durationLabel: '5 to 6 Days Journey • 2 Nights AC Hotel Stay (Pune to Pune)',
-    datesLabel: '27 Nov 2026 – 03 Dec 2026 (Pune to Pune)',
-    basePrice: 11999,
-    lowerSeatPrice: 12999,
-    upperSeatPrice: 11999,
-    priceDisplay: 'Lower Berth ₹12,999 / Upper Berth ₹11,999 per person',
-    depositPrice: 2999,
-    advanceLabel: 'Advance: ₹2,999',
-    rating: 5.0,
-    reviewsCount: 184,
-    featured: true,
-    image: 'https://images.unsplash.com/photo-1609766857041-ed402ea8069a?q=80&w=1200&auto=format&fit=crop',
-    gallery: [
-      'https://images.unsplash.com/photo-1609766857041-ed402ea8069a?q=80&w=1200&auto=format&fit=crop',
-      'https://images.unsplash.com/photo-1596707328905-234b3e811c75?q=80&w=1200&auto=format&fit=crop',
-      'https://images.unsplash.com/photo-1548013146-72479768bada?q=80&w=1200&auto=format&fit=crop',
+    "id": "pune-to-sanwaliya-seth---khatu-shyam-babaujjain-mahakal",
+    "slug": "pune-to-sanwaliya-seth---khatu-shyam-babaujjain-mahakal",
+    "title": "Pune to Sanwaliya Seth  | Khatu Shyam Baba/ujjain mahakal",
+    "subtitle": "Special Spiritual Yatra 2026 • Pune to Pune • Sacred Darshan of Khatu Shyam Baba, Sanwaliya Seth & Salasar Balaji Dham",
+    "destination": "Rajasthan & Madhya Pradesh",
+    "state": "Rajasthan & Maharashtra",
+    "durationDays": 3,
+    "durationNights": 1,
+    "durationLabel": "3 Days / 1 Nights",
+    "datesLabel": "23 Oct 2026 – 26 Oct 2026 (Pune to Pune)",
+    "basePrice": 7999,
+    "priceDisplay": "₹7,999 per person",
+    "depositPrice": 2999,
+    "advanceLabel": "Advance: ₹2,999",
+    "rating": 4.9,
+    "reviewsCount": 140,
+    "featured": true,
+    "image": "/images/tours/khatu_shyam_salasar_tour.jpg",
+    "gallery": [
+      "/images/tours/khatu_shyam_salasar_tour.jpg"
     ],
-    sites: [
-      'Girnar Mountain (Guru Dattatreya & Ambaji Darshan)',
-      'Dwarkadhish Temple (Dwarka)',
-      'Bet Dwarka (Island & Holy Shrine)',
-      'Shree Somnath Jyotirlinga Temple',
-      'Nageshwar Jyotirlinga Temple',
-      'Neelkanth Dham (Swaminarayan Temple, Poicha)',
-      'Statue of Sardar Vallabhbhai Patel (Statue of Unity)',
-      'Gomti Ghat & Sudama Setu (Dwarka)',
-      'Bhalka Tirth (Lord Krishna Sacred Site)',
-      'Junagadh Heritage & Girnar Foothills',
+    "sites": [
+      "Khatu Shyam Baba (Rajasthan)",
+      "Shri Sanwaliya Seth Mandir (Mandphiya)",
+      "Salasar Balaji Dham (Hanuman Ji)"
     ],
-    inclusions: [
-      'Sleeper Coach (2×2 AC Pushback/Sleeper Bus Travel)',
-      'Overnight Stay in Comfortable AC Hotels (2 Nights Accommodation)',
-      '4-Person Sharing Rooms',
-      '2 Meals per Day (Pure Vegetarian Lunch & Dinner)',
-      'Daily Morning Tea',
-      'Daily Morning Breakfast',
-      'Daily Morning Access to Hotel Facilities for Bathing & Fresh-up',
-      'Drinking Water Provided During Meals',
-      'Comprehensive Travel Insurance',
+    "inclusions": [
+      "Sleeper Coach (2×2 AC Pushback/Sleeper Luxury Travel)",
+      "1 Night Stay in Premium AC Hotel",
+      "4-Person Sharing Rooms (Quad Sharing)",
+      "2 Pure Vegetarian Meals per Day (Lunch & Dinner)",
+      "Daily Morning Tea",
+      "Fresh Breakfast Daily",
+      "Packaged Drinking Water Provided During Meals",
+      "Comprehensive Travel Insurance"
     ],
-    exclusions: [
-      'Girnar Ropeway Ticket Charges',
-      'Puja / Abhishek Rituals & Special Offerings',
-      'VIP / Fast-track Darshan Passes',
-      'Local Transport / Rickshaw Fares',
-      'Boating Charges at Bet Dwarka',
-      'Personal Expenses, Laundry & Shopping',
+    "exclusions": [
+      "Puja, Archana & Abhishek Charges",
+      "VIP / Fast-track Darshan Passes",
+      "Local Travel / Auto-Rickshaw / E-Rickshaw Charges",
+      "Boating Charges",
+      "Personal Expenses, Shopping & Extra Food"
     ],
-    terms: [
-      'Booking is confirmed strictly upon receipt of the ₹2,999/- advance payment.',
-      'Strict No Refund policy in case of cancellation.',
-      'You may send another person in your place (ticket transfer permitted).',
-      'Seats are limited – secure your spot today!',
+    "terms": [
+      "Booking is confirmed strictly upon receipt of the ₹2,999/- advance amount.",
+      "Strict No Refund policy in case of cancellation.",
+      "You can send another person in your place (ticket transfer permitted)."
     ],
-    itinerary: [
+    "itinerary": [
       {
-        day: 1,
-        title: 'Pune Departure & Highway Journey towards Gujarat',
-        description: 'Depart in the evening from Pune (Katraj / Mastan Hotel / Swargate) in comfortable 2×2 AC Sleeper Coach. Enjoy scenic highway travel towards Gujarat with devotional group ambiance.',
-        highlights: ['Pune Departure', '2×2 AC Sleeper Coach', 'Comfortable Night Highway Journey'],
+        "day": 1,
+        "title": "Pune Departure & Highway Journey to Sanwaliya Seth",
+        "description": "Depart from Pune in luxury 2×2 AC Sleeper Coach towards Rajasthan with group devotion.",
+        "highlights": []
       },
       {
-        day: 2,
-        title: 'Neelkanth Dham (Poicha) & Statue of Unity Sightseeing',
-        description: 'Morning hotel fresh-up and breakfast. Visit the magnificent Neelkanth Dham Swaminarayan Temple in Poicha. Proceed to marvel at the world-famous Statue of Sardar Vallabhbhai Patel (Statue of Unity). Evening journey towards Dwarka.',
-        highlights: ['Neelkanth Dham Poicha', 'Statue of Unity (Sardar Patel)', 'Sardar Sarovar Dam Region', 'Pure Veg Meals'],
+        "day": 2,
+        "title": "Sanwaliya Seth Darshan & Drive to Khatu Dham (AC Hotel Stay)",
+        "description": "Darshan at miraculous Shri Sanwaliya Seth Mandir. Drive to Khatu, hotel check-in, dinner and night stay.",
+        "highlights": []
       },
       {
-        day: 3,
-        title: 'Dwarkadhish Temple, Gomti Ghat, Nageshwar Jyotirlinga & Bet Dwarka',
-        description: 'Morning arrival in holy Dwarka and check-in to AC hotel. Experience divine blessings at Dwarkadhish Mandir and Gomti Ghat. Visit sacred Nageshwar Jyotirlinga and take a boat ferry to holy Bet Dwarka Island. Overnight stay in AC hotel at Dwarka.',
-        highlights: ['Dwarkadhish Mandir', 'Nageshwar Jyotirlinga', 'Bet Dwarka Island Darshan', 'AC Hotel Stay (Night 1)'],
+        "day": 3,
+        "title": "Khatu Shyam Baba Darshan, Salasar Balaji Dham & Return Boarding",
+        "description": "Early morning holy darshan of Khatu Shyam Baba and Salasar Balaji Dham. Evening boarding AC coach for Pune.",
+        "highlights": []
       },
       {
-        day: 4,
-        title: 'Somnath Jyotirlinga, Bhalka Tirth & Evening Sound and Light Show',
-        description: 'Morning breakfast and drive to Prabhas Patan, Somnath. Visit sacred Bhalka Tirth. Seek divine darshan at the 1st Jyotirlinga Shree Somnath Mahadev Temple, followed by the enchanting evening Aarti and Sound & Light Show by the Arabian Sea. Overnight stay in AC hotel at Somnath.',
-        highlights: ['1st Jyotirlinga Somnath Mahadev', 'Bhalka Tirth', 'Somnath Evening Aarti & Laser Show', 'AC Hotel Stay (Night 2)'],
-      },
-      {
-        day: 5,
-        title: 'Junagadh & Sacred Girnar Mountain Darshan (Dattatreya & Ambaji)',
-        description: 'Morning arrival at the foothills of holy Girnar Mountain in Junagadh. Ascend by ropeway or steps to seek divine darshan of Shri Ambaji Mata and Guru Dattatreya Holy Padukas. Evening departure on the return highway journey towards Pune.',
-        highlights: ['Sacred Girnar Mountain', 'Guru Dattatreya Paduka', 'Ambaji Peak & Ropeway Experience', 'Overnight Return Travel in AC Sleeper'],
-      },
-      {
-        day: 6,
-        title: 'Return Highway Journey & Safe Arrival in Pune',
-        description: 'Day-long highway journey with morning tea, fresh breakfast, and pure vegetarian meals provided en route. Safe and blessed arrival back in Pune. Har Har Mahadev!',
-        highlights: ['Scenic Highway Journey', 'Fresh Meals & Tea Provided', 'Safe Arrival in Pune'],
-      },
+        "day": 4,
+        "title": "Highway Return Journey & Safe Arrival in Pune",
+        "description": "Comfortable transit with morning tea, breakfast & pure veg meals. Safe arrival back in Pune on 26 October 2026.",
+        "highlights": []
+      }
     ],
-    batchDates: [
+    "batchDates": [
       {
-        id: 'batch-girnar-nov-2026',
-        month: 'November',
-        label: '27 Nov 2026 – 03 Dec 2026 (Pune to Pune)',
-        tag: 'Special Gujarat Pilgrimage 2026 • Lower ₹12,999 / Upper ₹11,999',
-        startDate: '2026-11-27',
-        endDate: '2026-12-03',
-        status: 'available',
+        "id": "batch-khatu-salasar-oct-2026",
+        "month": "October",
+        "label": "23 Oct 2026 – 26 Oct 2026 (Pune to Pune)",
+        "tag": "Special Spiritual Yatra 2026 • Lower ₹8,499 / Upper ₹7,499",
+        "startDate": "2026-10-23",
+        "endDate": "2026-10-26",
+        "status": "full",
+        "_id": "6aef60a86d1889e3ab6f479b"
       },
+      {
+        "id": "batch-1794076974610",
+        "month": "November",
+        "label": "04 Dec 2026 – 07 Dec 2026",
+        "tag": "Batch #1 (Late nov )",
+        "startDate": "2026-12-04",
+        "endDate": "2026-12-07",
+        "status": "available",
+        "_id": "6aef71316d1889e3ab6fcdba"
+      }
     ],
-    overview: 'Embark on a divine 6-day spiritual pilgrimage from Pune covering sacred Girnar Mountain, Dwarkadhish Temple, Bet Dwarka, Somnath Jyotirlinga, Nageshwar Jyotirlinga, Neelkanth Dham, and the iconic Statue of Sardar Vallabhbhai Patel traveling comfortably in 2×2 AC Sleeper Coach with 2 Nights AC Hotel Stay and pure vegetarian meals.',
+    "overview": "Embark on a sacred 3-day spiritual pilgrimage (returning on 4th day) from Pune covering holy Khatu Shyam Baba, miraculous Sanwaliya Seth Mandir, and revered Salasar Balaji Dham with 1 Night AC Hotel stay and 2×2 AC Sleeper Coach comfort."
   },
+  {
+    "id": "south-india-premium-mysore-ooty-munnar-thekkady-alleppey-kochi",
+    "slug": "south-india-premium-mysore-ooty-munnar-thekkady-alleppey-kochi",
+    "title": "South India Premium Tour – Mysore, Ooty, Pollachi, Munnar, Thekkady, Alleppey, Kochi",
+    "subtitle": "Experience royal Mysore, chilly Ooty hills, lush Munnar tea gardens, Thekkady wilderness & serene Alleppey backwaters in AC Urbania comfort",
+    "destination": "Mysore, Ooty & Kerala",
+    "state": "Karnataka, Tamil Nadu & Kerala",
+    "durationDays": 7,
+    "durationNights": 4,
+    "durationLabel": "7 Days / 4 Nights",
+    "datesLabel": "01 Oct 2026 – 08 Oct 2026",
+    "basePrice": 15999,
+    "priceDisplay": "₹15,999 per person",
+    "depositPrice": 4999,
+    "advanceLabel": "Advance: ₹4,999",
+    "rating": 4.9,
+    "reviewsCount": 140,
+    "featured": true,
+    "image": "https://images.unsplash.com/photo-1602216056096-3b40cc0c9944?q=80&w=1000&auto=format&fit=crop",
+    "gallery": [
+      "https://images.unsplash.com/photo-1602216056096-3b40cc0c9944?q=80&w=1000&auto=format&fit=crop",
+      "https://images.unsplash.com/photo-1600100397800-47b2511475e1?q=80&w=1000&auto=format&fit=crop",
+      "https://images.unsplash.com/photo-1596176530529-78163a4f7af2?q=80&w=1000&auto=format&fit=crop"
+    ],
+    "sites": [
+      "Magnificent Mysore Palace",
+      "Chamundeshwari Temple & Chamundi Hills",
+      "Beautiful Brindavan Gardens",
+      "Ooty Lake & Picturesque Boating",
+      "Botanical Garden & Doddabetta Peak",
+      "Pine Forest & Nilgiri Tea Gardens",
+      "Pollachi Coconut Groves & Mountain Ghat Roads",
+      "Mattupetty Dam & Echo Point",
+      "Kundala Lake & Munnar Tea Museum",
+      "Periyar Wildlife Sanctuary Region & Spice Plantations",
+      "Alleppey Famous Backwaters Sightseeing & Boating",
+      "Fort Kochi, Marine Drive & Chinese Fishing Nets",
+      "St. Francis Church & Kochi City Shopping"
+    ],
+    "inclusions": [
+      "Round-trip travel from Pune to Pune by AC Urbania (Pushback seats)",
+      "Dedicated comfortable vehicle for the entire itinerary",
+      "Minimum 4 nights stay in clean, quality family hotels (5th night stay subject to schedule)",
+      "Room accommodation on 3 to 4 sharing basis",
+      "Sightseeing as per the itinerary",
+      "Driver allowance, toll charges, parking fees, and state entry permits",
+      "Complete tour planning and guidance throughout the trip"
+    ],
+    "exclusions": [
+      "Daily breakfast, lunch, and dinner",
+      "Entry tickets for boating, safaris, monuments, and viewpoints",
+      "Personal shopping, laundry, and individual expenses",
+      "Additional sightseeing spots not mentioned in the itinerary",
+      "Any extra costs arising from weather, traffic delays, or natural causes"
+    ],
+    "terms": [
+      "The hotel stay covers a minimum of 4 nights; a 5th night stay may be added based on route timing and conditions.",
+      "Accommodation will be on a 3 to 4 persons per room basis.",
+      "Seats will be confirmed only upon payment of the ₹4,999/- advance booking amount.",
+      "Remaining tour balance must be cleared before the designated date prior to departure.",
+      "The order of sightseeing points may change based on traffic, weather, or local circumstances.",
+      "All travelers must carry a valid government-issued photo ID.",
+      "Please carry necessary warm clothing and personal medications for high-altitude areas.",
+      "Bookings are accepted on a first-come, first-served basis due to limited seats (15 seats only)."
+    ],
+    "itinerary": [
+      {
+        "day": 1,
+        "title": "Thursday Night Departure from Pune to Mysore",
+        "description": "Depart comfortably on Thursday night (01 October 2026) from Pune in New AC Urbania with Pushback seats. Overnight journey to Karnataka.",
+        "highlights": []
+      },
+      {
+        "day": 2,
+        "title": "Arrival in Royal Mysore – Palace, Chamundeshwari & Brindavan Gardens",
+        "description": "Arrive in Mysore. Hotel check-in. Visit Mysore Palace, Chamundeshwari Temple atop Chamundi Hills, and illuminated Brindavan Gardens.",
+        "highlights": []
+      },
+      {
+        "day": 3,
+        "title": "Mysore to Ooty – Queen of Hill Stations & Tea Gardens",
+        "description": "Scenic drive ascending Nilgiri Ghats. Visit Doddabetta Peak, Botanical Garden, Pine Forest, Ooty Lake boating, and tea plantations.",
+        "highlights": []
+      },
+      {
+        "day": 4,
+        "title": "Ooty to Munnar via Pollachi Coconut Groves & Waterfalls",
+        "description": "Drive through scenic Pollachi coconut plantations, waterfalls, and ghats into Munnar tea paradise. Hotel check-in.",
+        "highlights": []
+      },
+      {
+        "day": 5,
+        "title": "Munnar Sightseeing to Thekkady Spice Trails",
+        "description": "Explore Mattupetty Dam, Echo Point, Kundala Lake, and Munnar Tea Museum. Proceed to Thekkady for spice plantation tour and shopping.",
+        "highlights": []
+      },
+      {
+        "day": 6,
+        "title": "Thekkady to Alleppey Backwaters Boating & Fort Kochi",
+        "description": "Alleppey backwaters boating experience. Afternoon transfer to Kochi for Fort Kochi, Chinese Fishing Nets, and Marine Drive.",
+        "highlights": []
+      },
+      {
+        "day": 7,
+        "title": "Kochi City Heritage & Return Journey to Pune",
+        "description": "Visit St. Francis Church and local markets. Return journey in AC Urbania, arriving in Pune on Thursday morning, 8 October 2026.",
+        "highlights": []
+      }
+    ],
+    "batchDates": [
+      {
+        "id": "batch-south-india-oct-2026",
+        "month": "October",
+        "label": "01 Oct 2026 – 08 Oct 2026 (Pune to Pune)",
+        "tag": "Limited 15 Seats • Premium AC Urbania",
+        "startDate": "2026-10-01",
+        "endDate": "2026-10-08",
+        "status": "available",
+        "_id": "6af07157a7e7406a2ef3e5d6"
+      }
+    ],
+    "overview": "Experience the royal heritage of Mysore, the chilly breeze of Ooty, the lush tea gardens of Munnar, the wilderness of Thekkady, and the serene backwaters of Alleppey—all in one premium 7-day tour package traveling Pune to Pune by comfortable AC Urbania (Pushback seats) for only 15 travelers."
+  },
+  {
+    "id": "tirupati-balaji-srisailam-jyotirlinga-kolhapur-mahalakshmi",
+    "slug": "tirupati-balaji-srisailam-jyotirlinga-kolhapur-mahalakshmi",
+    "title": "Tirupati Balaji, Srisailam Jyotirlinga, Mahanandi, Kolhapur Mahalakshmi",
+    "subtitle": "Lord Venkateswara Tirupati Balaji, Mallikarjuna Srisailam Jyotirlinga, Kalahasti Rahu-Ketu, Mahanandi & Kolhapur Mahalakshmi",
+    "destination": "Tirupati & Srisailam",
+    "state": "Andhra Pradesh & Maharashtra",
+    "durationDays": 6,
+    "durationNights": 5,
+    "durationLabel": "6 Days / 5 Nights",
+    "datesLabel": "Upcoming Departures",
+    "basePrice": 10999,
+    "priceDisplay": "₹10,999 per person",
+    "depositPrice": 2999,
+    "advanceLabel": "Advance: ₹2,999",
+    "rating": 4.9,
+    "reviewsCount": 140,
+    "featured": true,
+    "image": "https://images.unsplash.com/photo-1582510003544-4d00b7f74220?q=80&w=800&auto=format&fit=crop",
+    "gallery": [
+      "https://images.unsplash.com/photo-1582510003544-4d00b7f74220?q=80&w=800&auto=format&fit=crop"
+    ],
+    "sites": [
+      "Srisailam Jyotirlinga",
+      "Mahanandi Temple",
+      "Kalahasti Temple",
+      "Tirupati Balaji Temple",
+      "Padmavati Ammavari Temple",
+      "Kolhapur Mahalakshmi Temple"
+    ],
+    "inclusions": [
+      "New Urbania AC Pushback Bus",
+      "Hotel Stay (4 sharing)",
+      "Daily Morning Tea",
+      "Drinking Water",
+      "Travel Insurance"
+    ],
+    "exclusions": [
+      "Puja / Abhishek Charges",
+      "VIP Darshan Pass",
+      "Local Travel / Auto Rickshaw",
+      "Boating Charges",
+      "Personal Expenses / Shopping"
+    ],
+    "terms": [
+      "Booking confirmed only after advance received",
+      "No refund on cancellation",
+      "Substitute traveler allowed"
+    ],
+    "itinerary": [
+      {
+        "day": 1,
+        "title": "Departure & Kolhapur Mahalakshmi Darshan",
+        "description": "Kolhapur Mahalakshmi Ambabai Temple darshan.",
+        "highlights": []
+      },
+      {
+        "day": 2,
+        "title": "Srisailam Mallikarjuna Jyotirlinga",
+        "description": "Mallikarjuna Swamy Jyotirlinga and Bhramaramba Devi.",
+        "highlights": []
+      },
+      {
+        "day": 3,
+        "title": "Mahanandi Temple & Kalahasti Drive",
+        "description": "Mahanandi Pushkarini and drive to Kalahasti.",
+        "highlights": []
+      },
+      {
+        "day": 4,
+        "title": "Srikalahasti Temple & Tirupati Arrival",
+        "description": "Srikalahasteeswara Vayu Lingam darshan.",
+        "highlights": []
+      },
+      {
+        "day": 5,
+        "title": "Tirumala Tirupati Balaji & Padmavati",
+        "description": "Lord Venkateswara Balaji and Padmavati Ammavari.",
+        "highlights": []
+      },
+      {
+        "day": 6,
+        "title": "Return Journey to Pune",
+        "description": "Return journey with holy prasad.",
+        "highlights": []
+      }
+    ],
+    "batchDates": [],
+    "overview": "Embark on a sanctified South Indian pilgrimage to seek the divine blessings of Lord Venkateswara at Tirupati Balaji, Sri Mallikarjuna Jyotirlinga at Srisailam, Srikalahasti, and Kolhapur Mahalakshmi Mata traveling comfortably in New Urbania AC Pushback Bus."
+  }
 ];

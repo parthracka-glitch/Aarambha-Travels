@@ -54,16 +54,26 @@ export class ToursService {
 
   static async getPackageBySlugOrId(slugOrId: string) {
     let pkg: any = null;
+    const candidates = [slugOrId];
+    if (slugOrId.startsWith('pune-to-')) {
+      candidates.push(slugOrId.replace(/^pune-to-/, ''));
+    } else {
+      candidates.push(`pune-to-${slugOrId}`);
+    }
+
     if (mongoose.connection.readyState === 1) {
       try {
-        pkg = await TourPackage.findOne({ slug: slugOrId }).populate('destinationId');
+        pkg = await TourPackage.findOne({ slug: { $in: candidates } }).populate('destinationId');
         if (!pkg && slugOrId.match(/^[0-9a-fA-F]{24}$/)) {
           pkg = await TourPackage.findById(slugOrId).populate('destinationId');
         }
       } catch (_e) {}
     }
     if (!pkg) {
-      pkg = localStore.getTourPackageByIdOrSlug(slugOrId);
+      for (const candidate of candidates) {
+        pkg = localStore.getTourPackageByIdOrSlug(candidate);
+        if (pkg) break;
+      }
     }
     if (!pkg) {
       const error: any = new Error('Package not found');
