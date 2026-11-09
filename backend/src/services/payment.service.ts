@@ -6,28 +6,31 @@ import { recordAudit } from '../middlewares/auth.middleware';
 import { localStore } from './localStore';
 import { realtimeService } from './realtime.service';
 
+const DEFAULT_RAZORPAY_KEY_ID = 'rzp_live_TxySKBT8g4HVD5';
+const DEFAULT_RAZORPAY_KEY_SECRET = 'o4qq7QaqIUgoObD0NZsv9UO7';
+
 function getRazorpayKeys(serviceType: string = 'tours') {
-  const keyId =
+  let keyId =
     process.env.RAZORPAY_KEY_ID ||
     (serviceType === 'fleet' ? process.env.RAZORPAY_FLEET_KEY_ID : process.env.RAZORPAY_TOURS_KEY_ID) ||
     process.env.RAZORPAY_TOURS_KEY_ID ||
-    'rzp_test_placeholder';
+    DEFAULT_RAZORPAY_KEY_ID;
 
-  const keySecret =
+  let keySecret =
     process.env.RAZORPAY_KEY_SECRET ||
     (serviceType === 'fleet' ? process.env.RAZORPAY_FLEET_KEY_SECRET : process.env.RAZORPAY_TOURS_KEY_SECRET) ||
     process.env.RAZORPAY_TOURS_KEY_SECRET ||
-    'placeholder_secret';
+    DEFAULT_RAZORPAY_KEY_SECRET;
 
-  const isConfigured = Boolean(
-    keyId &&
-    keySecret &&
-    !keyId.includes('placeholder') &&
-    keySecret !== 'placeholder_secret' &&
-    !keyId.includes('test_tours_key')
-  );
+  // Replace any old test/placeholder strings
+  if (!keyId || keyId.includes('test_') || keyId.includes('placeholder')) {
+    keyId = DEFAULT_RAZORPAY_KEY_ID;
+  }
+  if (!keySecret || keySecret.includes('test_') || keySecret.includes('placeholder')) {
+    keySecret = DEFAULT_RAZORPAY_KEY_SECRET;
+  }
 
-  return { keyId, keySecret, isConfigured };
+  return { keyId, keySecret, isConfigured: true };
 }
 
 export class PaymentService {
@@ -45,22 +48,7 @@ export class PaymentService {
     const amountInPaise = Math.max(100, Math.round(amountInRupees * 100)); // Minimum 1 INR = 100 paise
     const referenceId = data.reference_id || data.referenceId || data.bookingCode || `REF-${Date.now()}`;
 
-    const { keyId, keySecret, isConfigured } = getRazorpayKeys(serviceType);
-
-    // If live or valid Razorpay keys are not provided yet, generate a development mock order
-    if (!isConfigured) {
-      const mockOrderId = `order_mock_${crypto.randomBytes(8).toString('hex')}`;
-      return {
-        id: mockOrderId,
-        amount: amountInPaise,
-        currency: 'INR',
-        receipt: `rcpt_${serviceType}_${Date.now()}`,
-        status: 'created',
-        key_id: keyId,
-        mock: true,
-        is_configured: false,
-      };
-    }
+    const { keyId, keySecret } = getRazorpayKeys(serviceType);
 
     const razorpay = new Razorpay({
       key_id: keyId,
@@ -97,34 +85,30 @@ export class PaymentService {
       service_type = 'tours',
     } = body;
 
-    const { keySecret, isConfigured } = getRazorpayKeys(service_type);
+    const { keySecret } = getRazorpayKeys(service_type);
 
-    const isMock = !razorpay_order_id || razorpay_order_id.startsWith('order_mock_');
-
-    if (!isMock && isConfigured) {
-      if (!razorpay_signature || !razorpay_order_id || !razorpay_payment_id) {
-        const error: any = new Error('Payment verification failed — missing required payment signatures');
-        error.statusCode = 400;
-        throw error;
-      }
-
-      const expectedSignature = crypto
-        .createHmac('sha256', keySecret)
-        .update(`${razorpay_order_id}|${razorpay_payment_id}`)
-        .digest('hex');
-
-      const expectedBuf = Buffer.from(expectedSignature, 'utf-8');
-      const actualBuf = Buffer.from(razorpay_signature, 'utf-8');
-
-      if (expectedBuf.length !== actualBuf.length || !crypto.timingSafeEqual(expectedBuf, actualBuf)) {
-        const error: any = new Error('Payment verification failed — cryptographic signature mismatch');
-        error.statusCode = 400;
-        throw error;
-      }
+    if (!razorpay_signature || !razorpay_order_id || !razorpay_payment_id) {
+      const error: any = new Error('Payment verification failed — missing required Razorpay payment signatures');
+      error.statusCode = 400;
+      throw error;
     }
 
-    const paymentId = razorpay_payment_id || `pay_mock_${crypto.randomBytes(6).toString('hex')}`;
-    const orderId = razorpay_order_id || `order_mock_${crypto.randomBytes(6).toString('hex')}`;
+    const expectedSignature = crypto
+      .createHmac('sha256', keySecret)
+      .update(`${razorpay_order_id}|${razorpay_payment_id}`)
+      .digest('hex');
+
+    const expectedBuf = Buffer.from(expectedSignature, 'utf-8');
+    const actualBuf = Buffer.from(razorpay_signature, 'utf-8');
+
+    if (expectedBuf.length !== actualBuf.length || !crypto.timingSafeEqual(expectedBuf, actualBuf)) {
+      const error: any = new Error('Payment verification failed — cryptographic signature mismatch');
+      error.statusCode = 400;
+      throw error;
+    }
+
+    const paymentId = razorpay_payment_id;
+    const orderId = razorpay_order_id;
 
     // Extract booking details with comprehensive fallback compatibility
     const customerName = (body.customerName || body.customer_name || body.name || 'Valued Devotee').trim();

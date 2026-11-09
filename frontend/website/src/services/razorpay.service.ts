@@ -120,46 +120,7 @@ export async function launchRazorpayPayment(options: LaunchRazorpayParams): Prom
         throw new Error('Failed to initialize payment order with server');
       }
 
-      // 2. Sandbox/Development fallback when API keys are pending
-      if (order.mock) {
-        const confirmed = window.confirm(
-          `[Razorpay Test Gateway Mode]\n\nPay Advance Amount: ₹${options.amount.toLocaleString('en-IN')}\nPackage: ${options.itemTitle}\nCustomer: ${options.customerName} (${options.customerPhone})\n\nClick OK to simulate successful Razorpay payment authorization, or Cancel to abort.`
-        );
-
-        if (!confirmed) {
-          if (options.onDismiss) options.onDismiss();
-          reject(new Error('Payment cancelled by user.'));
-          return;
-        }
-
-        const mockPaymentId = `pay_rzp_mock_${Date.now().toString(36)}`;
-        const verifyRes = await apiFetch<any>('/api/payments/verify', {
-          method: 'POST',
-          body: JSON.stringify({
-            razorpay_order_id: order.id,
-            razorpay_payment_id: mockPaymentId,
-            razorpay_signature: 'mock_signature_authorized',
-            service_type: serviceType,
-            ...mergedDetails,
-            depositPaid: options.amount,
-          }),
-        });
-
-        const successData: RazorpaySuccessResult = {
-          success: true,
-          bookingCode: verifyRes.bookingCode || bookingCode,
-          paymentId: mockPaymentId,
-          orderId: order.id,
-          invoiceNumber: verifyRes.invoiceNumber || 'AT/TT/2026/00148',
-          booking: verifyRes.booking || mergedDetails,
-        };
-
-        if (options.onSuccess) options.onSuccess(successData);
-        resolve(successData);
-        return;
-      }
-
-      // 3. Live Razorpay Standard Checkout
+      // 2. Load and launch official Razorpay Checkout modal
       const scriptLoaded = await loadRazorpayScript();
       if (!scriptLoaded) {
         throw new Error('Could not load Razorpay payment gateway. Please check your internet connection.');
