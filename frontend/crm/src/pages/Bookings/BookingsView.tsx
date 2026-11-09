@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { Link } from 'react-router-dom';
-import { RefreshCw, Plus, Trash2, FileDown, Filter, FileSpreadsheet, Calendar as CalendarIcon, CheckCircle, XCircle, AlertTriangle, Copy, Check, Clock, QrCode, Phone, MessageSquare, Image as ImageIcon, Eye, Download, X } from 'lucide-react';
+import { RefreshCw, Plus, Trash2, FileDown, Filter, FileSpreadsheet, Calendar as CalendarIcon, CheckCircle, XCircle, AlertTriangle, Copy, Check, Clock, QrCode, Phone, MessageSquare, Image as ImageIcon, Eye, Download, X, ArrowUpDown } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
 import { getToursBookings, getToursPackages, createToursBooking, deleteToursBooking, verifyToursBooking } from '@/api/tours.api';
 import { getFleetBookings, getFleetVehicles, createFleetBooking, deleteFleetBooking, pickupFleetBooking, returnFleetBooking, refundFleetBooking, verifyFleetBooking } from '@/api/fleet.api';
@@ -31,11 +31,12 @@ export default function BookingsView() {
   const [whatsAppDefaultTemplateId, setWhatsAppDefaultTemplateId] = useState<string | undefined>(undefined);
   const [viewingScreenshot, setViewingScreenshot] = useState<{ url: string; bookingCode: string; customerName: string; utrNumber?: string; deposit?: number; bookingObj?: any } | null>(null);
 
-  // ── Filters ──────────────────────────────────────────────────────────────
+  // ── Filters & Sorting ────────────────────────────────────────────────────────
   const [filterSection, setFilterSection] = useState<'all' | 'tours' | 'fleet'>('all');
   const [filterDateFrom, setFilterDateFrom] = useState('');
   const [filterDateTo, setFilterDateTo] = useState('');
   const [filterPayment, setFilterPayment] = useState<'all' | 'paid' | 'partial' | 'pending' | 'pending_verification'>('all');
+  const [sortOrder, setSortOrder] = useState<'latest' | 'oldest' | 'travelDate'>('latest');
   const [showFilters, setShowFilters] = useState(false);
 
   // Offline walk-in booking state
@@ -391,10 +392,62 @@ export default function BookingsView() {
   const PAID_STATUSES = ['Picked Up (Paid in Full)', 'Returned', 'Confirmed'];
   const PARTIAL_STATUSES = ['Deposit Paid'];
 
+  const getBookingTimestamp = (b: any): number => {
+    if (!b) return 0;
+
+    // 1. Check explicit createdAt / created_at / dates
+    const dateCandidates = [
+      b.createdAt,
+      b.created_at,
+      b.verifiedAt,
+      b.termsAcceptedAt,
+      b.agreementAcceptedAt,
+      b.updatedAt,
+      b.updated_at,
+    ];
+
+    for (const c of dateCandidates) {
+      if (c) {
+        const ms = new Date(c).getTime();
+        if (!isNaN(ms) && ms > 0) return ms;
+      }
+    }
+
+    // 2. Check if MongoDB ObjectId (first 8 hex chars = unix timestamp in seconds)
+    const idStr = String(b._id || b.id || '');
+    if (/^[0-9a-fA-F]{24}$/.test(idStr)) {
+      const sec = parseInt(idStr.substring(0, 8), 16);
+      if (!isNaN(sec) && sec > 1000000000) return sec * 1000;
+    }
+
+    // 3. Fallback to travel date / pickup date
+    const travelDate = b.travelDate || b.travel_date || b.startDate || b.start_date || b.pickupDatetime || b.pickup_datetime;
+    if (travelDate) {
+      const ms = new Date(travelDate).getTime();
+      if (!isNaN(ms) && ms > 0) return ms;
+    }
+
+    return 0;
+  };
+
   const rawAllBookings = [
     ...(vertical !== 'fleet' ? toursBookings.map(b => ({ ...b, type: 'Tours' })) : []),
     ...(vertical !== 'tours' ? fleetBookings.map(b => ({ ...b, type: 'Fleet' })) : []),
-  ].sort((a, b) => new Date(b.createdAt || b.created_at).getTime() - new Date(a.createdAt || a.created_at).getTime());
+  ].sort((a, b) => {
+    if (sortOrder === 'travelDate') {
+      const travelA = new Date(a.travelDate || a.pickupDatetime || a.startDate || 0).getTime();
+      const travelB = new Date(b.travelDate || b.pickupDatetime || b.startDate || 0).getTime();
+      return travelB - travelA;
+    }
+    const timeA = getBookingTimestamp(a);
+    const timeB = getBookingTimestamp(b);
+    if (timeA !== timeB) {
+      return sortOrder === 'oldest' ? timeA - timeB : timeB - timeA;
+    }
+    const codeA = String(a.bookingCode || a.booking_code || a.id || '');
+    const codeB = String(b.bookingCode || b.booking_code || b.id || '');
+    return codeB.localeCompare(codeA);
+  });
 
   const pendingVerificationCount = rawAllBookings.filter(b => b.status === 'pending_verification').length;
   const hasOverduePending = rawAllBookings.some(b => isOverdueVerification(b));
@@ -472,6 +525,21 @@ export default function BookingsView() {
           >
             <FileSpreadsheet className="w-3.5 h-3.5 text-[#3569F6]" /> Export Excel
           </button>
+
+          {/* Sort Selector: Latest by default */}
+          <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-[#E8ECF4] bg-white shadow-2xs">
+            <ArrowUpDown className="w-3.5 h-3.5 text-[#3569F6]" />
+            <select
+              value={sortOrder}
+              onChange={(e) => setSortOrder(e.target.value as any)}
+              className="text-xs font-bold text-[#17233D] bg-transparent border-0 outline-none cursor-pointer pr-1"
+              title="Sort sequence for bookings"
+            >
+              <option value="latest">Latest Booking First (Default)</option>
+              <option value="oldest">Oldest Booking First</option>
+              <option value="travelDate">Departure / Travel Date</option>
+            </select>
+          </div>
 
           <button
             onClick={() => setShowFilters(!showFilters)}

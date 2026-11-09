@@ -370,7 +370,7 @@ export class FleetService {
   static async listBookings() {
     if (mongoose.connection.readyState === 1) {
       try {
-        const list = await FleetBooking.find().sort({ createdAt: -1 }).populate('vehicleId');
+        const list = await FleetBooking.find().sort({ createdAt: -1, _id: -1 }).populate('vehicleId');
         return list;
       } catch (_e) {}
     }

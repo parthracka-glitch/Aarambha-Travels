@@ -416,7 +416,7 @@ export class ToursService {
   static async listBookings() {
     if (mongoose.connection.readyState === 1) {
       try {
-        const list = await TourBooking.find().sort({ createdAt: -1 }).populate('packageId');
+        const list = await TourBooking.find().sort({ createdAt: -1, _id: -1 }).populate('packageId');
         return list;
       } catch (_e) {}
     }

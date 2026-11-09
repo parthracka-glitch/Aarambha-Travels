@@ -421,7 +421,11 @@ class LocalStore {
 
   // Tours Bookings
   getToursBookings() {
-    return this.data.toursBookings;
+    return [...this.data.toursBookings].sort((a, b) => {
+      const timeA = new Date(a.createdAt || a.created_at || 0).getTime();
+      const timeB = new Date(b.createdAt || b.created_at || 0).getTime();
+      return timeB - timeA;
+    });
   }
   addToursBooking(booking: any) {
     this.data.toursBookings.unshift(booking);
@@ -446,7 +450,11 @@ class LocalStore {
 
   // Fleet Bookings
   getFleetBookings() {
-    return this.data.fleetBookings;
+    return [...this.data.fleetBookings].sort((a, b) => {
+      const timeA = new Date(a.createdAt || a.created_at || 0).getTime();
+      const timeB = new Date(b.createdAt || b.created_at || 0).getTime();
+      return timeB - timeA;
+    });
   }
   addFleetBooking(booking: any) {
     this.data.fleetBookings.unshift(booking);
