@@ -5,7 +5,6 @@ import JsonLd, { getOrganizationSchema } from '@/components/shared/JsonLd';
 import './globals.css';
 
 import CookieConsentBanner from '@/components/legal/CookieConsentBanner';
-import FloatingBookNow from '@/components/common/FloatingBookNow';
 
 
 export const viewport: Viewport = {
@@ -63,7 +62,6 @@ export default function RootLayout({
       <body className="antialiased selection:bg-[#C65A2E] selection:text-white">
         <JsonLd data={getOrganizationSchema()} />
         {children}
-        <FloatingBookNow />
         <CookieConsentBanner />
         <Script
           src="https://checkout.razorpay.com/v1/checkout.js"
