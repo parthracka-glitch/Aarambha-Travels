@@ -24,8 +24,21 @@ export const AuthContext = createContext<AuthContextType | undefined>(undefined)
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [activeVertical, setActiveVertical] = useState<'all' | 'tours' | 'fleet'>('all');
   const [apiStatus, setApiStatus] = useState<'checking' | 'online' | 'offline'>('checking');
-  const [user, setUser] = useState<AdminUser | null>(null);
-  const [loading, setLoading] = useState(true);
+  const [user, setUser] = useState<AdminUser | null>(() => {
+    if (typeof window === 'undefined') return null;
+    const token = localStorage.getItem('crm_token');
+    const savedUser = localStorage.getItem('crm_user');
+    if (token && savedUser) {
+      try {
+        return JSON.parse(savedUser);
+      } catch (_e) {
+        localStorage.removeItem('crm_token');
+        localStorage.removeItem('crm_user');
+      }
+    }
+    return null;
+  });
+  const [loading, setLoading] = useState(false);
 
   const syncCurrentUser = useCallback(async () => {
     const token = localStorage.getItem('crm_token');

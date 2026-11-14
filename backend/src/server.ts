@@ -57,6 +57,7 @@ const defaultAllowedOrigins = [
   'http://127.0.0.1:5173',
   'https://aarambhatravels.in',
   'https://www.aarambhatravels.in',
+  'https://crm.aarambhatravels.in',
   'https://admin.aarambhatravels.in',
 ];
 
@@ -91,7 +92,7 @@ app.use(express.json({ limit: '15mb' }));
 app.use(express.urlencoded({ limit: '15mb', extended: true }));
 
 // ─── Health Check & Root Endpoints (Exempt from rate limits & suspicious detector) ───
-app.get('/api/health', async (_req: Request, res: Response): Promise<void> => {
+app.get(['/health', '/api/health'], async (_req: Request, res: Response): Promise<void> => {
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.json({
     status: 'online',

@@ -111,7 +111,35 @@ export function useAutoRefresh(
       }
     });
 
-    // 3. Window Focus & Device Wakeup Sync
+    // 3. Cross-Tab BroadcastChannel & Storage Event Listeners
+    let channel: BroadcastChannel | null = null;
+    if (typeof window !== 'undefined') {
+      try {
+        channel = new BroadcastChannel('aarambha_sync_bus');
+        channel.onmessage = (msgEvent) => {
+          const type = msgEvent?.data?.type;
+          if (
+            !type ||
+            eventTypesRef.current.length === 0 ||
+            eventTypesRef.current.includes(type) ||
+            type === 'ALL'
+          ) {
+            safeReload();
+          }
+        };
+      } catch (_err) {}
+    }
+
+    const handleStorage = (e: StorageEvent) => {
+      if (e.key && e.key.startsWith('aarambha_')) {
+        safeReload();
+      }
+    };
+    if (typeof window !== 'undefined') {
+      window.addEventListener('storage', handleStorage);
+    }
+
+    // 4. Window Focus & Device Wakeup Sync
     const handleFocus = () => {
       safeReload();
     };
@@ -125,14 +153,20 @@ export function useAutoRefresh(
     window.addEventListener('focus', handleFocus);
     document.addEventListener('visibilitychange', handleVisibilityChange);
 
-    // 4. Background Heartbeat Polling Fallback
+    // 5. Background Heartbeat Polling Fallback
     let timer: any = null;
     if (fallbackIntervalMs > 0) {
-      timer = setInterval(safeReload, fallbackIntervalMs);
+      timer = setInterval(safeReload, Math.min(fallbackIntervalMs, 6000));
     }
 
     return () => {
       if (unsubscribe) unsubscribe();
+      if (channel) {
+        try { channel.close(); } catch (_e) {}
+      }
+      if (typeof window !== 'undefined') {
+        window.removeEventListener('storage', handleStorage);
+      }
       window.removeEventListener('focus', handleFocus);
       document.removeEventListener('visibilitychange', handleVisibilityChange);
       if (timer) clearInterval(timer);

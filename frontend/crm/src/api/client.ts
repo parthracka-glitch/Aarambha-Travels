@@ -41,6 +41,17 @@ export function getApiBaseUrl(): string {
 const cache = new Map<string, { data: any; timestamp: number }>();
 const CACHE_TTL_MS = 15000; // 15 seconds TTL
 
+export function broadcastDataChange(type: string = 'DATA_UPDATED', meta?: any) {
+  if (typeof window === 'undefined') return;
+  cache.clear();
+  window.dispatchEvent(new CustomEvent('aarambha_data_updated', { detail: { type, meta } }));
+  try {
+    const channel = new BroadcastChannel('aarambha_sync_bus');
+    channel.postMessage({ type, meta, timestamp: Date.now() });
+    channel.close();
+  } catch (_e) {}
+}
+
 function getAuthHeaders(): Record<string, string> {
   const token = localStorage.getItem('crm_token');
   return token ? { Authorization: `Bearer ${token}` } : {};
@@ -105,6 +116,17 @@ export async function apiFetch(path: string, opts?: RequestInit, retries: number
       const data = await res.json();
       if (method === 'GET') {
         cache.set(cacheKey, { data, timestamp: Date.now() });
+      } else {
+        const eventType = path.includes('/tours')
+          ? 'TOURS_UPDATED'
+          : path.includes('/fleet')
+          ? 'FLEET_UPDATED'
+          : path.includes('/bookings')
+          ? 'BOOKINGS_UPDATED'
+          : path.includes('/inquiries')
+          ? 'INQUIRIES_UPDATED'
+          : 'DATA_UPDATED';
+        broadcastDataChange(eventType, { path, method });
       }
 
       return data;

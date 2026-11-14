@@ -1062,15 +1062,15 @@ export default function DashboardView() {
                         <td className="py-2.5 px-2 text-right">
                           <div className="flex items-center justify-end gap-1">
                             <button
-                              onClick={() => navigate('/tours')}
+                              onClick={() => navigate(`/tours?edit=${pkg._id || pkg.id || pkg.slug}`)}
                               title="Edit Tour Package"
                               className="p-1.5 rounded-lg text-[#77839A] hover:text-[#3569F6] hover:bg-[#EDF3FF] transition-colors"
                             >
                               <Pencil className="w-3.5 h-3.5" />
                             </button>
                             <button
-                              onClick={() => navigate('/tours')}
-                              title="View Details"
+                              onClick={() => navigate(`/tours?batches=${pkg._id || pkg.id || pkg.slug}`)}
+                              title="Manage Batches & Dates"
                               className="p-1.5 rounded-lg text-[#77839A] hover:text-[#17233D] hover:bg-[#F5F7FC] transition-colors"
                             >
                               <MoreVertical className="w-3.5 h-3.5" />

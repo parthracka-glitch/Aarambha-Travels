@@ -5,6 +5,7 @@ import JsonLd, { getOrganizationSchema } from '@/components/shared/JsonLd';
 import './globals.css';
 
 import CookieConsentBanner from '@/components/legal/CookieConsentBanner';
+import DeploymentAutoRefresh from '@/components/shared/DeploymentAutoRefresh';
 
 
 export const viewport: Viewport = {
@@ -60,6 +61,7 @@ export default function RootLayout({
         <meta name="mobile-web-app-capable" content="yes" />
       </head>
       <body className="antialiased selection:bg-[#C65A2E] selection:text-white">
+        <DeploymentAutoRefresh />
         <JsonLd data={getOrganizationSchema()} />
         {children}
         <CookieConsentBanner />

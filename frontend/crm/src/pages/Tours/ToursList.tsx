@@ -1,4 +1,5 @@
-import React, { useState, useCallback, useRef, useMemo } from 'react';
+import React, { useState, useEffect, useCallback, useRef, useMemo } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import {
   Plus,
   RefreshCw,
@@ -132,6 +133,7 @@ export default function ToursView() {
   const hasLoadedRef = useRef(false);
   const [isCreateOpen, setIsCreateOpen] = useState(false);
   const [editingPkg, setEditingPkg] = useState<any | null>(null);
+  const [searchParams, setSearchParams] = useSearchParams();
 
   // Search & Filter State
   const [searchQuery, setSearchQuery] = useState('');
@@ -373,6 +375,27 @@ export default function ToursView() {
       alert('Error saving batch dates: ' + err.message);
     }
   };
+
+  // Immediate query param deep-linking handler (?edit=<id> or ?batches=<id>)
+  useEffect(() => {
+    if (!loading && packages.length > 0) {
+      const editId = searchParams.get('edit');
+      const batchId = searchParams.get('batches');
+      if (editId) {
+        const found = packages.find(p => p._id === editId || p.id === editId || p.slug === editId);
+        if (found) {
+          handleOpenEdit(found);
+          setSearchParams({}, { replace: true });
+        }
+      } else if (batchId) {
+        const found = packages.find(p => p._id === batchId || p.id === batchId || p.slug === batchId);
+        if (found) {
+          handleOpenManageBatches(found);
+          setSearchParams({}, { replace: true });
+        }
+      }
+    }
+  }, [loading, packages, searchParams]);
 
   // Filtered packages
   const filteredPackages = useMemo(() => {
