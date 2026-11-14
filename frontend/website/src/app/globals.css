@@ -357,3 +357,29 @@ button, a, input, select, textarea {
   padding-right: max(1rem, env(safe-area-inset-right, 0px));
 }
 
+/* Hero Carousel Animations */
+@keyframes heroProgress {
+  from { width: 0%; }
+  to { width: 100%; }
+}
+
+@keyframes fadeInHero {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-hero-progress {
+  animation: heroProgress linear forwards;
+}
+
+.animate-fadeIn {
+  animation: fadeInHero 0.45s ease-out forwards;
+}
+
+

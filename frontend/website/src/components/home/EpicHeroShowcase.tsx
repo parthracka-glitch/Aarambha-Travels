@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect, useCallback, useMemo } from 'react';
+import React, { useState, useEffect, useCallback, useMemo, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import {
   Compass,
@@ -10,6 +10,7 @@ import {
   ChevronLeft,
   ChevronRight,
   Star,
+  Sparkles,
 } from 'lucide-react';
 import { TourPackage } from '@/constants/toursData';
 import { fetchLiveTourPackages } from '@/services/tours.service';
@@ -17,16 +18,16 @@ import { useAutoRefresh } from '@/hooks/useRealtimeSync';
 
 const DEFAULT_HERO_SLIDES = [
   {
-    id: '2-jyotirlinga',
+    id: 'mumbai-ujjain',
     image: '/images/tours/mumbai_ujjain_omkareshwar_tour.jpg',
-    badge: '🛕 Holy Jyotirlinga Darshan • 3D / 2N',
-    label: '2 Jyotirlinga Yatra',
-    tag: 'Ujjain & Omkareshwar',
-    title: 'Pune to 2 Jyotirlinga Yatra — Ujjain & Omkareshwar',
-    subtitle: 'Mahakaleshwar Bhasma Aarti, Mahakal Corridor, Omkareshwar Jyotirlinga, Mamleshwar & Maheshwar Rajwada with 2×2 AC Sleeper Coach & verified 3★ stays.',
-    slug: 'pune-to-2-jyotirlinga-yatra--ujjain-omkareshwar-maheshwar',
-    price: '₹5,999',
-    deposit: '₹1,999',
+    badge: '🛕 Holy Jyotirlinga Darshan • 3D / 1N',
+    label: 'Mumbai to Ujjain Mahakal',
+    tag: 'Ujjain, Omkareshwar & Maheshwar',
+    title: 'Mumbai to Ujjain Mahakal | Omkareshwar Jyotirlinga | Maheshwar',
+    subtitle: 'Special Spiritual Yatra • Sacred Darshan of Mahakaleshwar, Kaal Bhairav, Omkareshwar, Mamleshwar & Maheshwar Rajwada in 2×2 AC Sleeper Coach.',
+    slug: 'mumbai-ujjain-mahakal-omkareshwar-maheshwar',
+    price: '₹7,499',
+    deposit: '₹2,999',
   },
   {
     id: 'sanwaliya-seth',
@@ -54,6 +55,8 @@ const DEFAULT_HERO_SLIDES = [
   },
 ];
 
+const AUTO_SCROLL_DURATION = 5500; // 5.5 seconds per slide
+
 interface EpicHeroShowcaseProps {
   packages?: TourPackage[];
 }
@@ -63,6 +66,7 @@ export default function EpicHeroShowcase({ packages: initialPackages }: EpicHero
   const [currentSlide, setCurrentSlide] = useState(0);
   const [isPaused, setIsPaused] = useState(false);
   const [livePackages, setLivePackages] = useState<TourPackage[]>(initialPackages || []);
+  const timerRef = useRef<NodeJS.Timeout | null>(null);
 
   const loadPackages = useCallback(() => {
     fetchLiveTourPackages(true).then((pkgs) => {
@@ -87,26 +91,25 @@ export default function EpicHeroShowcase({ packages: initialPackages }: EpicHero
     return DEFAULT_HERO_SLIDES.map((defaultSlide) => {
       const match = livePackages.find((p) => {
         if (!p) return false;
-        if (defaultSlide.id === '2-jyotirlinga') {
+        if (defaultSlide.id === 'mumbai-ujjain') {
           return (
-            p.slug.includes('2-jyotirlinga') ||
-            p.id === '2-jyotirlinga' ||
-            p.title.toLowerCase().includes('2 jyotirlinga') ||
-            p.title.toLowerCase().includes('omkareshwar')
+            p.slug.includes('mumbai-ujjain') ||
+            p.id.includes('mumbai-ujjain') ||
+            (p.title?.toLowerCase().includes('mumbai') && p.title?.toLowerCase().includes('ujjain'))
           );
         }
         if (defaultSlide.id === 'sanwaliya-seth') {
           return (
             p.slug.includes('sanwaliya') ||
             p.id === 'sanwaliya-seth' ||
-            p.title.toLowerCase().includes('sanwaliya')
+            p.title?.toLowerCase().includes('sanwaliya')
           );
         }
         if (defaultSlide.id === 'girnar-trip') {
           return (
             p.slug.includes('girnar') ||
             p.id === 'girnar-trip' ||
-            p.title.toLowerCase().includes('girnar')
+            p.title?.toLowerCase().includes('girnar')
           );
         }
         return false;
@@ -119,7 +122,7 @@ export default function EpicHeroShowcase({ packages: initialPackages }: EpicHero
         title: match.title || defaultSlide.title,
         subtitle: match.subtitle || match.overview || defaultSlide.subtitle,
         slug: match.slug || defaultSlide.slug,
-        price: match.priceDisplay || `₹${match.basePrice.toLocaleString('en-IN')}`,
+        price: match.priceDisplay ? match.priceDisplay.replace(' per person', '') : `₹${match.basePrice.toLocaleString('en-IN')}`,
         deposit: match.advanceLabel
           ? match.advanceLabel.replace(' Advance', '')
           : `₹${match.depositPrice.toLocaleString('en-IN')}`,
@@ -128,13 +131,20 @@ export default function EpicHeroShowcase({ packages: initialPackages }: EpicHero
     });
   }, [livePackages]);
 
-  // Auto-play carousel every 5.5s
+  // Smooth, lag-free auto-scroll timer
   useEffect(() => {
-    if (isPaused) return;
-    const timer = setInterval(() => {
+    if (isPaused) {
+      if (timerRef.current) clearInterval(timerRef.current);
+      return;
+    }
+
+    timerRef.current = setInterval(() => {
       setCurrentSlide((prev) => (prev + 1) % heroSlides.length);
-    }, 5500);
-    return () => clearInterval(timer);
+    }, AUTO_SCROLL_DURATION);
+
+    return () => {
+      if (timerRef.current) clearInterval(timerRef.current);
+    };
   }, [isPaused, heroSlides.length]);
 
   const goToSlide = (idx: number) => {
@@ -149,43 +159,49 @@ export default function EpicHeroShowcase({ packages: initialPackages }: EpicHero
     setCurrentSlide((prev) => (prev - 1 + heroSlides.length) % heroSlides.length);
   };
 
+  const activeSlide = heroSlides[currentSlide] || heroSlides[0];
+
   return (
     <section
       onMouseEnter={() => setIsPaused(true)}
       onMouseLeave={() => setIsPaused(false)}
-      className="relative w-full bg-[#181310] pt-24 pb-14 sm:pt-28 sm:pb-16 lg:pt-32 lg:pb-20 overflow-hidden flex items-center justify-center font-sans border-b border-[#EDE2D0]/60"
+      className="relative w-full bg-[#120F0D] pt-24 pb-12 sm:pt-28 sm:pb-14 lg:pt-32 lg:pb-16 overflow-hidden flex items-center justify-center font-sans border-b border-[#EDE2D0]/40 select-none"
     >
       
-      {/* ─── 1. HIGH-VISIBILITY BACKGROUND CAROUSEL ─── */}
+      {/* ─── 1. BUTTERY-SMOOTH HARDWARE-ACCELERATED CAROUSEL ─── */}
       <div className="absolute inset-0 w-full h-full pointer-events-none z-0 overflow-hidden">
-        {heroSlides.map((slide, idx) => (
-          <div
-            key={slide.id}
-            className={`absolute inset-0 w-full h-full transition-opacity duration-1000 ease-in-out ${
-              idx === currentSlide
-                ? 'opacity-100 scale-100 z-10'
-                : 'opacity-0 scale-105 pointer-events-none z-0'
-            }`}
-          >
-            <img
-              src={slide.image}
-              alt={slide.title}
-              className="w-full h-full object-cover object-center filter brightness-[0.82] contrast-[1.08]"
-            />
-          </div>
-        ))}
+        {heroSlides.map((slide, idx) => {
+          const isActive = idx === currentSlide;
+          return (
+            <div
+              key={slide.id}
+              className={`absolute inset-0 w-full h-full transition-all duration-[1200ms] ease-out will-change-[opacity,transform] ${
+                isActive
+                  ? 'opacity-100 scale-100 z-10'
+                  : 'opacity-0 scale-105 pointer-events-none z-0'
+              }`}
+            >
+              <img
+                src={slide.image}
+                alt={slide.title}
+                className="w-full h-full object-cover object-center filter brightness-[0.78] contrast-[1.06]"
+                loading={idx === 0 ? 'eager' : 'lazy'}
+              />
+            </div>
+          );
+        })}
 
-        {/* Ambient cinematic scrim: delivers crisp typography contrast while keeping photos vivid */}
-        <div className="absolute inset-0 z-20 bg-gradient-to-b from-black/65 via-black/40 to-black/75 pointer-events-none" />
-        <div className="absolute bottom-0 inset-x-0 h-28 bg-gradient-to-t from-[#FCFAF6] via-[#FCFAF6]/60 to-transparent z-20 pointer-events-none" />
+        {/* Ambient atmospheric gradient overlays for optimal text clarity */}
+        <div className="absolute inset-0 z-20 bg-gradient-to-b from-black/70 via-black/45 to-black/80 pointer-events-none" />
+        <div className="absolute bottom-0 inset-x-0 h-32 bg-gradient-to-t from-[#FCFAF6] via-[#FCFAF6]/40 to-transparent z-20 pointer-events-none" />
       </div>
 
-      {/* Side Arrow Controls */}
+      {/* Side Arrow Navigation */}
       <button
         type="button"
         onClick={prevSlide}
         aria-label="Previous Slide"
-        className="hidden lg:flex absolute left-4 lg:left-8 top-1/2 -translate-y-1/2 z-30 w-10 h-10 rounded-full bg-black/35 hover:bg-black/70 backdrop-blur-md border border-white/20 text-white items-center justify-center transition-all cursor-pointer shadow-lg active:scale-95"
+        className="hidden xl:flex absolute left-6 top-1/2 -translate-y-1/2 z-30 w-11 h-11 rounded-full bg-black/30 hover:bg-black/60 backdrop-blur-md border border-white/15 text-white items-center justify-center transition-all cursor-pointer shadow-lg active:scale-95 hover:border-white/30"
       >
         <ChevronLeft className="w-5 h-5 text-white/90" />
       </button>
@@ -194,16 +210,16 @@ export default function EpicHeroShowcase({ packages: initialPackages }: EpicHero
         type="button"
         onClick={nextSlide}
         aria-label="Next Slide"
-        className="hidden lg:flex absolute right-4 lg:right-8 top-1/2 -translate-y-1/2 z-30 w-10 h-10 rounded-full bg-black/35 hover:bg-black/70 backdrop-blur-md border border-white/20 text-white items-center justify-center transition-all cursor-pointer shadow-lg active:scale-95"
+        className="hidden xl:flex absolute right-6 top-1/2 -translate-y-1/2 z-30 w-11 h-11 rounded-full bg-black/30 hover:bg-black/60 backdrop-blur-md border border-white/15 text-white items-center justify-center transition-all cursor-pointer shadow-lg active:scale-95 hover:border-white/30"
       >
         <ChevronRight className="w-5 h-5 text-white/90" />
       </button>
 
-      {/* ─── 2. MAIN HERO CONTAINER ─── */}
-      <div className="relative z-20 max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 w-full flex flex-col items-center text-center">
+      {/* ─── 2. MINIMALIST CLEAN HERO CONTENT ─── */}
+      <div className="relative z-20 max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 w-full flex flex-col items-center text-center">
         
-        {/* Top 3 Yatra Switcher Tabs */}
-        <div className="flex flex-wrap items-center justify-center gap-2 sm:gap-2.5 mb-5 sm:mb-6 select-none">
+        {/* Sleek Minimalist Tabs with Auto-Scroll Progress */}
+        <div className="flex flex-wrap items-center justify-center gap-2 sm:gap-3 mb-6 sm:mb-8">
           {heroSlides.map((slide, idx) => {
             const isActive = idx === currentSlide;
             return (
@@ -211,87 +227,99 @@ export default function EpicHeroShowcase({ packages: initialPackages }: EpicHero
                 key={slide.id}
                 type="button"
                 onClick={() => goToSlide(idx)}
-                className={`px-4 sm:px-5 py-2 rounded-full text-xs sm:text-sm font-bold transition-all cursor-pointer backdrop-blur-md border ${
+                className={`relative overflow-hidden px-4 sm:px-5 py-2 rounded-full text-xs sm:text-[13px] font-semibold transition-all duration-300 cursor-pointer backdrop-blur-md border flex items-center gap-2 ${
                   isActive
-                    ? 'bg-[#C65A2E] text-white border-[#C65A2E] shadow-lg shadow-[#C65A2E]/30 scale-105'
-                    : 'bg-black/40 hover:bg-black/60 text-white/90 border-white/20 hover:border-white/40'
+                    ? 'bg-[#C65A2E] text-white border-[#C65A2E] shadow-md shadow-[#C65A2E]/25 scale-[1.02]'
+                    : 'bg-black/35 hover:bg-black/55 text-white/80 border-white/15 hover:border-white/30'
                 }`}
               >
                 <span>{slide.label}</span>
-                <span className={`ml-2 text-[11px] px-2 py-0.5 rounded-full ${isActive ? 'bg-white/20 text-white' : 'bg-white/10 text-white/80'}`}>
+                <span className={`text-[11px] px-2 py-0.5 rounded-full font-medium ${
+                  isActive ? 'bg-white/20 text-white' : 'bg-white/10 text-white/70'
+                }`}>
                   {slide.price}
                 </span>
+
+                {/* Subtle auto-play progress bar on active tab */}
+                {isActive && !isPaused && (
+                  <span
+                    key={`progress-${currentSlide}`}
+                    className="absolute bottom-0 left-0 h-[2px] bg-white/70 animate-hero-progress"
+                    style={{ animationDuration: `${AUTO_SCROLL_DURATION}ms` }}
+                  />
+                )}
               </button>
             );
           })}
         </div>
 
-        {/* Dynamic Title */}
-        <h1 className="font-serif text-2xl sm:text-4xl md:text-5xl lg:text-5xl font-extrabold text-white tracking-tight leading-[1.18] mb-3.5 max-w-4xl drop-shadow-lg">
-          {heroSlides[currentSlide]?.title}
-        </h1>
+        {/* Minimal Animated Text Content Container */}
+        <div
+          key={`content-${currentSlide}`}
+          className="flex flex-col items-center transition-opacity duration-500 ease-out animate-fadeIn"
+        >
+          {/* Subtle Pill Tag */}
+          <div className="inline-flex items-center gap-1.5 px-3.5 py-1 rounded-full bg-white/10 backdrop-blur-md border border-white/15 text-white/90 text-xs font-medium mb-3.5">
+            <Sparkles className="w-3.5 h-3.5 text-[#E8B9A5]" />
+            <span>{activeSlide.badge}</span>
+          </div>
 
-        {/* Dynamic Subtitle */}
-        <p className="text-xs sm:text-sm md:text-base text-white/90 max-w-2xl mx-auto leading-relaxed font-normal mb-6 sm:mb-8 drop-shadow-md">
-          {heroSlides[currentSlide]?.subtitle}
-        </p>
+          {/* Clean Elegant Headline */}
+          <h1 className="font-serif text-2xl sm:text-4xl md:text-5xl font-bold text-white tracking-tight leading-[1.18] mb-3 max-w-3xl drop-shadow-md">
+            {activeSlide.title}
+          </h1>
 
-        {/* Single Clean Actions Row */}
-        <div className="flex flex-wrap items-center justify-center gap-3 sm:gap-4 mb-6 sm:mb-8 select-none">
-          <button
-            type="button"
-            onClick={() => router.push(`/tours-travels/${heroSlides[currentSlide]?.slug}`)}
-            className="px-7 py-3.5 rounded-full bg-[#C65A2E] hover:bg-[#B24E25] text-white text-xs sm:text-sm font-extrabold shadow-xl hover:shadow-2xl transition-all flex items-center gap-2 cursor-pointer active:scale-95"
-          >
-            <Compass className="w-4 h-4 text-white" />
-            <span>Book This Tour • Advance: {heroSlides[currentSlide]?.deposit}</span>
-            <ArrowRight className="w-4 h-4 text-white/80" />
-          </button>
+          {/* Minimalist Subtitle */}
+          <p className="text-xs sm:text-sm md:text-[15px] text-white/85 max-w-2xl mx-auto leading-relaxed font-light mb-6 sm:mb-8 drop-shadow-sm">
+            {activeSlide.subtitle}
+          </p>
 
-          <button
-            type="button"
-            onClick={() => router.push(`/tours-travels/${heroSlides[currentSlide]?.slug}`)}
-            className="px-6 py-3.5 rounded-full bg-white/20 hover:bg-white/30 backdrop-blur-md text-white border border-white/40 text-xs sm:text-sm font-bold shadow-md transition-all flex items-center gap-2 cursor-pointer active:scale-95"
-          >
-            <span>View Full Itinerary</span>
-          </button>
-        </div>
-
-        {/* Minimal Slide Indicators */}
-        <div className="flex items-center justify-center gap-2 mb-6 select-none">
-          {heroSlides.map((slide, idx) => (
+          {/* Clean Dual CTAs */}
+          <div className="flex flex-wrap items-center justify-center gap-3 sm:gap-4 mb-7 sm:mb-9">
             <button
-              key={slide.id}
               type="button"
-              onClick={() => goToSlide(idx)}
-              aria-label={`Go to slide ${idx + 1}`}
-              className={`h-1.5 transition-all duration-300 rounded-full cursor-pointer ${
-                idx === currentSlide
-                  ? 'w-8 bg-[#C65A2E] shadow-sm'
-                  : 'w-2 bg-white/50 hover:bg-white/80'
-              }`}
-            />
-          ))}
+              onClick={() => router.push(`/tours-travels/${activeSlide.slug}`)}
+              className="px-6 sm:px-7 py-3 rounded-full bg-[#C65A2E] hover:bg-[#B24E25] text-white text-xs sm:text-sm font-bold shadow-lg hover:shadow-xl transition-all flex items-center gap-2 cursor-pointer active:scale-95 group"
+            >
+              <Compass className="w-4 h-4 text-white group-hover:rotate-45 transition-transform" />
+              <span>Book This Tour • Advance: {activeSlide.deposit}</span>
+              <ArrowRight className="w-4 h-4 text-white/80 group-hover:translate-x-0.5 transition-transform" />
+            </button>
+
+            <button
+              type="button"
+              onClick={() => router.push(`/tours-travels/${activeSlide.slug}`)}
+              className="px-5 sm:px-6 py-3 rounded-full bg-white/15 hover:bg-white/25 backdrop-blur-md text-white border border-white/25 text-xs sm:text-sm font-semibold shadow-sm transition-all flex items-center gap-2 cursor-pointer active:scale-95"
+            >
+              <span>View Full Itinerary</span>
+            </button>
+          </div>
         </div>
 
-        {/* Refined Minimal Trust Strip */}
-        <div className="flex flex-wrap items-center justify-center gap-2.5 sm:gap-3 text-xs text-[#5D5047] font-medium select-none">
-          <div className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-white/95 backdrop-blur-md border border-[#EDE2D0] shadow-sm">
+        {/* Minimalist Trust Ribbon (Unified sleek glass bar) */}
+        <div className="flex flex-wrap items-center justify-center gap-y-2 gap-x-4 sm:gap-x-6 px-5 py-2.5 rounded-full bg-white/90 backdrop-blur-md border border-[#EDE2D0] shadow-sm text-xs text-[#5D5047] font-medium">
+          <div className="flex items-center gap-1.5">
             <Star className="w-3.5 h-3.5 text-amber-500 fill-amber-500" />
             <span><strong className="font-bold text-[#3B2E27]">4.9/5</strong> (1,200+ Yatris)</span>
           </div>
 
-          <div className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-white/95 backdrop-blur-md border border-[#EDE2D0] shadow-sm">
+          <span className="hidden sm:inline text-[#EDE2D0]">•</span>
+
+          <div className="flex items-center gap-1.5">
             <ShieldCheck className="w-3.5 h-3.5 text-emerald-600" />
             <span>Commercial Tourist Fleet</span>
           </div>
 
-          <div className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-white/95 backdrop-blur-md border border-[#EDE2D0] shadow-sm">
+          <span className="hidden sm:inline text-[#EDE2D0]">•</span>
+
+          <div className="flex items-center gap-1.5">
             <CheckCircle2 className="w-3.5 h-3.5 text-[#C65A2E]" />
             <span>Satvik Meals &amp; 3★ Stays</span>
           </div>
 
-          <div className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-white/95 backdrop-blur-md border border-[#EDE2D0] shadow-sm">
+          <span className="hidden sm:inline text-[#EDE2D0]">•</span>
+
+          <div className="flex items-center gap-1.5">
             <CheckCircle2 className="w-3.5 h-3.5 text-[#C65A2E]" />
             <span>100% Confirmed Departures</span>
           </div>
