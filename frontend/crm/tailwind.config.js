@@ -24,7 +24,13 @@ export default {
           'BlinkMacSystemFont',
           'sans-serif',
         ],
-        serif: ['"Playfair Display"', 'Georgia', 'serif'],
+        serif: [
+          '"Plus Jakarta Sans"',
+          '"Inter"',
+          '-apple-system',
+          'BlinkMacSystemFont',
+          'sans-serif',
+        ],
       },
       colors: {
         // ─── AARAMBHA CRM PREMIUM SAAS DESIGN SYSTEM ───
