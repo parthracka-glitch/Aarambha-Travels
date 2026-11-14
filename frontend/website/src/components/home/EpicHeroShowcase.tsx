@@ -216,7 +216,7 @@ export default function EpicHeroShowcase({ packages: initialPackages }: EpicHero
       onTouchStart={handleTouchStart}
       onTouchMove={handleTouchMove}
       onTouchEnd={handleTouchEnd}
-      className="relative w-full bg-[#120F0D] pt-20 pb-10 sm:pt-28 sm:pb-14 lg:pt-32 lg:pb-16 overflow-hidden flex items-center justify-center font-sans border-b border-[#EDE2D0]/40 touch-pan-y"
+      className="relative w-full bg-[#120F0D] pt-20 pb-10 sm:pt-28 sm:pb-14 lg:pt-32 lg:pb-16 overflow-hidden flex items-center justify-center font-sans border-b border-black/30 touch-pan-y"
     >
 
       {/* ─── 1. BUTTERY-SMOOTH HARDWARE-ACCELERATED CAROUSEL ─── */}
@@ -234,16 +234,15 @@ export default function EpicHeroShowcase({ packages: initialPackages }: EpicHero
               <img
                 src={slide.image}
                 alt={slide.title}
-                className="w-full h-full object-cover object-center filter brightness-[0.78] contrast-[1.06]"
+                className="w-full h-full object-cover object-center filter brightness-[0.82] contrast-[1.08]"
                 loading={idx === 0 ? 'eager' : 'lazy'}
               />
             </div>
           );
         })}
 
-        {/* Ambient atmospheric gradient overlays for optimal text clarity */}
-        <div className="absolute inset-0 z-20 bg-gradient-to-b from-black/70 via-black/45 to-black/80 pointer-events-none" />
-        <div className="absolute bottom-0 inset-x-0 h-32 bg-gradient-to-t from-[#FCFAF6] via-[#FCFAF6]/40 to-transparent z-20 pointer-events-none" />
+        {/* Ambient atmospheric gradient overlay: seamlessly blended dark vignette across entire background */}
+        <div className="absolute inset-0 z-20 bg-gradient-to-b from-black/80 via-black/40 to-black/85 pointer-events-none" />
       </div>
 
       {/* Side Arrow Navigation */}
@@ -357,31 +356,31 @@ export default function EpicHeroShowcase({ packages: initialPackages }: EpicHero
           </div>
         </div>
 
-        {/* Minimalist Trust Ribbon (Unified sleek glass bar) */}
-        <div className="flex flex-wrap items-center justify-center gap-y-2 gap-x-4 sm:gap-x-6 px-5 py-2.5 rounded-full bg-white/90 backdrop-blur-md border border-[#EDE2D0] shadow-sm text-xs text-[#5D5047] font-medium">
+        {/* Minimalist Trust Ribbon (Unified sleek frosted dark-glass capsule) */}
+        <div className="flex flex-wrap items-center justify-center gap-y-2 gap-x-4 sm:gap-x-6 px-5 py-2.5 rounded-full bg-black/45 backdrop-blur-md border border-white/15 shadow-xl text-xs text-white/90 font-medium">
           <div className="flex items-center gap-1.5">
-            <Star className="w-3.5 h-3.5 text-amber-500 fill-amber-500" />
-            <span><strong className="font-bold text-[#3B2E27]">4.9/5</strong> (1,200+ Yatris)</span>
+            <Star className="w-3.5 h-3.5 text-amber-400 fill-amber-400" />
+            <span><strong className="font-bold text-white">4.9/5</strong> (1,200+ Yatris)</span>
           </div>
 
-          <span className="hidden sm:inline text-[#EDE2D0]">•</span>
+          <span className="hidden sm:inline text-white/25">•</span>
 
           <div className="flex items-center gap-1.5">
-            <ShieldCheck className="w-3.5 h-3.5 text-emerald-600" />
+            <ShieldCheck className="w-3.5 h-3.5 text-emerald-400" />
             <span>Commercial Tourist Fleet</span>
           </div>
 
-          <span className="hidden sm:inline text-[#EDE2D0]">•</span>
+          <span className="hidden sm:inline text-white/25">•</span>
 
           <div className="flex items-center gap-1.5">
-            <CheckCircle2 className="w-3.5 h-3.5 text-[#C65A2E]" />
+            <CheckCircle2 className="w-3.5 h-3.5 text-[#E8B9A5]" />
             <span>Satvik Meals &amp; 3★ Stays</span>
           </div>
 
-          <span className="hidden sm:inline text-[#EDE2D0]">•</span>
+          <span className="hidden sm:inline text-white/25">•</span>
 
           <div className="flex items-center gap-1.5">
-            <CheckCircle2 className="w-3.5 h-3.5 text-[#C65A2E]" />
+            <CheckCircle2 className="w-3.5 h-3.5 text-[#E8B9A5]" />
             <span>100% Confirmed Departures</span>
           </div>
         </div>
