@@ -26,6 +26,7 @@ import { TOUR_PACKAGES, TourPackage, SHARED_TOUR_CONTACT } from '@/constants/tou
 import { fetchLiveTourPackages } from '@/services/tours.service';
 import { fetchLiveFleetVehicles } from '@/services/fleet.service';
 import { useAutoRefresh } from '@/hooks/useRealtimeSync';
+import { getUpcomingBatchInfo } from '@/utils/upcomingBatches';
 
 const BookingModal = dynamic(() => import('@/components/booking/BookingModal'), {
   ssr: false,
@@ -205,6 +206,17 @@ export default function MainLandingPage() {
                           Temple Darshan Pass
                         </span>
                       </div>
+
+                      {/* Auto-Fetched Dynamic Departure Batch Badge */}
+                      {(() => {
+                        const upcoming = getUpcomingBatchInfo(pkg.batchDates, pkg.durationDays);
+                        return (
+                          <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-[#F0FDF4] border border-[#BBF7D0] text-[#166534] text-[11px] font-semibold mt-1">
+                            <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse shrink-0" />
+                            <span className="truncate">{upcoming.badgeText}</span>
+                          </div>
+                        );
+                      })()}
                     </div>
                   </div>
 

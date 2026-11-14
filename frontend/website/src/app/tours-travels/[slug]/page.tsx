@@ -31,6 +31,7 @@ import { TOUR_PACKAGES, SHARED_TOUR_CONTACT, TourPackage } from '@/constants/tou
 import { fetchLiveTourPackageBySlug } from '@/services/tours.service';
 import { useAutoRefresh } from '@/hooks/useRealtimeSync';
 import JsonLd, { getTourPackageSchema } from '@/components/shared/JsonLd';
+import { getUpcomingBatchInfo } from '@/utils/upcomingBatches';
 
 export default function TourPackageDetailPage() {
   const params = useParams();
@@ -233,25 +234,63 @@ export default function TourPackageDetailPage() {
                 </div>
               </div>
 
-              {/* Live Departure Batches & Dates */}
-              {tour.batchDates && tour.batchDates.length > 0 && (
-                <div className="space-y-4">
-                  <div className="flex flex-col sm:flex-row sm:items-center justify-between border-b border-[#EDE2D0] pb-2.5 gap-2">
-                    <div>
-                      <h2 className="font-serif text-lg font-bold text-[#493B34] tracking-tight flex items-center gap-2">
-                        <Calendar className="w-5 h-5 text-[#C65A2E]" />
-                        <span>Upcoming Departure Batches</span>
-                      </h2>
-                      <p className="text-xs text-[#756B63] font-normal mt-0.5">
-                        Select an official departure batch to reserve seats with ₹{tour.depositPrice || 2500} advance
-                      </p>
-                    </div>
-                    <span className="self-start sm:self-auto text-xs font-bold text-[#C65A2E] bg-[#F8EFEA] px-3 py-1 rounded-full border border-[#E8B9A5]/50">
-                      {tour.batchDates.length} Scheduled Batches
-                    </span>
+              {/* Live Departure Batches & Auto-Fetched Upcoming Dates */}
+              <div className="space-y-4">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between border-b border-[#EDE2D0] pb-2.5 gap-2">
+                  <div>
+                    <h2 className="font-serif text-lg font-bold text-[#493B34] tracking-tight flex items-center gap-2">
+                      <Calendar className="w-5 h-5 text-[#C65A2E]" />
+                      <span>Upcoming Departure Batches</span>
+                    </h2>
+                    <p className="text-xs text-[#756B63] font-normal mt-0.5">
+                      Select an official departure batch to reserve seats with ₹{tour.depositPrice || 2500} advance
+                    </p>
                   </div>
+                  <span className="self-start sm:self-auto text-xs font-bold text-[#C65A2E] bg-[#F8EFEA] px-3 py-1 rounded-full border border-[#E8B9A5]/50">
+                    {tour.batchDates?.length || 1} Scheduled Batches
+                  </span>
+                </div>
 
-                  {/* Month Filter Tabs */}
+                {/* Auto-Fetched Nearest Guaranteed Departure Highlight Banner */}
+                {(() => {
+                  const upcoming = getUpcomingBatchInfo(tour.batchDates, tour.durationDays);
+                  return (
+                    <div className="bg-gradient-to-r from-[#101F40] to-[#1C315A] text-white p-4 sm:p-5 rounded-2xl border border-white/10 shadow-md flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                      <div className="space-y-1">
+                        <div className="flex items-center gap-2">
+                          <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+                          <span className="text-[11px] font-bold uppercase tracking-wider text-emerald-300">
+                            Nearest Guaranteed Departure
+                          </span>
+                          {upcoming.daysRemaining !== undefined && (
+                            <span className="bg-white/15 px-2 py-0.5 rounded text-[10px] text-white font-medium">
+                              In {upcoming.daysRemaining} {upcoming.daysRemaining === 1 ? 'Day' : 'Days'}
+                            </span>
+                          )}
+                        </div>
+                        <h3 className="font-serif text-base sm:text-lg font-bold text-white">
+                          {upcoming.label}
+                        </h3>
+                        <p className="text-[11px] text-blue-200">
+                          Confirmed spiritual yatra departing from Pune with verified AC transport &amp; 3★ accommodation.
+                        </p>
+                      </div>
+
+                      <button
+                        type="button"
+                        onClick={() => handleBookBatch(upcoming.batchId)}
+                        className="px-5 py-2.5 rounded-xl bg-[#C65A2E] hover:bg-[#B24E25] text-white font-bold text-xs shadow-md transition-all flex items-center justify-center gap-1.5 shrink-0 cursor-pointer active:scale-95"
+                      >
+                        <span>Reserve This Date</span>
+                        <ArrowRight className="w-3.5 h-3.5" />
+                      </button>
+                    </div>
+                  );
+                })()}
+
+                {tour.batchDates && tour.batchDates.length > 0 && (
+                  <>
+                    {/* Month Filter Tabs */}
                   {Array.from(new Set(tour.batchDates.map((b) => b.month || 'Other'))).length > 1 && (
                     <div className="flex flex-wrap gap-1.5 pt-1">
                       <button
@@ -332,8 +371,9 @@ export default function TourPackageDetailPage() {
                         );
                       })}
                   </div>
-                </div>
+                </>
               )}
+            </div>
 
               {/* Day-by-Day Detailed Itinerary */}
               <div className="space-y-3.5">

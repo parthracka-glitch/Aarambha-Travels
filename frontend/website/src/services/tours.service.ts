@@ -27,6 +27,22 @@ export function formatTourPackageFromApi(apiPkg: any, fallback?: TourPackage): T
     batchDates = match.batchDates;
   }
 
+  // Cross-tab / live local sync if admin recently saved batches in CRM
+  if (typeof window !== 'undefined') {
+    try {
+      const targetSlug = apiPkg.slug || apiPkg._id || apiPkg.id || match?.slug;
+      if (targetSlug) {
+        const stored = localStorage.getItem('aarambha_package_batches_' + targetSlug);
+        if (stored) {
+          const parsed = JSON.parse(stored);
+          if (Array.isArray(parsed) && parsed.length > 0) {
+            batchDates = parsed;
+          }
+        }
+      }
+    } catch (_e) {}
+  }
+
   // Derive dynamic live datesLabel
   let datesLabel = apiPkg.datesLabel || apiPkg.dates_label;
   if (!datesLabel || datesLabel.trim() === '') {

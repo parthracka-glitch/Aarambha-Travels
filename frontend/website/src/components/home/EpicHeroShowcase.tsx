@@ -15,6 +15,7 @@ import {
 import { TourPackage } from '@/constants/toursData';
 import { fetchLiveTourPackages } from '@/services/tours.service';
 import { useAutoRefresh } from '@/hooks/useRealtimeSync';
+import { getUpcomingBatchInfo, UpcomingBatchInfo } from '@/utils/upcomingBatches';
 
 const DEFAULT_HERO_SLIDES = [
   {
@@ -122,16 +123,19 @@ export default function EpicHeroShowcase({ packages: initialPackages }: EpicHero
           ? '/images/tours/somnath_jyotirlinga_temple.jpg'
           : (match?.image || defaultSlide.image);
 
+      const upcomingBatch = match ? getUpcomingBatchInfo(match.batchDates, match.durationDays) : undefined;
+
       return {
         ...defaultSlide,
-        title: match.title || defaultSlide.title,
-        subtitle: match.subtitle || match.overview || defaultSlide.subtitle,
-        slug: match.slug || defaultSlide.slug,
-        price: match.priceDisplay ? match.priceDisplay.replace(' per person', '') : `₹${match.basePrice.toLocaleString('en-IN')}`,
-        deposit: match.advanceLabel
+        title: match?.title || defaultSlide.title,
+        subtitle: match?.subtitle || match?.overview || defaultSlide.subtitle,
+        slug: match?.slug || defaultSlide.slug,
+        price: match?.priceDisplay ? match.priceDisplay.replace(' per person', '') : `₹${match?.basePrice ? match.basePrice.toLocaleString('en-IN') : defaultSlide.price}`,
+        deposit: match?.advanceLabel
           ? match.advanceLabel.replace(' Advance', '')
-          : `₹${match.depositPrice.toLocaleString('en-IN')}`,
+          : `₹${match?.depositPrice ? match.depositPrice.toLocaleString('en-IN') : defaultSlide.deposit}`,
         image: finalImage,
+        upcomingBatch,
       };
     });
   }, [livePackages]);
@@ -290,10 +294,19 @@ export default function EpicHeroShowcase({ packages: initialPackages }: EpicHero
           key={`content-${currentSlide}`}
           className="flex flex-col items-center transition-opacity duration-500 ease-out animate-fadeIn"
         >
-          {/* Subtle Pill Tag */}
-          <div className="inline-flex items-center gap-1.5 px-3.5 py-1 rounded-full bg-white/10 backdrop-blur-md border border-white/15 text-white/90 text-xs font-medium mb-3.5">
-            <Sparkles className="w-3.5 h-3.5 text-[#E8B9A5]" />
-            <span>{activeSlide.badge}</span>
+          {/* Subtle Pill Tag & Auto-Fetched Live Batch Pill */}
+          <div className="flex flex-wrap items-center justify-center gap-2 mb-3.5">
+            <div className="inline-flex items-center gap-1.5 px-3.5 py-1 rounded-full bg-white/10 backdrop-blur-md border border-white/15 text-white/90 text-xs font-medium">
+              <Sparkles className="w-3.5 h-3.5 text-[#E8B9A5]" />
+              <span>{activeSlide.badge}</span>
+            </div>
+
+            {(activeSlide as any).upcomingBatch && (
+              <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-emerald-500/20 backdrop-blur-md border border-emerald-400/40 text-emerald-200 text-xs font-bold shadow-xs">
+                <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+                <span>{(activeSlide as any).upcomingBatch.badgeText}</span>
+              </div>
+            )}
           </div>
 
           {/* Clean Elegant Headline */}

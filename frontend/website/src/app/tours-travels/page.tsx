@@ -29,6 +29,7 @@ import BookingModal, { BookingModalItem } from '@/components/booking/BookingModa
 import { TOUR_PACKAGES, SHARED_TOUR_CONTACT, TourPackage } from '@/constants/toursData';
 import { fetchLiveTourPackages } from '@/services/tours.service';
 import { useAutoRefresh } from '@/hooks/useRealtimeSync';
+import { getUpcomingBatchInfo } from '@/utils/upcomingBatches';
 
 export default function ToursTravelsLandingPage() {
   const [searchQuery, setSearchQuery] = useState('');
@@ -326,6 +327,17 @@ export default function ToursTravelsLandingPage() {
                         </span>
                       ))}
                     </div>
+
+                    {/* Auto-Fetched Dynamic Departure Batch Badge */}
+                    {(() => {
+                      const upcoming = getUpcomingBatchInfo(pkg.batchDates, pkg.durationDays);
+                      return (
+                        <div className="flex items-center gap-2 p-2 rounded-xl bg-[#F0FDF4] border border-[#BBF7D0] text-[#166534] text-xs font-semibold">
+                          <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse shrink-0" />
+                          <span className="truncate">{upcoming.badgeText}</span>
+                        </div>
+                      );
+                    })()}
                   </div>
 
                   {/* Pricing and Action */}

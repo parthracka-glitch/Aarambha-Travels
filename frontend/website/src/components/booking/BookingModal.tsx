@@ -75,13 +75,17 @@ export default function BookingModal({ isOpen, onClose, item, onSuccess }: Booki
 
   const activeBatches = React.useMemo(() => {
     if (!item) return [];
+    let list: any[] = [];
     if (item.batchDates !== undefined && Array.isArray(item.batchDates)) {
-      return item.batchDates;
+      list = item.batchDates;
+    } else if ((item as any)?.batchDates !== undefined && Array.isArray((item as any).batchDates)) {
+      list = (item as any).batchDates;
     }
-    if ((item as any)?.batchDates !== undefined && Array.isArray((item as any).batchDates)) {
-      return (item as any).batchDates;
-    }
-    return [];
+    // Sort upcoming batches chronologically by startDate
+    return [...list].sort((a: any, b: any) => {
+      if (!a.startDate || !b.startDate) return 0;
+      return new Date(a.startDate).getTime() - new Date(b.startDate).getTime();
+    });
   }, [item]);
 
   const availableMonths: string[] = React.useMemo(() => {
