@@ -494,8 +494,8 @@ export const seedDatabase = async (): Promise<void> => {
         destination: 'Girnar, Dwarka & Somnath',
         state: 'Gujarat',
         images: [
+          '/images/tours/somnath_jyotirlinga_temple.jpg',
           'https://images.unsplash.com/photo-1609766857041-ed402ea8069a?q=80&w=1200&auto=format&fit=crop',
-          'https://images.unsplash.com/photo-1596707328905-234b3e811c75?q=80&w=1200&auto=format&fit=crop',
         ],
         sites: [
           'Girnar Mountain (Guru Dattatreya & Ambaji Darshan)',

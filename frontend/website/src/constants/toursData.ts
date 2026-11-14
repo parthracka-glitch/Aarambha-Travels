@@ -692,10 +692,10 @@ export const TOUR_PACKAGES: TourPackage[] = [
     "rating": 4.9,
     "reviewsCount": 140,
     "featured": true,
-    "image": "https://images.unsplash.com/photo-1609766857041-ed402ea8069a?q=80&w=1200&auto=format&fit=crop",
+    "image": "/images/tours/somnath_jyotirlinga_temple.jpg",
     "gallery": [
-      "https://images.unsplash.com/photo-1609766857041-ed402ea8069a?q=80&w=1200&auto=format&fit=crop",
-      "https://images.unsplash.com/photo-1596707328905-234b3e811c75?q=80&w=1200&auto=format&fit=crop"
+      "/images/tours/somnath_jyotirlinga_temple.jpg",
+      "https://images.unsplash.com/photo-1609766857041-ed402ea8069a?q=80&w=1200&auto=format&fit=crop"
     ],
     "sites": [
       "Girnar Mountain (Guru Dattatreya & Ambaji Darshan)",

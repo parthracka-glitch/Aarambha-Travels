@@ -43,7 +43,7 @@ const DEFAULT_HERO_SLIDES = [
   },
   {
     id: 'girnar-trip',
-    image: '/images/himalayan_hero_bg.jpg',
+    image: '/images/tours/somnath_jyotirlinga_temple.jpg',
     badge: '⛰️ Sacred Mountain Pilgrimage • 6 Days',
     label: 'Girnar Mountain Yatra',
     tag: 'Dwarka & Somnath Jyotirlinga',
@@ -117,6 +117,11 @@ export default function EpicHeroShowcase({ packages: initialPackages }: EpicHero
 
       if (!match) return defaultSlide;
 
+      const finalImage =
+        defaultSlide.id === 'girnar-trip' && (!match?.image || match.image.includes('unsplash') || match.image.includes('himalayan'))
+          ? '/images/tours/somnath_jyotirlinga_temple.jpg'
+          : (match?.image || defaultSlide.image);
+
       return {
         ...defaultSlide,
         title: match.title || defaultSlide.title,
@@ -126,7 +131,7 @@ export default function EpicHeroShowcase({ packages: initialPackages }: EpicHero
         deposit: match.advanceLabel
           ? match.advanceLabel.replace(' Advance', '')
           : `₹${match.depositPrice.toLocaleString('en-IN')}`,
-        image: match.image || defaultSlide.image,
+        image: finalImage,
       };
     });
   }, [livePackages]);

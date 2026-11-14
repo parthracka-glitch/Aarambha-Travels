@@ -71,8 +71,14 @@ export function formatTourPackageFromApi(apiPkg: any, fallback?: TourPackage): T
         { day: 3, title: 'Return Journey', description: 'Safe return journey.', highlights: [] },
       ]);
 
-  const image = (Array.isArray(apiPkg.images) && apiPkg.images[0]) || apiPkg.image || match?.image || '/images/hero_spiritual_tours.jpg';
-  const gallery = (Array.isArray(apiPkg.images) && apiPkg.images.length > 0) ? apiPkg.images : (match?.gallery || [image]);
+  let image = (Array.isArray(apiPkg.images) && apiPkg.images[0]) || apiPkg.image || match?.image || '/images/hero_spiritual_tours.jpg';
+  if ((apiPkg.slug?.includes('girnar') || apiPkg.id?.includes('girnar') || match?.slug?.includes('girnar')) && (image.includes('unsplash') || image.includes('himalayan'))) {
+    image = '/images/tours/somnath_jyotirlinga_temple.jpg';
+  }
+  let gallery = (Array.isArray(apiPkg.images) && apiPkg.images.length > 0) ? apiPkg.images : (match?.gallery || [image]);
+  if (apiPkg.slug?.includes('girnar') || apiPkg.id?.includes('girnar') || match?.slug?.includes('girnar')) {
+    gallery = ['/images/tours/somnath_jyotirlinga_temple.jpg', ...gallery.filter((g: string) => !g.includes('unsplash') && !g.includes('himalayan'))];
+  }
 
   return {
     id: apiPkg._id || apiPkg.id || match?.id || apiPkg.slug,
