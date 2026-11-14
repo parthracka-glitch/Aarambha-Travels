@@ -168,43 +168,55 @@ export default function EpicHeroShowcase({ packages: initialPackages }: EpicHero
     setCurrentSlide((prev) => (prev - 1 + heroSlides.length) % heroSlides.length);
   };
 
-  // Mobile Touch Swipe Gesture Handlers (iOS & Android)
+  // Mobile Touch Swipe Gesture Handlers (Unobtrusive & Smooth)
   const touchStartXRef = useRef<number | null>(null);
+  const touchStartYRef = useRef<number | null>(null);
   const touchEndXRef = useRef<number | null>(null);
+  const touchEndYRef = useRef<number | null>(null);
 
   const handleTouchStart = (e: React.TouchEvent) => {
     touchStartXRef.current = e.targetTouches[0].clientX;
-    setIsPaused(true);
+    touchStartYRef.current = e.targetTouches[0].clientY;
   };
 
   const handleTouchMove = (e: React.TouchEvent) => {
     touchEndXRef.current = e.targetTouches[0].clientX;
+    touchEndYRef.current = e.targetTouches[0].clientY;
   };
 
   const handleTouchEnd = () => {
-    setIsPaused(false);
-    if (touchStartXRef.current !== null && touchEndXRef.current !== null) {
-      const diff = touchStartXRef.current - touchEndXRef.current;
-      if (diff > 45) {
-        nextSlide();
-      } else if (diff < -45) {
-        prevSlide();
+    if (
+      touchStartXRef.current !== null &&
+      touchEndXRef.current !== null &&
+      touchStartYRef.current !== null &&
+      touchEndYRef.current !== null
+    ) {
+      const diffX = touchStartXRef.current - touchEndXRef.current;
+      const diffY = touchStartYRef.current - touchEndYRef.current;
+
+      // Only swipe if horizontal movement is distinctly dominant and exceeds threshold
+      if (Math.abs(diffX) > Math.abs(diffY) && Math.abs(diffX) > 45) {
+        if (diffX > 0) {
+          nextSlide();
+        } else {
+          prevSlide();
+        }
       }
     }
     touchStartXRef.current = null;
+    touchStartYRef.current = null;
     touchEndXRef.current = null;
+    touchEndYRef.current = null;
   };
 
   const activeSlide = heroSlides[currentSlide] || heroSlides[0];
 
   return (
     <section
-      onMouseEnter={() => setIsPaused(true)}
-      onMouseLeave={() => setIsPaused(false)}
       onTouchStart={handleTouchStart}
       onTouchMove={handleTouchMove}
       onTouchEnd={handleTouchEnd}
-      className="relative w-full bg-[#120F0D] pt-20 pb-10 sm:pt-28 sm:pb-14 lg:pt-32 lg:pb-16 overflow-hidden flex items-center justify-center font-sans border-b border-[#EDE2D0]/40 select-none touch-pan-y"
+      className="relative w-full bg-[#120F0D] pt-20 pb-10 sm:pt-28 sm:pb-14 lg:pt-32 lg:pb-16 overflow-hidden flex items-center justify-center font-sans border-b border-[#EDE2D0]/40 touch-pan-y"
     >
 
       {/* ─── 1. BUTTERY-SMOOTH HARDWARE-ACCELERATED CAROUSEL ─── */}
@@ -257,7 +269,11 @@ export default function EpicHeroShowcase({ packages: initialPackages }: EpicHero
       <div className="relative z-20 max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 w-full flex flex-col items-center text-center">
 
         {/* Sleek Minimalist Tabs with Auto-Scroll Progress */}
-        <div className="flex flex-wrap items-center justify-center gap-2 sm:gap-3 mb-6 sm:mb-8">
+        <div
+          onMouseEnter={() => setIsPaused(true)}
+          onMouseLeave={() => setIsPaused(false)}
+          className="flex flex-wrap items-center justify-center gap-2 sm:gap-3 mb-6 sm:mb-8"
+        >
           {heroSlides.map((slide, idx) => {
             const isActive = idx === currentSlide;
             return (
