@@ -566,10 +566,10 @@ export default function BookingsView() {
       </div>
 
       {/* Quick Navigation Filter Tabs */}
-      <div className="flex flex-wrap items-center gap-2 pt-1 border-b border-[#E8ECF4] pb-3">
+      <div className="flex items-center gap-2 pt-1 border-b border-[#E8ECF4] pb-3 overflow-x-auto no-scrollbar scroll-smooth whitespace-nowrap -mx-4 px-4 sm:mx-0 sm:px-0">
         <button
           onClick={() => { setFilterPayment('all'); setFilterSection('all'); }}
-          className={`px-4 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer ${
+          className={`shrink-0 px-4 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer ${
             filterPayment === 'all' && filterSection === 'all'
               ? 'bg-[#101F40] text-white shadow-xs'
               : 'bg-white text-[#77839A] border border-[#E8ECF4] hover:text-[#17233D] hover:bg-[#F5F7FC]'
@@ -580,7 +580,7 @@ export default function BookingsView() {
 
         <button
           onClick={() => setFilterPayment('pending_verification')}
-          className={`px-4 py-2 rounded-full text-xs font-bold transition-all flex items-center gap-2 cursor-pointer ${
+          className={`shrink-0 px-4 py-2 rounded-full text-xs font-bold transition-all flex items-center gap-2 cursor-pointer ${
             filterPayment === 'pending_verification'
               ? 'bg-amber-600 text-white shadow-xs'
               : 'bg-amber-50 text-amber-900 border border-amber-200 hover:bg-amber-100'
@@ -597,7 +597,7 @@ export default function BookingsView() {
 
         <button
           onClick={() => { setFilterSection('fleet'); setFilterPayment('all'); }}
-          className={`px-4 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer ${
+          className={`shrink-0 px-4 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer ${
             filterSection === 'fleet' && filterPayment === 'all'
               ? 'bg-[#101F40] text-white shadow-xs'
               : 'bg-white text-[#77839A] border border-[#E8ECF4] hover:text-[#17233D] hover:bg-[#F5F7FC]'
@@ -608,7 +608,7 @@ export default function BookingsView() {
 
         <button
           onClick={() => { setFilterSection('tours'); setFilterPayment('all'); }}
-          className={`px-4 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer ${
+          className={`shrink-0 px-4 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer ${
             filterSection === 'tours' && filterPayment === 'all'
               ? 'bg-[#101F40] text-white shadow-xs'
               : 'bg-white text-[#77839A] border border-[#E8ECF4] hover:text-[#17233D] hover:bg-[#F5F7FC]'

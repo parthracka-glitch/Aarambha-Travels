@@ -764,8 +764,8 @@ export default function DashboardView() {
                                 </div>
                               </div>
 
-                              {/* Clean Passenger Manifest Table */}
-                              <div className="overflow-x-auto">
+                              {/* 💻 DESKTOP TABLE VIEW (>= 768px) */}
+                              <div className="hidden md:block overflow-x-auto">
                                 <table className="w-full text-left text-xs border border-[#E8ECF4] rounded-lg">
                                   <thead>
                                     <tr className="bg-[#101F40] text-white text-[10px] uppercase font-bold tracking-wider">
@@ -866,6 +866,102 @@ export default function DashboardView() {
                                     })}
                                   </tbody>
                                 </table>
+                              </div>
+
+                              {/* 📱 MOBILE PASSENGER CARDS VIEW (< 768px) */}
+                              <div className="md:hidden space-y-2.5">
+                                {trip.passengers.map((p: any, idx: number) => {
+                                  const ageSex = [
+                                    p.age && p.age !== '—' ? `${p.age}y` : '',
+                                    p.gender && p.gender !== '—' ? p.gender : ''
+                                  ].filter(Boolean).join(' • ') || '—';
+
+                                  return (
+                                    <div
+                                      key={`${trip.id}_pax_m_${idx}`}
+                                      className={`p-3 rounded-xl border transition-all space-y-2 ${
+                                        p.boarded
+                                          ? 'bg-[#F0FDF4] border-[#86EFAC]'
+                                          : 'bg-white border-[#E8ECF4] shadow-2xs'
+                                      }`}
+                                    >
+                                      {/* Top Row: Seat & Name & Boarding Button */}
+                                      <div className="flex items-center justify-between gap-2">
+                                        <div className="flex items-center gap-2 min-w-0">
+                                          <span className="px-2 py-0.5 rounded-md font-bold text-xs bg-[#EDF3FF] text-[#1D4ED8] border border-[#BFDBFE] shrink-0">
+                                            #{p.seatNo}
+                                          </span>
+                                          <span className="font-bold text-xs text-[#17233D] truncate">
+                                            {p.name}
+                                          </span>
+                                          {p.isPrimary && (
+                                            <span className="text-[9px] bg-[#FEF3C7] text-[#92400E] px-1.5 py-0.5 rounded font-extrabold uppercase shrink-0">
+                                              Primary
+                                            </span>
+                                          )}
+                                        </div>
+
+                                        <button
+                                          type="button"
+                                          onClick={() => toggleBoarded(p.passKey)}
+                                          className={`shrink-0 inline-flex items-center gap-1 px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer touch-manipulation active:scale-95 ${
+                                            p.boarded
+                                              ? 'bg-[#12A879] text-white shadow-xs'
+                                              : 'bg-[#F5F7FC] border border-[#CBD5E1] text-[#17233D] hover:bg-[#EDF3FF]'
+                                          }`}
+                                        >
+                                          {p.boarded ? (
+                                            <>
+                                              <Check className="w-3.5 h-3.5" />
+                                              <span>Boarded</span>
+                                            </>
+                                          ) : (
+                                            <>
+                                              <Square className="w-3.5 h-3.5" />
+                                              <span>Check In</span>
+                                            </>
+                                          )}
+                                        </button>
+                                      </div>
+
+                                      {/* Middle Row: Age/Gender + Phone + Ref */}
+                                      <div className="flex flex-wrap items-center justify-between gap-2 text-[11px] text-[#64748B] pt-0.5">
+                                        <div className="flex items-center gap-2">
+                                          <span>{ageSex}</span>
+                                          <span>•</span>
+                                          <a href={`tel:${p.phone}`} className="font-semibold text-[#17233D] hover:text-[#3569F6]">
+                                            {p.phone || '—'}
+                                          </a>
+                                          {p.phone && p.phone !== '—' && (
+                                            <a
+                                              href={`https://wa.me/91${p.phone.replace(/[^0-9]/g, '')}`}
+                                              target="_blank"
+                                              rel="noreferrer"
+                                              className="text-[#12A879]"
+                                            >
+                                              <MessageSquare className="w-3.5 h-3.5" />
+                                            </a>
+                                          )}
+                                        </div>
+
+                                        <span className="font-mono font-bold text-[10px] text-[#3569F6]">
+                                          {p.bookingCode}
+                                        </span>
+                                      </div>
+
+                                      {/* Bottom Row: Pickup point + Adv deposit badge */}
+                                      <div className="flex items-center justify-between gap-2 text-[10px] text-[#77839A] pt-1 border-t border-gray-100">
+                                        <span className="truncate flex items-center gap-1">
+                                          <MapPin className="w-3 h-3 text-[#3569F6] shrink-0" />
+                                          {p.pickupPoint || 'Main Boarding Point'}
+                                        </span>
+                                        <span className="font-bold text-[#12A879] shrink-0">
+                                          {p.depositPaid ? `Adv: ₹${p.depositPaid}` : (p.status || 'Confirmed')}
+                                        </span>
+                                      </div>
+                                    </div>
+                                  );
+                                })}
                               </div>
 
                               {/* Footer Checklist & Print Button */}

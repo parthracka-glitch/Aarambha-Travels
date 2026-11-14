@@ -538,7 +538,7 @@ export default function BookingModal({ isOpen, onClose, item, onSuccess }: Booki
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-black/60 backdrop-blur-xs select-none">
 
-      <div className="relative w-full max-w-xl bg-white rounded-3xl border border-[#EDE2D0] shadow-2xl overflow-hidden flex flex-col max-h-[92vh]">
+      <div className="relative w-full max-w-xl bg-white rounded-3xl border border-[#EDE2D0] shadow-2xl overflow-hidden flex flex-col max-h-[92dvh] sm:max-h-[90vh] overscroll-contain">
 
         {/* Close Top-Right Button */}
         <button
