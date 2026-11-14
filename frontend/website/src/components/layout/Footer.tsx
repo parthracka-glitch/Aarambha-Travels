@@ -1,10 +1,26 @@
 'use client';
 
-import React from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import Link from 'next/link';
 import { Compass, Bus, Car, HelpCircle, MapPin, Phone, Mail } from 'lucide-react';
+import { fetchLivePublicSettings, PublicSettings, DEFAULT_PUBLIC_SETTINGS } from '@/services/settings.service';
+import { useAutoRefresh } from '@/hooks/useRealtimeSync';
 
 export default function Footer() {
+  const [settings, setSettings] = useState<PublicSettings>(DEFAULT_PUBLIC_SETTINGS);
+
+  const loadSettings = useCallback(() => {
+    fetchLivePublicSettings(true).then((data) => {
+      if (data) setSettings(data);
+    });
+  }, []);
+
+  useEffect(() => {
+    loadSettings();
+  }, [loadSettings]);
+
+  useAutoRefresh(loadSettings, ['SETTINGS_UPDATED'], 15000);
+
   const scrollToTop = () => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
@@ -49,11 +65,11 @@ export default function Footer() {
               </div>
               <div className="flex items-center gap-2">
                 <Phone className="w-3.5 h-3.5 text-[#C65A2E] shrink-0" />
-                <span>+91 90676 17451 (24x7 Customer Support)</span>
+                <span>{settings.contact_phone || '+91 90676 17451'} (24x7 Customer Support)</span>
               </div>
               <div className="flex items-center gap-2">
                 <Mail className="w-3.5 h-3.5 text-[#C65A2E] shrink-0" />
-                <span>contact@aarambhatravels.in</span>
+                <span>{settings.contact_email || 'contact@aarambhatravels.in'}</span>
               </div>
             </div>
           </div>

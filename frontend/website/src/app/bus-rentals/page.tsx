@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import Link from 'next/link';
 import {
   Car,
@@ -35,6 +35,7 @@ import {
 } from '@/constants/busData';
 import { fetchLiveFleetVehicles } from '@/services/fleet.service';
 import { fetchLiveBusRates, formatBusDataFromApi } from '@/services/bus.service';
+import { useAutoRefresh } from '@/hooks/useRealtimeSync';
 
 export default function BusAndCarRentalsLandingPage() {
   const [activeTab, setActiveTab] = useState<'urbania' | 'buses' | 'cabs' | 'cars'>('urbania');
@@ -59,7 +60,7 @@ export default function BusAndCarRentalsLandingPage() {
   });
   const [quoteSubmitted, setQuoteSubmitted] = useState(false);
 
-  useEffect(() => {
+  const loadBusAndFleetData = useCallback(() => {
     fetchLiveFleetVehicles().then((data) => {
       if (Array.isArray(data) && data.length > 0) {
         setCarsList(data);
@@ -72,6 +73,12 @@ export default function BusAndCarRentalsLandingPage() {
       }
     });
   }, []);
+
+  useEffect(() => {
+    loadBusAndFleetData();
+  }, [loadBusAndFleetData]);
+
+  useAutoRefresh(loadBusAndFleetData, ['FLEET_UPDATED', 'BUS_RATES_UPDATED'], 10000);
 
   const handleQuoteSubmit = (e: React.FormEvent) => {
     e.preventDefault();

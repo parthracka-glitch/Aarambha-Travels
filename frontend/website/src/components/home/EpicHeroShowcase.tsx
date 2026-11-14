@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { useRouter } from 'next/navigation';
 import {
   Compass,
@@ -11,8 +11,11 @@ import {
   ChevronRight,
   Star,
 } from 'lucide-react';
+import { TourPackage } from '@/constants/toursData';
+import { fetchLiveTourPackages } from '@/services/tours.service';
+import { useAutoRefresh } from '@/hooks/useRealtimeSync';
 
-const HERO_SLIDES = [
+const DEFAULT_HERO_SLIDES = [
   {
     id: '2-jyotirlinga',
     image: '/images/tours/mumbai_ujjain_omkareshwar_tour.jpg',
@@ -51,30 +54,99 @@ const HERO_SLIDES = [
   },
 ];
 
-export default function EpicHeroShowcase() {
+interface EpicHeroShowcaseProps {
+  packages?: TourPackage[];
+}
+
+export default function EpicHeroShowcase({ packages: initialPackages }: EpicHeroShowcaseProps = {}) {
   const router = useRouter();
   const [currentSlide, setCurrentSlide] = useState(0);
   const [isPaused, setIsPaused] = useState(false);
+  const [livePackages, setLivePackages] = useState<TourPackage[]>(initialPackages || []);
+
+  const loadPackages = useCallback(() => {
+    fetchLiveTourPackages(true).then((pkgs) => {
+      if (Array.isArray(pkgs) && pkgs.length > 0) {
+        setLivePackages(pkgs);
+      }
+    });
+  }, []);
+
+  useEffect(() => {
+    if (initialPackages && initialPackages.length > 0) {
+      setLivePackages(initialPackages);
+    } else {
+      loadPackages();
+    }
+  }, [initialPackages, loadPackages]);
+
+  useAutoRefresh(loadPackages, ['TOURS_UPDATED'], 8000);
+
+  // Dynamically merge live packages from DB into the hero carousel slides
+  const heroSlides = useMemo(() => {
+    return DEFAULT_HERO_SLIDES.map((defaultSlide) => {
+      const match = livePackages.find((p) => {
+        if (!p) return false;
+        if (defaultSlide.id === '2-jyotirlinga') {
+          return (
+            p.slug.includes('2-jyotirlinga') ||
+            p.id === '2-jyotirlinga' ||
+            p.title.toLowerCase().includes('2 jyotirlinga') ||
+            p.title.toLowerCase().includes('omkareshwar')
+          );
+        }
+        if (defaultSlide.id === 'sanwaliya-seth') {
+          return (
+            p.slug.includes('sanwaliya') ||
+            p.id === 'sanwaliya-seth' ||
+            p.title.toLowerCase().includes('sanwaliya')
+          );
+        }
+        if (defaultSlide.id === 'girnar-trip') {
+          return (
+            p.slug.includes('girnar') ||
+            p.id === 'girnar-trip' ||
+            p.title.toLowerCase().includes('girnar')
+          );
+        }
+        return false;
+      });
+
+      if (!match) return defaultSlide;
+
+      return {
+        ...defaultSlide,
+        title: match.title || defaultSlide.title,
+        subtitle: match.subtitle || match.overview || defaultSlide.subtitle,
+        slug: match.slug || defaultSlide.slug,
+        price: match.priceDisplay || `₹${match.basePrice.toLocaleString('en-IN')}`,
+        deposit: match.advanceLabel
+          ? match.advanceLabel.replace(' Advance', '')
+          : `₹${match.depositPrice.toLocaleString('en-IN')}`,
+        image: match.image || defaultSlide.image,
+      };
+    });
+  }, [livePackages]);
 
   // Auto-play carousel every 5.5s
   useEffect(() => {
     if (isPaused) return;
     const timer = setInterval(() => {
-      setCurrentSlide((prev) => (prev + 1) % HERO_SLIDES.length);
+      setCurrentSlide((prev) => (prev + 1) % heroSlides.length);
     }, 5500);
     return () => clearInterval(timer);
-  }, [isPaused]);
+  }, [isPaused, heroSlides.length]);
 
   const goToSlide = (idx: number) => {
     setCurrentSlide(idx);
   };
 
   const nextSlide = () => {
-    setCurrentSlide((prev) => (prev + 1) % HERO_SLIDES.length);
+    setCurrentSlide((prev) => (prev + 1) % heroSlides.length);
   };
 
   const prevSlide = () => {
-    setCurrentSlide((prev) => (prev - 1 + HERO_SLIDES.length) % HERO_SLIDES.length);
+    setCurrentSlide((prev) => (prev - 1 + heroSlides.length) % heroSlides.length);
   };
 
   return (
@@ -86,7 +158,7 @@ export default function EpicHeroShowcase() {
       
       {/* ─── 1. HIGH-VISIBILITY BACKGROUND CAROUSEL ─── */}
       <div className="absolute inset-0 w-full h-full pointer-events-none z-0 overflow-hidden">
-        {HERO_SLIDES.map((slide, idx) => (
+        {heroSlides.map((slide, idx) => (
           <div
             key={slide.id}
             className={`absolute inset-0 w-full h-full transition-opacity duration-1000 ease-in-out ${
@@ -132,7 +204,7 @@ export default function EpicHeroShowcase() {
         
         {/* Top 3 Yatra Switcher Tabs */}
         <div className="flex flex-wrap items-center justify-center gap-2 sm:gap-2.5 mb-5 sm:mb-6 select-none">
-          {HERO_SLIDES.map((slide, idx) => {
+          {heroSlides.map((slide, idx) => {
             const isActive = idx === currentSlide;
             return (
               <button
@@ -156,29 +228,29 @@ export default function EpicHeroShowcase() {
 
         {/* Dynamic Title */}
         <h1 className="font-serif text-2xl sm:text-4xl md:text-5xl lg:text-5xl font-extrabold text-white tracking-tight leading-[1.18] mb-3.5 max-w-4xl drop-shadow-lg">
-          {HERO_SLIDES[currentSlide].title}
+          {heroSlides[currentSlide]?.title}
         </h1>
 
         {/* Dynamic Subtitle */}
         <p className="text-xs sm:text-sm md:text-base text-white/90 max-w-2xl mx-auto leading-relaxed font-normal mb-6 sm:mb-8 drop-shadow-md">
-          {HERO_SLIDES[currentSlide].subtitle}
+          {heroSlides[currentSlide]?.subtitle}
         </p>
 
         {/* Single Clean Actions Row */}
         <div className="flex flex-wrap items-center justify-center gap-3 sm:gap-4 mb-6 sm:mb-8 select-none">
           <button
             type="button"
-            onClick={() => router.push(`/tours-travels/${HERO_SLIDES[currentSlide].slug}`)}
+            onClick={() => router.push(`/tours-travels/${heroSlides[currentSlide]?.slug}`)}
             className="px-7 py-3.5 rounded-full bg-[#C65A2E] hover:bg-[#B24E25] text-white text-xs sm:text-sm font-extrabold shadow-xl hover:shadow-2xl transition-all flex items-center gap-2 cursor-pointer active:scale-95"
           >
             <Compass className="w-4 h-4 text-white" />
-            <span>Book This Tour • Advance: {HERO_SLIDES[currentSlide].deposit}</span>
+            <span>Book This Tour • Advance: {heroSlides[currentSlide]?.deposit}</span>
             <ArrowRight className="w-4 h-4 text-white/80" />
           </button>
 
           <button
             type="button"
-            onClick={() => router.push(`/tours-travels/${HERO_SLIDES[currentSlide].slug}`)}
+            onClick={() => router.push(`/tours-travels/${heroSlides[currentSlide]?.slug}`)}
             className="px-6 py-3.5 rounded-full bg-white/20 hover:bg-white/30 backdrop-blur-md text-white border border-white/40 text-xs sm:text-sm font-bold shadow-md transition-all flex items-center gap-2 cursor-pointer active:scale-95"
           >
             <span>View Full Itinerary</span>
@@ -187,7 +259,7 @@ export default function EpicHeroShowcase() {
 
         {/* Minimal Slide Indicators */}
         <div className="flex items-center justify-center gap-2 mb-6 select-none">
-          {HERO_SLIDES.map((slide, idx) => (
+          {heroSlides.map((slide, idx) => (
             <button
               key={slide.id}
               type="button"

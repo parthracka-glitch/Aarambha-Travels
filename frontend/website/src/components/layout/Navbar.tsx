@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import Link from 'next/link';
 import dynamic from 'next/dynamic';
 import { usePathname, useRouter } from 'next/navigation';
@@ -16,6 +16,8 @@ import {
   Bus,
   HelpCircle,
 } from 'lucide-react';
+import { fetchLivePublicSettings, PublicSettings, DEFAULT_PUBLIC_SETTINGS } from '@/services/settings.service';
+import { useAutoRefresh } from '@/hooks/useRealtimeSync';
 
 const MyBookingsDrawer = dynamic(() => import('../booking/MyBookingsDrawer'), {
   ssr: false,
@@ -26,9 +28,22 @@ export default function Navbar({ vertical = 'home' }: { vertical?: 'tours' | 'fl
   const [bookingsOpen, setBookingsOpen] = useState(false);
   const [profileDropdownOpen, setProfileDropdownOpen] = useState(false);
   const [user, setUser] = useState<{ name: string; email: string } | null>(null);
+  const [settings, setSettings] = useState<PublicSettings>(DEFAULT_PUBLIC_SETTINGS);
   const dropdownRef = useRef<HTMLDivElement>(null);
   const pathname = usePathname();
   const router = useRouter();
+
+  const loadSettings = useCallback(() => {
+    fetchLivePublicSettings(true).then((data) => {
+      if (data) setSettings(data);
+    });
+  }, []);
+
+  useEffect(() => {
+    loadSettings();
+  }, [loadSettings]);
+
+  useAutoRefresh(loadSettings, ['SETTINGS_UPDATED'], 15000);
 
   useEffect(() => {
     const checkUser = () => {
@@ -168,14 +183,14 @@ export default function Navbar({ vertical = 'home' }: { vertical?: 'tours' | 'fl
             
             {/* Phone Helpline */}
             <a
-              href="https://wa.me/919067617451?text=Hello%20Aarambha%20Travels,%20I%20would%20like%20to%20inquire%20about%20a%20booking."
+              href={`https://wa.me/${(settings.contact_phone || '+91 90676 17451').replace(/[^0-9]/g, '').startsWith('91') ? (settings.contact_phone || '+91 90676 17451').replace(/[^0-9]/g, '') : '91' + (settings.contact_phone || '+91 90676 17451').replace(/[^0-9]/g, '')}?text=Hello%20Aarambha%20Travels,%20I%20would%20like%20to%20inquire%20about%20a%20booking.`}
               target="_blank"
               rel="noopener noreferrer"
               className="flex items-center gap-1.5 px-2.5 py-1.5 text-[13px] text-[#493B34] hover:text-[#C65A2E] transition-colors font-medium"
               title="Direct WhatsApp & Phone Helpline"
             >
               <Phone className="w-3.5 h-3.5 text-[#C65A2E]" />
-              <span>+91 90676 17451</span>
+              <span>{settings.contact_phone || '+91 90676 17451'}</span>
             </a>
 
             {/* If Logged Out: Show "Sign In" link */}

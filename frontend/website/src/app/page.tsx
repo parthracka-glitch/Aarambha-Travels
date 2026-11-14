@@ -34,6 +34,7 @@ const BookingModal = dynamic(() => import('@/components/booking/BookingModal'), 
 export default function MainLandingPage() {
   const [bookingModalItem, setBookingModalItem] = useState<BookingModalItem | null>(null);
   const [spotlightTab, setSpotlightTab] = useState<'all' | 'tours' | 'cars'>('all');
+  const [allTours, setAllTours] = useState<TourPackage[]>(TOUR_PACKAGES);
   const [famousTours, setFamousTours] = useState<TourPackage[]>(TOUR_PACKAGES.slice(0, 3));
   const [famousCars, setFamousCars] = useState<CarVehicle[]>([
     FLEET_VEHICLES.find((c) => c.id === 'swift-black-2026') || FLEET_VEHICLES[2],
@@ -44,6 +45,7 @@ export default function MainLandingPage() {
   const loadToursAndFleet = useCallback(() => {
     fetchLiveTourPackages(true).then((tours) => {
       if (Array.isArray(tours) && tours.length > 0) {
+        setAllTours(tours);
         setFamousTours(tours.slice(0, 3));
       }
     });
@@ -67,7 +69,7 @@ export default function MainLandingPage() {
       <Navbar vertical="home" />
 
       {/* 1. HERO SHOWCASE WITH COMPACT RESILIENT VIEWPORT FIT */}
-      <EpicHeroShowcase />
+      <EpicHeroShowcase packages={allTours} />
 
       {/* 2. FEATURED EXPERIENCES SECTION */}
       <section className="py-14 sm:py-16 bg-[#FCFAF6] border-b border-[#EDE2D0]">

@@ -85,22 +85,30 @@ export class ToursService {
 
   static async updatePackage(id: string, data: any) {
     let pkg: any = null;
+    const updateData = { ...data };
+    delete updateData._id;
+    delete updateData.id;
+    delete updateData.__v;
+    delete updateData.createdAt;
+
     if (mongoose.connection.readyState === 1) {
       try {
         if (id.match(/^[0-9a-fA-F]{24}$/)) {
-          pkg = await TourPackage.findByIdAndUpdate(id, data, { new: true });
+          pkg = await TourPackage.findByIdAndUpdate(id, updateData, { new: true });
         }
         if (!pkg) {
-          pkg = await TourPackage.findOneAndUpdate({ slug: id }, data, { new: true });
+          pkg = await TourPackage.findOneAndUpdate({ slug: id }, updateData, { new: true });
         }
         if (!pkg && data.slug) {
-          pkg = await TourPackage.findOneAndUpdate({ slug: data.slug }, data, { new: true });
+          pkg = await TourPackage.findOneAndUpdate({ slug: data.slug }, updateData, { new: true });
         }
-      } catch (_e) {}
+      } catch (err) {
+        console.error('[ToursService] Error updating tour package in Mongo:', err);
+      }
     }
-    const localUpdated = localStore.updateTourPackage(id, data);
+    const localUpdated = localStore.updateTourPackage(id, updateData);
     realtimeService.broadcast('TOURS_UPDATED');
-    return pkg || localUpdated || data;
+    return pkg || localUpdated || updateData;
   }
 
   static async deletePackage(id: string) {

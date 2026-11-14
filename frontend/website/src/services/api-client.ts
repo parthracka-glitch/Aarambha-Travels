@@ -56,9 +56,12 @@ export async function apiFetch<T>(endpoint: string, options?: ApiFetchOptions): 
     }
   }
 
-  const controllerSignal = options?.signal || AbortSignal.timeout(15000);
+  // Render free tier instances take 30-45s to spin up on cold start.
+  // Using 45s default ensures initial requests complete rather than aborting prematurely.
+  const timeoutMs = 45000;
+  const controllerSignal = options?.signal || AbortSignal.timeout(timeoutMs);
 
-  // Attempt fetch against primary URL; on connection failure (e.g. offline localhost), failover to Render API
+  // Attempt fetch against primary URL; on connection failure (e.g. offline localhost or timeout), failover to Render API with retry
   let res: Response | null = null;
   let primaryError: any = null;
 
@@ -74,21 +77,18 @@ export async function apiFetch<T>(endpoint: string, options?: ApiFetchOptions): 
     });
   } catch (err: any) {
     primaryError = err;
-    if (baseUrl !== RENDER_API) {
-      try {
-        res = await fetch(`${RENDER_API}${endpoint}`, {
-          cache: 'no-store',
-          headers: {
-            'Content-Type': 'application/json',
-            ...(options?.headers || {}),
-          },
-          signal: AbortSignal.timeout(15000),
-          ...options,
-        });
-      } catch (_fallbackErr) {
-        throw primaryError;
-      }
-    } else {
+    // If baseUrl is different from RENDER_API or if cold start timed out, retry once against RENDER_API
+    try {
+      res = await fetch(`${RENDER_API}${endpoint}`, {
+        cache: 'no-store',
+        headers: {
+          'Content-Type': 'application/json',
+          ...(options?.headers || {}),
+        },
+        signal: AbortSignal.timeout(timeoutMs),
+        ...options,
+      });
+    } catch (_fallbackErr) {
       throw primaryError;
     }
   }
