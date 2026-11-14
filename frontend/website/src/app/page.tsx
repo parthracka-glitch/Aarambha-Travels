@@ -31,11 +31,40 @@ const BookingModal = dynamic(() => import('@/components/booking/BookingModal'), 
   ssr: false,
 });
 
+function getTopThreeFeaturedTours(tours: TourPackage[]): TourPackage[] {
+  const mumbai = tours.find(t => 
+    t.slug === 'mumbai-ujjain-mahakal-omkareshwar-maheshwar' || 
+    t.id === 'mumbai-ujjain-mahakal-omkareshwar-maheshwar' ||
+    (t.title?.toLowerCase().includes('mumbai') && t.title?.toLowerCase().includes('ujjain'))
+  );
+  const sanwaliya = tours.find(t => 
+    t.slug.includes('sanwaliya') || 
+    t.id.includes('sanwaliya') || 
+    t.title?.toLowerCase().includes('sanwaliya')
+  );
+  const girnar = tours.find(t => 
+    t.slug.includes('girnar') || 
+    t.id.includes('girnar') || 
+    t.title?.toLowerCase().includes('girnar')
+  );
+
+  const selected = [mumbai, sanwaliya, girnar].filter(Boolean) as TourPackage[];
+  if (selected.length < 3) {
+    for (const t of tours) {
+      if (!selected.some(s => s.id === t.id || s.slug === t.slug)) {
+        selected.push(t);
+        if (selected.length === 3) break;
+      }
+    }
+  }
+  return selected;
+}
+
 export default function MainLandingPage() {
   const [bookingModalItem, setBookingModalItem] = useState<BookingModalItem | null>(null);
   const [spotlightTab, setSpotlightTab] = useState<'all' | 'tours' | 'cars'>('all');
   const [allTours, setAllTours] = useState<TourPackage[]>(TOUR_PACKAGES);
-  const [famousTours, setFamousTours] = useState<TourPackage[]>(TOUR_PACKAGES.slice(0, 3));
+  const [famousTours, setFamousTours] = useState<TourPackage[]>(getTopThreeFeaturedTours(TOUR_PACKAGES));
   const [famousCars, setFamousCars] = useState<CarVehicle[]>([
     FLEET_VEHICLES.find((c) => c.id === 'swift-black-2026') || FLEET_VEHICLES[2],
     FLEET_VEHICLES.find((c) => c.id === 'thar-diesel-2023') || FLEET_VEHICLES[6],
@@ -46,7 +75,7 @@ export default function MainLandingPage() {
     fetchLiveTourPackages(true).then((tours) => {
       if (Array.isArray(tours) && tours.length > 0) {
         setAllTours(tours);
-        setFamousTours(tours.slice(0, 3));
+        setFamousTours(getTopThreeFeaturedTours(tours));
       }
     });
 

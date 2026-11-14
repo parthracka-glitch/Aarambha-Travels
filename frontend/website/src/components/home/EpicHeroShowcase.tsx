@@ -20,11 +20,11 @@ const DEFAULT_HERO_SLIDES = [
   {
     id: 'mumbai-ujjain',
     image: '/images/tours/mumbai_ujjain_omkareshwar_tour.jpg',
-    badge: '🛕 Holy Jyotirlinga Darshan • 3D / 1N',
+    badge: '✨ Special Spiritual Yatra • 3D / 1N',
     label: 'Mumbai to Ujjain Mahakal',
     tag: 'Ujjain, Omkareshwar & Maheshwar',
     title: 'Mumbai to Ujjain Mahakal | Omkareshwar Jyotirlinga | Maheshwar',
-    subtitle: 'Special Spiritual Yatra • Sacred Darshan of Mahakaleshwar, Kaal Bhairav, Omkareshwar, Mamleshwar & Maheshwar Rajwada in 2×2 AC Sleeper Coach.',
+    subtitle: 'Special 2026 spiritual pilgrimage from Mumbai covering Ujjain Mahakaleshwar Jyotirlinga, Mahakal Corridor, Kaal Bhairav, Omkareshwar Jyotirlinga, Mamleshwar, and historic Maheshwar Rajwada.',
     slug: 'mumbai-ujjain-mahakal-omkareshwar-maheshwar',
     price: '₹7,499',
     deposit: '₹2,999',
@@ -167,7 +167,7 @@ export default function EpicHeroShowcase({ packages: initialPackages }: EpicHero
       onMouseLeave={() => setIsPaused(false)}
       className="relative w-full bg-[#120F0D] pt-24 pb-12 sm:pt-28 sm:pb-14 lg:pt-32 lg:pb-16 overflow-hidden flex items-center justify-center font-sans border-b border-[#EDE2D0]/40 select-none"
     >
-      
+
       {/* ─── 1. BUTTERY-SMOOTH HARDWARE-ACCELERATED CAROUSEL ─── */}
       <div className="absolute inset-0 w-full h-full pointer-events-none z-0 overflow-hidden">
         {heroSlides.map((slide, idx) => {
@@ -175,11 +175,10 @@ export default function EpicHeroShowcase({ packages: initialPackages }: EpicHero
           return (
             <div
               key={slide.id}
-              className={`absolute inset-0 w-full h-full transition-all duration-[1200ms] ease-out will-change-[opacity,transform] ${
-                isActive
+              className={`absolute inset-0 w-full h-full transition-all duration-[1200ms] ease-out will-change-[opacity,transform] ${isActive
                   ? 'opacity-100 scale-100 z-10'
                   : 'opacity-0 scale-105 pointer-events-none z-0'
-              }`}
+                }`}
             >
               <img
                 src={slide.image}
@@ -217,7 +216,7 @@ export default function EpicHeroShowcase({ packages: initialPackages }: EpicHero
 
       {/* ─── 2. MINIMALIST CLEAN HERO CONTENT ─── */}
       <div className="relative z-20 max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 w-full flex flex-col items-center text-center">
-        
+
         {/* Sleek Minimalist Tabs with Auto-Scroll Progress */}
         <div className="flex flex-wrap items-center justify-center gap-2 sm:gap-3 mb-6 sm:mb-8">
           {heroSlides.map((slide, idx) => {
@@ -227,16 +226,14 @@ export default function EpicHeroShowcase({ packages: initialPackages }: EpicHero
                 key={slide.id}
                 type="button"
                 onClick={() => goToSlide(idx)}
-                className={`relative overflow-hidden px-4 sm:px-5 py-2 rounded-full text-xs sm:text-[13px] font-semibold transition-all duration-300 cursor-pointer backdrop-blur-md border flex items-center gap-2 ${
-                  isActive
+                className={`relative overflow-hidden px-4 sm:px-5 py-2 rounded-full text-xs sm:text-[13px] font-semibold transition-all duration-300 cursor-pointer backdrop-blur-md border flex items-center gap-2 ${isActive
                     ? 'bg-[#C65A2E] text-white border-[#C65A2E] shadow-md shadow-[#C65A2E]/25 scale-[1.02]'
                     : 'bg-black/35 hover:bg-black/55 text-white/80 border-white/15 hover:border-white/30'
-                }`}
+                  }`}
               >
                 <span>{slide.label}</span>
-                <span className={`text-[11px] px-2 py-0.5 rounded-full font-medium ${
-                  isActive ? 'bg-white/20 text-white' : 'bg-white/10 text-white/70'
-                }`}>
+                <span className={`text-[11px] px-2 py-0.5 rounded-full font-medium ${isActive ? 'bg-white/20 text-white' : 'bg-white/10 text-white/70'
+                  }`}>
                   {slide.price}
                 </span>
 
