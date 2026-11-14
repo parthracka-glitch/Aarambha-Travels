@@ -23,6 +23,108 @@ import { Loader } from '@/components/common/Loader';
 import { formatCurrency } from '@/utils/formatCurrency';
 import { useAutoRefresh } from '@/hooks/useRealtimeSync';
 
+// Helper for contextual fallback images
+function getPackageFallbackImage(title?: string, slug?: string): string {
+  const str = `${title || ''} ${slug || ''}`.toLowerCase();
+  if (str.includes('girnar') || str.includes('somnath') || str.includes('dwarka')) {
+    return '/images/tours/somnath_jyotirlinga_temple.jpg';
+  }
+  if (str.includes('khatu') || str.includes('salasar') || str.includes('sanwaliya')) {
+    return '/images/tours/khatu_shyam_salasar_tour.jpg';
+  }
+  if (str.includes('ujjain') || str.includes('omkareshwar') || str.includes('mahakal') || str.includes('jyotirlinga')) {
+    return '/images/tours/mumbai_ujjain_omkareshwar_tour.jpg';
+  }
+  if (str.includes('krishna') || str.includes('vrindavan') || str.includes('mathura')) {
+    return 'https://images.unsplash.com/photo-1548013146-72479768bada?q=80&w=800&auto=format&fit=crop';
+  }
+  return '/images/tours_travels_bg.jpg';
+}
+
+// ─── NON-FLICKERING PACKAGE THUMBNAIL (GRID) ─────────────────────────
+function PackageThumbnail({ title, image, slug }: { title: string; image?: string; slug?: string }) {
+  const [loadError, setLoadError] = useState(false);
+  const fallbackImg = useMemo(() => getPackageFallbackImage(title, slug), [title, slug]);
+  const initialSrc = image?.trim() || fallbackImg;
+  const [currentSrc, setCurrentSrc] = useState(initialSrc);
+
+  React.useEffect(() => {
+    setCurrentSrc(image?.trim() || fallbackImg);
+    setLoadError(false);
+  }, [image, fallbackImg]);
+
+  if (loadError) {
+    return (
+      <div className="w-14 h-14 rounded-xl bg-gradient-to-br from-[#101F40] to-[#1C315A] text-white flex items-center justify-center shrink-0 border border-[#E8ECF4]">
+        <Compass className="w-6 h-6 text-[#E8B9A5]" />
+      </div>
+    );
+  }
+
+  return (
+    <div className="w-14 h-14 rounded-xl overflow-hidden bg-[#F5F7FC] border border-[#E8ECF4] shrink-0 relative">
+      <img
+        src={currentSrc}
+        alt={title}
+        loading="lazy"
+        decoding="async"
+        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+        onError={(e) => {
+          e.currentTarget.onerror = null; // Cut off infinite loop immediately
+          if (currentSrc.startsWith('/') && !currentSrc.startsWith('//')) {
+            setCurrentSrc(`https://www.aarambhatravels.in${currentSrc}`);
+          } else if (currentSrc !== fallbackImg) {
+            setCurrentSrc(fallbackImg);
+          } else {
+            setLoadError(true);
+          }
+        }}
+      />
+    </div>
+  );
+}
+
+// ─── NON-FLICKERING PACKAGE THUMBNAIL (TABLE) ────────────────────────
+function TablePackageThumbnail({ title, image, slug }: { title: string; image?: string; slug?: string }) {
+  const [loadError, setLoadError] = useState(false);
+  const fallbackImg = useMemo(() => getPackageFallbackImage(title, slug), [title, slug]);
+  const initialSrc = image?.trim() || fallbackImg;
+  const [currentSrc, setCurrentSrc] = useState(initialSrc);
+
+  React.useEffect(() => {
+    setCurrentSrc(image?.trim() || fallbackImg);
+    setLoadError(false);
+  }, [image, fallbackImg]);
+
+  if (loadError) {
+    return (
+      <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-[#101F40] to-[#1C315A] text-white flex items-center justify-center shrink-0">
+        <Compass className="w-4 h-4 text-[#E8B9A5]" />
+      </div>
+    );
+  }
+
+  return (
+    <img
+      src={currentSrc}
+      alt={title}
+      loading="lazy"
+      decoding="async"
+      className="w-10 h-10 rounded-lg object-cover bg-gray-100 border border-[#E8ECF4] shrink-0"
+      onError={(e) => {
+        e.currentTarget.onerror = null;
+        if (currentSrc.startsWith('/') && !currentSrc.startsWith('//')) {
+          setCurrentSrc(`https://www.aarambhatravels.in${currentSrc}`);
+        } else if (currentSrc !== fallbackImg) {
+          setCurrentSrc(fallbackImg);
+        } else {
+          setLoadError(true);
+        }
+      }}
+    />
+  );
+}
+
 export default function ToursView() {
   const [packages, setPackages] = useState<any[]>([]);
   const [_destinations, setDestinations] = useState<any[]>([]);
@@ -64,8 +166,22 @@ export default function ToursView() {
   const load = useCallback(() => {
     if (!hasLoadedRef.current) setLoading(true);
     Promise.all([
-      getToursPackages().then(d => { if (Array.isArray(d)) setPackages(d); }).catch(() => {}),
-      getToursDestinations().then(d => { if (Array.isArray(d)) setDestinations(d); }).catch(() => {}),
+      getToursPackages().then(d => {
+        if (Array.isArray(d)) {
+          setPackages(prev => {
+            if (JSON.stringify(prev) === JSON.stringify(d)) return prev;
+            return d;
+          });
+        }
+      }).catch(() => {}),
+      getToursDestinations().then(d => {
+        if (Array.isArray(d)) {
+          setDestinations(prev => {
+            if (JSON.stringify(prev) === JSON.stringify(d)) return prev;
+            return d;
+          });
+        }
+      }).catch(() => {}),
     ]).finally(() => {
       hasLoadedRef.current = true;
       setLoading(false);
@@ -419,7 +535,7 @@ export default function ToursView() {
             const dateCount = getBatchCount(pkg);
             const coverImage = Array.isArray(pkg.images) && pkg.images.length > 0
               ? pkg.images[0]
-              : (typeof pkg.image === 'string' ? pkg.image : '/images/tours/ujjain_mahakal_jyotirlinga_temple.png');
+              : (typeof pkg.image === 'string' ? pkg.image : undefined);
 
             return (
               <div
@@ -429,17 +545,12 @@ export default function ToursView() {
                 {/* Card Top: Image & Header Info */}
                 <div className="p-4 sm:p-5 space-y-3.5">
                   <div className="flex items-start gap-3">
-                    {/* Square Image Thumbnail */}
-                    <div className="w-14 h-14 rounded-xl overflow-hidden bg-[#F5F7FC] border border-[#E8ECF4] shrink-0 relative">
-                      <img
-                        src={coverImage}
-                        alt={pkg.title}
-                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                        onError={(e) => {
-                          (e.target as HTMLElement).setAttribute('src', '/images/tours/ujjain_mahakal_jyotirlinga_temple.png');
-                        }}
-                      />
-                    </div>
+                    {/* Non-flickering Square Image Thumbnail */}
+                    <PackageThumbnail
+                      title={pkg.title}
+                      image={coverImage}
+                      slug={pkg.slug}
+                    />
 
                     {/* Duration & Status Badges */}
                     <div className="flex-1 min-w-0">
@@ -545,19 +656,16 @@ export default function ToursView() {
                   const dateCount = getBatchCount(pkg);
                   const coverImage = Array.isArray(pkg.images) && pkg.images.length > 0
                     ? pkg.images[0]
-                    : (typeof pkg.image === 'string' ? pkg.image : '/images/tours/ujjain_mahakal_jyotirlinga_temple.png');
+                    : (typeof pkg.image === 'string' ? pkg.image : undefined);
 
                   return (
                     <tr key={pkg._id || pkg.id || pkg.slug} className="hover:bg-[#FAFBFD] transition-colors">
                       <td className="py-3 px-4">
                         <div className="flex items-center gap-3">
-                          <img
-                            src={coverImage}
-                            alt={pkg.title}
-                            className="w-10 h-10 rounded-lg object-cover bg-gray-100 border border-[#E8ECF4] shrink-0"
-                            onError={(e) => {
-                              (e.target as HTMLElement).setAttribute('src', '/images/tours/ujjain_mahakal_jyotirlinga_temple.png');
-                            }}
+                          <TablePackageThumbnail
+                            title={pkg.title}
+                            image={coverImage}
+                            slug={pkg.slug}
                           />
                           <div>
                             <span className="font-bold text-[#101F40] block">{pkg.title}</span>
